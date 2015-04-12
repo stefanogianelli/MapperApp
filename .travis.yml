@@ -12,4 +12,11 @@ before_script:
   - chmod +x gradlew
 script: ./gradlew clean assemble
 notifications:
-  email: false 
+  email: false
+deploy:
+  provider: releases
+  api_key:
+    secure: DxX3QUosqmpS3ypOrj2Czk+HSADesBBlpvoYin+vOc8u1fAqw1j77tM1EJwO0O0TtPgueGkYKOQX/3us+6wEKfnzkmjrbvVgd9tpLuR7CAE+6p53ZCb/dKcX2iMjf31R04nGJORwdOv2NblPKOIRNOT2YTNaKSJowDmOd1YLKYY=
+  file: mapper/build/outputs/apk/mapper-release.apk
+  on:
+    tags: true
