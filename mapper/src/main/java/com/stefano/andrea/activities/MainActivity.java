@@ -1,4 +1,4 @@
-package com.stefano.andrea.mapper;
+package com.stefano.andrea.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

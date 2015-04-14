@@ -1,4 +1,4 @@
-package com.stefano.andrea.mapper;
+package com.stefano.andrea.activities;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
