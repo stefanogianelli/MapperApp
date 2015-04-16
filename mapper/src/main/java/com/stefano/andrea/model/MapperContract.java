@@ -14,7 +14,7 @@ public final class MapperContract {
      */
     public static final String TABLE_VIAGGIO = "viaggio";
     /**
-     * Nome della tabella Città
+     * Nome della tabella Citta
      */
     public static final String TABLE_CITTA = "citta";
     /**
@@ -22,7 +22,7 @@ public final class MapperContract {
      */
     public static final String TABLE_POSTO = "posto";
     /**
-     * Nome della tabella Dati Città
+     * Nome della tabella Dati Citta
      */
     public static final String TABLE_DATI_CITTA = "dati_citta";
     /**
@@ -37,7 +37,7 @@ public final class MapperContract {
     /**
      * Nome dell'authority
      */
-    public static final String AUTHORITY = "com.stefano.andrea.mapper";
+    public static final String AUTHORITY = "com.stefano.andrea.mapper.provider";
     /**
      * Uri dell'authority
      */
@@ -55,7 +55,7 @@ public final class MapperContract {
     }
 
     /**
-     * Costanti della tabella Città
+     * Costanti della tabella Citta
      */
     public static final class Citta implements BaseColumns {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(MapperContract.AUTHORITY_URI, "citta");
@@ -81,7 +81,7 @@ public final class MapperContract {
     }
 
     /**
-     * Costanti della tabella Dati Città
+     * Costanti della tabella Dati Citta
      */
     public static final class DatiCitta implements BaseColumns {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(MapperContract.AUTHORITY_URI, "daticitta");

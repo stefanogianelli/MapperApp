@@ -18,7 +18,7 @@
         </activity>
         <provider
             android:name="com.stefano.andrea.model.MapperContentProvider"
-            android:authorities="com.stefano.andrea.mapper"
+            android:authorities="com.stefano.andrea.mapper.provider"
             android:enabled="true"
             android:exported="false" >
         </provider>
