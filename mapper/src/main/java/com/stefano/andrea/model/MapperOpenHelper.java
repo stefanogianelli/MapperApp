@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MapperOpenHelper extends SQLiteOpenHelper {
 
+    private static final String DATABASE_NAME = "mapperdb";
+    private static final int DATABASE_VERSION = 2;
+
     //Create table VIAGGIO
     private static final String CREATE_VIAGGIO = "CREATE TABLE \"" + MapperContract.TABLE_VIAGGIO + "\" (" +
             "`" + MapperContract.Viaggio._ID +"` INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -57,7 +60,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
             "FOREIGN KEY(`" + MapperContract.Foto.ID_LUOGO + "`) REFERENCES " + MapperContract.TABLE_POSTO + " (`" + MapperContract.Posto._ID + "`));";
 
     public MapperOpenHelper(Context context) {
-        super(context, MapperContract.DATABASE_NAME, null, MapperContract.DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
