@@ -3,7 +3,7 @@ package com.stefano.andrea.adapters;
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Matthieu Harlé
+ * Copyright (c) 2014 Matthieu Harle
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

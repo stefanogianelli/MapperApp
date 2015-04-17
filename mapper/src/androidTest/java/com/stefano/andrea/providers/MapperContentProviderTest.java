@@ -1,4 +1,4 @@
-package com.stefano.andrea.model;
+package com.stefano.andrea.providers;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -20,7 +20,7 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
     }
 
     public MapperContentProviderTest () {
-        super(MapperContentProvider.class, "com.stefano.andrea.model.MapperContentProvider");
+        super(MapperContentProvider.class, "com.stefano.andrea.providers.MapperContentProvider");
     }
 
     @Override

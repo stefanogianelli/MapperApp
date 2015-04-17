@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.stefano.andrea.model.MapperContract;
+import com.stefano.andrea.providers.MapperContract;
 
 /**
  * ViaggiAdapter

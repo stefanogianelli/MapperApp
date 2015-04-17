@@ -1,4 +1,4 @@
-package com.stefano.andrea.model;
+package com.stefano.andrea.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
