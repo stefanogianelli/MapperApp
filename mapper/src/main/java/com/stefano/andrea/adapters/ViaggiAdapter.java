@@ -43,7 +43,7 @@ public class ViaggiAdapter extends CursorRecyclerAdapter<ViaggiAdapter.ViaggiHol
 
         public ViaggiHolder(View v) {
             super(v);
-            vNome = (TextView) v.findViewById(R.id.my_recycler_view);
+            vNome = (TextView) v.findViewById(R.id.viaggio_item_label);
         }
     }
 }
