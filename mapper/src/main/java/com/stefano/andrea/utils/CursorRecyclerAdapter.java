@@ -1,4 +1,4 @@
-package com.stefano.andrea.adapters;
+package com.stefano.andrea.utils;
 
 /*
  * The MIT License (MIT)

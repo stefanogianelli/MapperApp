@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.CursorRecyclerAdapter;
 
 /**
  * ViaggiAdapter

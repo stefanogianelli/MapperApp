@@ -3,301 +3,318 @@ package com.stefano.andrea.providers;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+
+import com.stefano.andrea.utils.SelectionBuilder;
 
 /**
  * MapperContentProvider
  */
 public class MapperContentProvider extends ContentProvider {
 
-    private static final int VIAGGIO_LIST = 1;
-    private static final int VIAGGIO_ITEM = 2;
-    private static final int CITTA_LIST = 5;
-    private static final int CITTA_ITEM = 6;
-    private static final int POSTO_LIST = 10;
-    private static final int POSTO_ITEM = 11;
-    private static final int DATI_CITTA_LIST = 15;
-    private static final int DATI_CITTA_ITEM = 16;
-    private static final int LUOGO_LIST = 20;
-    private static final int LUOGO_ITEM = 21;
-    private static final int FOTO_LIST = 25;
-    private static final int FOTO_ITEM = 26;
+    private MapperOpenHelper mOpenHelper;
 
-    private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    static {
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_VIAGGIO, VIAGGIO_LIST);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_VIAGGIO + "/#", VIAGGIO_ITEM);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_CITTA, CITTA_LIST);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_CITTA + "/#", CITTA_ITEM);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_POSTO, POSTO_LIST);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_POSTO + "/#", POSTO_ITEM);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_DATI_CITTA, DATI_CITTA_LIST);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_DATI_CITTA + "/#", DATI_CITTA_ITEM);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_LUOGO, LUOGO_LIST);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_LUOGO + "/#", LUOGO_ITEM);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_FOTO, FOTO_LIST);
-        URI_MATCHER.addURI(MapperContract.AUTHORITY, MapperContract.TABLE_FOTO + "/#", FOTO_ITEM);
+    private static final int VIAGGI = 100;
+    private static final int VIAGGI_ID = 101;
+
+    private static final int CITTA = 200;
+    private static final int CITTA_ID = 201;
+
+    private static final int POSTI = 300;
+    private static final int POSTI_ID = 301;
+
+    private static final int DATI_CITTA = 400;
+    private static final int DATI_CITTA_ID = 401;
+
+    private static final int LUOGHI = 500;
+    private static final int LUOGHI_ID = 501;
+
+    private static final int FOTO = 600;
+    private static final int FOTO_ID = 601;
+
+
+    private static UriMatcher buildUriMatcher () {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = MapperContract.CONTENT_AUTHORITY;
+
+        matcher.addURI(authority, MapperContract.Viaggio.TABLE_NAME, VIAGGI);
+        matcher.addURI(authority, MapperContract.Viaggio.TABLE_NAME + "/*", VIAGGI_ID);
+
+        matcher.addURI(authority, MapperContract.Citta.TABLE_NAME, CITTA);
+        matcher.addURI(authority, MapperContract.Citta.TABLE_NAME + "/*", CITTA_ID);
+
+        matcher.addURI(authority, MapperContract.Posto.TABLE_NAME, POSTI);
+        matcher.addURI(authority, MapperContract.Posto.TABLE_NAME + "/*", POSTI_ID);
+
+        matcher.addURI(authority, MapperContract.DatiCitta.TABLE_NAME, DATI_CITTA);
+        matcher.addURI(authority, MapperContract.DatiCitta.TABLE_NAME + "/*", DATI_CITTA_ID);
+
+        matcher.addURI(authority, MapperContract.Luogo.TABLE_NAME, LUOGHI);
+        matcher.addURI(authority, MapperContract.Luogo.TABLE_NAME + "/*", LUOGHI_ID);
+
+        matcher.addURI(authority, MapperContract.Foto.TABLE_NAME, FOTO);
+        matcher.addURI(authority, MapperContract.Foto.TABLE_NAME + "/*", FOTO_ID);
+
+        return matcher;
     }
-
-    private MapperOpenHelper mHelper;
-    private SQLiteDatabase mDb;
 
     @Override
     public boolean onCreate() {
-        mHelper = new MapperOpenHelper(getContext());
-        mDb = mHelper.getWritableDatabase();
-        if (mDb == null)
-            return false;
-        if (mDb.isReadOnly()) {
-            mDb.close();
-            mDb = null;
-            return false;
-        }
+        mOpenHelper = new MapperOpenHelper(getContext());
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        switch (URI_MATCHER.match(uri)) {
-            case VIAGGIO_LIST:
+        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        SelectionBuilder builder = new SelectionBuilder();
+        String id;
+        Cursor c;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case VIAGGI_ID:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Viaggio._ID + "=?", id);
+            case VIAGGI:
+                builder.table(MapperContract.Viaggio.TABLE_NAME).where(selection, selectionArgs);
                 break;
-            case VIAGGIO_ITEM:
-                queryBuilder.setTables(MapperContract.TABLE_VIAGGIO);
-                queryBuilder.appendWhere(MapperContract.Viaggio._ID + "=" + uri.getLastPathSegment());
+            case CITTA_ID:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Citta._ID + "=?", id);
+            case CITTA:
+                builder.table(MapperContract.Citta.TABLE_NAME).where(selection, selectionArgs);
                 break;
-            case CITTA_LIST:
+            case POSTI_ID:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Posto._ID + "=?", id);
+            case POSTI:
+                builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs);
                 break;
-            case CITTA_ITEM:
-                queryBuilder.setTables(MapperContract.TABLE_CITTA);
-                queryBuilder.appendWhere(MapperContract.Citta._ID + "=" + uri.getLastPathSegment());
+            case DATI_CITTA_ID:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.DatiCitta._ID + "=?", id);
+            case DATI_CITTA:
+                builder.table(MapperContract.DatiCitta.TABLE_NAME).where(selection, selectionArgs);
                 break;
-            case POSTO_LIST:
+            case LUOGHI_ID:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Luogo._ID + "=?", id);
+            case LUOGHI:
+                builder.table(MapperContract.Luogo.TABLE_NAME).where(selection, selectionArgs);
                 break;
-            case POSTO_ITEM:
-                queryBuilder.setTables(MapperContract.TABLE_POSTO);
-                queryBuilder.appendWhere(MapperContract.Posto._ID + "=" + uri.getLastPathSegment());
-                break;
-            case DATI_CITTA_LIST:
-                break;
-            case DATI_CITTA_ITEM:
-                queryBuilder.setTables(MapperContract.TABLE_DATI_CITTA);
-                queryBuilder.appendWhere(MapperContract.DatiCitta._ID + "=" + uri.getLastPathSegment());
-                break;
-            case LUOGO_LIST:
-                break;
-            case LUOGO_ITEM:
-                queryBuilder.setTables(MapperContract.TABLE_LUOGO);
-                queryBuilder.appendWhere(MapperContract.Luogo._ID + "=" + uri.getLastPathSegment());
-                break;
-            case FOTO_LIST:
-                break;
-            case FOTO_ITEM:
-                queryBuilder.setTables(MapperContract.TABLE_FOTO);
-                queryBuilder.appendWhere(MapperContract.Foto._ID + "=" + uri.getLastPathSegment());
+            case FOTO_ID:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Foto._ID + "=?", id);
+            case FOTO:
+                builder.table(MapperContract.Foto.TABLE_NAME).where(selection, selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("URI non supportata " + uri);
+                throw new UnsupportedOperationException("URI non supportata " + uri);
         }
-        Cursor cursor = queryBuilder.query(mDb, projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return cursor;
+        Context ctx = getContext();
+        assert ctx != null;
+        c = builder.query(db, projection, sortOrder);
+        c.setNotificationUri(ctx.getContentResolver(), uri);
+        return c;
     }
 
     @Override
     public String getType(Uri uri) {
-        switch (URI_MATCHER.match(uri)) {
-            case VIAGGIO_LIST:
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case VIAGGI:
                 return MapperContract.Viaggio.CONTENT_TYPE;
-            case VIAGGIO_ITEM:
+            case VIAGGI_ID:
                 return MapperContract.Viaggio.CONTENT_ITEM_TYPE;
-            case CITTA_LIST:
+            case CITTA:
                 return MapperContract.Citta.CONTENT_TYPE;
-            case CITTA_ITEM:
+            case CITTA_ID:
                 return MapperContract.Citta.CONTENT_ITEM_TYPE;
-            case POSTO_LIST:
+            case POSTI:
                 return MapperContract.Posto.CONTENT_TYPE;
-            case POSTO_ITEM:
+            case POSTI_ID:
                 return MapperContract.Posto.CONTENT_ITEM_TYPE;
-            case DATI_CITTA_LIST:
+            case DATI_CITTA:
                 return MapperContract.DatiCitta.CONTENT_TYPE;
-            case DATI_CITTA_ITEM:
+            case DATI_CITTA_ID:
                 return MapperContract.DatiCitta.CONTENT_ITEM_TYPE;
-            case LUOGO_LIST:
+            case LUOGHI:
                 return MapperContract.Luogo.CONTENT_TYPE;
-            case LUOGO_ITEM:
+            case LUOGHI_ID:
                 return MapperContract.Luogo.CONTENT_ITEM_TYPE;
-            case FOTO_LIST:
+            case FOTO:
                 return MapperContract.Foto.CONTENT_TYPE;
-            case FOTO_ITEM:
+            case FOTO_ID:
                 return MapperContract.Foto.CONTENT_ITEM_TYPE;
             default:
-                throw new IllegalArgumentException("URI non supportata " + uri);
+                throw new UnsupportedOperationException("URI non supportata " + uri);
         }
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        assert db != null;
+        final int match = sUriMatcher.match(uri);
         long id;
-        switch (URI_MATCHER.match(uri)) {
-            case VIAGGIO_LIST:
-                id = mDb.insert(MapperContract.TABLE_VIAGGIO, null, values);
+        Uri result;
+        switch (match) {
+            case VIAGGI:
+                id = db.insert(MapperContract.Viaggio.TABLE_NAME, null, values);
+                result = Uri.parse(MapperContract.Viaggio.CONTENT_URI + "/" + id);
                 break;
-            case CITTA_LIST:
-                id = mDb.insert(MapperContract.TABLE_CITTA, null, values);
+            case CITTA:
+                id = db.insert(MapperContract.Citta.TABLE_NAME, null, values);
+                result = Uri.parse(MapperContract.Citta.CONTENT_URI + "/" + id);
                 break;
-            case POSTO_LIST:
-                id = mDb.insert(MapperContract.TABLE_POSTO, null, values);
+            case POSTI:
+                id = db.insert(MapperContract.Posto.TABLE_NAME, null, values);
+                result = Uri.parse(MapperContract.Posto.CONTENT_URI + "/" + id);
                 break;
-            case DATI_CITTA_LIST:
-                id = mDb.insert(MapperContract.TABLE_DATI_CITTA, null, values);
+            case DATI_CITTA:
+                id = db.insert(MapperContract.DatiCitta.TABLE_NAME, null, values);
+                result = Uri.parse(MapperContract.DatiCitta.CONTENT_URI + "/" + id);
                 break;
-            case LUOGO_LIST:
-                id = mDb.insert(MapperContract.TABLE_LUOGO, null, values);
+            case LUOGHI:
+                id = db.insert(MapperContract.Luogo.TABLE_NAME, null, values);
+                result = Uri.parse(MapperContract.Luogo.CONTENT_URI + "/" + id);
                 break;
-            case FOTO_LIST:
-                id = mDb.insert(MapperContract.TABLE_FOTO, null, values);
+            case FOTO:
+                id = db.insert(MapperContract.Foto.TABLE_NAME, null, values);
+                result = Uri.parse(MapperContract.Foto.CONTENT_URI + "/" + id);
                 break;
             default:
                 throw new IllegalArgumentException("URI non supportata " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return ContentUris.withAppendedId(uri, id);
+        Context ctx = getContext();
+        assert ctx != null;
+        ctx.getContentResolver().notifyChange(uri, null, false);
+        return result;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        int rowsDeleted;
-        String where;
-        switch (URI_MATCHER.match(uri)) {
-            case VIAGGIO_LIST:
-                rowsDeleted = mDb.delete(MapperContract.TABLE_VIAGGIO, selection, selectionArgs);
+        SelectionBuilder builder = new SelectionBuilder();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int count;
+        String id;
+        switch (match) {
+            case VIAGGI:
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
-            case VIAGGIO_ITEM:
-                where = MapperContract.Viaggio._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsDeleted = mDb.delete(MapperContract.TABLE_VIAGGIO, where, selectionArgs);
+            case VIAGGI_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio._ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
-            case CITTA_LIST:
-                rowsDeleted = mDb.delete(MapperContract.TABLE_CITTA, selection, selectionArgs);
+            case CITTA:
+                count = builder.table(MapperContract.Citta.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
-            case CITTA_ITEM:
-                where = MapperContract.Citta._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsDeleted = mDb.delete(MapperContract.TABLE_CITTA, where, selectionArgs);
+            case CITTA_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio._ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
-            case POSTO_LIST:
-                rowsDeleted = mDb.delete(MapperContract.TABLE_POSTO, selection, selectionArgs);
+            case POSTI:
+                count = builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
-            case POSTO_ITEM:
-                where = MapperContract.Posto._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsDeleted = mDb.delete(MapperContract.TABLE_POSTO, where, selectionArgs);
+            case POSTI_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Posto.TABLE_NAME).where(MapperContract.Posto._ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
-            case DATI_CITTA_LIST:
-                rowsDeleted = mDb.delete(MapperContract.TABLE_DATI_CITTA, selection, selectionArgs);
+            case DATI_CITTA:
+                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
-            case DATI_CITTA_ITEM:
-                where = MapperContract.DatiCitta._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsDeleted = mDb.delete(MapperContract.TABLE_DATI_CITTA, where, selectionArgs);
+            case DATI_CITTA_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(MapperContract.DatiCitta._ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
-            case LUOGO_LIST:
-                rowsDeleted = mDb.delete(MapperContract.TABLE_LUOGO, selection, selectionArgs);
+            case LUOGHI:
+                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
-            case LUOGO_ITEM:
-                where = MapperContract.Luogo._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsDeleted = mDb.delete(MapperContract.TABLE_LUOGO, where, selectionArgs);
+            case LUOGHI_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(MapperContract.Luogo._ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
-            case FOTO_LIST:
-                rowsDeleted = mDb.delete(MapperContract.TABLE_FOTO, selection, selectionArgs);
+            case FOTO:
+                count = builder.table(MapperContract.Foto.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
-            case FOTO_ITEM:
-                where = MapperContract.Foto._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsDeleted = mDb.delete(MapperContract.TABLE_FOTO, where, selectionArgs);
+            case FOTO_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Foto.TABLE_NAME).where(MapperContract.Foto._ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             default:
-                throw new IllegalArgumentException("URI non supportata " + uri);
+                throw new UnsupportedOperationException("URI non supportata " + uri);
         }
-        return rowsDeleted;
+        Context ctx = getContext();
+        assert ctx != null;
+        ctx.getContentResolver().notifyChange(uri, null, false);
+        return count;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        String where;
-        int rowsUpdated;
-        switch (URI_MATCHER.match(uri)) {
-            case VIAGGIO_LIST:
-                rowsUpdated = mDb.update(MapperContract.TABLE_VIAGGIO, values, selection, selectionArgs);
+        SelectionBuilder builder = new SelectionBuilder();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int count;
+        String id;
+        switch (match) {
+            case VIAGGI:
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
-            case VIAGGIO_ITEM:
-                where = MapperContract.Viaggio._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsUpdated = mDb.update(MapperContract.TABLE_VIAGGIO, values, where, selectionArgs);
+            case VIAGGI_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio._ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
-            case CITTA_LIST:
-                rowsUpdated = mDb.update(MapperContract.TABLE_CITTA, values, selection, selectionArgs);
+            case CITTA:
+                count = builder.table(MapperContract.Citta.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
-            case CITTA_ITEM:
-                where = MapperContract.Citta._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsUpdated = mDb.update(MapperContract.TABLE_CITTA, values, where, selectionArgs);
+            case CITTA_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Citta.TABLE_NAME).where(MapperContract.Citta._ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
-            case POSTO_LIST:
-                rowsUpdated = mDb.update(MapperContract.TABLE_POSTO, values, selection, selectionArgs);
+            case POSTI:
+                count = builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
-            case POSTO_ITEM:
-                where = MapperContract.Posto._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsUpdated = mDb.update(MapperContract.TABLE_POSTO, values, where, selectionArgs);
+            case POSTI_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Posto.TABLE_NAME).where(MapperContract.Posto._ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
-            case DATI_CITTA_LIST:
-                rowsUpdated = mDb.update(MapperContract.TABLE_DATI_CITTA, values, selection, selectionArgs);
+            case DATI_CITTA:
+                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
-            case DATI_CITTA_ITEM:
-                where = MapperContract.DatiCitta._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsUpdated = mDb.update(MapperContract.TABLE_DATI_CITTA, values, where, selectionArgs);
+            case DATI_CITTA_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(MapperContract.DatiCitta._ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
-            case LUOGO_LIST:
-                rowsUpdated = mDb.update(MapperContract.TABLE_LUOGO, values, selection, selectionArgs);
+            case LUOGHI:
+                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
-            case LUOGO_ITEM:
-                where = MapperContract.Luogo._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsUpdated = mDb.update(MapperContract.TABLE_LUOGO, values, where, selectionArgs);
+            case LUOGHI_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(MapperContract.Luogo._ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
-            case FOTO_LIST:
-                rowsUpdated = mDb.update(MapperContract.TABLE_FOTO, values, selection, selectionArgs);
+            case FOTO:
+                count = builder.table(MapperContract.Foto.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
-            case FOTO_ITEM:
-                where = MapperContract.Foto._ID + " = " + uri.getLastPathSegment();
-                if (!TextUtils.isEmpty(selection))
-                    where += " AND " + selection;
-                rowsUpdated = mDb.update(MapperContract.TABLE_FOTO, values, where, selectionArgs);
+            case FOTO_ID:
+                id = uri.getLastPathSegment();
+                count = builder.table(MapperContract.Foto.TABLE_NAME).where(MapperContract.Foto._ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             default:
-                throw new IllegalArgumentException("URI non supportata " + uri);
+                throw new UnsupportedOperationException("URI non supportata " + uri);
         }
-        return rowsUpdated;
+        Context ctx = getContext();
+        assert ctx != null;
+        ctx.getContentResolver().notifyChange(uri, null, false);
+        return count;
     }
+
 }
