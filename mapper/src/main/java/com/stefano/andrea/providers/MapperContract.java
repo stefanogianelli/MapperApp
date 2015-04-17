@@ -14,16 +14,16 @@ public final class MapperContract {
     }
 
     interface CittaColumns {
-        /** ID della città nella tabella Dati_Citta */
+        /** ID della citta nella tabella Dati_Citta */
         String ID_CITTA = "id_citta";
-        /** ID del viaggio nel quale è stata visitata la citta */
+        /** ID del viaggio nel quale e stata visitata la citta */
         String ID_VIAGGIO = "id_viaggio";
         /* Percentuale di completamento della visita */
         String PERCENTUALE = "percentuale";
     }
 
     interface PostoColumns {
-        /** Booleano che indicata se il posto è stato visitato */
+        /** Booleano che indicata se il posto e stato visitato */
         String VISITATO = "visitato";
         /** ID della citta nella tabella Dati_Citta */
         String ID_CITTA = "id_citta";
@@ -56,15 +56,15 @@ public final class MapperContract {
     interface FotoColumns {
         /** Percorso dove andare a recuperare la foto */
         String PATH = "path";
-        /** Data in cui è stata scattata la foto */
+        /** Data in cui e stata scattata la foto */
         String DATA = "data";
-        /** Latitudine dove è stata scattata la foto */
+        /** Latitudine dove e stata scattata la foto */
         String LATITUDINE = "latitudine";
-        /** Longitudine dove è stata scattata la foto */
+        /** Longitudine dove e stata scattata la foto */
         String LONGITUDINE = "longitudine";
-        /** ID della citta in cui è stata scattata la foto */
+        /** ID della citta in cui e stata scattata la foto */
         String ID_CITTA = "id_citta";
-        /** ID del luogo dove è stata scattata la foto */
+        /** ID del luogo dove e stata scattata la foto */
         String ID_LUOGO = "id_luogo";
     }
 
