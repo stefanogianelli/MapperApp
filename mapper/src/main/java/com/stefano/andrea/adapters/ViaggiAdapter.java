@@ -3,10 +3,12 @@ package com.stefano.andrea.adapters;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.stefano.andrea.activities.R;
 import com.stefano.andrea.providers.MapperContract;
 
 /**
@@ -30,9 +32,9 @@ public class ViaggiAdapter extends CursorRecyclerAdapter<ViaggiAdapter.ViaggiHol
     @Override
     public ViaggiHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         //TODO: completare reference view
-        //View view = null;
-        //return new ViaggiHolder(view);
-        return null;
+        View view =  LayoutInflater.from(viewGroup.getContext())
+        .inflate(R.layout.viaggio_item, viewGroup, false);
+        return new ViaggiHolder(view);
     }
 
     public class ViaggiHolder extends RecyclerView.ViewHolder {
@@ -41,8 +43,7 @@ public class ViaggiAdapter extends CursorRecyclerAdapter<ViaggiAdapter.ViaggiHol
 
         public ViaggiHolder(View v) {
             super(v);
-            //TODO: aggiungere reference all'elemento alla TextView
-            //esempio: vNome = (TextView) v.findViewById(R.id.nome_viaggio);
+            vNome = (TextView) v.findViewById(R.id.my_recycler_view);
         }
     }
 }
