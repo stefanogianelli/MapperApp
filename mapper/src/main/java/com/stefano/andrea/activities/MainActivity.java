@@ -39,6 +39,10 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         mAdapter = new ViaggiAdapter(null, getContentResolver());
         mRecyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
+
+
+        // Floating button
+
     }
 
     @Override

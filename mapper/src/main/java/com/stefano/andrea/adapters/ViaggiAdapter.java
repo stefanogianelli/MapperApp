@@ -31,7 +31,6 @@ public class ViaggiAdapter extends CursorRecyclerAdapter<ViaggiAdapter.ViaggiHol
 
     @Override
     public ViaggiHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        //TODO: completare reference view
         View view =  LayoutInflater.from(viewGroup.getContext())
         .inflate(R.layout.viaggio_item, viewGroup, false);
         return new ViaggiHolder(view);
