@@ -1,5 +1,6 @@
 package com.stefano.andrea.providers;
 
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -91,6 +92,7 @@ public final class MapperContract {
     /** Costanti della tabella Citta */
     public static final class Citta implements BaseColumns, CittaColumns {
         public static final String TABLE_NAME = "citta";
+        public static final String TABLE_CITTA_JOIN_DATI_CITTA = TABLE_NAME + " JOIN " + DatiCitta.TABLE_NAME + " ON " + TABLE_NAME + "." + ID_CITTA +  "=" + DatiCitta.TABLE_NAME + ":" + DatiCitta._ID;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 

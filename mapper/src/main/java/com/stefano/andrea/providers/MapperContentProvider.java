@@ -39,28 +39,27 @@ public class MapperContentProvider extends ContentProvider {
     private static final int FOTO = 600;
     private static final int FOTO_ID = 601;
 
-
     private static UriMatcher buildUriMatcher () {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MapperContract.CONTENT_AUTHORITY;
 
         matcher.addURI(authority, MapperContract.Viaggio.TABLE_NAME, VIAGGI);
-        matcher.addURI(authority, MapperContract.Viaggio.TABLE_NAME + "/*", VIAGGI_ID);
+        matcher.addURI(authority, MapperContract.Viaggio.TABLE_NAME + "/#", VIAGGI_ID);
 
         matcher.addURI(authority, MapperContract.Citta.TABLE_NAME, CITTA);
-        matcher.addURI(authority, MapperContract.Citta.TABLE_NAME + "/*", CITTA_ID);
+        matcher.addURI(authority, MapperContract.Citta.TABLE_NAME + "/#", CITTA_ID);
 
         matcher.addURI(authority, MapperContract.Posto.TABLE_NAME, POSTI);
-        matcher.addURI(authority, MapperContract.Posto.TABLE_NAME + "/*", POSTI_ID);
+        matcher.addURI(authority, MapperContract.Posto.TABLE_NAME + "/#", POSTI_ID);
 
         matcher.addURI(authority, MapperContract.DatiCitta.TABLE_NAME, DATI_CITTA);
-        matcher.addURI(authority, MapperContract.DatiCitta.TABLE_NAME + "/*", DATI_CITTA_ID);
+        matcher.addURI(authority, MapperContract.DatiCitta.TABLE_NAME + "/#", DATI_CITTA_ID);
 
         matcher.addURI(authority, MapperContract.Luogo.TABLE_NAME, LUOGHI);
-        matcher.addURI(authority, MapperContract.Luogo.TABLE_NAME + "/*", LUOGHI_ID);
+        matcher.addURI(authority, MapperContract.Luogo.TABLE_NAME + "/#", LUOGHI_ID);
 
         matcher.addURI(authority, MapperContract.Foto.TABLE_NAME, FOTO);
-        matcher.addURI(authority, MapperContract.Foto.TABLE_NAME + "/*", FOTO_ID);
+        matcher.addURI(authority, MapperContract.Foto.TABLE_NAME + "/#", FOTO_ID);
 
         return matcher;
     }
@@ -89,7 +88,7 @@ public class MapperContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Citta._ID + "=?", id);
             case CITTA:
-                builder.table(MapperContract.Citta.TABLE_NAME).where(selection, selectionArgs);
+                builder.table(MapperContract.Citta.TABLE_CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
