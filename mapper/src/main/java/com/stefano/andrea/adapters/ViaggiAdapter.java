@@ -1,12 +1,9 @@
 package com.stefano.andrea.adapters;
 
-import android.content.ContentResolver;
 import android.database.Cursor;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.providers.MapperContract;
@@ -15,35 +12,26 @@ import com.stefano.andrea.utils.CursorRecyclerAdapter;
 /**
  * ViaggiAdapter
  */
-public class ViaggiAdapter extends CursorRecyclerAdapter<ViaggiAdapter.ViaggiHolder> {
+public class ViaggiAdapter extends CursorRecyclerAdapter<ViaggiHolder> {
 
-    private ContentResolver resolver;
+    private ViaggiHolder.ViaggiHolderListener mListener;
 
-    public ViaggiAdapter(Cursor cursor, ContentResolver resolver) {
+    public ViaggiAdapter(Cursor cursor, ViaggiHolder.ViaggiHolderListener listener) {
         super(cursor);
-        this.resolver = resolver;
+        mListener = listener;
     }
 
     @Override
     public void onBindViewHolderCursor(ViaggiHolder holder, Cursor cursor) {
-        String nome = cursor.getString(cursor.getColumnIndex(MapperContract.Viaggio.NOME));
-        holder.vNome.setText(nome);
+        holder.setNomeViaggio(cursor.getString(cursor.getColumnIndex(MapperContract.Viaggio.NOME)));
+        holder.setId(cursor.getLong(cursor.getColumnIndex(MapperContract.Viaggio._ID)));
     }
 
     @Override
     public ViaggiHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view =  LayoutInflater.from(viewGroup.getContext())
         .inflate(R.layout.viaggio_item, viewGroup, false);
-        return new ViaggiHolder(view);
+        return new ViaggiHolder(view, mListener);
     }
 
-    public class ViaggiHolder extends RecyclerView.ViewHolder {
-
-        private TextView vNome;
-
-        public ViaggiHolder(View v) {
-            super(v);
-            vNome = (TextView) v.findViewById(R.id.viaggio_item_label);
-        }
-    }
 }

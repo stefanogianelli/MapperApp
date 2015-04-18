@@ -10,25 +10,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.stefano.andrea.adapters.ViaggiAdapter;
+import com.stefano.andrea.adapters.ViaggiHolder;
 import com.stefano.andrea.providers.MapperContract;
 
-
-public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
-
+public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiHolder.ViaggiHolderListener {
 
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         // Card layout
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -36,10 +33,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         // specify an adapter
-        mAdapter = new ViaggiAdapter(null, getContentResolver());
+        mAdapter = new ViaggiAdapter(null, this);
         mRecyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
-
 
         // Floating button
 
@@ -81,5 +77,17 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void selectViaggio(long id) {
+        //TODO: creare intent per passare all'activity con i dettagli del viaggio
+        Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public int deleteViaggio(long id) {
+        //TODO: cancellare viaggio/i, ritornare il numero di viaggi cancellati
+        return 0;
     }
 }
