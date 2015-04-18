@@ -2,9 +2,13 @@ package com.stefano.andrea.activities;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,16 +20,20 @@ import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.adapters.ViaggiHolder;
 import com.stefano.andrea.providers.MapperContract;
 
+import java.util.List;
+
 public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiHolder.ViaggiHolderListener {
 
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ContentResolver mResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mResolver = getContentResolver();
         // Card layout
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -87,7 +95,21 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
     @Override
     public int deleteViaggio(long id) {
-        //TODO: cancellare viaggio/i, ritornare il numero di viaggi cancellati
-        return 0;
+        Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, id);
+        return mResolver.delete(uri, null, null);
+    }
+
+    public int deleteViaggi (List<Integer> ids) {
+        int count = 0;
+        for(int id : ids) {
+            count += deleteViaggio(id);
+        }
+        return count;
+    }
+
+    public void creaNuovoViaggio (String nome) {
+        ContentValues values = new ContentValues();
+        values.put(MapperContract.Viaggio.NOME, nome);
+        mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
     }
 }
