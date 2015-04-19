@@ -66,15 +66,15 @@ public class ViaggiAdapter extends RecyclerView.Adapter<ViaggiAdapter.ViaggiHold
         return mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
     }
 
-    public int deleteViaggio(long id) {
+    public int cancellaViaggio(long id) {
         Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, id);
         return mResolver.delete(uri, null, null);
     }
 
-    public int deleteViaggi (List<Integer> ids) {
+    public int cancellaViaggi (List<Integer> ids) {
         int count = 0;
         for(int id : ids) {
-            count += deleteViaggio(id);
+            count += cancellaViaggio(id);
         }
         return count;
     }
