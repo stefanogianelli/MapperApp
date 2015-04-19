@@ -1,33 +1,32 @@
 package com.stefano.andrea.providers;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
-import android.util.Log;
+import android.test.mock.MockContentResolver;
 
 /**
  * MapperContentProviderTest
  */
 public class MapperContentProviderTest extends ProviderTestCase2<MapperContentProvider> {
 
-    private static final String TAG = "ProviderTest";
-    private ContentResolver provider;
+    private static final String NOME = "test";
 
-    public MapperContentProviderTest(Class<MapperContentProvider> providerClass, String providerAuthority) {
-        super(providerClass, providerAuthority);
-    }
+    private MockContentResolver mResolver;
 
     public MapperContentProviderTest () {
-        super(MapperContentProvider.class, "com.stefano.andrea.providers.MapperContentProvider");
+        super(MapperContentProvider.class, MapperContract.CONTENT_AUTHORITY);
     }
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        provider = getContext().getContentResolver();
+        mResolver = getMockContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MapperContract.Viaggio.NOME, NOME);
+        Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
     }
 
     @Override
@@ -36,25 +35,27 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
     }
 
     public void testInsertViaggio() throws Exception {
+        String nomeViaggio = "nuovo viaggio";
         ContentValues values = new ContentValues();
-        values.put(MapperContract.Viaggio.NOME, "prova");
-        Uri uri = provider.insert(MapperContract.Viaggio.CONTENT_URI, values);
+        values.put(MapperContract.Viaggio.NOME, nomeViaggio);
+        Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
         assertNotNull(uri);
     }
 
     public void testQueryViaggio() throws Exception {
-        String [] projection = {MapperContract.Viaggio._ID, MapperContract.Viaggio.NOME};
         Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, 1);
-        Cursor cursor = provider.query(uri, projection, null, null, null);
+        Cursor cursor = mResolver.query(uri, MapperContract.Viaggio.PROJECTION_ALL, null, null, null);
+        assertNotNull(cursor);
         cursor.moveToNext();
         int index = cursor.getColumnIndex(MapperContract.Viaggio.NOME);
-        Log.v(TAG, cursor.getString(index));
-        assertEquals(cursor.getCount(), 1);
+        String nome = cursor.getString(index);
+        cursor.close();
+        assertEquals(nome, NOME);
     }
 
     public void testDeleteViaggio () throws Exception {
         Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, 1);
-        int rows = provider.delete(uri, null, null);
+        int rows = mResolver.delete(uri, null, null);
         assertEquals(rows, 1);
     }
 }
