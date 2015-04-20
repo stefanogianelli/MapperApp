@@ -29,7 +29,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
     private final static int URL_LOADER = 0;
 
-    private final static String TAG = "FloatingActionButtonBasicFragment";
+    private final static String TAG = "FloatingButton";
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -53,13 +53,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         mAdapter = new ViaggiAdapter(mListaViaggi, mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
-
-
         // Floating button
         FloatingActionButton fab1 = (FloatingActionButton) getWindow().getDecorView().findViewById(R.id.fab_1);
         fab1.setOnCheckedChangeListener(this);
- }
-
     }
 
     @Override
@@ -116,7 +112,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         //TODO: creare intent per passare all'activity con i dettagli del viaggio
         Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
     }
-
 
     @Override
     public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
