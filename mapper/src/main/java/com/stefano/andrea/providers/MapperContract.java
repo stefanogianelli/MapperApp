@@ -1,8 +1,6 @@
 package com.stefano.andrea.providers;
 
-import android.content.ContentUris;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 /**
  * MapperContract
@@ -10,29 +8,37 @@ import android.provider.BaseColumns;
 public final class MapperContract {
 
     interface ViaggioColumns {
+        /** id del viaggio */
+        String ID_VIAGGIO = "id_viaggio";
         /** Nome del viaggio */
         String NOME = "nome";
     }
 
     interface CittaColumns {
-        /** ID della citta nella tabella Dati_Citta */
+        /** id della citta */
         String ID_CITTA = "id_citta";
+        /** ID della citta nella tabella Dati_Citta */
+        String ID_DATI_CITTA = "ref_dati_citta";
         /** ID del viaggio nel quale e stata visitata la citta */
-        String ID_VIAGGIO = "id_viaggio";
+        String ID_VIAGGIO = "ref_viaggio";
         /* Percentuale di completamento della visita */
         String PERCENTUALE = "percentuale";
     }
 
     interface PostoColumns {
+        /** id del posto */
+        String ID_POSTO = "id_posto";
         /** Booleano che indicata se il posto e stato visitato */
         String VISITATO = "visitato";
         /** ID della citta nella tabella Dati_Citta */
-        String ID_CITTA = "id_citta";
+        String ID_CITTA = "ref_citta";
         /** ID del luogo collegato con la taballa Luogo */
-        String ID_LUOGO = "luogo";
+        String ID_LUOGO = "ref_luogo";
     }
 
     interface DatiCittaColumns {
+        /** id della citta */
+        String ID = "id_dati_citta";
         /** Nome della citta */
         String NOME = "nome";
         /** Nome della nazione */
@@ -44,6 +50,8 @@ public final class MapperContract {
     }
 
     interface LuogoColumns {
+        /** id del luogo */
+        String ID = "id_luogo";
         /** Nome del luogo */
         String NOME = "nome";
         /** Latitudine del luogo */
@@ -51,10 +59,12 @@ public final class MapperContract {
         /** Longitudine del luogo */
         String LONGITUDINE = "longitudine";
         /** ID della citta collegato con la tabella Dati_Citta */
-        String ID_CITTA = "id_citta";
+        String ID_CITTA = "ref_citta";
     }
 
     interface FotoColumns {
+        /** id della foto */
+        String ID = "id_foto";
         /** Percorso dove andare a recuperare la foto */
         String PATH = "path";
         /** Data in cui e stata scattata la foto */
@@ -64,9 +74,9 @@ public final class MapperContract {
         /** Longitudine dove e stata scattata la foto */
         String LONGITUDINE = "longitudine";
         /** ID della citta in cui e stata scattata la foto */
-        String ID_CITTA = "id_citta";
+        String ID_CITTA = "ref_citta";
         /** ID del luogo dove e stata scattata la foto */
-        String ID_LUOGO = "id_luogo";
+        String ID_LUOGO = "ref_luogo";
     }
 
     /** Nome dell'authority */
@@ -75,7 +85,7 @@ public final class MapperContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     /** Costanti della tabella Viaggio */
-    public static final class Viaggio implements BaseColumns, ViaggioColumns {
+    public static final class Viaggio implements ViaggioColumns {
         public static final String TABLE_NAME = "viaggio";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
@@ -83,30 +93,31 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.viaggi";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.viaggio";
 
-        public static final String[] PROJECTION_ALL = {_ID, NOME};
+        public static final String[] PROJECTION_ALL = {ID_VIAGGIO, NOME};
 
         /** "ORDER BY" clauses. */
-        public static final String DEFAULT_SORT = _ID + " ASC";
+        public static final String DEFAULT_SORT = ID_VIAGGIO + " DESC";
     }
 
     /** Costanti della tabella Citta */
-    public static final class Citta implements BaseColumns, CittaColumns {
+    public static final class Citta implements CittaColumns {
         public static final String TABLE_NAME = "citta";
-        public static final String TABLE_CITTA_JOIN_DATI_CITTA = TABLE_NAME + " JOIN " + DatiCitta.TABLE_NAME + " ON " + TABLE_NAME + "." + ID_CITTA +  "=" + DatiCitta.TABLE_NAME + ":" + DatiCitta._ID;
+        public static final String TABLE_CITTA_JOIN_DATI_CITTA = TABLE_NAME + " JOIN " + DatiCitta.TABLE_NAME + " ON " + TABLE_NAME + "." + ID_DATI_CITTA +  "=" + DatiCitta.TABLE_NAME + "." + DatiCitta.ID;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";
 
-        public static final String[] PROJECTION_ALL = {_ID, ID_CITTA, ID_VIAGGIO, PERCENTUALE};
+        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE};
+        public static final String [] PROJECTION_JOIN = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE};
 
         /** "ORDER BY" clauses. */
-        public static final String DEFAULT_SORT = _ID + " ASC";
+        public static final String DEFAULT_SORT = ID_CITTA + " DESC";
     }
 
     /** Costanti della tabella Posto */
-    public static final class Posto implements BaseColumns, PostoColumns {
+    public static final class Posto implements PostoColumns {
         public static final String TABLE_NAME = "posto";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
@@ -114,29 +125,29 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.posto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.posto";
 
-        public static final String[] PROJECTION_ALL = {_ID, VISITATO, ID_CITTA, ID_LUOGO};
+        public static final String[] PROJECTION_ALL = {ID_LUOGO, VISITATO, ID_CITTA, ID_LUOGO};
 
         /** "ORDER BY" clauses. */
-        public static final String DEFAULT_SORT = _ID + " ASC";
+        public static final String DEFAULT_SORT = ID_POSTO + " DESC";
     }
 
     /** Costanti della tabella Dati Citta */
-    public static final class DatiCitta implements BaseColumns, DatiCittaColumns {
-        public static final String TABLE_NAME = "daticitta";
+    public static final class DatiCitta implements DatiCittaColumns {
+        public static final String TABLE_NAME = "dati_citta";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.daticitta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.daticitta";
 
-        public static final String[] PROJECTION_ALL = {_ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE};
+        public static final String[] PROJECTION_ALL = {ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = DatiCittaColumns.NOME + " ASC";
     }
 
     /** Costanti della tabella Luogo */
-    public static final class Luogo implements BaseColumns, LuogoColumns {
+    public static final class Luogo implements LuogoColumns {
         public static final String TABLE_NAME = "luogo";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
@@ -144,14 +155,14 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.luoghi";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.luogo";
 
-        public static final String[] PROJECTION_ALL = {_ID, NOME, LATITUDINE, LONGITUDINE, ID_CITTA};
+        public static final String[] PROJECTION_ALL = {ID, NOME, LATITUDINE, LONGITUDINE, ID_CITTA};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = LuogoColumns.NOME + " ASC";
     }
 
     /** Costanti della tabella Foto */
-    public static final class Foto implements BaseColumns, FotoColumns {
+    public static final class Foto implements FotoColumns {
         public static final String TABLE_NAME = "foto";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
@@ -159,7 +170,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.foto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.foto";
 
-        public static final String[] PROJECTION_ALL = {_ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_CITTA, ID_LUOGO};
+        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_CITTA, ID_LUOGO};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = FotoColumns.DATA + " ASC";

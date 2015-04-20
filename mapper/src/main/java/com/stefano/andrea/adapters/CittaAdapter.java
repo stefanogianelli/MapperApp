@@ -1,14 +1,17 @@
 package com.stefano.andrea.adapters;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.stefano.andrea.activities.R;
+import com.stefano.andrea.activities.BuildConfig;
+import com.stefano.andrea.helpers.CittaHelper;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.providers.MapperContract;
 
 import java.util.List;
 
@@ -20,6 +23,7 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
     private List<Citta> mListaCitta;
     private ContentResolver mResolver;
     private CittaOnClickListener mListener;
+    private CittaHelper mHelper;
 
     public interface CittaOnClickListener {
         void selezionataCitta (long id);
@@ -29,6 +33,7 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
         mListaCitta = listaCitta;
         mResolver = resolver;
         mListener = listener;
+        mHelper = new CittaHelper(mResolver);
     }
 
     @Override
@@ -56,6 +61,19 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
     @Override
     public int getItemCount() {
         return mListaCitta.size();
+    }
+
+    public Uri creaNuovaCitta (long idViaggio, String nome, String nazione) {
+        /*long idCitta = mHelper.getDatiCitta(nome, nazione);
+        if (idCitta == -1)
+            idCitta = mHelper.creaCitta(nome, nazione);
+        if (BuildConfig.DEBUG && !(idCitta != -1))
+            throw new AssertionError();*/
+        ContentValues values = new ContentValues();
+        values.put(MapperContract.Citta.ID_VIAGGIO, idViaggio);
+        values.put(MapperContract.Citta.ID_CITTA, 1);
+        values.put(MapperContract.Citta.PERCENTUALE, 0);
+        return mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
     }
 
     public class CittaHolder extends RecyclerView.ViewHolder {

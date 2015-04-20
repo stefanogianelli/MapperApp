@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case URL_LOADER:
-                return new CursorLoader(this, MapperContract.Viaggio.CONTENT_URI, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio._ID + " DESC");
+                return new CursorLoader(this, MapperContract.Viaggio.CONTENT_URI, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio.DEFAULT_SORT);
             default:
                 return null;
         }
@@ -86,7 +86,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         while (data.moveToNext()) {
-            long id = data.getLong(data.getColumnIndex(MapperContract.Viaggio._ID));
+            long id = data.getLong(data.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
             String nome = data.getString(data.getColumnIndex(MapperContract.Viaggio.NOME));
             mListaViaggi.add(new Viaggio(id, nome));
         }

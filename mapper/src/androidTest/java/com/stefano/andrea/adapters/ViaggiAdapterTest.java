@@ -49,6 +49,9 @@ public class ViaggiAdapterTest extends ProviderTestCase2<MapperContentProvider>{
         c.moveToNext();
         String query = c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME));
         assertEquals(query, nome);
+        long id = c.getLong(c.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
+        assertEquals(id, 5);
+        c.close();
     }
 
     public void testDeleteViaggio() throws Exception {

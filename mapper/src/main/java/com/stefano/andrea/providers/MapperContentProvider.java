@@ -78,37 +78,37 @@ public class MapperContentProvider extends ContentProvider {
         switch (match) {
             case VIAGGI_ID:
                 id = uri.getLastPathSegment();
-                builder.where(MapperContract.Viaggio._ID + "=?", id);
+                builder.where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id);
             case VIAGGI:
                 builder.table(MapperContract.Viaggio.TABLE_NAME).where(selection, selectionArgs);
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
-                builder.where(MapperContract.Citta._ID + "=?", id);
+                builder.where(MapperContract.Citta.ID_CITTA + "=?", id);
             case CITTA:
                 builder.table(MapperContract.Citta.TABLE_CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
-                builder.where(MapperContract.Posto._ID + "=?", id);
+                builder.where(MapperContract.Posto.ID_POSTO + "=?", id);
             case POSTI:
                 builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs);
                 break;
             case DATI_CITTA_ID:
                 id = uri.getLastPathSegment();
-                builder.where(MapperContract.DatiCitta._ID + "=?", id);
+                builder.where(MapperContract.DatiCitta.ID + "=?", id);
             case DATI_CITTA:
                 builder.table(MapperContract.DatiCitta.TABLE_NAME).where(selection, selectionArgs);
                 break;
             case LUOGHI_ID:
                 id = uri.getLastPathSegment();
-                builder.where(MapperContract.Luogo._ID + "=?", id);
+                builder.where(MapperContract.Luogo.ID + "=?", id);
             case LUOGHI:
                 builder.table(MapperContract.Luogo.TABLE_NAME).where(selection, selectionArgs);
                 break;
             case FOTO_ID:
                 id = uri.getLastPathSegment();
-                builder.where(MapperContract.Foto._ID + "=?", id);
+                builder.where(MapperContract.Foto.ID + "=?", id);
             case FOTO:
                 builder.table(MapperContract.Foto.TABLE_NAME).where(selection, selectionArgs);
                 break;
@@ -209,42 +209,42 @@ public class MapperContentProvider extends ContentProvider {
                 break;
             case VIAGGI_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio._ID + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             case CITTA:
                 count = builder.table(MapperContract.Citta.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio._ID + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             case POSTI:
                 count = builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Posto.TABLE_NAME).where(MapperContract.Posto._ID + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.Posto.TABLE_NAME).where(MapperContract.Posto.ID_POSTO + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             case DATI_CITTA:
                 count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
             case DATI_CITTA_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(MapperContract.DatiCitta._ID + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(MapperContract.DatiCitta.ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             case LUOGHI:
                 count = builder.table(MapperContract.Luogo.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
             case LUOGHI_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(MapperContract.Luogo._ID + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(MapperContract.Luogo.ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             case FOTO:
                 count = builder.table(MapperContract.Foto.TABLE_NAME).where(selection, selectionArgs).delete(db);
                 break;
             case FOTO_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Foto.TABLE_NAME).where(MapperContract.Foto._ID + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.Foto.TABLE_NAME).where(MapperContract.Foto.ID + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             default:
                 throw new UnsupportedOperationException("URI non supportata " + uri);
@@ -268,42 +268,42 @@ public class MapperContentProvider extends ContentProvider {
                 break;
             case VIAGGI_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio._ID + "=?", id).where(selection, selectionArgs).update(db, values);
+                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             case CITTA:
                 count = builder.table(MapperContract.Citta.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Citta.TABLE_NAME).where(MapperContract.Citta._ID + "=?", id).where(selection, selectionArgs).update(db, values);
+                count = builder.table(MapperContract.Citta.TABLE_NAME).where(MapperContract.Citta.ID_CITTA + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             case POSTI:
                 count = builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Posto.TABLE_NAME).where(MapperContract.Posto._ID + "=?", id).where(selection, selectionArgs).update(db, values);
+                count = builder.table(MapperContract.Posto.TABLE_NAME).where(MapperContract.Posto.ID_POSTO + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             case DATI_CITTA:
                 count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
             case DATI_CITTA_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(MapperContract.DatiCitta._ID + "=?", id).where(selection, selectionArgs).update(db, values);
+                count = builder.table(MapperContract.DatiCitta.TABLE_NAME).where(MapperContract.DatiCitta.ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             case LUOGHI:
                 count = builder.table(MapperContract.Luogo.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
             case LUOGHI_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(MapperContract.Luogo._ID + "=?", id).where(selection, selectionArgs).update(db, values);
+                count = builder.table(MapperContract.Luogo.TABLE_NAME).where(MapperContract.Luogo.ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             case FOTO:
                 count = builder.table(MapperContract.Foto.TABLE_NAME).where(selection, selectionArgs).update(db, values);
                 break;
             case FOTO_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Foto.TABLE_NAME).where(MapperContract.Foto._ID + "=?", id).where(selection, selectionArgs).update(db, values);
+                count = builder.table(MapperContract.Foto.TABLE_NAME).where(MapperContract.Foto.ID + "=?", id).where(selection, selectionArgs).update(db, values);
                 break;
             default:
                 throw new UnsupportedOperationException("URI non supportata " + uri);

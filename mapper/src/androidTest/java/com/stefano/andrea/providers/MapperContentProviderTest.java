@@ -40,6 +40,12 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         values.put(MapperContract.Viaggio.NOME, nomeViaggio);
         Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
         assertNotNull(uri);
+        Cursor c = mResolver.query(uri, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio.DEFAULT_SORT);
+        assertNotNull(c);
+        c.moveToNext();
+        String query = c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME));
+        c.close();
+        assertEquals(query, nomeViaggio);
     }
 
     public void testQueryViaggio() throws Exception {
