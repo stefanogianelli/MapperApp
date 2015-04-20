@@ -64,14 +64,14 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
     }
 
     public Uri creaNuovaCitta (long idViaggio, String nome, String nazione) {
-        /*long idCitta = mHelper.getDatiCitta(nome, nazione);
+        long idCitta = mHelper.getDatiCitta(nome, nazione);
         if (idCitta == -1)
             idCitta = mHelper.creaCitta(nome, nazione);
-        if (BuildConfig.DEBUG && !(idCitta != -1))
-            throw new AssertionError();*/
+        if (BuildConfig.DEBUG && idCitta == -1)
+            throw new AssertionError();
         ContentValues values = new ContentValues();
         values.put(MapperContract.Citta.ID_VIAGGIO, idViaggio);
-        values.put(MapperContract.Citta.ID_CITTA, 1);
+        values.put(MapperContract.Citta.ID_DATI_CITTA, idCitta);
         values.put(MapperContract.Citta.PERCENTUALE, 0);
         return mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
     }
