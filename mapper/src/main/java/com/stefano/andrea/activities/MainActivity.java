@@ -9,21 +9,27 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiAdapter.ViaggioOnClickListener {
+public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiAdapter.ViaggioOnClickListener, FloatingActionButton.OnCheckedChangeListener {
 
     private final static int URL_LOADER = 0;
 
+    private final static String TAG = "FloatingActionButtonBasicFragment";
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -46,8 +52,13 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         // specify an adapter
         mAdapter = new ViaggiAdapter(mListaViaggi, mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
+        getLoaderManager().initLoader(0, null, this);
+
 
         // Floating button
+        FloatingActionButton fab1 = (FloatingActionButton) getWindow().getDecorView().findViewById(R.id.fab_1);
+        fab1.setOnCheckedChangeListener(this);
+ }
 
     }
 
@@ -72,6 +83,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -103,5 +115,18 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     public void selezionatoViaggio(long id) {
         //TODO: creare intent per passare all'activity con i dettagli del viaggio
         Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
+        // When a FAB is toggled, log the action.
+        switch (fabView.getId()){
+            case R.id.fab_1:
+                Log.d(TAG, String.format("FAB 1 was %s.", isChecked ? "checked" : "unchecked"));
+                break;
+            default:
+                break;
+        }
     }
 }
