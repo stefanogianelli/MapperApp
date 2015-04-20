@@ -25,7 +25,8 @@
         android:elevation="@dimen/fab_elevation"
         android:background="@drawable/fab_background"
         android:stateListAnimator="@animator/fab_anim"
-        android:layout_gravity="right">
+        android:layout_gravity="right"
+        android:onClick="openDialogAddViaggio">
 
         <ImageView
             android:layout_width="@dimen/fab_icon_size"

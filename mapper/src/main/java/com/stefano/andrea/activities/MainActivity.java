@@ -1,6 +1,7 @@
 package com.stefano.andrea.activities;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
@@ -16,7 +17,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.os.Bundle;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -25,7 +28,7 @@ import com.stefano.andrea.utils.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiAdapter.ViaggioOnClickListener, FloatingActionButton.OnCheckedChangeListener {
+public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiAdapter.ViaggioOnClickListener {
 
     private final static int URL_LOADER = 0;
 
@@ -55,7 +58,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         getLoaderManager().initLoader(0, null, this);
         // Floating button
         FloatingActionButton fab1 = (FloatingActionButton) getWindow().getDecorView().findViewById(R.id.fab_1);
-        fab1.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -113,15 +115,15 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
-        // When a FAB is toggled, log the action.
-        switch (fabView.getId()){
-            case R.id.fab_1:
-                Log.d(TAG, String.format("FAB 1 was %s.", isChecked ? "checked" : "unchecked"));
-                break;
-            default:
-                break;
-        }
+    public void openDialogAddViaggio(View view) {
+        // Dialog
+        FragmentManager fm = getFragmentManager();
+        AddViaggioDialog addViaggioDialog = new AddViaggioDialog();
+        addViaggioDialog.setRetainInstance(true);
+        addViaggioDialog.show(fm, "fragment_add_viaggio");
     }
+
+
+
+
 }
