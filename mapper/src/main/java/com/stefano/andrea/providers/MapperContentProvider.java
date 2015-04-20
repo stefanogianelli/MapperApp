@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.utils.SelectionBuilder;
 
 /**
@@ -116,7 +117,8 @@ public class MapperContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("URI non supportata " + uri);
         }
         Context ctx = getContext();
-        assert ctx != null;
+        if (BuildConfig.DEBUG && ctx == null)
+            throw new AssertionError();
         c = builder.query(db, projection, sortOrder);
         c.setNotificationUri(ctx.getContentResolver(), uri);
         return c;
@@ -191,7 +193,8 @@ public class MapperContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("URI non supportata " + uri);
         }
         Context ctx = getContext();
-        assert ctx != null;
+        if (BuildConfig.DEBUG && ctx == null)
+            throw new AssertionError();
         ctx.getContentResolver().notifyChange(uri, null, false);
         return result;
     }
@@ -250,7 +253,8 @@ public class MapperContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("URI non supportata " + uri);
         }
         Context ctx = getContext();
-        assert ctx != null;
+        if (BuildConfig.DEBUG && ctx == null)
+            throw new AssertionError();
         ctx.getContentResolver().notifyChange(uri, null, false);
         return count;
     }
@@ -309,7 +313,8 @@ public class MapperContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("URI non supportata " + uri);
         }
         Context ctx = getContext();
-        assert ctx != null;
+        if (BuildConfig.DEBUG && ctx == null)
+            throw new AssertionError();
         ctx.getContentResolver().notifyChange(uri, null, false);
         return count;
     }
