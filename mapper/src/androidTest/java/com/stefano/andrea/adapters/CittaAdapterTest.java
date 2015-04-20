@@ -86,4 +86,18 @@ public class CittaAdapterTest extends ProviderTestCase2<MapperContentProvider> {
         assertEquals(query, CITTA);
     }
 
+    public void testLongitudineLatitudine() throws Exception {
+        String nome = "Milano";
+        String nazione = "Italia";
+        double lon = 9.1859243;
+        double lat = 45.4654219;
+        Uri uri = mAdapter.creaNuovaCitta(1, nome, nazione);
+        Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_JOIN, null, null, MapperContract.Citta.DEFAULT_SORT);
+        c.moveToNext();
+        double longitudine = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE));
+        double latitudine = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE));
+        c.close();
+        assertEquals(longitudine, lon);
+        assertEquals(latitudine, lat);
+    }
 }
