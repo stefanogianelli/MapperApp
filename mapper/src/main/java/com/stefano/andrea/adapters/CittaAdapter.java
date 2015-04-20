@@ -2,6 +2,7 @@ package com.stefano.andrea.adapters;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -10,17 +11,16 @@ import android.widget.TextView;
 
 import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.helpers.CittaHelper;
-import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.CursorRecyclerViewAdapter;
 
 import java.util.List;
 
 /**
  * CittaAdapter
  */
-public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder> {
+public class CittaAdapter extends CursorRecyclerViewAdapter<CittaAdapter.CittaHolder> {
 
-    private List<Citta> mListaCitta;
     private ContentResolver mResolver;
     private CittaOnClickListener mListener;
     private CittaHelper mHelper;
@@ -29,27 +29,19 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
         void selezionataCitta (long id);
     }
 
-    public CittaAdapter (List<Citta> listaCitta, ContentResolver resolver, CittaOnClickListener listener) {
-        mListaCitta = listaCitta;
+    public CittaAdapter(Cursor cursor, ContentResolver resolver, CittaOnClickListener listener) {
+        super(cursor);
         mResolver = resolver;
         mListener = listener;
         mHelper = new CittaHelper(mResolver);
     }
 
     @Override
-    public CittaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //TODO: modificare id del layout
-        /*View view =  LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.id_del_layout, parent, false);
-        return new CittaHolder(view);*/
-        return null;
-    }
-
-    @Override
-    public void onBindViewHolder(CittaHolder holder, int position) {
-        Citta citta = mListaCitta.get(position);
-        holder.vNome.setText(citta.getNome());
-        holder.itemView.setTag(citta.getId());
+    public void onBindViewHolderCursor(CittaHolder holder, Cursor cursor) {
+        String nome = cursor.getString(cursor.getColumnIndex(MapperContract.DatiCitta.NOME));
+        long id = cursor.getLong(cursor.getColumnIndex(MapperContract.Citta.ID_CITTA));
+        holder.vNome.setText(nome);
+        holder.itemView.setTag(id);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,8 +51,11 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
     }
 
     @Override
-    public int getItemCount() {
-        return mListaCitta.size();
+    public CittaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        //TODO: modificare id del layout
+        /*View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.id_del_layout, parent, false);
+        return new CittaHolder(view);*/
+        return null;
     }
 
     public Uri creaNuovaCitta (long idViaggio, String nome, String nazione) {

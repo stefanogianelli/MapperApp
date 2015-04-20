@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
-import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContentProvider;
 import com.stefano.andrea.providers.MapperContract;
 
@@ -19,7 +18,6 @@ public class ViaggiAdapterTest extends ProviderTestCase2<MapperContentProvider>{
 
     private MockContentResolver mResolver;
     private ViaggiAdapter mAdapter;
-    private List<Viaggio> mListaViaggi;
 
     public ViaggiAdapterTest () {
         super(MapperContentProvider.class, MapperContract.CONTENT_AUTHORITY);
@@ -29,8 +27,7 @@ public class ViaggiAdapterTest extends ProviderTestCase2<MapperContentProvider>{
     public void setUp() throws Exception {
         super.setUp();
         mResolver = getMockContentResolver();
-        mListaViaggi = new ArrayList<>();
-        mAdapter = new ViaggiAdapter(mListaViaggi, mResolver, new ViaggiAdapter.ViaggioOnClickListener() {
+        mAdapter = new ViaggiAdapter(null, mResolver, new ViaggiAdapter.ViaggioOnClickListener() {
             @Override
             public void selezionatoViaggio(long id) {
                 //do nothing

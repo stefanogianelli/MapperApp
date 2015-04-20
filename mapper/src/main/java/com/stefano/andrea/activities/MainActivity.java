@@ -19,29 +19,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.view.View;
 import com.stefano.andrea.adapters.ViaggiAdapter;
-import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
-import com.stefano.andrea.utils.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiAdapter.ViaggioOnClickListener {
 
     private final static int URL_LOADER = 0;
 
-    private final static String TAG = "FloatingButton";
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ContentResolver mResolver;
-    List<Viaggio> mListaViaggi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mListaViaggi = new ArrayList<>();
         mResolver = getContentResolver();
         getLoaderManager().initLoader(URL_LOADER, null, this);
         // Card layout
@@ -51,11 +43,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         // specify an adapter
-        mAdapter = new ViaggiAdapter(mListaViaggi, mResolver, this);
+        mAdapter = new ViaggiAdapter(null, mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
-        // Floating button
-        FloatingActionButton fab1 = (FloatingActionButton) getWindow().getDecorView().findViewById(R.id.fab_1);
     }
 
     @Override
@@ -80,7 +70,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
@@ -93,18 +82,12 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        while (data.moveToNext()) {
-            long id = data.getLong(data.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
-            String nome = data.getString(data.getColumnIndex(MapperContract.Viaggio.NOME));
-            mListaViaggi.add(new Viaggio(id, nome));
-        }
-        mAdapter.notifyDataSetChanged();
+        mAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mListaViaggi.clear();
-        mAdapter.notifyDataSetChanged();
+        mAdapter.swapCursor(null);
     }
 
     @Override
@@ -128,13 +111,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //builder.cancel();
+                        dialog.dismiss();
                     }
                 });
         builder.create().show();
     }
-
-
-
-
 }
