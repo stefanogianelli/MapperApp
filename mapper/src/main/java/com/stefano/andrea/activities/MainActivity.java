@@ -1,25 +1,23 @@
 package com.stefano.andrea.activities;
 
 import android.app.Activity;
-import android.app.DialogFragment;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.view.View;
-import android.view.ViewGroup;
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.os.Bundle;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -116,11 +114,24 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     }
 
     public void openDialogAddViaggio(View view) {
-        // Dialog
-        FragmentManager fm = getFragmentManager();
-        AddViaggioDialog addViaggioDialog = new AddViaggioDialog();
-        addViaggioDialog.setRetainInstance(true);
-        addViaggioDialog.show(fm, "fragment_add_viaggio");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.fragment_add_viaggio, null))
+                // Add action buttons
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        Dialog d = (Dialog) dialog;
+                        EditText nv = (EditText) d.findViewById(R.id.text_add_viaggio);
+                        mAdapter.creaNuovoViaggio(nv.getText().toString());
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //builder.cancel();
+                    }
+                });
+        builder.create().show();
     }
 
 
