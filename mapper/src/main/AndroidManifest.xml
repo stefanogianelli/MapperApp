@@ -20,6 +20,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ActivityDettagliViaggio"
+            android:label="@string/title_activity_dettagli_viaggio"
+            android:parentActivityName="com.stefano.andrea.activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stefano.andrea.activities.ActivityDettagliViaggio" />
+        </activity>
         <provider
             android:name="com.stefano.andrea.providers.MapperContentProvider"
             android:authorities="com.stefano.andrea.mapper.provider"

@@ -10,9 +10,13 @@
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="darkorange" type="color">#FFFF8800</item>
     <item name="darkred" type="color">#FFCC0000</item>
-
+    <!-- FAB -->
     <color name="fab_color_1">#ff5252</color>
     <color name="fab_color_1_muted">#ff8080</color>
     <color name="fab_color_2">#9c27b0</color>
     <color name="fab_color_2_muted">#a56ab0</color>
+    <!-- Toolbar -->
+    <color name="ColorPrimary">#e62117</color>
+    <color name="ColorPrimaryDark">#c31c13</color>
+    <color name="tabsScrollColor">#8a140e</color>
 </resources>
