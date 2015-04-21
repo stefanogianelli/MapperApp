@@ -105,6 +105,7 @@ public final class MapperContract {
         public static final String TABLE_CITTA_JOIN_DATI_CITTA = TABLE_NAME + " JOIN " + DatiCitta.TABLE_NAME + " ON " + TABLE_NAME + "." + ID_DATI_CITTA +  "=" + DatiCitta.TABLE_NAME + "." + DatiCitta.ID;
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+        public static final Uri DETTAGLI_VIAGGIO_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).appendPath("viaggio").build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";

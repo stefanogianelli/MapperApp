@@ -1,6 +1,7 @@
 package com.stefano.andrea.adapters;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,16 +12,17 @@ import android.widget.TextView;
 
 import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.helpers.CittaHelper;
+import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
-import com.stefano.andrea.utils.CursorRecyclerViewAdapter;
 
 import java.util.List;
 
 /**
  * CittaAdapter
  */
-public class CittaAdapter extends CursorRecyclerViewAdapter<CittaAdapter.CittaHolder> {
+public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder> {
 
+    private List<Citta> mElencoCitta;
     private ContentResolver mResolver;
     private CittaOnClickListener mListener;
     private CittaHelper mHelper;
@@ -29,33 +31,40 @@ public class CittaAdapter extends CursorRecyclerViewAdapter<CittaAdapter.CittaHo
         void selezionataCitta (long id);
     }
 
-    public CittaAdapter(Cursor cursor, ContentResolver resolver, CittaOnClickListener listener) {
-        super(cursor);
+    public CittaAdapter (ContentResolver resolver, CittaOnClickListener listener) {
         mResolver = resolver;
         mListener = listener;
         mHelper = new CittaHelper(mResolver);
     }
 
-    @Override
-    public void onBindViewHolderCursor(CittaHolder holder, Cursor cursor) {
-        String nome = cursor.getString(cursor.getColumnIndex(MapperContract.DatiCitta.NOME));
-        long id = cursor.getLong(cursor.getColumnIndex(MapperContract.Citta.ID_CITTA));
-        holder.vNome.setText(nome);
-        holder.itemView.setTag(id);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.selezionataCitta((Long) v.getTag());
-            }
-        });
+    public void setElencoCitta (List<Citta> elencoCitta) {
+        if (mElencoCitta == null) {
+            mElencoCitta = elencoCitta;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
-    public CittaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CittaAdapter.CittaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //TODO: modificare id del layout
         /*View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.id_del_layout, parent, false);
         return new CittaHolder(view);*/
         return null;
+    }
+
+    @Override
+    public void onBindViewHolder(CittaAdapter.CittaHolder holder, int position) {
+        Citta citta = mElencoCitta.get(position);
+        holder.bindCitta(citta);
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mElencoCitta != null) {
+            return mElencoCitta.size();
+        } else {
+            return 0;
+        }
     }
 
     public Uri creaNuovaCitta (long idViaggio, String nome, String nazione) {
@@ -68,16 +77,40 @@ public class CittaAdapter extends CursorRecyclerViewAdapter<CittaAdapter.CittaHo
         values.put(MapperContract.Citta.ID_VIAGGIO, idViaggio);
         values.put(MapperContract.Citta.ID_DATI_CITTA, idCitta);
         values.put(MapperContract.Citta.PERCENTUALE, 0);
-        return mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
+        Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
+        Uri query = ContentUris.withAppendedId(MapperContract.DatiCitta.CONTENT_URI, idCitta);
+        String [] projetion = {MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
+        Cursor c = mResolver.query(query, projetion, null, null, MapperContract.DatiCitta.DEFAULT_SORT);
+        if (c != null) {
+            c.moveToNext();
+            double lon = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE));
+            double lat = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE));
+            mElencoCitta.add(0, new Citta(Long.parseLong(uri.getLastPathSegment()), nome, nazione, lat, lon));
+            c.close();
+            notifyItemInserted(0);
+            return null;
+        }
+        return null;
     }
 
-    public class CittaHolder extends RecyclerView.ViewHolder {
+    public class CittaHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView vNome;
+        private TextView vNome;
 
         public CittaHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             //TODO: vNome = (TextView) v.findViewById(R.id.id_della_label);
+        }
+
+        public void bindCitta (Citta citta) {
+            this.itemView.setId((int)citta.getId());
+            vNome.setText(citta.getNome());
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.selezionataCitta(v.getId());
         }
     }
 

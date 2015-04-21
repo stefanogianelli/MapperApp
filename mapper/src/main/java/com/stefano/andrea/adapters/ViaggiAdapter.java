@@ -38,7 +38,7 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
     private ModalMultiSelectorCallback mDeleteMode;
 
     public interface ViaggioOnClickListener {
-        void selezionatoViaggio (long id);
+        void selezionatoViaggio (Viaggio viaggio);
     }
 
     public ViaggiAdapter(final Activity activity, Cursor cursor, ContentResolver resolver, ViaggioOnClickListener listener) {
@@ -66,7 +66,7 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
     @Override
     public void onBindViewHolder(ViaggiHolder holder, int position) {
         Viaggio viaggio = mListaViaggi.get(position);
-        holder.bindViaggio(viaggio.getId(), viaggio.getNome());
+        holder.bindViaggio(viaggio);
     }
 
     @Override
@@ -118,9 +118,9 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
             v.setOnLongClickListener(this);
         }
 
-        public void bindViaggio (long id, String nome) {
-            this.itemView.setId((int)id);
-            vNome.setText(nome);
+        public void bindViaggio (Viaggio viaggio) {
+            this.itemView.setTag(viaggio);
+            vNome.setText(viaggio.getNome());
         }
 
         @Override
@@ -128,7 +128,7 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
             if (mMultiSelector.tapSelection(this)) {
                 mMultiSelector.setSelected(this, true);
             } else {
-                mListener.selezionatoViaggio(v.getId());
+                mListener.selezionatoViaggio((Viaggio) v.getTag());
             }
         }
 

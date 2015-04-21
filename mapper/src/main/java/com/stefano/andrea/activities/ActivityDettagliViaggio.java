@@ -25,14 +25,12 @@ public class ActivityDettagliViaggio extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
 
-
         // Creating The Toolbar and setting it as the Toolbar for the activity
         // toolbar = (Toolbar) findViewById(R.id.tool_bar);
         //setSupportActionBar(toolbar);
 
-
         // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(),Titles,Numboftabs);
+        adapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), Titles, Numboftabs);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -52,11 +50,7 @@ public class ActivityDettagliViaggio extends ActionBarActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
-
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,5 +1,9 @@
 package com.stefano.andrea.models;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Viaggio
  */

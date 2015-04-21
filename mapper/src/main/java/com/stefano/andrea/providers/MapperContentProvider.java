@@ -25,6 +25,7 @@ public class MapperContentProvider extends ContentProvider {
 
     private static final int CITTA = 200;
     private static final int CITTA_ID = 201;
+    private static final int CITTA_IN_VIAGGIO = 202;
 
     private static final int POSTI = 300;
     private static final int POSTI_ID = 301;
@@ -47,6 +48,7 @@ public class MapperContentProvider extends ContentProvider {
 
         matcher.addURI(authority, MapperContract.Citta.TABLE_NAME, CITTA);
         matcher.addURI(authority, MapperContract.Citta.TABLE_NAME + "/#", CITTA_ID);
+        matcher.addURI(authority, MapperContract.Citta.TABLE_NAME + "/viaggio/#", CITTA_IN_VIAGGIO);
 
         matcher.addURI(authority, MapperContract.Posto.TABLE_NAME, POSTI);
         matcher.addURI(authority, MapperContract.Posto.TABLE_NAME + "/#", POSTI_ID);
@@ -87,6 +89,11 @@ public class MapperContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Citta.ID_CITTA + "=?", id);
             case CITTA:
+                builder.table(MapperContract.Citta.TABLE_CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
+                break;
+            case CITTA_IN_VIAGGIO:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Citta.ID_VIAGGIO + "=?", id);
                 builder.table(MapperContract.Citta.TABLE_CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
                 break;
             case POSTI_ID:
@@ -136,6 +143,8 @@ public class MapperContentProvider extends ContentProvider {
                 return MapperContract.Citta.CONTENT_TYPE;
             case CITTA_ID:
                 return MapperContract.Citta.CONTENT_ITEM_TYPE;
+            case CITTA_IN_VIAGGIO:
+                return MapperContract.Citta.CONTENT_TYPE;
             case POSTI:
                 return MapperContract.Posto.CONTENT_TYPE;
             case POSTI_ID:

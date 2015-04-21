@@ -25,6 +25,8 @@ import java.util.List;
 
 public class MainActivity extends android.support.v7.app.ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
 
+    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mainActivity.idViaggio";
+    public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mainActivitynomeViaggio";
     private final static int URL_LOADER = 0;
 
     private RecyclerView mRecyclerView;
@@ -72,10 +74,10 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
     }
 
     @Override
-    public void selezionatoViaggio(long id) {
-        //TODO: creare intent per passare all'activity con i dettagli del viaggio
-        //Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
+    public void selezionatoViaggio(Viaggio viaggio) {
         Intent intent = new Intent(this, ActivityDettagliViaggio.class);
+        intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
+        intent.putExtra(EXTRA_NOME_VIAGGIO, viaggio.getNome());
         startActivity(intent);
     }
 
