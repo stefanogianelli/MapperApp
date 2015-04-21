@@ -9,6 +9,8 @@
     <string name="cancel">Cancel</string>
     <string name="action_settings">Settings</string>
     <string name="add_viaggio">Come vuoi intitolare il nuovo viaggio?</string>
+    <string name="add_citta">Quale città?</string>
+    <string name="add_citta_nn">In quale nazione?</string>
 
 
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>

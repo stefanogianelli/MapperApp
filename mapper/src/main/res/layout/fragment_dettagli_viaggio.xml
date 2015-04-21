@@ -9,4 +9,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+
+    <com.stefano.andrea.utils.FloatingActionButton
+        android:id="@+id/fab_add_citta"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginRight="@dimen/fab_margin_right"
+        android:elevation="@dimen/fab_elevation"
+        android:background="@drawable/fab_background"
+        android:stateListAnimator="@animator/fab_anim"
+        android:layout_gravity="right"
+        android:onClick="openDialogAddCitta">
+
+        <ImageView
+            android:layout_width="@dimen/fab_icon_size"
+            android:layout_height="@dimen/fab_icon_size"
+            android:src="@drawable/fab_icons"
+            android:layout_gravity="center"
+            android:duplicateParentState="true"/>
+
+    </com.stefano.andrea.utils.FloatingActionButton>
+
+
+
 </RelativeLayout>
