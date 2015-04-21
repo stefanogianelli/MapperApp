@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -73,7 +74,9 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
     @Override
     public void selezionatoViaggio(long id) {
         //TODO: creare intent per passare all'activity con i dettagli del viaggio
-        Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Click sul viaggio " + id, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ActivityDettagliViaggio.class);
+        startActivity(intent);
     }
 
     public void openDialogAddViaggio(View view) {

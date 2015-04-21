@@ -28,7 +28,7 @@ public class ActivityDettagliViaggio extends ActionBarActivity {
 
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
 
         // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
