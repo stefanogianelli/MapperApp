@@ -15,8 +15,8 @@
     <color name="fab_color_1_muted">#ff8080</color>
     <color name="fab_color_2">#9c27b0</color>
     <color name="fab_color_2_muted">#a56ab0</color>
-    <!-- Toolbar -->
-    <color name="ColorPrimary">#e62117</color>
-    <color name="ColorPrimaryDark">#c31c13</color>
-    <color name="tabsScrollColor">#8a140e</color>
+    <!-- Scrolling tabs -->
+    <color name="ColorPrimary">#FFFFBB33</color>
+    <color name="ColorPrimaryDark">#FFFF8800</color>
+    <color name="tabsScrollColor">#FFFF8800</color>
 </resources>
