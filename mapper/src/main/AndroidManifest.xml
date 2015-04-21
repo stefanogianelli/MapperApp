@@ -21,10 +21,10 @@
         <activity
             android:name=".ActivityDettagliViaggio"
             android:label="@string/title_activity_dettagli_viaggio"
-            android:parentActivityName="com.stefano.andrea.activities.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.stefano.andrea.activities.ActivityDettagliViaggio" />
+                android:value=".MainActivity" />
         </activity>
         <provider
             android:name="com.stefano.andrea.providers.MapperContentProvider"
