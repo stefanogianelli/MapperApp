@@ -1,52 +1,59 @@
 package com.stefano.andrea.adapters;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
-import com.stefano.andrea.utils.CursorRecyclerViewAdapter;
 
 import java.util.List;
 
 /**
  * ViaggiAdapter
  */
-public class ViaggiAdapter extends CursorRecyclerViewAdapter<ViaggiAdapter.ViaggiHolder> {
+public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHolder> {
 
+    private List<Viaggio> mListaViaggi = null;
+    private Activity mActivity;
     private ContentResolver mResolver;
     private ViaggioOnClickListener mListener;
+    private MultiSelector mMultiSelector;
+    private ModalMultiSelectorCallback mDeleteMode;
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (long id);
     }
 
-    public ViaggiAdapter(Cursor cursor, ContentResolver resolver, ViaggioOnClickListener listener) {
-        super(cursor);
+    public ViaggiAdapter(final Activity activity, Cursor cursor, ContentResolver resolver, ViaggioOnClickListener listener) {
+        mActivity = activity;
         mResolver = resolver;
         mListener = listener;
+        mMultiSelector = new MultiSelector();
+        mDeleteMode = new MultiSelection(mMultiSelector);
     }
 
-    @Override
-    public void onBindViewHolderCursor(ViaggiHolder holder, Cursor cursor) {
-        String nome = cursor.getString(cursor.getColumnIndex(MapperContract.Viaggio.NOME));
-        long id = cursor.getLong(cursor.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));;
-        holder.vNome.setText(nome);
-        holder.itemView.setTag(id);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.selezionatoViaggio((Long) v.getTag());
-            }
-        });
+    public void setListaViaggi (List<Viaggio> lista) {
+        if (mListaViaggi == null) {
+            mListaViaggi = lista;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -56,32 +63,104 @@ public class ViaggiAdapter extends CursorRecyclerViewAdapter<ViaggiAdapter.Viagg
         return new ViaggiHolder(view);
     }
 
+    @Override
+    public void onBindViewHolder(ViaggiHolder holder, int position) {
+        Viaggio viaggio = mListaViaggi.get(position);
+        holder.bindViaggio(viaggio.getId(), viaggio.getNome());
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mListaViaggi != null)
+            return mListaViaggi.size();
+        else
+            return 0;
+    }
+
     public Uri creaNuovoViaggio (String nome) {
         ContentValues values = new ContentValues();
         values.put(MapperContract.Viaggio.NOME, nome);
-        return mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
+        Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
+        Viaggio viaggio = new Viaggio(Long.parseLong(uri.getLastPathSegment()), nome);
+        mListaViaggi.add(0, viaggio);
+        notifyItemInserted(0);
+        return uri;
     }
 
-    public int cancellaViaggio(long id) {
-        Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, id);
-        return mResolver.delete(uri, null, null);
+    public int cancellaViaggio (Viaggio viaggio) {
+        Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, viaggio.getId());
+        int count = mResolver.delete(uri, null, null);
+        int pos = mListaViaggi.indexOf(viaggio);
+        mListaViaggi.remove(pos);
+        notifyItemRemoved(pos);
+        return count;
     }
 
-    public int cancellaViaggi (List<Integer> ids) {
+    public int cancellaViaggi () {
         int count = 0;
-        for(int id : ids) {
-            count += cancellaViaggio(id);
+        for (int i = mListaViaggi.size(); i >= 0; i--) {
+            if (mMultiSelector.isSelected(i, 0)) {
+                count += cancellaViaggio(mListaViaggi.get(i));
+            }
         }
         return count;
     }
 
-    public class ViaggiHolder extends RecyclerView.ViewHolder {
+    public class ViaggiHolder extends SwappingHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        public TextView vNome;
+        private TextView vNome;
 
         public ViaggiHolder(View v) {
-            super(v);
+            super(v, mMultiSelector);
             vNome = (TextView) v.findViewById(R.id.viaggio_item_label);
+            v.setOnClickListener(this);
+            v.setLongClickable(true);
+            v.setOnLongClickListener(this);
+        }
+
+        public void bindViaggio (long id, String nome) {
+            this.itemView.setId((int)id);
+            vNome.setText(nome);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mMultiSelector.tapSelection(this)) {
+                mMultiSelector.setSelected(this, true);
+            } else {
+                mListener.selezionatoViaggio(v.getId());
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            ((ActionBarActivity) mActivity).startSupportActionMode(mDeleteMode);
+            mMultiSelector.setSelected(this, true);
+            return true;
+        }
+    }
+
+    private class MultiSelection extends ModalMultiSelectorCallback {
+
+        public MultiSelection(MultiSelector multiSelector) {
+            super(multiSelector);
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            mActivity.getMenuInflater().inflate(R.menu.viaggi_list_on_long_click, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if (menuItem.getItemId()==  R.id.menu_cancella_viaggio){
+                actionMode.finish();
+                cancellaViaggi();
+                mMultiSelector.clearSelections();
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,14 +1,11 @@
 package com.stefano.andrea.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +15,14 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.view.View;
-import com.stefano.andrea.adapters.ViaggiAdapter;
-import com.stefano.andrea.providers.MapperContract;
 
-public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, ViaggiAdapter.ViaggioOnClickListener {
+import com.stefano.andrea.adapters.ViaggiAdapter;
+import com.stefano.andrea.loaders.ViaggiLoader;
+import com.stefano.andrea.models.Viaggio;
+
+import java.util.List;
+
+public class MainActivity extends android.support.v7.app.ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
 
     private final static int URL_LOADER = 0;
 
@@ -35,7 +36,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mResolver = getContentResolver();
-        getLoaderManager().initLoader(URL_LOADER, null, this);
+        getLoaderManager().initLoader(URL_LOADER, null, this).forceLoad();
         // Card layout
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -43,9 +44,8 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         // specify an adapter
-        mAdapter = new ViaggiAdapter(null, mResolver, this);
+        mAdapter = new ViaggiAdapter(this, null, mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -68,26 +68,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch (id) {
-            case URL_LOADER:
-                return new CursorLoader(this, MapperContract.Viaggio.CONTENT_URI, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio.DEFAULT_SORT);
-            default:
-                return null;
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
     }
 
     @Override
@@ -115,5 +95,25 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
                     }
                 });
         builder.create().show();
+    }
+
+    @Override
+    public Loader<List<Viaggio>> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case URL_LOADER:
+                return new ViaggiLoader(this, mResolver);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Viaggio>> loader, List<Viaggio> data) {
+        mAdapter.setListaViaggi(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Viaggio>> loader) {
+        //do nothing
     }
 }
