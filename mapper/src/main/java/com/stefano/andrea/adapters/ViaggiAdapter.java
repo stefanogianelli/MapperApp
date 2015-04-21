@@ -1,24 +1,15 @@
 package com.stefano.andrea.adapters;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
-import com.bignerdranch.android.multiselector.MultiSelector;
-import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -31,22 +22,16 @@ import java.util.List;
 public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHolder> {
 
     private List<Viaggio> mListaViaggi = null;
-    private Activity mActivity;
     private ContentResolver mResolver;
     private ViaggioOnClickListener mListener;
-    private MultiSelector mMultiSelector;
-    private ModalMultiSelectorCallback mDeleteMode;
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
     }
 
-    public ViaggiAdapter(final Activity activity, Cursor cursor, ContentResolver resolver, ViaggioOnClickListener listener) {
-        mActivity = activity;
+    public ViaggiAdapter(ContentResolver resolver, ViaggioOnClickListener listener) {
         mResolver = resolver;
         mListener = listener;
-        mMultiSelector = new MultiSelector();
-        mDeleteMode = new MultiSelection(mMultiSelector);
     }
 
     public void setListaViaggi (List<Viaggio> lista) {
@@ -97,25 +82,26 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
     }
 
     public int cancellaViaggi () {
-        int count = 0;
+        /*int count = 0;
         for (int i = mListaViaggi.size(); i >= 0; i--) {
             if (mMultiSelector.isSelected(i, 0)) {
                 count += cancellaViaggio(mListaViaggi.get(i));
             }
         }
-        return count;
+        return count;*/
+        return 0;
     }
 
-    public class ViaggiHolder extends SwappingHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViaggiHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private TextView vNome;
 
-        public ViaggiHolder(View v) {
-            super(v, mMultiSelector);
-            vNome = (TextView) v.findViewById(R.id.viaggio_item_label);
-            v.setOnClickListener(this);
-            v.setLongClickable(true);
-            v.setOnLongClickListener(this);
+        public ViaggiHolder(View itemView) {
+            super(itemView);
+            vNome = (TextView) itemView.findViewById(R.id.viaggio_item_label);
+            itemView.setOnClickListener(this);
+            itemView.setLongClickable(true);
+            itemView.setOnLongClickListener(this);
         }
 
         public void bindViaggio (Viaggio viaggio) {
@@ -125,42 +111,13 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
 
         @Override
         public void onClick(View v) {
-            if (mMultiSelector.tapSelection(this)) {
-                mMultiSelector.setSelected(this, true);
-            } else {
-                mListener.selezionatoViaggio((Viaggio) v.getTag());
-            }
+            mListener.selezionatoViaggio((Viaggio) v.getTag());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            ((ActionBarActivity) mActivity).startSupportActionMode(mDeleteMode);
-            mMultiSelector.setSelected(this, true);
+            //TODO: abilitare multiselection
             return true;
-        }
-    }
-
-    private class MultiSelection extends ModalMultiSelectorCallback {
-
-        public MultiSelection(MultiSelector multiSelector) {
-            super(multiSelector);
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            mActivity.getMenuInflater().inflate(R.menu.viaggi_list_on_long_click, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            if (menuItem.getItemId()==  R.id.menu_cancella_viaggio){
-                actionMode.finish();
-                cancellaViaggi();
-                mMultiSelector.clearSelections();
-                return true;
-            }
-            return false;
         }
     }
 }

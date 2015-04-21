@@ -53,7 +53,7 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void selezionataCitta(long id) {
-        //TODO: intent per aprire l'activity dettagli della città
+        //TODO: intent per aprire l'activity dettagli della citta
     }
 
     public void openDialogAddCitta(View view) {

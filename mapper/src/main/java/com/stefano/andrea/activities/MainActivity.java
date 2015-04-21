@@ -13,9 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.Toast;
 import android.view.View;
+import android.widget.EditText;
 
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
@@ -47,7 +46,7 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         // specify an adapter
-        mAdapter = new ViaggiAdapter(this, null, mResolver, this);
+        mAdapter = new ViaggiAdapter(mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
