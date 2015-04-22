@@ -29,9 +29,9 @@ public class FotoViaggio extends Fragment {
         View v =inflater.inflate(R.layout.fragment_foto_viaggio,container,false);
 
         // Grid view per galleria immagini
-        gridView = (GridView) getActivity().findViewById(R.id.gridViewFotoViaggio);
+        gridView = (GridView) v.findViewById(R.id.gridViewFotoViaggio);
         gridAdapter = new GridViewFotoViaggioAdapter(getActivity(), R.layout.grid_item_foto_viaggio_layout, getData());
-        //gridView.setAdapter(gridAdapter);
+        gridView.setAdapter(gridAdapter);
 
         return v;
     }
