@@ -3,12 +3,12 @@ package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,19 +37,31 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
     private String mNomeViaggio;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         //recupero id e nome del viaggio
         mIdViaggio = getActivity().getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
         mNomeViaggio = getActivity().getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
         mResolver = getActivity().getContentResolver();
-        //getLoaderManager().initLoader(CITTA_LOADER, null, this).forceLoad();
+        getLoaderManager().initLoader(CITTA_LOADER, null, this);
+        getActivity().setTitle(mNomeViaggio);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CittaAdapter(mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
+        v.findViewById(R.id.fab_add_citta).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialogAddCitta(v);
+            }
+        });
         return v;
     }
 
@@ -82,12 +94,21 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<List<Citta>> onCreateLoader(int id, Bundle args) {
-        return new DettagliViaggioLoader(getActivity(), getActivity().getContentResolver(), mIdViaggio);
+        switch (id) {
+            case CITTA_LOADER:
+                return new DettagliViaggioLoader(getActivity(), getActivity().getContentResolver(), mIdViaggio);
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<List<Citta>> loader, List<Citta> data) {
-        mAdapter.setElencoCitta(data);
+        int id = loader.getId();
+        switch (id) {
+            case CITTA_LOADER:
+                mAdapter.setElencoCitta(data);
+        }
     }
 
     @Override
