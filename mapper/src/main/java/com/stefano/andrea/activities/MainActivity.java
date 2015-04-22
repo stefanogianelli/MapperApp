@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +25,7 @@ import com.stefano.andrea.models.Viaggio;
 
 import java.util.List;
 
-public class MainActivity extends android.support.v7.app.ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mainActivity.idViaggio";
     public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mainActivitynomeViaggio";
@@ -32,6 +34,8 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private ContentResolver mResolver;
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,7 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
         //inizializzo il caricamento dei dati dei viaggi
         getLoaderManager().initLoader(VIAGGI_LOADER, null, this);
         //inizializzo recyclerview
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -71,6 +75,35 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnClickItem(int position) {
+        if (actionMode !=  null) {
+            toggleSelection(position);
+        }
+    }
+
+    @Override
+    public boolean OnLongClickItem(int position) {
+        if (actionMode == null) {
+            actionMode = startSupportActionMode(actionModeCallback);
+        }
+        if (BuildConfig.DEBUG && actionMode == null)
+            throw new AssertionError("Null actionMode");
+        toggleSelection(position);
+        return true;
+    }
+
+    private void toggleSelection(int position) {
+        mAdapter.toggleSelection(position);
+        int count = mAdapter.getSelectedItemCount();
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
     }
 
     @Override
@@ -124,5 +157,37 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
     @Override
     public void onLoaderReset(Loader<List<Viaggio>> loader) {
         //do nothing
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_viaggio:
+                    // TODO: actually remove items
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelection();
+            actionMode = null;
+        }
     }
 }

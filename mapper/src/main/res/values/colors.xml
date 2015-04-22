@@ -19,4 +19,6 @@
     <color name="ColorPrimary">#FFFFBB33</color>
     <color name="ColorPrimaryDark">#FFFF8800</color>
     <color name="tabsScrollColor">#FFFF8800</color>
+    <!-- Overlay card selezionata -->
+    <item name="selected_overlay" type="color">#FFFFBB33</item>
 </resources>

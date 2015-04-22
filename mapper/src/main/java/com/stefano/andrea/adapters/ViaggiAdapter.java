@@ -13,23 +13,27 @@ import android.widget.TextView;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.SelectableAdapter;
 
 import java.util.List;
 
 /**
  * ViaggiAdapter
  */
-public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHolder> {
+public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> {
 
     private List<Viaggio> mListaViaggi = null;
     private ContentResolver mResolver;
     private ViaggioOnClickListener mListener;
 
     public interface ViaggioOnClickListener {
+        void OnClickItem (int position);
+        boolean OnLongClickItem (int position);
         void selezionatoViaggio (Viaggio viaggio);
     }
 
     public ViaggiAdapter(ContentResolver resolver, ViaggioOnClickListener listener) {
+        super();
         mResolver = resolver;
         mListener = listener;
     }
@@ -52,6 +56,7 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
     public void onBindViewHolder(ViaggiHolder holder, int position) {
         Viaggio viaggio = mListaViaggi.get(position);
         holder.bindViaggio(viaggio);
+        holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -95,10 +100,12 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
     public class ViaggiHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private TextView vNome;
+        private View selectedOverlay;
 
         public ViaggiHolder(View itemView) {
             super(itemView);
             vNome = (TextView) itemView.findViewById(R.id.viaggio_item_label);
+            selectedOverlay = itemView.findViewById(R.id.selected_overlay);
             itemView.setOnClickListener(this);
             itemView.setLongClickable(true);
             itemView.setOnLongClickListener(this);
@@ -111,13 +118,12 @@ public class ViaggiAdapter extends RecyclerView.Adapter <ViaggiAdapter.ViaggiHol
 
         @Override
         public void onClick(View v) {
-            mListener.selezionatoViaggio((Viaggio) v.getTag());
+            mListener.OnClickItem(getPosition());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            //TODO: abilitare multiselection
-            return true;
+            return mListener.OnLongClickItem(getPosition());
         }
     }
 }
