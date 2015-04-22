@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,20 +24,18 @@ import java.util.List;
  */
 public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> {
 
-    private List<Viaggio> mListaViaggi = null;
-    private ContentResolver mResolver;
+    private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
+    private ContentResolver mResolver;
 
     public interface ViaggioOnClickListener {
-        void OnClickItem (int position);
-        boolean OnLongClickItem (int position);
         void selezionatoViaggio (Viaggio viaggio);
     }
 
-    public ViaggiAdapter(ContentResolver resolver, ViaggioOnClickListener listener) {
-        super();
-        mResolver = resolver;
+    public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback, ContentResolver resolver) {
+        super(activity, callback);
         mListener = listener;
+        mResolver = resolver;
     }
 
     public void setListaViaggi (List<Viaggio> lista) {
@@ -87,14 +87,13 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     }
 
     public int cancellaViaggi () {
-        /*int count = 0;
+        int count = 0;
         for (int i = mListaViaggi.size(); i >= 0; i--) {
-            if (mMultiSelector.isSelected(i, 0)) {
+            if (isSelected(i)) {
                 count += cancellaViaggio(mListaViaggi.get(i));
             }
         }
-        return count;*/
-        return 0;
+        return count;
     }
 
     public class ViaggiHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -118,12 +117,18 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
         @Override
         public void onClick(View v) {
-            mListener.OnClickItem(getPosition());
+            if (isEnabledSelectionMode())
+                toggleSelection(getLayoutPosition());
+            else
+                mListener.selezionatoViaggio((Viaggio) v.getTag());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return mListener.OnLongClickItem(getPosition());
+            if (!isEnabledSelectionMode())
+                startActionMode();
+            toggleSelection(getLayoutPosition());
+            return true;
         }
     }
 }

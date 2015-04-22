@@ -1,5 +1,8 @@
 package com.stefano.andrea.utils;
 
+import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 
@@ -12,9 +15,14 @@ import java.util.List;
 public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     private SparseBooleanArray selectedItems;
+    private Activity mActivity;
+    private ActionMode.Callback mCallback;
+    private ActionMode mActionMode;
 
-    public SelectableAdapter() {
+    public SelectableAdapter(Activity activity, ActionMode.Callback callback) {
         selectedItems = new SparseBooleanArray();
+        mActivity = activity;
+        mCallback = callback;
     }
 
     /**
@@ -36,7 +44,33 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
         } else {
             selectedItems.put(position, true);
         }
+        int count = getSelectedItemCount();
+        if (count == 0) {
+            mActionMode.finish();
+        } else {
+            mActionMode.setTitle(String.valueOf(count));
+            mActionMode.invalidate();
+        }
         notifyItemChanged(position);
+    }
+
+    /**
+     * Verify if the selection mode in enabled
+     * @return true if selection mode enabled, false otherwise
+     */
+    public boolean isEnabledSelectionMode () {
+        if (mActionMode != null)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Start the selection mode
+     */
+    public void startActionMode () {
+        if (mActionMode == null)
+            mActionMode = ((ActionBarActivity) mActivity).startSupportActionMode(mCallback);
     }
 
     /**
@@ -48,6 +82,7 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
         for (Integer i : selection) {
             notifyItemChanged(i);
         }
+        mActionMode = null;
     }
 
     /**

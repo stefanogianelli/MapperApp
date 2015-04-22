@@ -34,8 +34,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private ContentResolver mResolver;
-    private ActionModeCallback actionModeCallback = new ActionModeCallback();
-    private ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //inizializzo l'adapter
-        mAdapter = new ViaggiAdapter(mResolver, this);
+        mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback(), mResolver);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -77,36 +75,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void OnClickItem(int position) {
-        if (actionMode !=  null) {
-            toggleSelection(position);
-        }
-    }
-
-    @Override
-    public boolean OnLongClickItem(int position) {
-        if (actionMode == null) {
-            actionMode = startSupportActionMode(actionModeCallback);
-        }
-        if (BuildConfig.DEBUG && actionMode == null)
-            throw new AssertionError("Null actionMode");
-        toggleSelection(position);
-        return true;
-    }
-
-    private void toggleSelection(int position) {
-        mAdapter.toggleSelection(position);
-        int count = mAdapter.getSelectedItemCount();
-        if (count == 0) {
-            actionMode.finish();
-        } else {
-            actionMode.setTitle(String.valueOf(count));
-            actionMode.invalidate();
-        }
-    }
-
-    @Override
     public void selezionatoViaggio(Viaggio viaggio) {
         Intent intent = new Intent(this, ActivityDettagliViaggio.class);
         intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
@@ -176,7 +144,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_cancella_viaggio:
-                    // TODO: actually remove items
+                    mAdapter.cancellaViaggi();
                     mode.finish();
                     return true;
                 default:
@@ -187,7 +155,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
-            actionMode = null;
         }
     }
 }
