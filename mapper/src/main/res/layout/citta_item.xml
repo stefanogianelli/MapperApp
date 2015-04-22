@@ -13,17 +13,26 @@
         android:orientation="vertical"
         android:background="?android:attr/selectableItemBackground" >
 
-        <!--<ImageView
-            android:id="@+id/viaggio_item_thumbnail"
+        <!-- <ImageView
+            android:id="@+id/citta_item_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            android:src="@drawable/default_header"/>-->
+            android:src="@drawable/default_header"/> -->
+
         <TextView
-            android:id="@+id/viaggio_item_label"
+            android:id="@+id/citta_item_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/citta_item_edit"
+            android:layout_toRightOf="@+id/citta_item_label"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/fab_icons"
+            />
     </LinearLayout>
 
     <View
