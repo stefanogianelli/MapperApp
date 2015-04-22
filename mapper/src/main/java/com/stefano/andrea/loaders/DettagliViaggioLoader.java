@@ -28,6 +28,12 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
     }
 
     @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        this.forceLoad();
+    }
+
+    @Override
     public List<Citta> loadInBackground() {
         List<Citta> list = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);

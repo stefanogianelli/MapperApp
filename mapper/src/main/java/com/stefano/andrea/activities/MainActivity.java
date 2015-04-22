@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,26 +27,26 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mainActivity.idViaggio";
     public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mainActivitynomeViaggio";
-    private final static int URL_LOADER = 0;
+    private final static int VIAGGI_LOADER = 0;
 
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ContentResolver mResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //acquisisco riferimento al content provider
         mResolver = getContentResolver();
-        getLoaderManager().initLoader(URL_LOADER, null, this).forceLoad();
-        // Card layout
+        //inizializzo il caricamento dei dati dei viaggi
+        getLoaderManager().initLoader(VIAGGI_LOADER, null, this);
+        //inizializzo recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        // specify an adapter
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        //inizializzo l'adapter
         mAdapter = new ViaggiAdapter(mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -89,8 +90,8 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         Dialog d = (Dialog) dialog;
-                        EditText nv = (EditText) d.findViewById(R.id.text_add_viaggio);
-                        mAdapter.creaNuovoViaggio(nv.getText().toString());
+                        EditText nomeViaggio = (EditText) d.findViewById(R.id.text_add_viaggio);
+                        mAdapter.creaNuovoViaggio(nomeViaggio.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -104,7 +105,7 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
     @Override
     public Loader<List<Viaggio>> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case URL_LOADER:
+            case VIAGGI_LOADER:
                 return new ViaggiLoader(this, mResolver);
             default:
                 return null;
@@ -113,7 +114,11 @@ public class MainActivity extends android.support.v7.app.ActionBarActivity imple
 
     @Override
     public void onLoadFinished(Loader<List<Viaggio>> loader, List<Viaggio> data) {
-        mAdapter.setListaViaggi(data);
+        int id = loader.getId();
+        switch (id) {
+            case VIAGGI_LOADER:
+                mAdapter.setListaViaggi(data);
+        }
     }
 
     @Override

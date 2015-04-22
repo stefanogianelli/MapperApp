@@ -24,6 +24,12 @@ public class ViaggiLoader extends AsyncTaskLoader<List<Viaggio>> {
     }
 
     @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        this.forceLoad();
+    }
+
+    @Override
     public List<Viaggio> loadInBackground() {
         List<Viaggio> viaggi = new ArrayList<>();
         Cursor c = mResolver.query(MapperContract.Viaggio.CONTENT_URI, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio.DEFAULT_SORT);

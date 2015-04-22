@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +27,8 @@ import java.util.List;
  */
 public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
 
+    private final static int CITTA_LOADER = 0;
+
     private RecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -36,12 +37,13 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
     private String mNomeViaggio;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
         //recupero id e nome del viaggio
         mIdViaggio = getActivity().getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
         mNomeViaggio = getActivity().getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
         mResolver = getActivity().getContentResolver();
+        //getLoaderManager().initLoader(CITTA_LOADER, null, this).forceLoad();
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
