@@ -79,9 +79,9 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         Dialog d = (Dialog) dialog;
-                        EditText nn = (EditText) d.findViewById(R.id.text_add_citta_nn);
-                        EditText nc = (EditText) d.findViewById(R.id.text_add_citta);
-                        mAdapter.creaNuovaCitta(mIdViaggio, nn.getText().toString(), nc.getText().toString());
+                        EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
+                        EditText nomeCitta = (EditText) d.findViewById(R.id.text_add_citta);
+                        mAdapter.creaNuovaCitta(mIdViaggio, nomeCitta.getText().toString(), nomeNazione.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

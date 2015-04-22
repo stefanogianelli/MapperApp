@@ -8,9 +8,6 @@ import android.test.mock.MockContentResolver;
 import com.stefano.andrea.providers.MapperContentProvider;
 import com.stefano.andrea.providers.MapperContract;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * ViaggiAdapterTest
  */
@@ -27,12 +24,7 @@ public class ViaggiAdapterTest extends ProviderTestCase2<MapperContentProvider>{
     public void setUp() throws Exception {
         super.setUp();
         mResolver = getMockContentResolver();
-        mAdapter = new ViaggiAdapter(null, mResolver, new ViaggiAdapter.ViaggioOnClickListener() {
-            @Override
-            public void selezionatoViaggio(long id) {
-                //do nothing
-            }
-        });
+        mAdapter = new ViaggiAdapter(null, null, null, mResolver);
         mAdapter.creaNuovoViaggio("viaggio1");
         mAdapter.creaNuovoViaggio("viaggio2");
         mAdapter.creaNuovoViaggio("viaggio3");
@@ -49,19 +41,5 @@ public class ViaggiAdapterTest extends ProviderTestCase2<MapperContentProvider>{
         long id = c.getLong(c.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
         assertEquals(id, 5);
         c.close();
-    }
-
-    public void testDeleteViaggio() throws Exception {
-        int count = mAdapter.cancellaViaggio(1);
-        assertEquals(count, 1);
-    }
-
-    public void testDeleteViaggi() throws Exception {
-        List<Integer> removeIds = new ArrayList<>();
-        removeIds.add(2);
-        removeIds.add(3);
-        removeIds.add(4);
-        int count = mAdapter.cancellaViaggi(removeIds);
-        assertEquals(count, 3);
     }
 }

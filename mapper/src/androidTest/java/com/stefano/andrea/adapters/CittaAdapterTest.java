@@ -6,8 +6,11 @@ import android.net.Uri;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
+import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContentProvider;
 import com.stefano.andrea.providers.MapperContract;
+
+import java.util.ArrayList;
 
 /**
  * CittaAdapterTest
@@ -29,12 +32,8 @@ public class CittaAdapterTest extends ProviderTestCase2<MapperContentProvider> {
     public void setUp() throws Exception {
         super.setUp();
         mResolver = getMockContentResolver();
-        mAdapter = new CittaAdapter(null, mResolver, new CittaAdapter.CittaOnClickListener() {
-            @Override
-            public void selezionataCitta(long id) {
-                //do nothing
-            }
-        });
+        mAdapter = new CittaAdapter(mResolver, null);
+        mAdapter.setElencoCitta(new ArrayList<Citta>());
         //creo viaggio di prova
         ContentValues values = new ContentValues();
         values.put(MapperContract.Viaggio.NOME, VIAGGIO);
