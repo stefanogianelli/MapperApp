@@ -5,7 +5,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
-import android.view.View;
+
+import com.stefano.andrea.activities.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,9 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
-        holder.mSelectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
+        if (isSelected(position)) {
+            holder.itemView.setBackgroundColor(holder.itemView.getResources().getColor(R.color.selected_overlay));
+        }
         onBindViewHolder1(holder, position);
     }
 
