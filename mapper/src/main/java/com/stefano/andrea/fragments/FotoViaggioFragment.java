@@ -6,9 +6,13 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.stefano.andrea.activities.R;
@@ -33,7 +37,25 @@ public class FotoViaggioFragment extends Fragment {
         gridAdapter = new GridViewFotoViaggioAdapter(getActivity(), R.layout.grid_item_foto_viaggio_layout, getData());
         gridView.setAdapter(gridAdapter);
 
-        return v;
+        /*
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DettagliFotoFragment mFragment = new DettagliFotoFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack
+                transaction.replace(R.id.pager, mFragment);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
+                // TODO: Finire fragment dettagli foto
+            }
+        }); */
+
+            return v;
     }
 
 
