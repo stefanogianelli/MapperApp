@@ -1,4 +1,4 @@
-package com.stefano.andrea.activities;
+package com.stefano.andrea.fragments;
 
 
 import android.app.AlertDialog;
@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.stefano.andrea.activities.MainActivity;
+import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;

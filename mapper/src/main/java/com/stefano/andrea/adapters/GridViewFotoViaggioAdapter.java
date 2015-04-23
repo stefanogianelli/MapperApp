@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
-import com.stefano.andrea.utils.ImageItem;
+import com.stefano.andrea.models.ImageItem;
 
 import java.util.ArrayList;
 

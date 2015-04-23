@@ -1,4 +1,4 @@
-package com.stefano.andrea.utils;
+package com.stefano.andrea.models;
 
 import android.graphics.Bitmap;
 

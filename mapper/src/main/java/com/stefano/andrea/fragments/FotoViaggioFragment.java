@@ -1,6 +1,5 @@
-package com.stefano.andrea.activities;
+package com.stefano.andrea.fragments;
 
-import android.app.Activity;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,15 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.GridViewFotoViaggioAdapter;
-import com.stefano.andrea.utils.ImageItem;
+import com.stefano.andrea.models.ImageItem;
 
 import java.util.ArrayList;
 
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class FotoViaggio extends Fragment {
+public class FotoViaggioFragment extends Fragment {
     private GridView gridView;
     private GridViewFotoViaggioAdapter gridAdapter;
 

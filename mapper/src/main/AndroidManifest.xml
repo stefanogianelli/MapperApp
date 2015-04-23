@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityDettagliViaggio"
+            android:name=".DettagliViaggioActivity"
             android:label="@string/title_activity_dettagli_viaggio"
             android:parentActivityName=".MainActivity" >
             <meta-data

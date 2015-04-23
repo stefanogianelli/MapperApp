@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     }
 
     public void selezionatoViaggio(Viaggio viaggio) {
-        Intent intent = new Intent(this, ActivityDettagliViaggio.class);
+        Intent intent = new Intent(this, DettagliViaggioActivity.class);
         intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
         intent.putExtra(EXTRA_NOME_VIAGGIO, viaggio.getNome());
         startActivity(intent);

@@ -1,47 +1,40 @@
 package com.stefano.andrea.activities;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.stefano.andrea.adapters.TabDettagliViaggioAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class ActivityDettagliViaggio extends ActionBarActivity {
-    // Declaring Your View and Variables
+public class DettagliViaggioActivity extends ActionBarActivity {
 
-    Toolbar toolbar;
-    ViewPager pager;
-    TabDettagliViaggioAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence Titles[]={"Dettagli","Foto"};
-    int Numboftabs =2;
+    private ViewPager mPager;
+    private TabDettagliViaggioAdapter mAdapter;
+    private SlidingTabLayout mTabs;
+    private CharSequence [] mTitles = {"Dettagli","Foto"};
+    private int mNumbOfTabs = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
 
-        // Creating The Toolbar and setting it as the Toolbar for the activity
-        // toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        //setSupportActionBar(toolbar);
+        // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, mTitles fot the Tabs and Number Of Tabs.
+        mAdapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
 
-        // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), Titles, Numboftabs);
-
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
+        // Assigning ViewPager View and setting the mAdapter
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setAdapter(mAdapter);
 
         // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
@@ -49,7 +42,7 @@ public class ActivityDettagliViaggio extends ActionBarActivity {
         });
 
         // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        mTabs.setViewPager(mPager);
     }
 
     @Override
