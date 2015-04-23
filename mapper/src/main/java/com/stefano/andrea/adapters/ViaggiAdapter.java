@@ -1,9 +1,5 @@
 package com.stefano.andrea.adapters;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
@@ -13,7 +9,6 @@ import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
-import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.SelectableAdapter;
 import com.stefano.andrea.utils.SelectableHolder;
 
@@ -26,16 +21,14 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
-    private ContentResolver mResolver;
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
     }
 
-    public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback, ContentResolver resolver) {
+    public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback) {
         super(activity, callback);
         mListener = listener;
-        mResolver = resolver;
     }
 
     public void setListaViaggi (List<Viaggio> lista) {
@@ -66,33 +59,16 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
             return 0;
     }
 
-    public Uri creaNuovoViaggio (String nome) {
-        ContentValues values = new ContentValues();
-        values.put(MapperContract.Viaggio.NOME, nome);
-        Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
-        Viaggio viaggio = new Viaggio(Long.parseLong(uri.getLastPathSegment()), nome);
+    public void creaNuovoViaggio (long id, String nome) {
+        Viaggio viaggio = new Viaggio(id, nome);
         mListaViaggi.add(0, viaggio);
         notifyItemInserted(0);
-        return uri;
     }
 
-    public int cancellaViaggio (Viaggio viaggio) {
-        Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, viaggio.getId());
-        int count = mResolver.delete(uri, null, null);
+    public void cancellaViaggio (Viaggio viaggio) {
         int pos = mListaViaggi.indexOf(viaggio);
         mListaViaggi.remove(pos);
         notifyItemRemoved(pos);
-        return count;
-    }
-
-    public int cancellaViaggi () {
-        int count = 0;
-        for (int i = mListaViaggi.size(); i >= 0; i--) {
-            if (isSelected(i)) {
-                count += cancellaViaggio(mListaViaggi.get(i));
-            }
-        }
-        return count;
     }
 
     public class ViaggiHolder extends SelectableHolder {
