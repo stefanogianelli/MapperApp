@@ -4,7 +4,10 @@ package com.stefano.andrea.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -56,12 +59,18 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new CittaAdapter(mResolver, this);
+        mAdapter = new CittaAdapter(getActivity(), mResolver, this);
         mRecyclerView.setAdapter(mAdapter);
         v.findViewById(R.id.fab_add_citta).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDialogAddCitta(v);
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    openDialogAddCitta(v);
+                } else {
+                    //TODO: mostrare errore connessione internet non disponibile
+                }
             }
         });
         return v;

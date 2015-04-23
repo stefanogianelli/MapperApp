@@ -3,6 +3,7 @@ package com.stefano.andrea.adapters;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -33,10 +34,10 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
         void selezionataCitta (long id);
     }
 
-    public CittaAdapter (ContentResolver resolver, CittaOnClickListener listener) {
+    public CittaAdapter (Context context, ContentResolver resolver, CittaOnClickListener listener) {
         mResolver = resolver;
         mListener = listener;
-        mHelper = new CittaHelper(mResolver);
+        mHelper = new CittaHelper(context, mResolver);
     }
 
     public void setElencoCitta (List<Citta> elencoCitta) {
@@ -88,7 +89,7 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
             mElencoCitta.add(0, new Citta(Long.parseLong(uri.getLastPathSegment()), nome, nazione, lat, lon));
             c.close();
             notifyItemInserted(0);
-            return null;
+            return uri;
         }
         return null;
     }

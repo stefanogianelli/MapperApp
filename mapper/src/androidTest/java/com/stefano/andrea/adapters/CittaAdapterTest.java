@@ -32,7 +32,7 @@ public class CittaAdapterTest extends ProviderTestCase2<MapperContentProvider> {
     public void setUp() throws Exception {
         super.setUp();
         mResolver = getMockContentResolver();
-        mAdapter = new CittaAdapter(mResolver, null);
+        mAdapter = new CittaAdapter(getMockContext(), mResolver, null);
         mAdapter.setElencoCitta(new ArrayList<Citta>());
         //creo viaggio di prova
         ContentValues values = new ContentValues();

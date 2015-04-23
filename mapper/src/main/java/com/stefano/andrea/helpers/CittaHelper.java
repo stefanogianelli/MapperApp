@@ -2,18 +2,17 @@ package com.stefano.andrea.helpers;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.tasks.GeocodeInformationTask;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 /**
  * CittaHelper
@@ -21,8 +20,10 @@ import java.net.URL;
 public class CittaHelper {
 
     private ContentResolver mResolver;
+    private Context mContext;
 
-    public CittaHelper (ContentResolver resolver) {
+    public CittaHelper (Context context, ContentResolver resolver) {
+        mContext = context;
         mResolver = resolver;
     }
 
@@ -54,69 +55,26 @@ public class CittaHelper {
      * @param nazione La nazione nella quale si trova la citta
      * @return l'id della citta creata, altrimenti -1
      */
-    public long creaCitta (String nome, String nazione) {
+    public long creaCitta (final String nome, final String nazione) {
         ContentValues values = new ContentValues();
         values.put(MapperContract.DatiCitta.NOME, nome);
         values.put(MapperContract.DatiCitta.NAZIONE, nazione);
-        JSONObject loc = getGeocodeInformations(nome + "," + nazione);
-        double latitudine = getLatitudine(loc);
-        double longitudine = getLongitudine(loc);
-        values.put(MapperContract.DatiCitta.LATITUDINE, latitudine);
-        values.put(MapperContract.DatiCitta.LONGITUDINE, longitudine);
-        Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
-        if (uri != null)
-            return Long.parseLong(uri.getLastPathSegment());
-        else
-            return -1;
-    }
-
-    private JSONObject getGeocodeInformations (String indirizzo) {
         try {
-            HttpURLConnection conn = null;
-            StringBuilder jsonResults = new StringBuilder();
-            String googleMapUrl = "http://maps.googleapis.com/maps/api/geocode/json?address=" + indirizzo;
-
-            URL url = new URL(googleMapUrl);
-            conn = (HttpURLConnection) url.openConnection();
-            InputStreamReader in = new InputStreamReader(
-                    conn.getInputStream());
-            int read;
-            char[] buff = new char[1024];
-            while ((read = in.read(buff)) != -1) {
-                jsonResults.append(buff, 0, read);
-            }
-            String a = "";
-
-            JSONObject jsonObj = new JSONObject(jsonResults.toString());
-            JSONArray resultJsonArray = jsonObj.getJSONArray("results");
-            JSONObject before_geometry_jsonObj = resultJsonArray.getJSONObject(0);
-            JSONObject geometry_jsonObj = before_geometry_jsonObj.getJSONObject("geometry");
-            return geometry_jsonObj.getJSONObject("location");
-        } catch (Exception e) {
+            LatLng coord = new GeocodeInformationTask(nome + "," + nazione).execute().get();
+            values.put(MapperContract.DatiCitta.LATITUDINE, coord.latitude);
+            values.put(MapperContract.DatiCitta.LONGITUDINE, coord.longitude);
+            if (BuildConfig.DEBUG)
+                Log.v("CittaHelper", nome + " - Lat: " + coord.latitude + " , Lng: " + coord.longitude);
+            Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
+            if (uri != null)
+                return Long.parseLong(uri.getLastPathSegment());
+        } catch (InterruptedException e) {
+            //TODO: mostrare messaggio d'errore
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            //TODO: mostrare messaggio d'errore
             e.printStackTrace();
         }
-        return null;
-    }
-
-    private double getLongitudine (JSONObject location) {
-        double lng = 0;
-        try {
-            String lng_helper = location.getString("lng");
-            lng = Double.valueOf(lng_helper);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return lng;
-    }
-
-    private double getLatitudine (JSONObject location) {
-        double lat = 0;
-        try {
-            String lat_helper = location.getString("lat");
-            lat = Double.valueOf(lat_helper);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return lat;
+        return -1;
     }
 }
