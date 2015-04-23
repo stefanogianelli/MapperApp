@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.SelectableAdapter;
+import com.stefano.andrea.utils.SelectableHolder;
 
 import java.util.List;
 
@@ -53,10 +53,9 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     }
 
     @Override
-    public void onBindViewHolder(ViaggiHolder holder, int position) {
+    public void onBindViewHolder1(ViaggiHolder holder, int position) {
         Viaggio viaggio = mListaViaggi.get(position);
         holder.bindViaggio(viaggio);
-        holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -96,18 +95,13 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         return count;
     }
 
-    public class ViaggiHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViaggiHolder extends SelectableHolder {
 
         private TextView vNome;
-        private View selectedOverlay;
 
         public ViaggiHolder(View itemView) {
             super(itemView);
             vNome = (TextView) itemView.findViewById(R.id.viaggio_item_label);
-            selectedOverlay = itemView.findViewById(R.id.selected_overlay);
-            itemView.setOnClickListener(this);
-            itemView.setLongClickable(true);
-            itemView.setOnLongClickListener(this);
         }
 
         public void bindViaggio (Viaggio viaggio) {
