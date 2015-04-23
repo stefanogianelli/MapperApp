@@ -6,11 +6,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.stefano.andrea.activities.BuildConfig;
+import com.stefano.andrea.activities.R;
 import com.stefano.andrea.helpers.CittaHelper;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
@@ -46,10 +48,8 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
 
     @Override
     public CittaAdapter.CittaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //TODO: modificare id del layout
-        /*View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.id_del_layout, parent, false);
-        return new CittaHolder(view);*/
-        return null;
+        View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.citta_item, parent, false);
+        return new CittaHolder(view);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
         public CittaHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            //TODO: vNome = (TextView) v.findViewById(R.id.id_della_label);
+            vNome = (TextView) itemView.findViewById(R.id.citta_item_label);
         }
 
         public void bindCitta (Citta citta) {
