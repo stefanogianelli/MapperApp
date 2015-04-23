@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * SelectableAdapter
  */
-public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class SelectableAdapter<VH extends SelectableHolder> extends RecyclerView.Adapter<VH> {
 
     private SparseBooleanArray selectedItems;
     private Activity mActivity;
@@ -24,6 +25,14 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
         mActivity = activity;
         mCallback = callback;
     }
+
+    @Override
+    public void onBindViewHolder(VH holder, int position) {
+        holder.mSelectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
+        onBindViewHolder1(holder, position);
+    }
+
+    public abstract void onBindViewHolder1(VH holder, int position);
 
     /**
      * Indicates if the item at position position is selected
