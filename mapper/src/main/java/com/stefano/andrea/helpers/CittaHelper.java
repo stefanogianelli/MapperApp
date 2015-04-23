@@ -1,8 +1,8 @@
 package com.stefano.andrea.helpers;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -19,11 +19,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class CittaHelper {
 
+    private Activity mActivity;
     private ContentResolver mResolver;
-    private Context mContext;
 
-    public CittaHelper (Context context, ContentResolver resolver) {
-        mContext = context;
+    public CittaHelper (Activity activity, ContentResolver resolver) {
+        mActivity = activity;
         mResolver = resolver;
     }
 
@@ -42,10 +42,10 @@ public class CittaHelper {
         if (c != null && c.getCount() > 0) {
             c.moveToNext();
             id =  c.getLong(c.getColumnIndex(MapperContract.DatiCitta.ID));
+            c.close();
         } else {
             id = -1;
         }
-        c.close();
         return id;
     }
 
@@ -60,7 +60,7 @@ public class CittaHelper {
         values.put(MapperContract.DatiCitta.NOME, nome);
         values.put(MapperContract.DatiCitta.NAZIONE, nazione);
         try {
-            LatLng coord = new GeocodeInformationTask(nome + "," + nazione).execute().get();
+            LatLng coord = new GeocodeInformationTask(mActivity, nome + "," + nazione).execute().get();
             values.put(MapperContract.DatiCitta.LATITUDINE, coord.latitude);
             values.put(MapperContract.DatiCitta.LONGITUDINE, coord.longitude);
             if (BuildConfig.DEBUG)

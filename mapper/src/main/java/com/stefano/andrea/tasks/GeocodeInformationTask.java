@@ -1,5 +1,7 @@
 package com.stefano.andrea.tasks;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -18,9 +20,18 @@ import java.net.URL;
 public class GeocodeInformationTask extends AsyncTask<Void, Void, LatLng> {
 
     private String mIndirizzo;
+    private ProgressDialog mDialog;
 
-    public GeocodeInformationTask (String indirizzo) {
+    public GeocodeInformationTask (Activity activity, String indirizzo) {
         mIndirizzo = indirizzo;
+        mDialog = new ProgressDialog(activity);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mDialog.setMessage("Recupero informazioni ...");
+        mDialog.show();
     }
 
     @Override
@@ -35,9 +46,15 @@ public class GeocodeInformationTask extends AsyncTask<Void, Void, LatLng> {
         return new LatLng(latitudine, longitudine);
     }
 
+    @Override
+    protected void onPostExecute(LatLng latLng) {
+        super.onPostExecute(latLng);
+        mDialog.dismiss();
+    }
+
     private JSONObject getGeocodeInformations (String indirizzo) {
         try {
-            HttpURLConnection conn = null;
+            HttpURLConnection conn;
             StringBuilder jsonResults = new StringBuilder();
             String googleMapUrl = "http://maps.googleapis.com/maps/api/geocode/json?address=" + indirizzo;
 
