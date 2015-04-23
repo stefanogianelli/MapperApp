@@ -84,6 +84,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * Avvia la schermata contenente i dettagli del viaggio
      * @param viaggio Il viaggio selezionato
      */
+    @Override
     public void selezionatoViaggio(Viaggio viaggio) {
         Intent intent = new Intent(this, DettagliViaggioActivity.class);
         intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
@@ -111,7 +112,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     /**
      * Cancella un viaggio
      * @param viaggio Il viaggio da cancellare
-     * @return 1 se il viaggio è stato cancellato correttamente, 0 altrimenti
+     * @return 1 se il viaggio e' stato cancellato correttamente, 0 altrimenti
      */
     public int cancellaViaggio (Viaggio viaggio) {
         Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, viaggio.getId());

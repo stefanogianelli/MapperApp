@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.stefano.andrea.fragments.DettagliViaggio;
+import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.FotoViaggioFragment;
 
 
@@ -29,7 +29,7 @@ public class TabDettagliViaggioAdapter  extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         if(position == 0) // if the position is 0 we are returning the First tab
         {
-            DettagliViaggio tab1 = new DettagliViaggio();
+            DettagliViaggioFragment tab1 = new DettagliViaggioFragment();
             return tab1;
         }
         else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab

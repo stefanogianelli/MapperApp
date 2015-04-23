@@ -228,7 +228,7 @@ public class MapperContentProvider extends ContentProvider {
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
-                count = builder.table(MapperContract.Viaggio.TABLE_NAME).where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id).where(selection, selectionArgs).delete(db);
+                count = builder.table(MapperContract.Citta.TABLE_NAME).where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id).where(selection, selectionArgs).delete(db);
                 break;
             case POSTI:
                 count = builder.table(MapperContract.Posto.TABLE_NAME).where(selection, selectionArgs).delete(db);
