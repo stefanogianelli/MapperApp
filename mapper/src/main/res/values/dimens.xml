@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- Standard -->
+    <dimen name="standard_touch_target_size">48dp</dimen>
 
     <!-- FAB -->
     <dimen name="fab_elevation">8dp</dimen>
@@ -16,6 +18,8 @@
     <dimen name="fab_icon_size">24dp</dimen>
 
     <!-- viaggio_item.xml -->
+    <dimen name="width_card_viaggio">-1dp</dimen>
     <dimen name="title_size">72dp</dimen>
     <dimen name="subtitle_size">48dp</dimen>
+
 </resources>
