@@ -1,7 +1,8 @@
 <resources>
+    <!-- Titolo app -->
     <string name="app_name">Mapper</string>
 
-
+    <!-- MainActivity -->
     <string name="hello_world">Hello world!</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -12,17 +13,19 @@
     <string name="add_citta">Quale città?</string>
     <string name="add_citta_nn">In quale nazione?</string>
 
-
+    <!-- DettagliViaggioActivity -->
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 
     <!-- PER TESTARE GALLERIA IMAGES -->
     <string-array name="image_ids">
         <item>@drawable/default_header</item>
         <item>@drawable/ic_add</item>
     </string-array>
+
+    <!-- Messaggi di errore -->
+    <string name="unsupported_uri_error">URI non supportata</string>
 
 </resources>
