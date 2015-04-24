@@ -2,6 +2,6 @@
 <resources>
 
     <!-- viaggio_item.xml -->
-    <dimen name="width_card_viaggio">350dp</dimen>
+    <dimen name="padding_card_viaggio">50dp</dimen>
 
 </resources>

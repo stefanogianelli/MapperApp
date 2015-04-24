@@ -10,7 +10,9 @@
         android:id="@+id/elenco_viaggi"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/padding_card_viaggio"
+        android:paddingRight="@dimen/padding_card_viaggio"/>
 
 
     <com.stefano.andrea.utils.FloatingActionButton
