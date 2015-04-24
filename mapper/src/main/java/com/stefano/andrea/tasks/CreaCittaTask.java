@@ -3,7 +3,6 @@ package com.stefano.andrea.tasks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +13,8 @@ import android.util.Log;
 import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
+import com.stefano.andrea.helpers.CommonAlertDialog;
+import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
 
 import org.json.JSONArray;
@@ -27,20 +28,26 @@ import java.net.URL;
 /**
  * CreaCittaTask
  */
-public class CreaCittaTask extends AsyncTask<String, Void, Uri> {
+public class CreaCittaTask extends AsyncTask<String, Void, Integer> {
+
+    private static final int RESULT_OK = 0;
+    private static final int RESULT_ERROR = 1;
 
     private ContentResolver mResolver;
     private CittaAdapter mAdapter;
-    private long mIdViaggio;
     private ProgressDialog mDialog;
+    private Activity mActivity;
     private Context mContext;
+    private Citta mCitta;
 
     public CreaCittaTask (Activity activity, ContentResolver resolver, CittaAdapter adapter, long idViaggio) {
         mResolver = resolver;
         mAdapter = adapter;
-        mIdViaggio = idViaggio;
         mDialog = new ProgressDialog(activity);
+        mActivity = activity;
         mContext = activity.getApplicationContext();
+        mCitta = new Citta();
+        mCitta.setIdViaggio(idViaggio);
     }
 
     @Override
@@ -51,89 +58,87 @@ public class CreaCittaTask extends AsyncTask<String, Void, Uri> {
     }
 
     @Override
-    protected void onPostExecute(Uri uri) {
-        super.onPostExecute(uri);
+    protected void onPostExecute(Integer result) {
+        super.onPostExecute(result);
         mDialog.dismiss();
+        if (result == RESULT_ERROR) {
+            new CommonAlertDialog(mActivity, R.string.errore_nuova_citta_title_dialog, R.string.errore_nuova_citta_message_dialog);
+        }
     }
 
     @Override
-    protected Uri doInBackground(String... params) {
+    protected Integer doInBackground(String... params) {
+        long id = -1;
         if (params.length == 2) {
-            String nome = params[0];
-            String nazione = params[1];
-            long idCitta = this.getDatiCitta(nome, nazione);
-            if (idCitta == -1)
-                idCitta = this.creaCitta(nome, nazione);
-            if (idCitta != -1) {
+            mCitta.setNome(params[0]);
+            mCitta.setNazione(params[1]);
+            //verifico se la citta esiste gia nel database
+            this.getDatiCitta();
+            if (mCitta.getIdCitta() == -1)
+                //creo la nuova citta
+                this.creaCitta();
+            if (mCitta.getIdCitta() != -1) {
                 ContentValues values = new ContentValues();
-                values.put(MapperContract.Citta.ID_VIAGGIO, mIdViaggio);
-                values.put(MapperContract.Citta.ID_DATI_CITTA, idCitta);
+                values.put(MapperContract.Citta.ID_VIAGGIO, mCitta.getIdViaggio());
+                values.put(MapperContract.Citta.ID_DATI_CITTA, mCitta.getIdCitta());
                 values.put(MapperContract.Citta.PERCENTUALE, 0);
                 Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
-                long id = Long.parseLong(uri.getLastPathSegment());
+                id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
-                    //recupero informazioni sulla citta
-                    Uri query = ContentUris.withAppendedId(MapperContract.DatiCitta.CONTENT_URI, idCitta);
-                    String[] projetion = {MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
-                    Cursor c = mResolver.query(query, projetion, null, null, MapperContract.DatiCitta.DEFAULT_SORT);
-                    if (c != null) {
-                        c.moveToNext();
-                        double lon = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE));
-                        double lat = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE));
-                        mAdapter.creaNuovaCitta(id, nome, nazione, lat, lon);
-                        c.close();
-                        return uri;
-                    }
+                    mCitta.setId(id);
+                    mAdapter.creaNuovaCitta(mCitta);
+                    return RESULT_OK;
                 }
             }
         }
-        return null;
+        return RESULT_ERROR;
     }
 
     /**
      * Verifica se esistono nel database i dati di una citta
-     * @param nome Il nome della citta
-     * @param nazione La nazione della citta
-     * @return l'id della citta se esiste, altrimenti -1
      */
-    private long getDatiCitta (String nome, String nazione) {
-        String [] projection = {MapperContract.DatiCitta.ID};
+    private void getDatiCitta () {
         String selection = MapperContract.DatiCitta.NOME + "=? AND " + MapperContract.DatiCitta.NAZIONE + "=?";
-        String [] selectionArgs = {nome, nazione};
-        Cursor c = mResolver.query(MapperContract.DatiCitta.CONTENT_URI, projection, selection, selectionArgs, MapperContract.DatiCitta.DEFAULT_SORT);
+        String [] selectionArgs = {mCitta.getNome(), mCitta.getNazione()};
+        Cursor c = mResolver.query(MapperContract.DatiCitta.CONTENT_URI, MapperContract.DatiCitta.PROJECTION_ALL, selection, selectionArgs, MapperContract.DatiCitta.DEFAULT_SORT);
         long id = -1;
         if (c != null && c.getCount() > 0) {
             c.moveToNext();
             id =  c.getLong(c.getColumnIndex(MapperContract.DatiCitta.ID));
+            mCitta.setLatitudine(c.getLong(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
+            mCitta.setLongitudine(c.getLong(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
             c.close();
         }
-        return id;
+        mCitta.setIdCitta(id);
     }
 
     /**
      * Crea una nuova citta nel database
-     * @param nome Il nome della citta da creare
-     * @param nazione La nazione nella quale si trova la citta
-     * @return l'id della citta creata, altrimenti -1
      */
-    private long creaCitta (final String nome, final String nazione) {
+    private void creaCitta () {
         ContentValues values = new ContentValues();
-        values.put(MapperContract.DatiCitta.NOME, nome);
-        values.put(MapperContract.DatiCitta.NAZIONE, nazione);
-        JSONObject geoInfo = getGeocodeInformations(nome + "," + nazione);
+        values.put(MapperContract.DatiCitta.NOME, mCitta.getNome());
+        values.put(MapperContract.DatiCitta.NAZIONE, mCitta.getNazione());
+        JSONObject geoInfo = getGeocodeInformations();
+        long idCitta = 1;
         if (geoInfo != null) {
-            values.put(MapperContract.DatiCitta.LATITUDINE, this.getLatitudine(geoInfo));
-            values.put(MapperContract.DatiCitta.LONGITUDINE, this.getLongitudine(geoInfo));
+            double latitudine = this.getLatitudine(geoInfo);
+            double longitudine = this.getLongitudine(geoInfo);
+            mCitta.setLatitudine(latitudine);
+            mCitta.setLongitudine(longitudine);
+            values.put(MapperContract.DatiCitta.LATITUDINE, latitudine);
+            values.put(MapperContract.DatiCitta.LONGITUDINE, longitudine);
             if (BuildConfig.DEBUG)
-                Log.v("CittaHelper", nome + " - Lat: " + this.getLatitudine(geoInfo) + " , Lng: " + this.getLongitudine(geoInfo));
+                Log.v("CittaHelper", mCitta.getNome() + " - Lat: " + latitudine + " , Lng: " + longitudine);
             Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
             if (uri != null)
-                return Long.parseLong(uri.getLastPathSegment());
+                idCitta = Long.parseLong(uri.getLastPathSegment());
         }
-        return -1;
+        mCitta.setIdCitta(idCitta);
     }
 
-    private JSONObject getGeocodeInformations (String indirizzo) {
+    private JSONObject getGeocodeInformations () {
+        String indirizzo = mCitta.getNome() + "," + mCitta.getNazione();
         try {
             HttpURLConnection conn;
             StringBuilder jsonResults = new StringBuilder();

@@ -59,8 +59,8 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> {
         }
     }
 
-    public void creaNuovaCitta (long idCitta, String nome, String nazione, double latitudine, double longitudine) {
-        mElencoCitta.add(0, new Citta(idCitta, nome, nazione, latitudine, longitudine));
+    public void creaNuovaCitta (Citta citta) {
+        mElencoCitta.add(0, citta);
         notifyItemInserted(0);
     }
 

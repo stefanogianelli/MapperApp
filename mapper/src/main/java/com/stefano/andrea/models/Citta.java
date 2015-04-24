@@ -6,18 +6,13 @@ package com.stefano.andrea.models;
 public class Citta {
 
     private long id;
+    private long idCitta;
+    private long idViaggio;
     private String nome;
     private String nazione;
     private double latitudine;
     private double longitudine;
-
-    public Citta(long id, String nome, String nazione, double latitudine, double longitudine) {
-        this.id = id;
-        this.nome = nome;
-        this.nazione = nazione;
-        this.latitudine = latitudine;
-        this.longitudine = longitudine;
-    }
+    private double percentuale;
 
     public long getId() {
         return id;
@@ -25,6 +20,22 @@ public class Citta {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getIdCitta() {
+        return idCitta;
+    }
+
+    public void setIdCitta(long idCitta) {
+        this.idCitta = idCitta;
+    }
+
+    public long getIdViaggio() {
+        return idViaggio;
+    }
+
+    public void setIdViaggio(long idViaggio) {
+        this.idViaggio = idViaggio;
     }
 
     public String getNome() {
@@ -57,5 +68,13 @@ public class Citta {
 
     public void setLongitudine(double longitudine) {
         this.longitudine = longitudine;
+    }
+
+    public double getPercentuale() {
+        return percentuale;
+    }
+
+    public void setPercentuale(double percentuale) {
+        this.percentuale = percentuale;
     }
 }

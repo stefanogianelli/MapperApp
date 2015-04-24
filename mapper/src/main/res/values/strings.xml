@@ -1,5 +1,5 @@
 <resources>
-    <!-- Titolo app -->
+    <!-- Valori comuni -->
     <string name="app_name">Mapper</string>
 
     <!-- MainActivity -->
@@ -17,7 +17,13 @@
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
 
     <!-- DettagliViaggioFragment -->
-    <string name="nuova_citta_loading_dialog">Recupero informazioni ...</string>
+    <string name="nuova_citta_loading_dialog">Recupero informazioni &#8230;</string>
+    <!-- Dialog mancanza connesione internet -->
+    <string name="no_internet_title_dialog">Errore</string>
+    <string name="no_internet_message_dialog">Impossibile creare la citta.\nNessuna connessione a Internet.</string>
+    <!-- Dialog errore creazione citta -->
+    <string name="errore_nuova_citta_title_dialog">Errore</string>
+    <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della citta.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

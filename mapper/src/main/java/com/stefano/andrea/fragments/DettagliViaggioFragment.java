@@ -27,6 +27,7 @@ import android.widget.EditText;
 import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
+import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
@@ -75,7 +76,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 if (networkInfo != null && networkInfo.isConnected()) {
                     openDialogAddCitta(v);
                 } else {
-                    //TODO: mostrare errore connessione internet non disponibile
+                    new CommonAlertDialog(getActivity(), R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
                 }
             }
         });

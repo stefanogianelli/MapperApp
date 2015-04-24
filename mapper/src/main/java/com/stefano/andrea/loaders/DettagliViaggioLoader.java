@@ -39,12 +39,16 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);
         Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_JOIN, null, null, MapperContract.Citta.DEFAULT_SORT);
         while (c.moveToNext()) {
-            long id = c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA));
-            String nome = c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME));
-            String nazione = c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE));
-            double latitudine = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE));
-            double longitudine = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE));;
-            list.add(new Citta(id, nome, nazione, latitudine, longitudine));
+            Citta citta = new Citta();
+            citta.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
+            citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
+            citta.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_VIAGGIO)));
+            citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
+            citta.setNazione(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE)));
+            citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
+            citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
+            citta.setPercentuale(c.getDouble(c.getColumnIndex(MapperContract.Citta.PERCENTUALE)));
+            list.add(citta);
         }
         c.close();
         return list;
