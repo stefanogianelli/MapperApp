@@ -5,10 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -29,10 +27,10 @@ import android.widget.EditText;
 import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
-import com.stefano.andrea.helpers.CittaHelper;
 import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.tasks.CreaCittaTask;
 
 import java.util.List;
 
@@ -46,7 +44,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private RecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
-    private CittaHelper mHelper;
     private long mIdViaggio;
     private String mNomeViaggio;
     private List<Citta> mElencoCitta;
@@ -58,7 +55,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mIdViaggio = getActivity().getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
         mNomeViaggio = getActivity().getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
         mResolver = getActivity().getContentResolver();
-        mHelper = new CittaHelper(getActivity(), mResolver);
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
         getActivity().setTitle(mNomeViaggio);
         mAdapter = new CittaAdapter(getActivity(), new ActionModeCallback(), this);
@@ -92,39 +88,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     /**
-     * Aggiunge una nuova citta al viaggio
-     * @param nome Il nome della citta
-     * @param nazione La nazione
-     * @return L'uri della citta aggiunta, null altrimenti
-     */
-    public Uri aggiungiCitta (String nome, String nazione) {
-        long idCitta = mHelper.getDatiCitta(nome, nazione);
-        if (idCitta == -1)
-            idCitta = mHelper.creaCitta(nome, nazione);
-        ContentValues values = new ContentValues();
-        values.put(MapperContract.Citta.ID_VIAGGIO, mIdViaggio);
-        values.put(MapperContract.Citta.ID_DATI_CITTA, idCitta);
-        values.put(MapperContract.Citta.PERCENTUALE, 0);
-        Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
-        long id = Long.parseLong(uri.getLastPathSegment());
-        if (id != -1) {
-            //recupero informazioni sulla citta
-            Uri query = ContentUris.withAppendedId(MapperContract.DatiCitta.CONTENT_URI, idCitta);
-            String[] projetion = {MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
-            Cursor c = mResolver.query(query, projetion, null, null, MapperContract.DatiCitta.DEFAULT_SORT);
-            if (c != null) {
-                c.moveToNext();
-                double lon = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE));
-                double lat = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE));
-                mAdapter.creaNuovaCitta(id, nome, nazione, lat, lon);
-                c.close();
-                return uri;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Cancella una citta
      * @param citta La citta da cancellare
      * @return 1 se l'operazione e' termanata correttamente, 0 altrimenti
@@ -137,6 +100,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         return count;
     }
 
+    /**
+     * Cancella le citta selezionate dall'utente
+     * @return Il numero di citta cancellate
+     */
     public int cancellaElencoCitta () {
         int count = 0;
         for (int i = mElencoCitta.size(); i >= 0; i--) {
@@ -158,8 +125,8 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                         Dialog d = (Dialog) dialog;
                         EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
                         EditText nomeCitta = (EditText) d.findViewById(R.id.text_add_citta);
-                        aggiungiCitta(nomeCitta.getText().toString(), nomeNazione.getText().toString());
-                        //TODO: mostrare messaggio in caso di errore
+                        new CreaCittaTask(getActivity(), mResolver, mAdapter, mIdViaggio).execute(nomeCitta.getText().toString(), nomeNazione.getText().toString());
+                        d.dismiss();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
