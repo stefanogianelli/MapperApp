@@ -107,7 +107,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         values.put(MapperContract.Citta.PERCENTUALE, 0);
         Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
         long id = Long.parseLong(uri.getLastPathSegment());
-        if (uri.getLastPathSegment().equals("-1")) {
+        if (id != -1) {
             //recupero informazioni sulla citta
             Uri query = ContentUris.withAppendedId(MapperContract.DatiCitta.CONTENT_URI, idCitta);
             String[] projetion = {MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
