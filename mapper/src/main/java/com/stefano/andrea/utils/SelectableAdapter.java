@@ -60,7 +60,8 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
         if (count == 0) {
             mActionMode.finish();
         } else {
-            mActionMode.setTitle(String.valueOf(count));
+            String title = mActivity.getApplicationContext().getResources().getQuantityString(R.plurals.action_mode_count_selected, count, count);
+            mActionMode.setTitle(title);
             mActionMode.invalidate();
         }
         notifyItemChanged(position);
