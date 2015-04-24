@@ -2,9 +2,11 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
+        <!-- Action Bar -->
         <item name="colorPrimary">@color/orange</item>
-        <item name="colorPrimaryDark">@color/darkorange</item>
+        <item name="colorPrimaryDark">@color/dark_orange</item>
+        <!-- Action Mode theme -->
+        <item name="android:actionModeBackground">@color/orange</item>
     </style>
 
 </resources>

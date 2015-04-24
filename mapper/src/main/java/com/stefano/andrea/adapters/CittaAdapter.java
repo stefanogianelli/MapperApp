@@ -1,43 +1,34 @@
 package com.stefano.andrea.adapters;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
+import android.app.Activity;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
-import com.stefano.andrea.helpers.CittaHelper;
 import com.stefano.andrea.models.Citta;
-import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.SelectableAdapter;
+import com.stefano.andrea.utils.SelectableHolder;
 
 import java.util.List;
 
 /**
  * CittaAdapter
  */
-public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder> {
+public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> {
 
     private List<Citta> mElencoCitta;
-    private ContentResolver mResolver;
     private CittaOnClickListener mListener;
-    private CittaHelper mHelper;
 
     public interface CittaOnClickListener {
         void selezionataCitta (long id);
     }
 
-    public CittaAdapter (Context context, ContentResolver resolver, CittaOnClickListener listener) {
-        mResolver = resolver;
+    public CittaAdapter (Activity activity, ActionMode.Callback callback, CittaOnClickListener listener) {
+        super(activity, callback);
         mListener = listener;
-        mHelper = new CittaHelper(context, mResolver);
     }
 
     public void setElencoCitta (List<Citta> elencoCitta) {
@@ -54,7 +45,7 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
     }
 
     @Override
-    public void onBindViewHolder(CittaAdapter.CittaHolder holder, int position) {
+    public void onBindViewHolder1(CittaAdapter.CittaHolder holder, int position) {
         Citta citta = mElencoCitta.get(position);
         holder.bindCitta(citta);
     }
@@ -68,33 +59,18 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
         }
     }
 
-    public Uri creaNuovaCitta (long idViaggio, String nome, String nazione) {
-        long idCitta = mHelper.getDatiCitta(nome, nazione);
-        if (idCitta == -1)
-            idCitta = mHelper.creaCitta(nome, nazione);
-        if (BuildConfig.DEBUG && idCitta == -1)
-            throw new AssertionError();
-        ContentValues values = new ContentValues();
-        values.put(MapperContract.Citta.ID_VIAGGIO, idViaggio);
-        values.put(MapperContract.Citta.ID_DATI_CITTA, idCitta);
-        values.put(MapperContract.Citta.PERCENTUALE, 0);
-        Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
-        Uri query = ContentUris.withAppendedId(MapperContract.DatiCitta.CONTENT_URI, idCitta);
-        String [] projetion = {MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
-        Cursor c = mResolver.query(query, projetion, null, null, MapperContract.DatiCitta.DEFAULT_SORT);
-        if (c != null) {
-            c.moveToNext();
-            double lon = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE));
-            double lat = c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE));
-            mElencoCitta.add(0, new Citta(Long.parseLong(uri.getLastPathSegment()), nome, nazione, lat, lon));
-            c.close();
-            notifyItemInserted(0);
-            return uri;
-        }
-        return null;
+    public void creaNuovaCitta (long idCitta, String nome, String nazione, double latitudine, double longitudine) {
+        mElencoCitta.add(0, new Citta(idCitta, nome, nazione, latitudine, longitudine));
+        notifyItemInserted(0);
     }
 
-    public class CittaHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public void cancellaCitta (Citta citta) {
+        int pos = mElencoCitta.indexOf(citta);
+        mElencoCitta.remove(pos);
+        notifyItemRemoved(pos);
+    }
+
+    public class CittaHolder extends SelectableHolder {
 
         private TextView vNome;
 
@@ -111,7 +87,18 @@ public class CittaAdapter extends RecyclerView.Adapter<CittaAdapter.CittaHolder>
 
         @Override
         public void onClick(View v) {
-            mListener.selezionataCitta(v.getId());
+            if (isEnabledSelectionMode())
+                toggleSelection(getLayoutPosition());
+            else
+                mListener.selezionataCitta(v.getId());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (!isEnabledSelectionMode())
+                startActionMode();
+            toggleSelection(getLayoutPosition());
+            return true;
         }
     }
 

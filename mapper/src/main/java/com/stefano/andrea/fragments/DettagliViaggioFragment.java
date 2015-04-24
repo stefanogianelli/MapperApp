@@ -4,17 +4,22 @@ package com.stefano.andrea.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -24,22 +29,24 @@ import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.tasks.CreaCittaTask;
 
 import java.util.List;
 
 /**
- * DettagliViaggio
+ * DettagliViaggioFragment
  */
-public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
+public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
 
     private final static int CITTA_LOADER = 0;
 
     private RecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ContentResolver mResolver;
     private long mIdViaggio;
     private String mNomeViaggio;
+    private List<Citta> mElencoCitta;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
         mResolver = getActivity().getContentResolver();
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
         getActivity().setTitle(mNomeViaggio);
+        mAdapter = new CittaAdapter(getActivity(), new ActionModeCallback(), this);
     }
 
     @Override
@@ -57,9 +65,7 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new CittaAdapter(getActivity(), mResolver, this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
         v.findViewById(R.id.fab_add_citta).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +87,33 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
         //TODO: intent per aprire l'activity dettagli della citta
     }
 
+    /**
+     * Cancella una citta
+     * @param citta La citta da cancellare
+     * @return 1 se l'operazione e' termanata correttamente, 0 altrimenti
+     */
+    public int cancellaCitta (Citta citta) {
+        Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, citta.getId());
+        int count = mResolver.delete(uri, null, null);
+        if (count != 0)
+            mAdapter.cancellaCitta(citta);
+        return count;
+    }
+
+    /**
+     * Cancella le citta selezionate dall'utente
+     * @return Il numero di citta cancellate
+     */
+    public int cancellaElencoCitta () {
+        int count = 0;
+        for (int i = mElencoCitta.size(); i >= 0; i--) {
+            if (mAdapter.isSelected(i)) {
+                count += cancellaCitta(mElencoCitta.get(i));
+            }
+        }
+        return count;
+    }
+
     public void openDialogAddCitta(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -92,7 +125,8 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
                         Dialog d = (Dialog) dialog;
                         EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
                         EditText nomeCitta = (EditText) d.findViewById(R.id.text_add_citta);
-                        mAdapter.creaNuovaCitta(mIdViaggio, nomeCitta.getText().toString(), nomeNazione.getText().toString());
+                        new CreaCittaTask(getActivity(), mResolver, mAdapter, mIdViaggio).execute(nomeCitta.getText().toString(), nomeNazione.getText().toString());
+                        d.dismiss();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -119,11 +153,43 @@ public class DettagliViaggio extends Fragment implements LoaderManager.LoaderCal
         switch (id) {
             case CITTA_LOADER:
                 mAdapter.setElencoCitta(data);
+                mElencoCitta = data;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Citta>> loader) {
         //do nothing
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_viaggio:
+                    cancellaElencoCitta();
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelection();
+        }
     }
 }

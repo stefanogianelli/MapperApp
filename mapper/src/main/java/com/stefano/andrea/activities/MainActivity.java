@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -22,6 +25,7 @@ import android.widget.EditText;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
+import com.stefano.andrea.providers.MapperContract;
 
 import java.util.List;
 
@@ -34,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private ContentResolver mResolver;
+    private List<Viaggio> mListaViaggi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //inizializzo l'adapter
-        mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback(), mResolver);
+        mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -75,6 +80,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Avvia la schermata contenente i dettagli del viaggio
+     * @param viaggio Il viaggio selezionato
+     */
+    @Override
     public void selezionatoViaggio(Viaggio viaggio) {
         Intent intent = new Intent(this, DettagliViaggioActivity.class);
         intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
@@ -82,6 +92,54 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         startActivity(intent);
     }
 
+    /**
+     * Crea un nuovo viaggio nel database
+     * @param nome Il nome del viaggio
+     * @return L'uri del viaggio inserito nel database, null se l'operazione fallisce
+     */
+    public Uri creaViaggio (String nome) {
+        ContentValues values = new ContentValues();
+        values.put(MapperContract.Viaggio.NOME, nome);
+        Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
+        if (uri != null && uri.getLastPathSegment() != "-1") {
+            long id = Long.parseLong(uri.getLastPathSegment());
+            mAdapter.creaNuovoViaggio(id, nome);
+            return uri;
+        }
+        return null;
+    }
+
+    /**
+     * Cancella un viaggio
+     * @param viaggio Il viaggio da cancellare
+     * @return 1 se il viaggio e' stato cancellato correttamente, 0 altrimenti
+     */
+    public int cancellaViaggio (Viaggio viaggio) {
+        Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, viaggio.getId());
+        int count = mResolver.delete(uri, null, null);
+        if (count != 0)
+            mAdapter.cancellaViaggio(viaggio);
+        return count;
+    }
+
+    /**
+     * Cancella i viaggi selezionati dall'utente
+     * @return il numero di viaggi cancellati
+     */
+    public int cancellaViaggi () {
+        int count = 0;
+        for (int i = mListaViaggi.size(); i >= 0; i--) {
+            if (mAdapter.isSelected(i)) {
+                count += cancellaViaggio(mListaViaggi.get(i));
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Mostra la finestra di dialogo per creare un nuovo viaggio
+     * @param view
+     */
     public void openDialogAddViaggio(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -92,7 +150,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                     public void onClick(DialogInterface dialog, int id) {
                         Dialog d = (Dialog) dialog;
                         EditText nomeViaggio = (EditText) d.findViewById(R.id.text_add_viaggio);
-                        mAdapter.creaNuovoViaggio(nomeViaggio.getText().toString());
+                        creaViaggio(nomeViaggio.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -119,6 +177,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         switch (id) {
             case VIAGGI_LOADER:
                 mAdapter.setListaViaggi(data);
+                mListaViaggi = data;
         }
     }
 
@@ -144,7 +203,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_cancella_viaggio:
-                    mAdapter.cancellaViaggi();
+                    cancellaViaggi();
                     mode.finish();
                     return true;
                 default:
