@@ -22,4 +22,6 @@
     <color name="tabsScrollColor">#FFFF8800</color>
     <!-- Overlay card selezionata -->
     <item name="selected_overlay" type="color">#FFFFBB33</item>
+    <!-- Sfondo n trasparenza dei titoli del viaggio-->
+    <color name="info_background">#CC333333</color>
 </resources>

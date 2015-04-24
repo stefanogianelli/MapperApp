@@ -14,4 +14,8 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_small">40dp</dimen>
     <dimen name="fab_icon_size">24dp</dimen>
+
+    <!-- viaggio_item.xml -->
+    <dimen name="title_size">72dp</dimen>
+    <dimen name="subtitle_size">48dp</dimen>
 </resources>

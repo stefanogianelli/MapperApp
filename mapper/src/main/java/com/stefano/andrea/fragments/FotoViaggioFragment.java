@@ -6,17 +6,12 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.RecyclerViewFotoViaggioAdapter;
@@ -29,7 +24,7 @@ import java.util.List;
  * Created by hp1 on 21-01-2015.
  */
 public class FotoViaggioFragment extends Fragment {
-    private GridView gridView;
+    //private GridView gridView;
     private RecyclerView mRecyclerView;
 
     @Override

@@ -21,6 +21,7 @@
 
     <!-- PER TESTARE GALLERIA IMAGES -->
     <string-array name="image_ids">
+        <item>@drawable/prova01</item>
         <item>@drawable/prova02</item>
         <item>@drawable/prova03</item>
         <item>@drawable/prova04</item>
