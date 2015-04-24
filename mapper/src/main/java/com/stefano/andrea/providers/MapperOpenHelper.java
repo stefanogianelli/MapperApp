@@ -31,7 +31,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
             "`" + MapperContract.Citta.ID_DATI_CITTA + "` INTEGER NOT NULL," +
             "`" + MapperContract.Citta.ID_VIAGGIO + "` INTEGER NOT NULL," +
             "`" + MapperContract.Citta.PERCENTUALE + "` REAL DEFAULT -1," +
-            " FOREIGN KEY(`" + MapperContract.Citta.ID_CITTA + "`) REFERENCES " + Tables.DATI_CITTA + " (`" + MapperContract.DatiCitta.ID + "`)," +
+            " FOREIGN KEY(`" + MapperContract.Citta.ID_DATI_CITTA + "`) REFERENCES " + Tables.DATI_CITTA + " (`" + MapperContract.DatiCitta.ID + "`)," +
             " FOREIGN KEY(`" + MapperContract.Citta.ID_VIAGGIO +"`) REFERENCES " + Tables.VIAGGIO + " (`" + MapperContract.Viaggio.ID_VIAGGIO + "`));";
     //Create table POSTO
     private static final String CREATE_POSTO = "CREATE TABLE \"" + Tables.POSTO + "\" (" +
