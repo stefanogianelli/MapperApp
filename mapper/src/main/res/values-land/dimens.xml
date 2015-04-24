@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- viaggio_item.xml -->
+    <dimen name="width_card_viaggio">350dp</dimen>
+
+</resources>
