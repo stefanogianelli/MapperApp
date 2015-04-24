@@ -24,4 +24,8 @@
     <color name="selected_overlay">#FFFFBB33</color>
     <!-- Sfondo n trasparenza dei titoli del viaggio-->
     <color name="info_background">#CC333333</color>
+    <color name="info_title">#ffffffff</color>
+    <color name="info_subtitle">#ffdddddd</color>
+
+
 </resources>

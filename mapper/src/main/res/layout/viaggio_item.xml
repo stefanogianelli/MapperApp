@@ -5,30 +5,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foreground="?android:attr/selectableItemBackground"
-    android:padding="40dp"
+    android:layout_marginBottom="5dp"
     app:cardUseCompatPadding="true" >
 
     <RelativeLayout
+        android:id="@+id/viaggio_item_thumbnail"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="150dp"
         android:orientation="vertical"
-        android:background="?android:attr/selectableItemBackground" >
+        android:background="@drawable/prova02">
 
-        <ImageView
-            android:id="@+id/viaggio_item_thumbnail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/default_header"/>
-        <TextView
-            android:id="@+id/viaggio_item_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/viaggio_item_thumbnail"
-            android:layout_alignTop="@+id/viaggio_item_thumbnail"
-            android:layout_alignRight="@+id/viaggio_item_thumbnail"
-            android:layout_alignBottom="@+id/viaggio_item_thumbnail"
-            android:layout_margin="1dp"
-            android:gravity="center"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:minHeight="?android:listPreferredItemHeight"
+            android:divider="?android:dividerVertical"
+            android:dividerPadding="8dp"
+            android:showDividers="middle"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:background="@color/info_background">
+
+            <!--
+                Any view or view group can become interactive by simply setting the
+                android:clickable and android:focusable attributes to true.
+
+                When doing this, make sure to provide adequate touch feedback by also
+                setting the view background to ?android:selectableItemBackground. When
+                using the Holo theme, this drawable is transparent by default, but
+                changes to a translucent color overlay when the view is pressed or
+                focused.
+            -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="?android:listPreferredItemPaddingLeft"
+                android:paddingRight="?android:listPreferredItemPaddingRight"
+                android:gravity="center_vertical"
+                android:background="?android:selectableItemBackground">
+
+                <TextView style="?android:textAppearanceListItemSmall"
+                    android:id="@+id/viaggio_item_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/info_title"
+                    android:text="afdfddfv" />
+
+                <TextView style="?android:textAppearanceSmall"
+                    android:id="@+id/viaggio_item_label_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/info_subtitle"
+                    android:text="sduchsdnsdcnhe" />
+
+            </LinearLayout>
+
+              <ImageButton android:id="@+id/secondary_action"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="@dimen/standard_touch_target_size"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_info_outline_white_18dp"
+                android:contentDescription="@string/delete" />
+
+        </LinearLayout>
+
 
     </RelativeLayout >
 
