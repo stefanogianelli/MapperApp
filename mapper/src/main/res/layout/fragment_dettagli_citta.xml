@@ -5,6 +5,14 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:text="Fragment dettagli citta" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_lista_check_posti"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical" />
 
 </FrameLayout>
