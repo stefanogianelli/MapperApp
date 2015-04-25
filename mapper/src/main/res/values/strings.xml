@@ -42,5 +42,11 @@
 
     <!-- Messaggi di errore -->
     <string name="unsupported_uri_error">URI non supportata</string>
+    <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

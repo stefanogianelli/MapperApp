@@ -6,33 +6,32 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.stefano.andrea.adapters.TabDettagliViaggioAdapter;
+import com.stefano.andrea.adapters.TabDettagliCittaAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliViaggioActivity extends ActionBarActivity {
+public class DettagliCittaActivity extends ActionBarActivity {
 
-    public final static String EXTRA_ID_CITTA = "com.stefano.andrea.DettagliViaggioActivity.idCitta";
-    public final static String EXTRA_NOME_CITTA = "com.stefano.andrea.DettagliViaggioActivity.nomeCitta";
     private ViewPager mPager;
-    private TabDettagliViaggioAdapter mAdapter;
+    private TabDettagliCittaAdapter mAdapter;
     private SlidingTabLayout mTabs;
-    private CharSequence [] mTitles = {"Dettagli","Foto"};
+    private CharSequence [] mTitles = {"Posti","Foto"};
     private int mNumbOfTabs = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dettagli_viaggio);
+        setContentView(R.layout.activity_dettagli_citta);
 
         // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, mTitles fot the Tabs and Number Of Tabs.
-        mAdapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        mAdapter =  new TabDettagliCittaAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
 
         // Assigning ViewPager View and setting the mAdapter
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = (ViewPager) findViewById(R.id.pager_dettagli_citta);
         mPager.setAdapter(mAdapter);
 
         // Assiging the Sliding Tab Layout View
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs_dettagli_citta);
         mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
@@ -47,10 +46,11 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         mTabs.setViewPager(mPager);
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_dettagli_citta, menu);
         return true;
     }
 
@@ -68,6 +68,4 @@ public class DettagliViaggioActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }
