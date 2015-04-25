@@ -14,33 +14,8 @@
         android:paddingLeft="@dimen/padding_card_viaggio"
         android:paddingRight="@dimen/padding_card_viaggio"/>
 
-
-    <!-- <com.stefano.andrea.utils.FloatingActionButton
-        android:id="@+id/fab_1"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:elevation="@dimen/fab_elevation"
-        android:background="@drawable/fab_background"
-        android:stateListAnimator="@animator/fab_anim"
-        android:layout_gravity="right"
-        android:onClick="openDialogAddViaggio">
-
-        <ImageView
-            android:layout_width="@dimen/fab_icon_size"
-            android:layout_height="@dimen/fab_icon_size"
-            android:src="@drawable/fab_icons"
-            android:layout_gravity="center"
-            android:duplicateParentState="true"/>
-
-    </com.stefano.andrea.utils.FloatingActionButton>-->
-
     <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/fab_1"
+        android:id="@+id/fab_aggiunta_viaggio"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
         android:layout_alignParentRight="true"
@@ -49,8 +24,8 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginRight="@dimen/fab_margin_right"
         android:src="@drawable/fab_icons"
-        fab:fab_colorNormal="@color/fab_color_1"
-        fab:fab_colorPressed="@color/fab_color_1_muted"
+        fab:fab_colorNormal="@color/fab_color_normal"
+        fab:fab_colorPressed="@color/fab_color_pressed"
         android:onClick="openDialogAddViaggio"/>
 
 </RelativeLayout>

@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback());
         mRecyclerView.setAdapter(mAdapter);
         //acquisisco riferimento al fab
-        mFab = (FloatingActionButton) findViewById(R.id.fab_1);
+        mFab = (FloatingActionButton) findViewById(R.id.fab_aggiunta_viaggio);
         mFab.attachToRecyclerView(mRecyclerView);
     }
 

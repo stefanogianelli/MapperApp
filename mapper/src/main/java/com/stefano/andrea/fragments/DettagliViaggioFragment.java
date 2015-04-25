@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.melnykov.fab.FloatingActionButton;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
@@ -48,6 +49,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private long mIdViaggio;
     private String mNomeViaggio;
     private List<Citta> mElencoCitta;
+    private FloatingActionButton mFab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,11 +66,13 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
+        mFab = (FloatingActionButton) v.findViewById(R.id.fab_aggiunta_citta);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
-        v.findViewById(R.id.fab_add_citta).setOnClickListener(new View.OnClickListener() {
+        mFab.attachToRecyclerView(mRecyclerView);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -148,6 +152,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mFab.hide();
             mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
             return true;
         }
@@ -172,6 +177,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
+            mFab.show();
         }
     }
 }
