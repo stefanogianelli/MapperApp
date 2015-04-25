@@ -6,6 +6,7 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancella</string>
     <string name="action_settings">Impostazioni</string>
+    <string name="info">Informazioni</string>
 
     <!-- MainActivity -->
     <string name="add_viaggio">Come vuoi intitolare il nuovo viaggio?</string>
