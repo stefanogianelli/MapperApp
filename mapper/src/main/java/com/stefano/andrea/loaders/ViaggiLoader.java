@@ -17,6 +17,7 @@ import java.util.List;
 public class ViaggiLoader extends AsyncTaskLoader<List<Viaggio>> {
 
     private ContentResolver mResolver;
+    private List<Viaggio> mViaggi;
 
     public ViaggiLoader(Context context, ContentResolver resolver) {
         super(context);
@@ -26,19 +27,25 @@ public class ViaggiLoader extends AsyncTaskLoader<List<Viaggio>> {
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
-        this.forceLoad();
+        if (mViaggi != null)
+            deliverResult(mViaggi);
+        if (mViaggi == null || takeContentChanged())
+            this.forceLoad();
     }
 
     @Override
     public List<Viaggio> loadInBackground() {
-        List<Viaggio> viaggi = new ArrayList<>();
+        mViaggi = new ArrayList<>();
         Cursor c = mResolver.query(MapperContract.Viaggio.CONTENT_URI, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio.DEFAULT_SORT);
-        while (c.moveToNext()) {
-            long id_viaggio = c.getLong(c.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
-            String nome = c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME));
-            viaggi.add(new Viaggio(id_viaggio, nome));
+        if (c != null) {
+            while (c.moveToNext()) {
+                long id_viaggio = c.getLong(c.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
+                String nome = c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME));
+                mViaggi.add(new Viaggio(id_viaggio, nome));
+            }
+            c.close();
+            return mViaggi;
         }
-        c.close();
-        return viaggi;
+        return null;
     }
 }

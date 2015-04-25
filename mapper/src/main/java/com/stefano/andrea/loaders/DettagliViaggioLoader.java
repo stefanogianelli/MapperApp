@@ -20,6 +20,7 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
 
     private ContentResolver mResolver;
     private long mIdViaggio;
+    private List<Citta> mCitta;
 
     public DettagliViaggioLoader(Context context, ContentResolver resolver, long idViaggio) {
         super(context);
@@ -30,7 +31,10 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
-        this.forceLoad();
+        if (mCitta != null)
+            deliverResult(mCitta);
+        if (mCitta == null || takeContentChanged())
+            this.forceLoad();
     }
 
     @Override
@@ -38,19 +42,22 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
         List<Citta> list = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);
         Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_JOIN, null, null, MapperContract.Citta.DEFAULT_SORT);
-        while (c.moveToNext()) {
-            Citta citta = new Citta();
-            citta.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
-            citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
-            citta.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_VIAGGIO)));
-            citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
-            citta.setNazione(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE)));
-            citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
-            citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
-            citta.setPercentuale(c.getDouble(c.getColumnIndex(MapperContract.Citta.PERCENTUALE)));
-            list.add(citta);
+        if (c != null) {
+            while (c.moveToNext()) {
+                Citta citta = new Citta();
+                citta.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
+                citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
+                citta.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_VIAGGIO)));
+                citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
+                citta.setNazione(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE)));
+                citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
+                citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
+                citta.setPercentuale(c.getDouble(c.getColumnIndex(MapperContract.Citta.PERCENTUALE)));
+                list.add(citta);
+            }
+            c.close();
+            return list;
         }
-        c.close();
-        return list;
+        return null;
     }
 }
