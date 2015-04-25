@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
@@ -83,7 +85,8 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
     @Override
     public void selezionataCitta(long id) {
-        //TODO: intent per aprire l'activity dettagli della citta
+        Intent intent = new Intent(getActivity(), DettagliCittaActivity.class);
+        startActivity(intent);
     }
 
     /**

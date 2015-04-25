@@ -27,14 +27,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
-        <provider
-            android:name="com.stefano.andrea.providers.MapperContentProvider"
-            android:authorities="com.stefano.andrea.mapper.provider"
-            android:enabled="true"
-            android:exported="false" >
-        </provider>
-
         <activity
             android:name=".DettagliCittaActivity"
             android:label="@string/title_activity_dettagli_citta"
@@ -43,6 +35,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stefano.andrea.activities.DettagliViaggioActivity" />
         </activity>
+        <provider
+            android:name="com.stefano.andrea.providers.MapperContentProvider"
+            android:authorities="com.stefano.andrea.mapper.provider"
+            android:enabled="true"
+            android:exported="false" >
+        </provider>
     </application>
 
 </manifest>

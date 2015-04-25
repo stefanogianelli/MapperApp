@@ -1,5 +1,6 @@
 package com.stefano.andrea.activities;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -7,9 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.stefano.andrea.adapters.TabDettagliCittaAdapter;
+import com.stefano.andrea.fragments.DettagliCittaFragment;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliCittaActivity extends ActionBarActivity {
+public class DettagliCittaActivity extends ActionBarActivity implements DettagliCittaFragment.OnFragmentInteractionListener {
 
     private ViewPager mPager;
     private TabDettagliCittaAdapter mAdapter;
@@ -67,5 +69,10 @@ public class DettagliCittaActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //TODO: da implementare
     }
 }
