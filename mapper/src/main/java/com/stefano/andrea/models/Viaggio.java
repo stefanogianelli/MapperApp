@@ -1,9 +1,5 @@
 package com.stefano.andrea.models;
 
-import android.os.Parcelable;
-
-import java.io.Serializable;
-
 /**
  * Viaggio
  */
@@ -11,6 +7,10 @@ public class Viaggio {
 
     private long id;
     private String nome;
+
+    public Viaggio (String nome) {
+        this.nome = nome;
+    }
 
     public Viaggio (long id, String nome) {
         this.id = id;

@@ -4,11 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -25,8 +23,8 @@ import com.melnykov.fab.FloatingActionButton;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
-import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.DeleteTask;
+import com.stefano.andrea.tasks.InsertTask;
 
 import java.util.List;
 
@@ -100,18 +98,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     /**
      * Crea un nuovo viaggio nel database
      * @param nome Il nome del viaggio
-     * @return L'uri del viaggio inserito nel database, null se l'operazione fallisce
      */
-    public Uri creaViaggio (String nome) {
-        ContentValues values = new ContentValues();
-        values.put(MapperContract.Viaggio.NOME, nome);
-        Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
-        if (uri != null && uri.getLastPathSegment() != "-1") {
-            long id = Long.parseLong(uri.getLastPathSegment());
-            mAdapter.creaNuovoViaggio(id, nome);
-            return uri;
-        }
-        return null;
+    public void creaViaggio (String nome) {
+        Viaggio viaggio = new Viaggio(nome);
+        new InsertTask<>(this, mResolver, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
     }
 
     /**

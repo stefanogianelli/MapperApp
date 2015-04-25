@@ -31,8 +31,8 @@ import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;
-import com.stefano.andrea.tasks.CreaCittaTask;
 import com.stefano.andrea.tasks.DeleteTask;
+import com.stefano.andrea.tasks.InsertTask;
 
 import java.util.List;
 
@@ -87,10 +87,27 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         return v;
     }
 
+    /**
+     * Avvia l'activity con i dettagli della citta
+     * @param id parametro da definire
+     */
     @Override
     public void selezionataCitta(long id) {
         Intent intent = new Intent(getActivity(), DettagliCittaActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * Aggiunge una nuova citta al viaggio
+     * @param nomeCitta Il nome della citta
+     * @param nomeNazione Il nome della nazione
+     */
+    public void creaNuovaCitta (String nomeCitta, String nomeNazione) {
+        Citta citta = new Citta();
+        citta.setIdViaggio(mIdViaggio);
+        citta.setNome(nomeCitta);
+        citta.setNazione(nomeNazione);
+        new InsertTask<>(getActivity(), mResolver, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
     }
 
     /**
@@ -111,7 +128,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                         Dialog d = (Dialog) dialog;
                         EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
                         EditText nomeCitta = (EditText) d.findViewById(R.id.text_add_citta);
-                        new CreaCittaTask(getActivity(), mResolver, mAdapter, mIdViaggio).execute(nomeCitta.getText().toString(), nomeNazione.getText().toString());
+                        creaNuovaCitta(nomeCitta.getText().toString(), nomeNazione.getText().toString());
                         d.dismiss();
                     }
                 })
