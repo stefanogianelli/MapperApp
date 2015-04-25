@@ -40,11 +40,6 @@
         <item quantity="other">%d elementi selezionati</item>
     </plurals>
 
-    <!-- Task cancellazione items -->
-    <string name="eliminazione_messagge_dialog">Eliminazione in corso &#8230;</string>
-    <string name="errore_eliminazione_titolo_dialog">Errore</string>
-    <string name="errore_eliminazione_messaggio_dialog">Errore durante l\'eliminazione</string>
-
     <!-- Messaggi di errore -->
     <string name="unsupported_uri_error">URI non supportata</string>
 
