@@ -4,12 +4,10 @@ package com.stefano.andrea.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -30,8 +28,8 @@ import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;
-import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.CreaCittaTask;
+import com.stefano.andrea.tasks.DeleteTask;
 
 import java.util.List;
 
@@ -89,30 +87,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     /**
-     * Cancella una citta
-     * @param citta La citta da cancellare
-     * @return 1 se l'operazione e' termanata correttamente, 0 altrimenti
-     */
-    public int cancellaCitta (Citta citta) {
-        Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, citta.getId());
-        int count = mResolver.delete(uri, null, null);
-        if (count != 0)
-            mAdapter.cancellaCitta(citta);
-        return count;
-    }
-
-    /**
      * Cancella le citta selezionate dall'utente
-     * @return Il numero di citta cancellate
      */
-    public int cancellaElencoCitta () {
-        int count = 0;
-        for (int i = mElencoCitta.size(); i >= 0; i--) {
-            if (mAdapter.isSelected(i)) {
-                count += cancellaCitta(mElencoCitta.get(i));
-            }
-        }
-        return count;
+    public void cancellaElencoCitta () {
+        new DeleteTask<>(getActivity(), mResolver, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     public void openDialogAddCitta(View view) {

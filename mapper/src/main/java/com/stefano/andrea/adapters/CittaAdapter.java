@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.utils.SelectableAdapter;
 import com.stefano.andrea.utils.SelectableHolder;
 
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * CittaAdapter
  */
-public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> {
+public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> implements DeleteTask.DeleteAdapter<Citta> {
 
     private List<Citta> mElencoCitta;
     private CittaOnClickListener mListener;
@@ -64,8 +65,9 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> {
         notifyItemInserted(0);
     }
 
-    public void cancellaCitta (Citta citta) {
-        int pos = mElencoCitta.indexOf(citta);
+    @Override
+    public void cancellaItem(Citta item) {
+        int pos = mElencoCitta.indexOf(item);
         mElencoCitta.remove(pos);
         notifyItemRemoved(pos);
     }
