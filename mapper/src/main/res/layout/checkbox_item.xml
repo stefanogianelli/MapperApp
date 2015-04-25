@@ -21,12 +21,12 @@
             />
 
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/nome_posto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/chkSelected"
             android:layout_centerVertical="true"
-            android:text="name"
+            android:text="Sdivbsihh dchns"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
