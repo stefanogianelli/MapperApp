@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +26,7 @@ import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.tasks.DeleteTask;
 
 import java.util.List;
 
@@ -115,30 +115,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     }
 
     /**
-     * Cancella un viaggio
-     * @param viaggio Il viaggio da cancellare
-     * @return 1 se il viaggio e' stato cancellato correttamente, 0 altrimenti
-     */
-    public int cancellaViaggio (Viaggio viaggio) {
-        Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, viaggio.getId());
-        int count = mResolver.delete(uri, null, null);
-        if (count != 0)
-            mAdapter.cancellaViaggio(viaggio);
-        return count;
-    }
-
-    /**
      * Cancella i viaggi selezionati dall'utente
-     * @return il numero di viaggi cancellati
      */
-    public int cancellaViaggi () {
-        int count = 0;
-        for (int i = mListaViaggi.size(); i >= 0; i--) {
-            if (mAdapter.isSelected(i)) {
-                count += cancellaViaggio(mListaViaggi.get(i));
-            }
-        }
-        return count;
+    public void cancellaViaggi () {
+        new DeleteTask<>(this, mResolver, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**

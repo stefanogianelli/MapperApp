@@ -1,6 +1,7 @@
 package com.stefano.andrea.utils;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +31,9 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
     @Override
     public void onBindViewHolder(VH holder, int position) {
         if (isSelected(position)) {
-            holder.itemView.setBackgroundColor(holder.itemView.getResources().getColor(R.color.selected_overlay));
+            holder.itemView.setBackgroundColor(mActivity.getResources().getColor(R.color.selected_overlay));
+        } else {
+            holder.itemView.setBackgroundColor(Color.WHITE);
         }
         onBindViewHolder1(holder, position);
     }

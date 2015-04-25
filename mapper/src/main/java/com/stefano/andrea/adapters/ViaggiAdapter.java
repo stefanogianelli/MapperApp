@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
+import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.utils.SelectableAdapter;
 import com.stefano.andrea.utils.SelectableHolder;
 
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * ViaggiAdapter
  */
-public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> {
+public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> implements DeleteTask.DeleteAdapter<Viaggio> {
 
     private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
@@ -65,8 +66,9 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         notifyItemInserted(0);
     }
 
-    public void cancellaViaggio (Viaggio viaggio) {
-        int pos = mListaViaggi.indexOf(viaggio);
+    @Override
+    public void cancellaItem(Viaggio item) {
+        int pos = mListaViaggi.indexOf(item);
         mListaViaggi.remove(pos);
         notifyItemRemoved(pos);
     }
