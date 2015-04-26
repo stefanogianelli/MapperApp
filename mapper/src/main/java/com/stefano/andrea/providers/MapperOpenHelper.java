@@ -22,7 +22,8 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
 
     private interface Triggers {
         String ELIMINA_CITTA_IN_VIAGGIO = "citta_in_viaggio_delete";
-        String UPDATE_COUNT_CITTA = "update_count_citta";
+        String INCREMENTA_COUNT_CITTA = "incrementa_count_citta";
+        String DECREMENTA_COUNT_CITTA = "decrementa_count_citta";
     }
 
     private static final String DATABASE_NAME = "mapper_db";
@@ -92,11 +93,19 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
             Tables.VIAGGIO + " BEGIN DELETE FROM " + Tables.CITTA + " WHERE " + MapperContract.Citta.ID_VIAGGIO + " = old." +
             MapperContract.Viaggio.ID_VIAGGIO + "; END;";
 
-    //Trigger che aggiorna il conteggio delle citta presenti in un viaggio
-    private static final String TRIGGER_UPDATE_COUNT_CITTA = "CREATE TRIGGER " + Triggers.UPDATE_COUNT_CITTA +
+    //Trigger che incrementa i contatori delle citta
+    private static final String TRIGGER_INCREMENTA_COUNT_CITTA = "CREATE TRIGGER " + Triggers.INCREMENTA_COUNT_CITTA +
             " AFTER INSERT ON " + Tables.CITTA + " BEGIN UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_CITTA +
-            " = " + MapperContract.Viaggio.COUNT_CITTA + " + 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = new." + MapperContract.Citta.ID_VIAGGIO +
-            "; END;";
+            " = " + MapperContract.Viaggio.COUNT_CITTA + " + 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = new." + MapperContract.Citta.ID_VIAGGIO + ";" +
+            "UPDATE " + Tables.DATI_CITTA + " SET " + MapperContract.DatiCitta.COUNT + " = " + MapperContract.DatiCitta.COUNT + " + 1 WHERE " +
+            Tables.DATI_CITTA + "." + MapperContract.DatiCitta.ID + " = new." + MapperContract.Citta.ID_DATI_CITTA + "; END;";
+
+    //Trigger che decrementa i contatori delle citta
+    private static final String TRIGGER_DECREMENTA_COUNT_CITTA = "CREATE TRIGGER " + Triggers.DECREMENTA_COUNT_CITTA +
+            " AFTER DELETE ON " + Tables.CITTA + " BEGIN UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_CITTA +
+            " = " + MapperContract.Viaggio.COUNT_CITTA + " - 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = old." + MapperContract.Citta.ID_VIAGGIO + ";" +
+            "UPDATE " + Tables.DATI_CITTA + " SET " + MapperContract.DatiCitta.COUNT + " = " + MapperContract.DatiCitta.COUNT + " - 1 WHERE " +
+            Tables.DATI_CITTA + "." + MapperContract.DatiCitta.ID + " = old." + MapperContract.Citta.ID_DATI_CITTA + "; END;";
 
     public MapperOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -120,7 +129,8 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_LUOGO);
         db.execSQL(CREATE_FOTO);
         db.execSQL(TRIGGER_ELIMINA_CITTA_IN_VIAGGIO);
-        db.execSQL(TRIGGER_UPDATE_COUNT_CITTA);
+        db.execSQL(TRIGGER_INCREMENTA_COUNT_CITTA);
+        db.execSQL(TRIGGER_DECREMENTA_COUNT_CITTA);
     }
 
     @Override
@@ -132,7 +142,8 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.LUOGO);
         db.execSQL("DROP TABLE IF EXISTS " + Tables.FOTO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_CITTA_IN_VIAGGIO);
-        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.UPDATE_COUNT_CITTA);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.INCREMENTA_COUNT_CITTA);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_CITTA);
         onCreate(db);
     }
 }
