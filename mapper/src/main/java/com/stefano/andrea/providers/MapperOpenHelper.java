@@ -24,6 +24,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
         String ELIMINA_CITTA_IN_VIAGGIO = "citta_in_viaggio_delete";
         String INCREMENTA_COUNT_CITTA = "incrementa_count_citta";
         String DECREMENTA_COUNT_CITTA = "decrementa_count_citta";
+        String ELIMINA_DATI_CITTA = "elimina_dati_citta";
     }
 
     private static final String DATABASE_NAME = "mapper_db";
@@ -107,6 +108,12 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
             "UPDATE " + Tables.DATI_CITTA + " SET " + MapperContract.DatiCitta.COUNT + " = " + MapperContract.DatiCitta.COUNT + " - 1 WHERE " +
             Tables.DATI_CITTA + "." + MapperContract.DatiCitta.ID + " = old." + MapperContract.Citta.ID_DATI_CITTA + "; END;";
 
+    //Trigger che elimina i dati di una citta una volta che non sono più referenziati da nessuna citta
+    private static final String TRIGGER_ELIMINA_DATI_CITTA = "CREATE TRIGGER " + Triggers.ELIMINA_DATI_CITTA +
+            " AFTER UPDATE OF " + MapperContract.DatiCitta.COUNT + " ON " + Tables.DATI_CITTA +
+            " FOR EACH ROW WHEN new." + MapperContract.DatiCitta.COUNT + " = 0 BEGIN " +
+            "DELETE FROM " + Tables.DATI_CITTA + " WHERE " + MapperContract.DatiCitta.ID + " = new." + MapperContract.DatiCitta.ID + "; END;";
+
     public MapperOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -131,6 +138,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
         db.execSQL(TRIGGER_ELIMINA_CITTA_IN_VIAGGIO);
         db.execSQL(TRIGGER_INCREMENTA_COUNT_CITTA);
         db.execSQL(TRIGGER_DECREMENTA_COUNT_CITTA);
+        db.execSQL(TRIGGER_ELIMINA_DATI_CITTA);
     }
 
     @Override
@@ -144,6 +152,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_CITTA_IN_VIAGGIO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.INCREMENTA_COUNT_CITTA);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_CITTA);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_DATI_CITTA);
         onCreate(db);
     }
 }

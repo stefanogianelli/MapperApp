@@ -96,6 +96,28 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         assertEquals(uri.getLastPathSegment(), "2");
     }
 
+    public void testCancellazioneDatiCitta() throws Exception {
+        //aggiungo nuova citta di prova
+        ContentValues values = new ContentValues();
+        values.put(MapperContract.DatiCitta.NOME, "provadelete");
+        values.put(MapperContract.DatiCitta.NAZIONE, "italia");
+        values.put(MapperContract.DatiCitta.LATITUDINE, 0);
+        values.put(MapperContract.DatiCitta.LONGITUDINE, 0);
+        Uri result = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
+        long id = Long.parseLong(result.getLastPathSegment());
+        //aggiungo la citta al viaggio di default
+        values.clear();
+        values.put(MapperContract.Citta.ID_VIAGGIO, 1);
+        values.put(MapperContract.Citta.ID_DATI_CITTA, id);
+        values.put(MapperContract.Citta.PERCENTUALE, 0);
+        Uri cittaInViaggio = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
+        //elimino la citta appena creata
+        mResolver.delete(cittaInViaggio, null, null);
+        //verifico che i dati della citta siano stati cancellati
+        Cursor c = mResolver.query(result, MapperContract.DatiCitta.PROJECTION_ALL, null, null, MapperContract.DatiCitta.DEFAULT_SORT);
+        assertEquals(c.getCount(), 0);
+    }
+    
     /*
     Tabella Citta
      */
