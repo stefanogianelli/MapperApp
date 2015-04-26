@@ -17,7 +17,7 @@ import com.stefano.andrea.utils.SelectionBuilder;
  */
 public class MapperContentProvider extends ContentProvider {
 
-    private MapperOpenHelper mOpenHelper;
+    private MapperDatabase mOpenHelper;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -44,31 +44,31 @@ public class MapperContentProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MapperContract.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority, MapperOpenHelper.Tables.VIAGGIO, VIAGGI);
-        matcher.addURI(authority, MapperOpenHelper.Tables.VIAGGIO + "/#", VIAGGI_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.VIAGGIO, VIAGGI);
+        matcher.addURI(authority, MapperDatabase.Tables.VIAGGIO + "/#", VIAGGI_ID);
 
-        matcher.addURI(authority, MapperOpenHelper.Tables.CITTA, CITTA);
-        matcher.addURI(authority, MapperOpenHelper.Tables.CITTA + "/#", CITTA_ID);
-        matcher.addURI(authority, MapperOpenHelper.Tables.CITTA + "/viaggio/#", CITTA_IN_VIAGGIO);
+        matcher.addURI(authority, MapperDatabase.Tables.CITTA, CITTA);
+        matcher.addURI(authority, MapperDatabase.Tables.CITTA + "/#", CITTA_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.CITTA + "/viaggio/#", CITTA_IN_VIAGGIO);
 
-        matcher.addURI(authority, MapperOpenHelper.Tables.POSTO, POSTI);
-        matcher.addURI(authority, MapperOpenHelper.Tables.POSTO + "/#", POSTI_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.POSTO, POSTI);
+        matcher.addURI(authority, MapperDatabase.Tables.POSTO + "/#", POSTI_ID);
 
-        matcher.addURI(authority, MapperOpenHelper.Tables.DATI_CITTA, DATI_CITTA);
-        matcher.addURI(authority, MapperOpenHelper.Tables.DATI_CITTA + "/#", DATI_CITTA_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.DATI_CITTA, DATI_CITTA);
+        matcher.addURI(authority, MapperDatabase.Tables.DATI_CITTA + "/#", DATI_CITTA_ID);
 
-        matcher.addURI(authority, MapperOpenHelper.Tables.LUOGO, LUOGHI);
-        matcher.addURI(authority, MapperOpenHelper.Tables.LUOGO + "/#", LUOGHI_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.LUOGO, LUOGHI);
+        matcher.addURI(authority, MapperDatabase.Tables.LUOGO + "/#", LUOGHI_ID);
 
-        matcher.addURI(authority, MapperOpenHelper.Tables.FOTO, FOTO);
-        matcher.addURI(authority, MapperOpenHelper.Tables.FOTO + "/#", FOTO_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.FOTO, FOTO);
+        matcher.addURI(authority, MapperDatabase.Tables.FOTO + "/#", FOTO_ID);
 
         return matcher;
     }
 
     @Override
     public boolean onCreate() {
-        mOpenHelper = new MapperOpenHelper(getContext());
+        mOpenHelper = new MapperDatabase(getContext());
         return true;
     }
 
@@ -87,42 +87,42 @@ public class MapperContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id);
             case VIAGGI:
-                builder.table(MapperOpenHelper.Tables.VIAGGIO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.VIAGGIO).where(selection, selectionArgs);
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Citta.ID_CITTA + "=?", id);
             case CITTA:
-                builder.table(MapperOpenHelper.Tables.CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
                 break;
             case CITTA_IN_VIAGGIO:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Citta.ID_VIAGGIO + "=?", id);
-                builder.table(MapperOpenHelper.Tables.CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.CITTA_JOIN_DATI_CITTA).where(selection, selectionArgs);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Posto.ID_POSTO + "=?", id);
             case POSTI:
-                builder.table(MapperOpenHelper.Tables.POSTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.POSTO).where(selection, selectionArgs);
                 break;
             case DATI_CITTA_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.DatiCitta.ID + "=?", id);
             case DATI_CITTA:
-                builder.table(MapperOpenHelper.Tables.DATI_CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.DATI_CITTA).where(selection, selectionArgs);
                 break;
             case LUOGHI_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Luogo.ID + "=?", id);
             case LUOGHI:
-                builder.table(MapperOpenHelper.Tables.LUOGO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.LUOGO).where(selection, selectionArgs);
                 break;
             case FOTO_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Foto.ID + "=?", id);
             case FOTO:
-                builder.table(MapperOpenHelper.Tables.FOTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException(ctx.getResources().getString(R.string.unsupported_uri_error) + " " + uri);
@@ -182,27 +182,27 @@ public class MapperContentProvider extends ContentProvider {
         Uri result;
         switch (match) {
             case VIAGGI:
-                id = db.insert(MapperOpenHelper.Tables.VIAGGIO, null, values);
+                id = db.insert(MapperDatabase.Tables.VIAGGIO, null, values);
                 result = Uri.parse(MapperContract.Viaggio.CONTENT_URI + "/" + id);
                 break;
             case CITTA:
-                id = db.insert(MapperOpenHelper.Tables.CITTA, null, values);
+                id = db.insert(MapperDatabase.Tables.CITTA, null, values);
                 result = Uri.parse(MapperContract.Citta.CONTENT_URI + "/" + id);
                 break;
             case POSTI:
-                id = db.insert(MapperOpenHelper.Tables.POSTO, null, values);
+                id = db.insert(MapperDatabase.Tables.POSTO, null, values);
                 result = Uri.parse(MapperContract.Posto.CONTENT_URI + "/" + id);
                 break;
             case DATI_CITTA:
-                id = db.insert(MapperOpenHelper.Tables.DATI_CITTA, null, values);
+                id = db.insert(MapperDatabase.Tables.DATI_CITTA, null, values);
                 result = Uri.parse(MapperContract.DatiCitta.CONTENT_URI + "/" + id);
                 break;
             case LUOGHI:
-                id = db.insert(MapperOpenHelper.Tables.LUOGO, null, values);
+                id = db.insert(MapperDatabase.Tables.LUOGO, null, values);
                 result = Uri.parse(MapperContract.Luogo.CONTENT_URI + "/" + id);
                 break;
             case FOTO:
-                id = db.insert(MapperOpenHelper.Tables.FOTO, null, values);
+                id = db.insert(MapperDatabase.Tables.FOTO, null, values);
                 result = Uri.parse(MapperContract.Foto.CONTENT_URI + "/" + id);
                 break;
             default:
@@ -226,37 +226,37 @@ public class MapperContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id);
             case VIAGGI:
-                builder.table(MapperOpenHelper.Tables.VIAGGIO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.VIAGGIO).where(selection, selectionArgs);
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Citta.ID_CITTA + "=?", id);
             case CITTA:
-                builder.table(MapperOpenHelper.Tables.CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.CITTA).where(selection, selectionArgs);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Posto.ID_POSTO + "=?", id);
             case POSTI:
-                builder.table(MapperOpenHelper.Tables.POSTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.POSTO).where(selection, selectionArgs);
                 break;
             case DATI_CITTA_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.DatiCitta.ID + "=?", id);
             case DATI_CITTA:
-                builder.table(MapperOpenHelper.Tables.DATI_CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.DATI_CITTA).where(selection, selectionArgs);
                 break;
             case LUOGHI_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Luogo.ID + "=?", id);
             case LUOGHI:
-                builder.table(MapperOpenHelper.Tables.LUOGO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.LUOGO).where(selection, selectionArgs);
                 break;
             case FOTO_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Foto.ID + "=?", id);
             case FOTO:
-                builder.table(MapperOpenHelper.Tables.FOTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException(ctx.getResources().getString(R.string.unsupported_uri_error) + " " + uri);
@@ -280,37 +280,37 @@ public class MapperContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Viaggio.ID_VIAGGIO + "=?", id);
             case VIAGGI:
-                builder.table(MapperOpenHelper.Tables.VIAGGIO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.VIAGGIO).where(selection, selectionArgs);
                 break;
             case CITTA_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Citta.ID_CITTA + "=?", id);
             case CITTA:
-                builder.table(MapperOpenHelper.Tables.CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.CITTA).where(selection, selectionArgs);
                 break;
             case POSTI_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Posto.ID_POSTO + "=?", id);
             case POSTI:
-                builder.table(MapperOpenHelper.Tables.POSTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.POSTO).where(selection, selectionArgs);
                 break;
             case DATI_CITTA_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.DatiCitta.ID + "=?", id);
             case DATI_CITTA:
-                builder.table(MapperOpenHelper.Tables.DATI_CITTA).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.DATI_CITTA).where(selection, selectionArgs);
                 break;
             case LUOGHI_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Luogo.ID + "=?", id);
             case LUOGHI:
-                builder.table(MapperOpenHelper.Tables.LUOGO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.LUOGO).where(selection, selectionArgs);
                 break;
             case FOTO_ID:
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Foto.ID + "=?", id);
             case FOTO:
-                builder.table(MapperOpenHelper.Tables.FOTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException(ctx.getResources().getString(R.string.unsupported_uri_error) + " " + uri);

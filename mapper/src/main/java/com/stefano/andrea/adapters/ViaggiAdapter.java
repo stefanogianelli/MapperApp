@@ -88,7 +88,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         public void bindViaggio (Viaggio viaggio) {
             this.itemView.setTag(viaggio);
             nomeViaggio.setText(viaggio.getNome());
-            viaggioLabel.setText(viaggio.getCountCitta() + " citta");
+            viaggioLabel.setText(viaggio.getCountCitta() + " citta, " + viaggio.getCountPosti() + " posti");
         }
 
         @Override
