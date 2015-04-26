@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.melnykov.fab.FloatingActionButton
+    <com.stefano.andrea.utils.CustomFAB
         android:id="@+id/fab_aggiunta_citta"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"

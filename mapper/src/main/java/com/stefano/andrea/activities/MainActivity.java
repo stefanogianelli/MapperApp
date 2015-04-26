@@ -19,12 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.CustomFAB;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private ViaggiAdapter mAdapter;
     private ContentResolver mResolver;
     private List<Viaggio> mListaViaggi;
-    private FloatingActionButton mFab;
+    private CustomFAB mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback());
         mRecyclerView.setAdapter(mAdapter);
         //acquisisco riferimento al fab
-        mFab = (FloatingActionButton) findViewById(R.id.fab_aggiunta_viaggio);
+        mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         mFab.attachToRecyclerView(mRecyclerView);
     }
 
@@ -166,6 +166,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mFab.hide();
+            mFab.setForceHide(true);
             mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
             return true;
         }
@@ -190,6 +191,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
+            mFab.setForceHide(false);
             mFab.show();
         }
     }

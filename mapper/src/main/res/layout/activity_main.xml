@@ -14,7 +14,7 @@
         android:paddingLeft="@dimen/padding_card_viaggio"
         android:paddingRight="@dimen/padding_card_viaggio"/>
 
-    <com.melnykov.fab.FloatingActionButton
+    <com.stefano.andrea.utils.CustomFAB
         android:id="@+id/fab_aggiunta_viaggio"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"

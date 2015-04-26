@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
@@ -33,6 +32,7 @@ import com.stefano.andrea.loaders.DettagliViaggioLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.CustomFAB;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private long mIdViaggio;
     private String mNomeViaggio;
     private List<Citta> mElencoCitta;
-    private FloatingActionButton mFab;
+    private CustomFAB mFab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
-        mFab = (FloatingActionButton) v.findViewById(R.id.fab_aggiunta_citta);
+        mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -170,6 +170,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mFab.hide();
+            mFab.setForceHide(true);
             mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
             return true;
         }
@@ -194,6 +195,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
+            mFab.setForceHide(false);
             mFab.show();
         }
     }
