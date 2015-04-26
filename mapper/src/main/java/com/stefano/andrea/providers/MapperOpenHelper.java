@@ -18,19 +18,24 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
         String FOTO = "foto";
     }
 
-    private static final String DATABASE_NAME = "mapperdb";
-    private static final int DATABASE_VERSION = 2;
+    private static final String DATABASE_NAME = "mapper_db";
+    private static final int DATABASE_VERSION = 1;
 
     //Create table VIAGGIO
     private static final String CREATE_VIAGGIO = "CREATE TABLE \"" + Tables.VIAGGIO + "\" (" +
             "`" + MapperContract.Viaggio.ID_VIAGGIO +"` INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "`" + MapperContract.Viaggio.NOME + "` TEXT NOT NULL);";
+            "`" + MapperContract.Viaggio.NOME + "` TEXT NOT NULL," +
+            "`" + MapperContract.Viaggio.COUNT_CITTA + "` INTEGER DEFAULT 0," +
+            "`" + MapperContract.Viaggio.COUNT_POSTI + "` INTEGER DEFAULT 0," +
+            "`" + MapperContract.Viaggio.PATH_FOTO + "` TEXT DEFAULT null);";
     //Create table CITTA
     private static final String CREATE_CITTA = "CREATE TABLE \"" + Tables.CITTA + "\" (" +
             "`" + MapperContract.Citta.ID_CITTA + "` INTEGER PRIMARY KEY AUTOINCREMENT," +
             "`" + MapperContract.Citta.ID_DATI_CITTA + "` INTEGER NOT NULL," +
             "`" + MapperContract.Citta.ID_VIAGGIO + "` INTEGER NOT NULL," +
-            "`" + MapperContract.Citta.PERCENTUALE + "` REAL DEFAULT -1," +
+            "`" + MapperContract.Citta.PERCENTUALE + "` REAL DEFAULT 0," +
+            "`" + MapperContract.Citta.COUNT_POSTI + "` INTEGER DEFAULT 0," +
+            "`" + MapperContract.Citta.POSTI_VISITATI + "` INTEGER DEFAULT 0," +
             " FOREIGN KEY(`" + MapperContract.Citta.ID_DATI_CITTA + "`) REFERENCES " + Tables.DATI_CITTA + " (`" + MapperContract.DatiCitta.ID + "`)," +
             " FOREIGN KEY(`" + MapperContract.Citta.ID_VIAGGIO +"`) REFERENCES " + Tables.VIAGGIO + " (`" + MapperContract.Viaggio.ID_VIAGGIO + "`));";
     //Create table POSTO
@@ -47,7 +52,8 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
             "`" + MapperContract.DatiCitta.NOME + "` TEXT NOT NULL," +
             "`" + MapperContract.DatiCitta.NAZIONE + "` TEXT NOT NULL," +
             "`" + MapperContract.DatiCitta.LATITUDINE + "` REAL NOT NULL," +
-            "`" + MapperContract.DatiCitta.LONGITUDINE + "` REAL NOT NULL);";
+            "`" + MapperContract.DatiCitta.LONGITUDINE + "` REAL NOT NULL," +
+            "`" + MapperContract.DatiCitta.COUNT + "` INTEGER DEFAULT 0);";
     //Create table LUOGO
     private static final String CREATE_LUOGO = "CREATE TABLE \"" + Tables.LUOGO + "\" (" +
             "`" + MapperContract.Luogo.ID + "` INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -55,6 +61,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
             "`" + MapperContract.Luogo.LATITUDINE + "` REAL NOT NULL," +
             "`" + MapperContract.Luogo.LONGITUDINE + "` REAL NOT NULL," +
             "`" + MapperContract.Luogo.ID_CITTA + "` INTEGER NOT NULL," +
+            "`" + MapperContract.Luogo.COUNT + "` INTEGER DEFAULT 0," +
             "FOREIGN KEY(`" + MapperContract.Luogo.ID_CITTA + "`) REFERENCES " + Tables.DATI_CITTA + " (`" + MapperContract.DatiCitta.ID + "`));";
     //Create table FOTO
     private static final String CREATE_FOTO = "CREATE TABLE \"" + Tables.FOTO + "\" (" +
@@ -75,6 +82,7 @@ public class MapperOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onOpen (SQLiteDatabase db) {
         super.onOpen(db);
+        //abilita foreign keys
         if (!db.isReadOnly()) {
             db.execSQL("PRAGMA foreign_keys=ON;");
         }
