@@ -42,15 +42,13 @@
                     android:id="@+id/viaggio_item_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/info_title"
-                    android:text="afdfddfv" />
+                    android:textColor="@color/info_title" />
 
                 <TextView style="?android:textAppearanceSmall"
                     android:id="@+id/viaggio_item_label_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/info_subtitle"
-                    android:text="sduchsdnsdcnhe" />
+                    android:textColor="@color/info_subtitle" />
 
             </LinearLayout>
 

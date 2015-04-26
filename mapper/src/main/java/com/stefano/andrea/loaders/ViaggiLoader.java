@@ -39,9 +39,12 @@ public class ViaggiLoader extends AsyncTaskLoader<List<Viaggio>> {
         Cursor c = mResolver.query(MapperContract.Viaggio.CONTENT_URI, MapperContract.Viaggio.PROJECTION_ALL, null, null, MapperContract.Viaggio.DEFAULT_SORT);
         if (c != null) {
             while (c.moveToNext()) {
-                long id_viaggio = c.getLong(c.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO));
-                String nome = c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME));
-                mViaggi.add(new Viaggio(id_viaggio, nome));
+                Viaggio viaggio = new Viaggio();
+                viaggio.setId(c.getLong(c.getColumnIndex(MapperContract.Viaggio.ID_VIAGGIO)));
+                viaggio.setNome(c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME)));
+                viaggio.setCountCitta(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_CITTA)));
+                viaggio.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_POSTI)));
+                mViaggi.add(viaggio);
             }
             c.close();
             return mViaggi;

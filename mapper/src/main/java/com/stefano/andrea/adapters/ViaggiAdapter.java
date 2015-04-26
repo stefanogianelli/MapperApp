@@ -76,16 +76,19 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     public class ViaggiHolder extends SelectableHolder {
 
-        private TextView vNome;
+        private TextView nomeViaggio;
+        private TextView viaggioLabel;
 
         public ViaggiHolder(View itemView) {
             super(itemView);
-            vNome = (TextView) itemView.findViewById(R.id.viaggio_item_label);
+            nomeViaggio = (TextView) itemView.findViewById(R.id.viaggio_item_label);
+            viaggioLabel = (TextView) itemView.findViewById(R.id.viaggio_item_label_subtitle);
         }
 
         public void bindViaggio (Viaggio viaggio) {
             this.itemView.setTag(viaggio);
-            vNome.setText(viaggio.getNome());
+            nomeViaggio.setText(viaggio.getNome());
+            viaggioLabel.setText(viaggio.getCountCitta() + " citta");
         }
 
         @Override

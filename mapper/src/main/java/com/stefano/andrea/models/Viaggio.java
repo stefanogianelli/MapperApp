@@ -7,6 +7,11 @@ public class Viaggio {
 
     private long id;
     private String nome;
+    private int countCitta;
+    private int countPosti;
+    private String pathFoto;
+
+    public Viaggio () {}
 
     public Viaggio (String nome) {
         this.nome = nome;
@@ -33,10 +38,27 @@ public class Viaggio {
         this.nome = nome;
     }
 
-    @Override
-    public String toString() {
-        return "Viaggio{" +
-                "nome='" + nome + '\'' +
-                '}';
+    public int getCountCitta() {
+        return countCitta;
+    }
+
+    public void setCountCitta(int countCitta) {
+        this.countCitta = countCitta;
+    }
+
+    public int getCountPosti() {
+        return countPosti;
+    }
+
+    public void setCountPosti(int countPosti) {
+        this.countPosti = countPosti;
+    }
+
+    public String getPathFoto() {
+        return pathFoto;
+    }
+
+    public void setPathFoto(String pathFoto) {
+        this.pathFoto = pathFoto;
     }
 }
