@@ -3,7 +3,6 @@ package com.stefano.andrea.tasks;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -22,7 +21,6 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     private interface DeleteInterface<T> {
         int cancellaItem (T item);
-        int cancellaItem (int idItem);
     }
 
     public interface DeleteAdapter<T> {
@@ -100,28 +98,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     private class CancellaViaggio implements DeleteInterface<Viaggio> {
         @Override
         public int cancellaItem(Viaggio item) {
-            //verifico se esistono delle citta associate al viaggio da eliminare
-            Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, item.getId());
-            String [] projection = {MapperContract.Citta.ID_CITTA};
-            Cursor c = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
-            if (c != null) {
-                CancellaCitta helper = new CancellaCitta();
-                int idCitta;
-                //elimino le citta trovate
-                while (c.moveToNext()) {
-                    idCitta = c.getInt(c.getColumnIndex(MapperContract.Citta.ID_CITTA));
-                    helper.cancellaItem(idCitta);
-                }
-                c.close();
-            }
             Uri uri = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, item.getId());
             return mResolver.delete(uri, null, null);
-        }
-
-        @Override
-        public int cancellaItem(int idItem) {
-            //implementazione non necessaria
-            return 0;
         }
     }
 
@@ -132,12 +110,6 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int cancellaItem(Citta item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, item.getId());
-            return mResolver.delete(uri, null, null);
-        }
-
-        @Override
-        public int cancellaItem(int idItem) {
-            Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idItem);
             return mResolver.delete(uri, null, null);
         }
     }

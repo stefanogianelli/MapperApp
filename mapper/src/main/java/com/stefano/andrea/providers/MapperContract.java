@@ -100,9 +100,8 @@ public final class MapperContract {
 
     /** Costanti della tabella Viaggio */
     public static final class Viaggio implements ViaggioColumns {
-        public static final String TABLE_NAME = "viaggio";
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.VIAGGIO).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.viaggi";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.viaggio";
@@ -115,11 +114,9 @@ public final class MapperContract {
 
     /** Costanti della tabella Citta */
     public static final class Citta implements CittaColumns {
-        public static final String TABLE_NAME = "citta";
-        public static final String TABLE_CITTA_JOIN_DATI_CITTA = TABLE_NAME + " JOIN " + DatiCitta.TABLE_NAME + " ON " + TABLE_NAME + "." + ID_DATI_CITTA +  "=" + DatiCitta.TABLE_NAME + "." + DatiCitta.ID;
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
-        public static final Uri DETTAGLI_VIAGGIO_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).appendPath("viaggio").build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.CITTA).build();
+        public static final Uri DETTAGLI_VIAGGIO_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.CITTA).appendPath("viaggio").build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";
@@ -133,9 +130,8 @@ public final class MapperContract {
 
     /** Costanti della tabella Posto */
     public static final class Posto implements PostoColumns {
-        public static final String TABLE_NAME = "posto";
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.POSTO).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.posto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.posto";
@@ -148,9 +144,8 @@ public final class MapperContract {
 
     /** Costanti della tabella Dati Citta */
     public static final class DatiCitta implements DatiCittaColumns {
-        public static final String TABLE_NAME = "dati_citta";
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.DATI_CITTA).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.daticitta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.daticitta";
@@ -163,9 +158,8 @@ public final class MapperContract {
 
     /** Costanti della tabella Luogo */
     public static final class Luogo implements LuogoColumns {
-        public static final String TABLE_NAME = "luogo";
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.LUOGO).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.luoghi";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.luogo";
@@ -178,9 +172,8 @@ public final class MapperContract {
 
     /** Costanti della tabella Foto */
     public static final class Foto implements FotoColumns {
-        public static final String TABLE_NAME = "foto";
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperOpenHelper.Tables.FOTO).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.foto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.foto";

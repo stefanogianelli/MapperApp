@@ -123,7 +123,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             values.put(MapperContract.Viaggio.NOME, viaggio.getNome());
             Uri uri = mResolver.insert(MapperContract.Viaggio.CONTENT_URI, values);
             long id = Long.parseLong(uri.getLastPathSegment());
-            if (uri != null && id != -1) {
+            if (id != -1) {
                 viaggio.setId(id);
                 return RESULT_OK;
             }
@@ -210,7 +210,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                     Log.v("InsertTask", citta.getNome() + " - Lat: " + latitudine + " , Lng: " + longitudine);
                 Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
                 long idCitta = Long.parseLong(uri.getLastPathSegment());
-                if (uri != null && idCitta != -1) {
+                if (idCitta != -1) {
                     citta.setIdCitta(idCitta);
                     return RESULT_OK;
                 }
@@ -234,7 +234,6 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 while ((read = in.read(buff)) != -1) {
                     jsonResults.append(buff, 0, read);
                 }
-                String a = "";
 
                 JSONObject jsonObj = new JSONObject(jsonResults.toString());
                 JSONArray resultJsonArray = jsonObj.getJSONArray("results");
