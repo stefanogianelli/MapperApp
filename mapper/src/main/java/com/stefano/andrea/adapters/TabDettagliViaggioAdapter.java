@@ -2,57 +2,43 @@ package com.stefano.andrea.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.FotoViaggioFragment;
+import com.stefano.andrea.utils.ScrollableTabAdapter;
 
 
 /**
- * Created by Andre on 21/04/2015.
+ * TabDettagliViaggioAdapter
  */
 
-public class TabDettagliViaggioAdapter  extends FragmentStatePagerAdapter {
+public class TabDettagliViaggioAdapter  extends ScrollableTabAdapter {
 
-    private CharSequence [] mTitles; // This will Store the mTitles of the Tabs which are Going to be passed when TabDettagliViaggioAdapter is created
-    private int mNumbOfTabs; // Store the number of tabs, this will also be passed when the TabDettagliViaggioAdapter is created
-    private int mScrollY;
+    private CharSequence [] mTitles;
+    private int mNumbOfTabs;
 
-    // Build a Constructor and assign the passed Values to appropriate values in the class
     public TabDettagliViaggioAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
         super(fm);
         mTitles = titles;
         mNumbOfTabs = numbOfTabSum;
     }
 
-    //This method return the fragment for the every position in the View Pager
     @Override
     public Fragment getItem(int position) {
-        if(position == 0) // if the position is 0 we are returning the First tab
-        {
-            DettagliViaggioFragment tab1 = new DettagliViaggioFragment();
-            return tab1;
-        }
-        else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
-        {
-            FotoViaggioFragment tab2 = new FotoViaggioFragment();
-            return tab2;
+        if(position == 0) {
+            return new DettagliViaggioFragment();
+        } else {
+            return new FotoViaggioFragment();
         }
     }
 
-    // This method return the titles for the Tabs in the Tab Strip
     @Override
     public CharSequence getPageTitle(int position) {
         return mTitles[position];
     }
 
-    // This method return the Number of tabs for the tabs Strip
     @Override
     public int getCount() {
         return mNumbOfTabs;
-    }
-
-    public void setScrollY(int scrollY) {
-        mScrollY = scrollY;
     }
 }
