@@ -28,6 +28,8 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
 
         mToolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
         setSupportActionBar((Toolbar) mToolbarView);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mHeaderView = findViewById(R.id.dettagli_viaggio_header);
 
