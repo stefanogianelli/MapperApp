@@ -21,5 +21,7 @@
     <dimen name="distanza_card_viaggio">16dp</dimen>
     <dimen name="title_size">72dp</dimen>
     <dimen name="subtitle_size">48dp</dimen>
+    <dimen name="sliding_tab_height">48dp</dimen>
+
 
 </resources>
