@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:paddingTop="@dimen/sliding_tab_height" >
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
@@ -33,14 +34,9 @@
     <com.stefano.andrea.utils.SlidingTabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary" />
+        android:layout_height="@dimen/sliding_tab_height"
+        android:background="@color/ColorPrimary"/>
     </LinearLayout>
 
 
-
 </FrameLayout>
-
-
-
-
