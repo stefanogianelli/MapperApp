@@ -47,19 +47,16 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
     private long mIdViaggio;
-    private String mNomeViaggio;
     private List<Citta> mElencoCitta;
     private CustomFAB mFab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //recupero id e nome del viaggio
+        //recupero id del viaggio
         mIdViaggio = getActivity().getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
-        mNomeViaggio = getActivity().getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
         mResolver = getActivity().getContentResolver();
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
-        getActivity().setTitle(mNomeViaggio);
         mAdapter = new CittaAdapter(getActivity(), new ActionModeCallback(), this);
     }
 
@@ -194,7 +191,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mAdapter.clearSelection();
+            mAdapter.stopActionMode();
             mFab.setForceHide(false);
             mFab.show();
         }

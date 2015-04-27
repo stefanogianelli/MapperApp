@@ -151,6 +151,10 @@ public class MapperDatabase extends SQLiteOpenHelper {
             " FOR EACH ROW WHEN new." + MapperContract.Luogo.COUNT + " = 0 BEGIN " +
             "DELETE FROM " + Tables.LUOGO + " WHERE " + MapperContract.Luogo.ID + " = new." + MapperContract.Luogo.ID + "; END;";
 
+    //Trigger che aggiorna la percentuale di completamento della citta
+    //TODO: completare
+    private static final String TRIGGER_UPDATE_PERCENTUALE = "";
+
     public MapperDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

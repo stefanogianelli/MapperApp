@@ -3,6 +3,7 @@ package com.stefano.andrea.activities;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -23,6 +24,11 @@ public class DettagliViaggioActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
+
+        setSupportActionBar((Toolbar) findViewById(R.id.dettagli_viaggio_toolbar));
+
+        String nomeViaggio = this.getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
+        this.setTitle(nomeViaggio);
 
         // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, mTitles fot the Tabs and Number Of Tabs.
         mAdapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
@@ -68,6 +74,5 @@ public class DettagliViaggioActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }
