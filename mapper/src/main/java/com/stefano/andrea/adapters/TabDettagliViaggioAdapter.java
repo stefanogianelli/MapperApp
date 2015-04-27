@@ -16,6 +16,7 @@ public class TabDettagliViaggioAdapter  extends FragmentStatePagerAdapter {
 
     private CharSequence [] mTitles; // This will Store the mTitles of the Tabs which are Going to be passed when TabDettagliViaggioAdapter is created
     private int mNumbOfTabs; // Store the number of tabs, this will also be passed when the TabDettagliViaggioAdapter is created
+    private int mScrollY;
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
     public TabDettagliViaggioAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
@@ -49,5 +50,9 @@ public class TabDettagliViaggioAdapter  extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return mNumbOfTabs;
+    }
+
+    public void setScrollY(int scrollY) {
+        mScrollY = scrollY;
     }
 }

@@ -1,6 +1,7 @@
 package com.stefano.andrea.fragments;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -15,7 +16,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
@@ -42,8 +45,9 @@ import java.util.List;
 public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
 
     private final static int CITTA_LOADER = 0;
+    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
 
-    private RecyclerView mRecyclerView;
+    private ObservableRecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
     private long mIdViaggio;
@@ -63,8 +67,9 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
+        Activity parentActivity = getActivity();
         mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
+        mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
@@ -81,6 +86,20 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 }
             }
         });
+        if (parentActivity instanceof ObservableScrollViewCallbacks) {
+            // Scroll to the specified offset after layout
+            Bundle args = getArguments();
+            if (args != null && args.containsKey(ARG_INITIAL_POSITION)) {
+                final int initialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
+                ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.scrollVerticallyToPosition(initialPosition);
+                    }
+                });
+            }
+            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+        }
         return v;
     }
 
