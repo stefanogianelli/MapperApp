@@ -7,7 +7,9 @@
     <dimen name="standard_touch_target_size">48dp</dimen>
     <dimen name="standard_horizontal_tab_height">48dp</dimen>
     <dimen name="standard_touch_icon_size">32dp</dimen>
+    <dimen name="standard_touch_icon_size_min">24dp</dimen>
     <dimen name="standard_touch_icon_margin">8dp</dimen>
+    <dimen name="standard_touch_icon_margin_min">12dp</dimen>
 
     <!-- FAB -->
     <dimen name="fab_elevation">8dp</dimen>
@@ -27,8 +29,10 @@
     <dimen name="sliding_tab_height">48dp</dimen>
 
     <!-- mod_info_foto -->
-    <dimen name="info_margin">15dp</dimen>
-    <dimen name="info_txt_margin_top">16dp</dimen>
+    <dimen name="width_horizz_tab_title_container">60dp</dimen>
+    <dimen name="info_margin">8dp</dimen>
+    <dimen name="info_margin_big">20dp</dimen>
+    <dimen name="info_txt_margin_top">12dp</dimen>
 
 
 </resources>

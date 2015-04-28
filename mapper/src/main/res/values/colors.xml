@@ -31,5 +31,5 @@
     <!-- Modifica info foto -->
     <color name="mod_background">#ffffffff</color>
     <color name="mod_title">#ff444444</color>
-    <color name="mod_subtitle">#ff777777</color>
+    <color name="mod_subtitle">#ff898989</color>
 </resources>

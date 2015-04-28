@@ -21,6 +21,7 @@
     <string name="nuova_citta_loading_dialog">Recupero informazioni &#8230;</string>
 
     <!-- Info fotografie -->
+    <string name="scattata_presso">Scattata presso:</string>
     <string name="citta">Città</string>
     <string name="nazione">Nazione</string>
     <string name="posto">Posto</string>
