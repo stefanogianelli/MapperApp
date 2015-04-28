@@ -15,7 +15,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,6 +43,10 @@
             android:enabled="true"
             android:exported="false" >
         </provider>
+        <activity
+            android:name=".ModInfoFotoActivity"
+            android:label="@string/title_activity_mod_info_foto" >
+        </activity>
     </application>
 
 </manifest>

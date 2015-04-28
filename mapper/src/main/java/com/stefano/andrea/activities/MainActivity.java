@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, DettagliCittaActivity.class);
+            Intent intent = new Intent(this, ModInfoFotoActivity.class);
             startActivity(intent);
             return true;
         }
