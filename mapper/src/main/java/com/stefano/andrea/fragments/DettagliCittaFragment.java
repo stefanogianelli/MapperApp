@@ -12,8 +12,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -26,6 +30,7 @@ import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
+import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
 
@@ -34,7 +39,7 @@ import java.util.List;
 /**
  * DettagliCittaFragment
  */
-public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener {
+public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>> {
 
     private static final String ID_VIAGGIO = "id_viaggio";
     private static final String ID_CITTA = "id_citta";
@@ -49,6 +54,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private PostiAdapter mAdapter;
     private ObservableRecyclerView mRecyclerView;
     private CustomFAB mFab;
+    private List<Posto> mElencoPosti;
 
     public DettagliCittaFragment () { }
 
@@ -75,8 +81,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         //avvio il loader dei posto
         getLoaderManager().initLoader(POSTI_LOADER, null, this);
         //creo l'adapter
-        //TODO: aggiungere action mode
-        mAdapter = new PostiAdapter(this, mParentActivity, null);
+        mAdapter = new PostiAdapter((PostiAdapter.PostoOnClickListener) mParentActivity, mParentActivity, new ActionModeCallback());
     }
 
     @Override
@@ -90,6 +95,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mParentActivity instanceof ObservableScrollViewCallbacks) {
             // Scroll to the specified offset after layout
             Bundle args = getArguments();
@@ -121,11 +127,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         return view;
     }
 
-    @Override
-    public void selezionatoPosto(Posto posto) {
-        //TODO: completare
-    }
-
     /**
      * Aggiunge un nuovo posto all'interno di una citta'
      * @param nomePosto Il nome del posto
@@ -135,6 +136,13 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         posto.setNome(nomePosto);
         posto.setIdCitta(mIdCitta);
         new InsertTask<>(mParentActivity, mResolver, mAdapter, posto).execute(InsertTask.INSERISCI_POSTO);
+    }
+
+    /**
+     * Cancella i posti selezionati dall'utente
+     */
+    public void cancellaElencoPosti () {
+        new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoPosti, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_POSTO);
     }
 
     public void openDialogAddPosto (View view) {
@@ -175,13 +183,48 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         switch (id) {
             case POSTI_LOADER:
                 mAdapter.setElencoPosti(data);
-                break;
+                mElencoPosti = data;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Posto>> loader) {
         //do nothing
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mFab.hide();
+            mFab.setForceHide(true);
+            mode.getMenuInflater().inflate (R.menu.menu_posti_selezionati, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_posto:
+                    cancellaElencoPosti();
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.stopActionMode();
+            mFab.setForceHide(false);
+            mFab.show();
+        }
     }
 
 }

@@ -169,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mFab.hide();
             mFab.setForceHide(true);
-            mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
+            mode.getMenuInflater().inflate (R.menu.menu_viaggi_selezionati, menu);
             return true;
         }
 
