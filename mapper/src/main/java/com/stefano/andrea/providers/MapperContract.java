@@ -71,7 +71,7 @@ public final class MapperContract {
         /** Longitudine del luogo */
         String LONGITUDINE = "longitudine";
         /** ID della citta collegato con la tabella Dati_Citta */
-        String ID_CITTA = "ref_citta";
+        String ID_CITTA = "ref_dati_citta";
         /** Numero di riferimenti ai dati del luogo */
         String COUNT = "count";
     }
@@ -132,11 +132,13 @@ public final class MapperContract {
     public static final class Posto implements PostoColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperDatabase.Tables.POSTO).build();
+        public static final Uri POSTI_IN_CITTA_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperDatabase.Tables.POSTO).appendPath("citta").build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.posto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.posto";
 
-        public static final String[] PROJECTION_ALL = {ID_LUOGO, VISITATO, ID_CITTA, ID_LUOGO};
+        public static final String [] PROJECTION_ALL = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO};
+        public static final String [] PROJECTION_JOIN = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA };
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_POSTO + " DESC";

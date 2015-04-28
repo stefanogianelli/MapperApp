@@ -1,64 +1,69 @@
 package com.stefano.andrea.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.stefano.andrea.adapters.TabDettagliViaggioAdapter;
+import com.stefano.andrea.adapters.CittaAdapter;
+import com.stefano.andrea.fragments.DettagliViaggioFragment;
+import com.stefano.andrea.fragments.FotoViaggioFragment;
+import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.utils.ScrollableTabActivity;
+import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliViaggioActivity extends ScrollableTabActivity {
+public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener {
 
-    private ViewPager mPager;
-    private TabDettagliViaggioAdapter mAdapter;
-    private SlidingTabLayout mTabs;
-    private CharSequence [] mTitles = {"Dettagli","Foto"};
+    public static final String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.DettagliViaggioActivity.idViaggio";
+    public static final String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.idCitta";
+    public static final String EXTRA_NOME_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.nomeCitta";
+
+    private CharSequence [] mTitles = {"Dettagli", "Foto"};
     private int mNumbOfTabs = 2;
-    private View mToolbarView;
-    private View mHeaderView;
+    private long mIdViaggio;
+    private String mNomeViaggio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
-
-        mToolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
-        setSupportActionBar((Toolbar) mToolbarView);
+        //salvo i parametri ricevuti dall'intent
+        if (getIntent().getExtras() != null) {
+            mNomeViaggio = getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
+            mIdViaggio = getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
+        }
+        //acquisito riferimenti
+        View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
+        View headerView = findViewById(R.id.dettagli_viaggio_header);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        //attivo action bar
+        setSupportActionBar((Toolbar) toolbarView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        mHeaderView = findViewById(R.id.dettagli_viaggio_header);
-
-        String nomeViaggio = this.getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
-        this.setTitle(nomeViaggio);
-
-        // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, mTitles fot the Tabs and Number Of Tabs.
-        mAdapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
-
-        // Assigning ViewPager View and setting the mAdapter
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
-
-        setParameters(mAdapter, mPager, mToolbarView, mHeaderView);
-
-        // Assiging the Sliding Tab Layout View
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        //aggiungo il titolo alla action bar
+        this.setTitle(mNomeViaggio);
+        //Creo l'adapter per le tab
+        TabDettagliViaggioAdapter adapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        //assegno al pager l'adapter
+        pager.setAdapter(adapter);
+        //assegno i parametri alla superclasse per lo scrolling
+        setParameters(adapter, pager, toolbarView, headerView);
+        //configuro le tab
+        tabs.setDistributeEvenly(true);
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        mTabs.setViewPager(mPager);
+        tabs.setViewPager(pager);
     }
 
     @Override
@@ -81,5 +86,49 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Avvia l'activity con i dettagli della citta
+     * @param citta La citta selezionata
+     */
+    @Override
+    public void selezionataCitta(Citta citta) {
+        Intent intent = new Intent(this, DettagliCittaActivity.class);
+        intent.putExtra(EXTRA_ID_VIAGGIO, mIdViaggio);
+        intent.putExtra(EXTRA_ID_CITTA, citta.getId());
+        intent.putExtra(EXTRA_NOME_CITTA, citta.getNome());
+        startActivity(intent);
+    }
+
+    private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {
+
+        private CharSequence [] mTitles;
+        private int mNumbOfTabs;
+
+        public TabDettagliViaggioAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
+            super(fm);
+            mTitles = titles;
+            mNumbOfTabs = numbOfTabSum;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if(position == 0) {
+                return DettagliViaggioFragment.newInstance(mIdViaggio);
+            } else {
+                return new FotoViaggioFragment();
+            }
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTitles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return mNumbOfTabs;
+        }
     }
 }

@@ -18,6 +18,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
         String FOTO = "foto";
 
         String CITTA_JOIN_DATI_CITTA = CITTA + " JOIN " + DATI_CITTA + " ON " + CITTA + "." + MapperContract.Citta.ID_DATI_CITTA +  "=" + DATI_CITTA + "." + MapperContract.DatiCitta.ID;
+        String POSTO_JOIN_DATI_POSTO = POSTO + " JOIN " + LUOGO + " ON " + POSTO + "." + MapperContract.Posto.ID_LUOGO + "=" + LUOGO + "." + MapperContract.Luogo.ID;
     }
 
     private interface Triggers {

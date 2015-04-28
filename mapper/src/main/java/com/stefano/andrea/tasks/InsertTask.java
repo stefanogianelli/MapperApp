@@ -3,6 +3,7 @@ package com.stefano.andrea.tasks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 
@@ -81,6 +83,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                     mDelegate = new InsertCitta();
                     break;
                 case INSERISCI_POSTO:
+                    mDelegate = new InsertPosto();
                     break;
                 case INSERISCI_FOTO:
                     break;
@@ -185,6 +188,9 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
     }
 
+    /**
+     * Classe che si occupa dell'inserimento dei dati di una citta
+     */
     private class InsertDatiCitta implements InsertInterface{
 
         private Citta citta;
@@ -266,6 +272,98 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 e.printStackTrace();
             }
             return lat;
+        }
+    }
+
+    /**
+     * Classe che si occupa dell'inserimento di un posto
+     */
+    private class InsertPosto implements InsertInterface {
+
+        private Posto posto;
+
+        public InsertPosto () {
+            posto = (Posto) mItem;
+        }
+
+        @Override
+        public int insertItem() {
+            //verifico se il luogo e' gia' presente nel db
+            int res = getLuogo();
+            if (res == RESULT_ERROR) {
+                //creo un nuovo luogo
+                InsertLuogo helper = new InsertLuogo();
+                res = helper.insertItem();
+            }
+            if (res == RESULT_OK) {
+                ContentValues values = new ContentValues();
+                values.put(MapperContract.Posto.ID_CITTA, posto.getIdCitta());
+                values.put(MapperContract.Posto.ID_LUOGO, posto.getIdLuogo());
+                Uri uri = mResolver.insert(MapperContract.Posto.CONTENT_URI, values);
+                long id = Long.parseLong(uri.getLastPathSegment());
+                if (id != -1) {
+                    posto.setId(id);
+                    return RESULT_OK;
+                }
+            }
+            return RESULT_ERROR;
+        }
+
+        private int getLuogo () {
+            String [] projection = {MapperContract.Luogo.ID};
+            String selection = MapperContract.Luogo.NOME + "=?";
+            String [] selectionArgs = {posto.getNome()};
+            Cursor c = mResolver.query(MapperContract.Luogo.CONTENT_URI, projection, selection, selectionArgs, MapperContract.Luogo.DEFAULT_SORT);
+            if (c != null && c.getCount() > 0) {
+                c.moveToNext();
+                posto.setIdLuogo(c.getLong(c.getColumnIndex(MapperContract.Luogo.ID)));
+                c.close();
+                return RESULT_OK;
+            }
+            return RESULT_ERROR;
+        }
+
+    }
+
+    private class InsertLuogo implements InsertInterface {
+
+        private Posto posto;
+
+        public InsertLuogo () {
+            posto = (Posto) mItem;
+        }
+
+        @Override
+        public int insertItem() {
+            ContentValues values = new ContentValues();
+            values.put(MapperContract.Luogo.NOME, posto.getNome());
+            //TODO: implementare lookup delle coordinate
+            values.put(MapperContract.Luogo.LATITUDINE, 0);
+            values.put(MapperContract.Luogo.LONGITUDINE, 0);
+            int res = getIdDatiCitta();
+            if (res == RESULT_OK) {
+                values.put(MapperContract.Luogo.ID_CITTA, posto.getIdDatiCitta());
+                Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
+                long id = Long.parseLong(uri.getLastPathSegment());
+                if (id != -1) {
+                    posto.setIdLuogo(id);
+                    return RESULT_OK;
+                }
+            }
+            return RESULT_ERROR;
+        }
+
+        private int getIdDatiCitta () {
+            String [] projection = {MapperContract.Citta.ID_DATI_CITTA};
+            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, posto.getIdCitta());
+            Cursor c = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
+            if (c != null && c.getCount() > 0) {
+                c.moveToNext();
+                posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
+                c.close();
+                return RESULT_OK;
+            }
+            return RESULT_ERROR;
         }
     }
 }

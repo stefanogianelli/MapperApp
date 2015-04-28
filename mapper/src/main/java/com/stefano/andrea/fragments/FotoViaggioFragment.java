@@ -63,11 +63,12 @@ public class FotoViaggioFragment extends Fragment {
     }
 
 
-    // FZIONE TEMPORANEA...per cricare le varie immagini
+    // FZIONE TEMPORANEA...per caricare le varie immagini
     private List<ImageItem> getData() {
         final List<ImageItem> imageItems = new ArrayList<>();
         TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
-        for (int i = 0; i < imgs.length(); i++) {
+        //for (int i = 0; i < imgs.length(); i++) {
+        for (int i = 0; i < 2; i++) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
             imageItems.add(new ImageItem(bitmap, "Image#" + i));
         }

@@ -23,7 +23,8 @@
             android:name=".DettagliViaggioActivity"
             android:label="@string/title_activity_dettagli_viaggio"
             android:theme="@style/AppThemeNoToolbar"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -31,6 +32,7 @@
         <activity
             android:name=".DettagliCittaActivity"
             android:label="@string/title_activity_dettagli_citta"
+            android:theme="@style/AppThemeNoToolbar"
             android:parentActivityName=".DettagliViaggioActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

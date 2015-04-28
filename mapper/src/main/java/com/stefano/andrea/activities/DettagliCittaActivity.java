@@ -1,51 +1,64 @@
 package com.stefano.andrea.activities;
 
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import com.stefano.andrea.adapters.TabDettagliCittaAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
+import com.stefano.andrea.fragments.FotoViaggioFragment;
+import com.stefano.andrea.utils.ScrollableTabActivity;
+import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliCittaActivity extends ActionBarActivity implements DettagliCittaFragment.OnFragmentInteractionListener {
+public class DettagliCittaActivity extends ScrollableTabActivity {
 
-    private ViewPager mPager;
-    private TabDettagliCittaAdapter mAdapter;
-    private SlidingTabLayout mTabs;
     private CharSequence [] mTitles = {"Posti","Foto"};
     private int mNumbOfTabs = 2;
-
+    private long mIdViaggio;
+    private long mIdCitta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_citta);
-
-        // Creating The TabDettagliViaggioAdapter and Passing Fragment Manager, mTitles fot the Tabs and Number Of Tabs.
-        mAdapter =  new TabDettagliCittaAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
-
-        // Assigning ViewPager View and setting the mAdapter
-        mPager = (ViewPager) findViewById(R.id.pager_dettagli_citta);
-        mPager.setAdapter(mAdapter);
-
-        // Assiging the Sliding Tab Layout View
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs_dettagli_citta);
-        mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        //salvo i parametri ricevuti dall'intent
+        String nomeCitta = "";
+        if (getIntent() != null) {
+            mIdViaggio = getIntent().getExtras().getLong(DettagliViaggioActivity.EXTRA_ID_VIAGGIO);
+            mIdCitta = getIntent().getExtras().getLong(DettagliViaggioActivity.EXTRA_ID_CITTA);
+            nomeCitta = getIntent().getExtras().getString(DettagliViaggioActivity.EXTRA_NOME_CITTA);
+        }
+        //acquisito riferimenti
+        View toolbarView = findViewById(R.id.dettagli_citta_toolbar);
+        View headerView = findViewById(R.id.dettagli_citta_header);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        //attivo action bar
+        setSupportActionBar((Toolbar) toolbarView);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //aggiungo il titolo alla action bar
+        this.setTitle(nomeCitta);
+        //creo l'adapter per le tab
+        TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        //assegno l'adapter al pager
+        pager.setAdapter(adapter);
+        //assegno i parametri alla superclasse per lo scrolling
+        setParameters(adapter, pager, toolbarView, headerView);
+        //configuro tab
+        tabs.setDistributeEvenly(true);
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        mTabs.setViewPager(mPager);
+        tabs.setViewPager(pager);
     }
 
 
@@ -71,8 +84,35 @@ public class DettagliCittaActivity extends ActionBarActivity implements Dettagli
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //TODO: da implementare
+    public class TabDettagliCittaAdapter extends ScrollableTabAdapter {
+
+        private CharSequence [] mTitles;
+        private int mNumbOfTabs;
+
+        public TabDettagliCittaAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
+            super(fm);
+            mTitles = titles;
+            mNumbOfTabs = numbOfTabSum;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if(position == 0) {
+                return DettagliCittaFragment.newInstance(mIdViaggio, mIdCitta);
+            } else {
+                return new FotoViaggioFragment();
+            }
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTitles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return mNumbOfTabs;
+        }
     }
+
 }

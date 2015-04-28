@@ -25,6 +25,9 @@
     <string name="errore_nuova_citta_title_dialog">Errore</string>
     <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della citta.</string>
 
+    <!-- DettagliCittaFragment -->
+    <string name="add_posto">Nome del posto</string>
+
     <!-- PER TESTARE GALLERIA IMAGES -->
     <string-array name="image_ids">
         <item>@drawable/prova01</item>

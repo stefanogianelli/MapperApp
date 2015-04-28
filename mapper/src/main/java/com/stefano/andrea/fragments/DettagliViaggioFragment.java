@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -26,12 +25,10 @@ import android.widget.EditText;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
-import com.stefano.andrea.activities.DettagliCittaActivity;
-import com.stefano.andrea.activities.MainActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.helpers.CommonAlertDialog;
-import com.stefano.andrea.loaders.DettagliViaggioLoader;
+import com.stefano.andrea.loaders.CittaLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
@@ -42,9 +39,11 @@ import java.util.List;
 /**
  * DettagliViaggioFragment
  */
-public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
+public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>> {
 
-    private final static int CITTA_LOADER = 0;
+    private static final int CITTA_LOADER = 0;
+    private static final String ID_VIAGGIO = "id_viaggio";
+
     public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
 
     private ObservableRecyclerView mRecyclerView;
@@ -53,40 +52,46 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private long mIdViaggio;
     private List<Citta> mElencoCitta;
     private CustomFAB mFab;
+    private Activity mParentActivity;
+
+    public DettagliViaggioFragment () { }
+
+    public static DettagliViaggioFragment newInstance(long idViaggio) {
+        DettagliViaggioFragment fragment = new DettagliViaggioFragment();
+        Bundle args = new Bundle();
+        args.putLong(ID_VIAGGIO, idViaggio);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //recupero id del viaggio
-        mIdViaggio = getActivity().getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
-        mResolver = getActivity().getContentResolver();
+        if (getArguments() != null) {
+            mIdViaggio = getArguments().getLong(ID_VIAGGIO);
+        }
+        //acquisisco riferimento all'activity
+        mParentActivity = getActivity();
+        //acquisisco content resolver
+        mResolver = mParentActivity.getContentResolver();
+        //avvio il loader delle citta
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
-        mAdapter = new CittaAdapter(getActivity(), new ActionModeCallback(), this);
+        //creo l'adapter
+        mAdapter = new CittaAdapter(mParentActivity, new ActionModeCallback(), (CittaAdapter.CittaOnClickListener) mParentActivity);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_dettagli_viaggio,container,false);
-        Activity parentActivity = getActivity();
+        View v = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
+        //acquisisco riferimenti
         mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
-        mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recycler_view_elenco_citta);
+        mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
+        //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
         mRecyclerView.setAdapter(mAdapter);
-        mFab.attachToRecyclerView(mRecyclerView);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected()) {
-                    openDialogAddCitta(v);
-                } else {
-                    new CommonAlertDialog(getActivity(), R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
-                }
-            }
-        });
-        if (parentActivity instanceof ObservableScrollViewCallbacks) {
+        if (mParentActivity instanceof ObservableScrollViewCallbacks) {
             // Scroll to the specified offset after layout
             Bundle args = getArguments();
             if (args != null && args.containsKey(ARG_INITIAL_POSITION)) {
@@ -98,19 +103,23 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                     }
                 });
             }
-            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
         }
+        //configuro fab
+        mFab.attachToRecyclerView(mRecyclerView);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager connMgr = (ConnectivityManager) mParentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    openDialogAddCitta(v);
+                } else {
+                    new CommonAlertDialog(mParentActivity, R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
+                }
+            }
+        });
         return v;
-    }
-
-    /**
-     * Avvia l'activity con i dettagli della citta
-     * @param id parametro da definire
-     */
-    @Override
-    public void selezionataCitta(long id) {
-        Intent intent = new Intent(getActivity(), DettagliCittaActivity.class);
-        startActivity(intent);
     }
 
     /**
@@ -123,19 +132,19 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
         citta.setNazione(nomeNazione);
-        new InsertTask<>(getActivity(), mResolver, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
+        new InsertTask<>(mParentActivity, mResolver, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
     }
 
     /**
      * Cancella le citta selezionate dall'utente
      */
     public void cancellaElencoCitta () {
-        new DeleteTask<>(getActivity(), mResolver, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
+        new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     public void openDialogAddCitta(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
+        LayoutInflater inflater = mParentActivity.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.fragment_add_citta, null))
                 // Add action buttons
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -160,7 +169,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     public Loader<List<Citta>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case CITTA_LOADER:
-                return new DettagliViaggioLoader(getActivity(), getActivity().getContentResolver(), mIdViaggio);
+                return new CittaLoader(mParentActivity, mResolver, mIdViaggio);
             default:
                 return null;
         }
