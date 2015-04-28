@@ -55,7 +55,7 @@ public class FotoViaggioFragment extends Fragment {
 
                 // Commit the transaction
                 transaction.commit();
-                // TODO: Finire fragment dettagli foto
+                // TODO: Finire fragment full foto
             }
         }); */
 

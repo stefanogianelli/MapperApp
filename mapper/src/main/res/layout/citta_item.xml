@@ -5,34 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardUseCompatPadding="true" >
+    app:cardUseCompatPadding="true"  >
+
+    <!--- Parametri della CardView da rimettere se si vogliono mostrare le citta separate
+    android:layout_marginTop="@dimen/space_between_cards"
+android:layout_marginBottom="@dimen/space_between_cards"
+android:layout_marginLeft="@dimen/activity_horizontal_margin"
+android:layout_marginRight="@dimen/activity_horizontal_margin"-->
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="72dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:orientation="horizontal"
         android:background="?android:attr/selectableItemBackground" >
 
-        <!-- <ImageView
+        <ImageView
             android:id="@+id/citta_item_thumbnail"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/prova04"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_header"/> -->
+            android:orientation="vertical">
+            <TextView   style="?android:textAppearanceSearchResultSubtitle"
+                android:id="@+id/citta_item_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/citta_item_label_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="17 posti, 122 foto"/>
 
-        <TextView
-            android:id="@+id/citta_item_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        </LinearLayout>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/citta_item_edit"
-            android:layout_toRightOf="@+id/citta_item_label"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/fab_icons"
-            />
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
