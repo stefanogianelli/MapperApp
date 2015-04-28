@@ -74,4 +74,6 @@ public class FotoViaggioFragment extends Fragment {
         return imageItems;
     }
 
+
+
 }

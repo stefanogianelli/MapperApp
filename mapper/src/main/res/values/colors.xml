@@ -11,6 +11,10 @@
     <color name="dark_orange">#FFFF8800</color>
     <color name="red">#FFFF4444</color>
     <color name="dark_red">#FFCC0000</color>
+
+    <!-- Linea orizzontale -->
+    <color name="horizontal_sep_color">#15170432</color>
+
     <!-- FAB -->
     <color name="fab_color_normal">#ff5252</color>
     <color name="fab_color_pressed">#ff8080</color>
@@ -24,4 +28,8 @@
     <color name="info_background">#CC333333</color>
     <color name="info_title">#ffffffff</color>
     <color name="info_subtitle">#ffdddddd</color>
+    <!-- Modifica info foto -->
+    <color name="mod_background">#ffffffff</color>
+    <color name="mod_title">#ff444444</color>
+    <color name="mod_subtitle">#ff777777</color>
 </resources>

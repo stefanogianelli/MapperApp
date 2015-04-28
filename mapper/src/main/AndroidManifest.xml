@@ -22,8 +22,8 @@
         <activity
             android:name=".DettagliViaggioActivity"
             android:label="@string/title_activity_dettagli_viaggio"
-            android:theme="@style/AppThemeNoToolbar"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppThemeNoToolbar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -36,12 +36,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.stefano.andrea.activities.DettagliViaggioActivity" />
         </activity>
+
         <provider
             android:name="com.stefano.andrea.providers.MapperContentProvider"
             android:authorities="com.stefano.andrea.mapper.provider"
             android:enabled="true"
             android:exported="false" >
         </provider>
+
+        <activity
+            android:name=".ModInfoFotoActivity"
+            android:label="@string/title_activity_mod_info_foto" >
+        </activity>
     </application>
 
 </manifest>

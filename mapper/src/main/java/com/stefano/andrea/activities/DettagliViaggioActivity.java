@@ -82,4 +82,6 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
