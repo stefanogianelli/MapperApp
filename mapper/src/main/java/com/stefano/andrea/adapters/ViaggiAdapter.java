@@ -1,5 +1,6 @@
 package com.stefano.andrea.adapters;
 
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
+    private Context mContext;
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
@@ -30,6 +32,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback) {
         super(activity, callback);
+        mContext = activity.getApplicationContext();
         mListener = listener;
     }
 
@@ -88,7 +91,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         public void bindViaggio (Viaggio viaggio) {
             this.itemView.setTag(viaggio);
             nomeViaggio.setText(viaggio.getNome());
-            viaggioLabel.setText(viaggio.getCountCitta() + " citta, " + viaggio.getCountPosti() + " posti");
+            viaggioLabel.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_viaggio, viaggio.getCountPosti(), viaggio.getCountCitta(), viaggio.getCountPosti()));
         }
 
         @Override

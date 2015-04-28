@@ -13,6 +13,7 @@ public class Citta {
     private double latitudine;
     private double longitudine;
     private double percentuale;
+    private int countPosti;
 
     public long getId() {
         return id;
@@ -76,5 +77,13 @@ public class Citta {
 
     public void setPercentuale(double percentuale) {
         this.percentuale = percentuale;
+    }
+
+    public int getCountPosti() {
+        return countPosti;
+    }
+
+    public void setCountPosti(int countPosti) {
+        this.countPosti = countPosti;
     }
 }

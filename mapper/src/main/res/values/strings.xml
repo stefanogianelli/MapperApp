@@ -13,12 +13,20 @@
     <string name="add_viaggio">Come vuoi intitolare il nuovo viaggio?</string>
     <string name="add_citta">Quale città?</string>
     <string name="add_citta_nn">In quale nazione?</string>
+    <plurals name="statistiche_viaggio">
+        <item quantity="one">%1$d citta, %2$d posto, 0 foto</item>
+        <item quantity="other">%1$d citta, %2$d posti, 0 foto</item>
+    </plurals>
 
     <!-- DettagliViaggioActivity -->
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
 
     <!-- DettagliViaggioFragment -->
     <string name="nuova_citta_loading_dialog">Recupero informazioni &#8230;</string>
+    <plurals name="statistiche_citta">
+        <item quantity="one">%1$d posto, 0 foto</item>
+        <item quantity="other">%1$d posti, 0 foto</item>
+    </plurals>
 
     <!-- Info fotografie -->
     <string name="scattata_presso">Scattata presso:</string>
