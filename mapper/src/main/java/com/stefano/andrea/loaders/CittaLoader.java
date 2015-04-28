@@ -53,6 +53,7 @@ public class CittaLoader extends AsyncTaskLoader<List<Citta>> {
                 citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
                 citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
                 citta.setPercentuale(c.getDouble(c.getColumnIndex(MapperContract.Citta.PERCENTUALE)));
+                citta.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_POSTI)));
                 mElencoCitta.add(citta);
             }
             c.close();

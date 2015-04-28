@@ -1,6 +1,7 @@
 package com.stefano.andrea.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
 
     private List<Citta> mElencoCitta;
     private CittaOnClickListener mListener;
+    private Context mContext;
 
     public interface CittaOnClickListener {
         void selezionataCitta (Citta citta);
@@ -30,6 +32,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
 
     public CittaAdapter (Activity activity, ActionMode.Callback callback, CittaOnClickListener listener) {
         super(activity, callback);
+        mContext = activity.getApplicationContext();
         mListener = listener;
     }
 
@@ -76,16 +79,19 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
 
     public class CittaHolder extends SelectableHolder {
 
-        private TextView vNome;
+        private TextView nomeCitta;
+        private TextView statCitta;
 
         public CittaHolder(View itemView) {
             super(itemView);
-            vNome = (TextView) itemView.findViewById(R.id.citta_item_label);
+            nomeCitta = (TextView) itemView.findViewById(R.id.citta_item_label);
+            statCitta = (TextView) itemView.findViewById(R.id.citta_item_label_subtitle);
         }
 
         public void bindCitta (Citta citta) {
             this.itemView.setTag(citta);
-            vNome.setText(citta.getNome());
+            nomeCitta.setText(citta.getNome());
+            statCitta.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_citta, citta.getCountPosti(), citta.getCountPosti()));
         }
 
         @Override
