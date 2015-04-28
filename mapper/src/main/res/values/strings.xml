@@ -29,8 +29,8 @@
     </plurals>
 
     <!-- Info fotografie -->
-    <string name="scattata_presso">Scattata presso:</string>
-    <string name="durante_il_viaggio">Durante il viaggio:</string>
+    <string name="scattata_presso">Presso:</string>
+    <string name="durante_il_viaggio">Scattata durante il viaggio:</string>
     <string name="viaggio">Viaggio</string>
     <string name="citta">Città</string>
     <string name="nazione">Nazione</string>
