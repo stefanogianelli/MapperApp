@@ -34,7 +34,7 @@
     <!-- mod_info_foto -->
     <dimen name="width_horizz_tab_title_container">60dp</dimen>
     <dimen name="info_margin">8dp</dimen>
-    <dimen name="info_margin_big">20dp</dimen>
+    <dimen name="info_margin_big">10dp</dimen>
     <dimen name="info_txt_margin_top">12dp</dimen>
 
 
