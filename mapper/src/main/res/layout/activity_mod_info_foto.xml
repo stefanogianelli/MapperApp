@@ -33,6 +33,73 @@
             android:contentDescription="@string/edit" />
     </RelativeLayout>
 
+
+
+
+    <!-- Edit viaggio -->
+    <TextView style="?android:textAppearanceSmall"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/durante_il_viaggio"
+        android:layout_marginTop="@dimen/info_margin_big"
+        android:textColor="#ff898989"/>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/mod_background"
+        android:layout_marginTop="@dimen/info_margin">
+
+        <!--    Edit nazione -->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:minHeight="?android:listPreferredItemHeight"
+            android:layout_height="@dimen/standard_horizontal_tab_height"   >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingLeft="?android:listPreferredItemPaddingLeft"
+                android:paddingRight="?android:listPreferredItemPaddingRight"
+                android:gravity="center_vertical">
+                <TextView style="?android:textAppearanceListItemSmall"
+                    android:layout_weight="1"
+                    android:layout_width="@dimen/width_horizz_tab_title_container"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/mod_subtitle"
+                    android:text="@string/viaggio"/>
+                <TextView style="?android:textAppearanceSearchResultSubtitle"
+                    android:id="@+id/txt_edit_viaggio_foto"
+                    android:layout_weight="3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/mod_title"
+                    android:text="Viaggio 1"/>
+            </LinearLayout>
+            <ImageButton android:id="@+id/icon_edit_viaggio_foto"
+                style="?android:borderlessButtonStyle"
+                android:src="@drawable/ic_edit_grey600_24dp"
+                android:layout_height="@dimen/standard_touch_icon_size_min"
+                android:layout_width="@dimen/standard_touch_icon_size_min"
+                android:background="?android:selectableItemBackground"
+                android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
+                android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
+                android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/edit" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+
+
+    <!-- edit luoghi -->
     <TextView style="?android:textAppearanceSmall"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -190,63 +257,6 @@
     </LinearLayout>
 
 
-    <TextView style="?android:textAppearanceSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/durante_il_viaggio"
-        android:layout_marginTop="@dimen/info_margin_big"
-        android:textColor="#ff898989"/>
-
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/mod_background"
-        android:layout_marginTop="@dimen/info_margin">
-
-        <!--    Edit nazione -->
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:minHeight="?android:listPreferredItemHeight"
-            android:layout_height="@dimen/standard_horizontal_tab_height"   >
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:paddingLeft="?android:listPreferredItemPaddingLeft"
-                android:paddingRight="?android:listPreferredItemPaddingRight"
-                android:gravity="center_vertical">
-                <TextView style="?android:textAppearanceListItemSmall"
-                    android:layout_weight="1"
-                    android:layout_width="@dimen/width_horizz_tab_title_container"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/mod_subtitle"
-                    android:text="@string/viaggio"/>
-                <TextView style="?android:textAppearanceSearchResultSubtitle"
-                    android:id="@+id/txt_edit_viaggio_foto"
-                    android:layout_weight="3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/mod_title"
-                    android:text="Viaggio 1"/>
-            </LinearLayout>
-            <ImageButton android:id="@+id/icon_edit_viaggio_foto"
-                style="?android:borderlessButtonStyle"
-                android:src="@drawable/ic_edit_grey600_24dp"
-                android:layout_height="@dimen/standard_touch_icon_size_min"
-                android:layout_width="@dimen/standard_touch_icon_size_min"
-                android:background="?android:selectableItemBackground"
-                android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
-                android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
-                android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/edit" />
-        </LinearLayout>
-     </LinearLayout>
 
 
 </LinearLayout>
