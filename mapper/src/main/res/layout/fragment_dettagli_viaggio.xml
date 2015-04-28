@@ -9,7 +9,7 @@
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/sliding_tab_height"
+        android:paddingTop="56dp"
         android:clipToPadding="false" />
 
     <com.stefano.andrea.utils.CustomFAB
