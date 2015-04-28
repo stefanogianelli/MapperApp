@@ -91,12 +91,18 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
 
         @Override
         public void onClick(View v) {
-
+            if (isEnabledSelectionMode())
+                toggleSelection(getLayoutPosition());
+            else
+                mListener.selezionatoPosto((Posto) v.getTag());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return false;
+            if (!isEnabledSelectionMode())
+                startActionMode();
+            toggleSelection(getLayoutPosition());
+            return true;
         }
     }
 

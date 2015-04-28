@@ -9,13 +9,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
 import com.stefano.andrea.fragments.FotoViaggioFragment;
+import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliCittaActivity extends ScrollableTabActivity {
+public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener {
 
     private CharSequence [] mTitles = {"Posti","Foto"};
     private int mNumbOfTabs = 2;
@@ -82,6 +84,11 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void selezionatoPosto(Posto posto) {
+        //TODO: completare
     }
 
     public class TabDettagliCittaAdapter extends ScrollableTabAdapter {

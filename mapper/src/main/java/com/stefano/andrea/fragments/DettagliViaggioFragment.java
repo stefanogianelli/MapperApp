@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,6 +92,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mParentActivity instanceof ObservableScrollViewCallbacks) {
             // Scroll to the specified offset after layout
             Bundle args = getArguments();
@@ -196,7 +198,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mFab.hide();
             mFab.setForceHide(true);
-            mode.getMenuInflater().inflate (R.menu.viaggi_list_on_long_click, menu);
+            mode.getMenuInflater().inflate (R.menu.menu_citta_selezionate, menu);
             return true;
         }
 
@@ -208,7 +210,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.menu_cancella_viaggio:
+                case R.id.menu_cancella_citta:
                     cancellaElencoCitta();
                     mode.finish();
                     return true;

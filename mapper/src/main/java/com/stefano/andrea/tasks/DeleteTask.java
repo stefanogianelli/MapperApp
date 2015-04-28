@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 
@@ -62,6 +63,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
                     mDelegate = new CancellaCitta();
                     break;
                 case CANCELLA_POSTO:
+                    mDelegate = new CancellaPosto();
                     break;
                 case CANCELLA_FOTO:
                     break;
@@ -110,6 +112,17 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int cancellaItem(Citta item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, item.getId());
+            return mResolver.delete(uri, null, null);
+        }
+    }
+
+    /**
+     * Classe che si occupa dell'eliminazione di un posto
+     */
+    private class CancellaPosto implements DeleteInterface<Posto> {
+        @Override
+        public int cancellaItem(Posto item) {
+            Uri uri = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, item.getId());
             return mResolver.delete(uri, null, null);
         }
     }
