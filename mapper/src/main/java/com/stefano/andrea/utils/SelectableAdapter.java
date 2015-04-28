@@ -86,7 +86,6 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
      */
     public void startActionMode () {
         if (mActionMode == null) {
-            ((ActionBarActivity) mActivity).getSupportActionBar().hide();
             mActionMode = ((ActionBarActivity) mActivity).startSupportActionMode(mCallback);
         }
     }
@@ -96,7 +95,6 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
      */
     public void stopActionMode () {
         if (mActionMode != null) {
-            ((ActionBarActivity) mActivity).getSupportActionBar().show();
             clearSelection();
         }
     }
