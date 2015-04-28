@@ -68,7 +68,7 @@ public abstract class ScrollableTabActivity extends ActionBarActivity implements
 
     private void adjustToolbar(ScrollState scrollState, View view) {
         int toolbarHeight = mToolbarView.getHeight();
-        final Scrollable scrollView = (Scrollable) view.findViewById(R.id.recycler_view_elenco_citta);
+        final Scrollable scrollView = (Scrollable) view.findViewById(R.id.recyclerview_scroll);
         if (scrollView == null) {
             return;
         }
@@ -127,7 +127,7 @@ public abstract class ScrollableTabActivity extends ActionBarActivity implements
     }
 
     private void propagateToolbarState(boolean isShown, View view, int toolbarHeight) {
-        Scrollable scrollView = (Scrollable) view.findViewById(R.id.recycler_view_elenco_citta);
+        Scrollable scrollView = (Scrollable) view.findViewById(R.id.recyclerview_scroll);
         if (scrollView == null) {
             return;
         }

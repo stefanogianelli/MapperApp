@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DettagliViaggioLoader
+ * CittaLoader
  */
-public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
+public class CittaLoader extends AsyncTaskLoader<List<Citta>> {
 
     private ContentResolver mResolver;
     private long mIdViaggio;
-    private List<Citta> mCitta;
+    private List<Citta> mElencoCitta;
 
-    public DettagliViaggioLoader(Context context, ContentResolver resolver, long idViaggio) {
+    public CittaLoader(Context context, ContentResolver resolver, long idViaggio) {
         super(context);
         mResolver = resolver;
         mIdViaggio = idViaggio;
@@ -31,15 +31,15 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
-        if (mCitta != null)
-            deliverResult(mCitta);
-        if (mCitta == null || takeContentChanged())
+        if (mElencoCitta != null)
+            deliverResult(mElencoCitta);
+        if (mElencoCitta == null || takeContentChanged())
             this.forceLoad();
     }
 
     @Override
     public List<Citta> loadInBackground() {
-        List<Citta> list = new ArrayList<>();
+        mElencoCitta = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);
         Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_JOIN, null, null, MapperContract.Citta.DEFAULT_SORT);
         if (c != null) {
@@ -53,10 +53,10 @@ public class DettagliViaggioLoader extends AsyncTaskLoader<List<Citta>> {
                 citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
                 citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
                 citta.setPercentuale(c.getDouble(c.getColumnIndex(MapperContract.Citta.PERCENTUALE)));
-                list.add(citta);
+                mElencoCitta.add(citta);
             }
             c.close();
-            return list;
+            return mElencoCitta;
         }
         return null;
     }

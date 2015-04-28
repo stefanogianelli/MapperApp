@@ -1,110 +1,187 @@
 package com.stefano.andrea.fragments;
 
 import android.app.Activity;
-import android.net.Uri;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.adapters.PostiAdapter;
+import com.stefano.andrea.helpers.CommonAlertDialog;
+import com.stefano.andrea.loaders.PostiLoader;
+import com.stefano.andrea.models.Posto;
+import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.CustomFAB;
+
+import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DettagliCittaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DettagliCittaFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * DettagliCittaFragment
  */
-public class DettagliCittaFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ID_VIAGGIO = "id_viaggio";
+    private static final String ID_CITTA = "id_citta";
+    private static final int POSTI_LOADER = 0;
 
-    private OnFragmentInteractionListener mListener;
+    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DettagliCittaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DettagliCittaFragment newInstance(String param1, String param2) {
+    private long mIdViaggio;
+    private long mIdCitta;
+    private Activity mParentActivity;
+    private ContentResolver mResolver;
+    private PostiAdapter mAdapter;
+    private ObservableRecyclerView mRecyclerView;
+    private CustomFAB mFab;
+
+    public DettagliCittaFragment () { }
+
+    public static DettagliCittaFragment newInstance(long idViaggio, long idCitta) {
         DettagliCittaFragment fragment = new DettagliCittaFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putLong(ID_VIAGGIO, idViaggio);
+        args.putLong(ID_CITTA, idCitta);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public DettagliCittaFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mIdViaggio = getArguments().getLong(ID_VIAGGIO);
+            mIdCitta = getArguments().getLong(ID_CITTA);
         }
+        //acquisisco riferimento dell'activity
+        mParentActivity = getActivity();
+        //acquisisco il content resolver
+        mResolver = mParentActivity.getContentResolver();
+        //avvio il loader dei posto
+        getLoaderManager().initLoader(POSTI_LOADER, null, this);
+        //creo l'adapter
+        //TODO: aggiungere action mode
+        mAdapter = new PostiAdapter(this, mParentActivity, null);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        View view =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
+        //acquisisco riferimenti
+        mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.recyclerview_scroll);
+        mFab = (CustomFAB) view.findViewById(R.id.fab_aggiunta_posto);
+        //configuro recyclerview
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
+        mRecyclerView.setAdapter(mAdapter);
+        if (mParentActivity instanceof ObservableScrollViewCallbacks) {
+            // Scroll to the specified offset after layout
+            Bundle args = getArguments();
+            if (args != null && args.containsKey(ARG_INITIAL_POSITION)) {
+                final int initialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
+                ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.scrollVerticallyToPosition(initialPosition);
+                    }
+                });
+            }
+            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
         }
+        //configuro fab
+        mFab.attachToRecyclerView(mRecyclerView);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager connMgr = (ConnectivityManager) mParentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    openDialogAddPosto (v);
+                } else {
+                    new CommonAlertDialog(mParentActivity, R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
+                }
+            }
+        });
+        return view;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void selezionatoPosto(Posto posto) {
+        //TODO: completare
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Aggiunge un nuovo posto all'interno di una citta'
+     * @param nomePosto Il nome del posto
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    public void creaNuovoPosto (String nomePosto) {
+        Posto posto = new Posto();
+        posto.setNome(nomePosto);
+        posto.setIdCitta(mIdCitta);
+        new InsertTask<>(mParentActivity, mResolver, mAdapter, posto).execute(InsertTask.INSERISCI_POSTO);
+    }
+
+    public void openDialogAddPosto (View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
+        LayoutInflater inflater = mParentActivity.getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.fragment_add_posto, null))
+                // Add action buttons
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        Dialog d = (Dialog) dialog;
+                        EditText nomePosto = (EditText) d.findViewById(R.id.text_add_posto);
+                        creaNuovoPosto(nomePosto.getText().toString());
+                        d.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create().show();
+    }
+
+    @Override
+    public Loader<List<Posto>> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case POSTI_LOADER:
+                return new PostiLoader(mParentActivity, mResolver, mIdCitta);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Posto>> loader, List<Posto> data) {
+        int id = loader.getId();
+        switch (id) {
+            case POSTI_LOADER:
+                mAdapter.setElencoPosti(data);
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Posto>> loader) {
+        //do nothing
     }
 
 }

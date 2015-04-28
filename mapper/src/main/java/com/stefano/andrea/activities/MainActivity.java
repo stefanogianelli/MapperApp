@@ -30,8 +30,8 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
 
-    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mainActivity.idViaggio";
-    public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mainActivitynomeViaggio";
+    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.idViaggio";
+    public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.nomeViaggio";
     private final static int VIAGGI_LOADER = 0;
 
     private RecyclerView mRecyclerView;

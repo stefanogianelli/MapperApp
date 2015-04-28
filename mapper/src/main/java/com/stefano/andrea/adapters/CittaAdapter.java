@@ -25,7 +25,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
     private CittaOnClickListener mListener;
 
     public interface CittaOnClickListener {
-        void selezionataCitta (long id);
+        void selezionataCitta (Citta citta);
     }
 
     public CittaAdapter (Activity activity, ActionMode.Callback callback, CittaOnClickListener listener) {
@@ -80,12 +80,11 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
 
         public CittaHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
             vNome = (TextView) itemView.findViewById(R.id.citta_item_label);
         }
 
         public void bindCitta (Citta citta) {
-            this.itemView.setId((int)citta.getId());
+            this.itemView.setTag(citta);
             vNome.setText(citta.getNome());
         }
 
@@ -94,7 +93,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
             if (isEnabledSelectionMode())
                 toggleSelection(getLayoutPosition());
             else
-                mListener.selezionataCitta(v.getId());
+                mListener.selezionataCitta((Citta) v.getTag());
         }
 
         @Override
