@@ -1,10 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Action Bar -->
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryDark">@color/dark_orange</item>
+        <item name="colorAccent">@color/orange</item>
         <!-- Action Mode theme -->
         <item name="android:actionModeBackground">@color/orange</item>
     </style>
@@ -14,6 +15,7 @@
         <!-- Action Bar -->
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryDark">@color/dark_orange</item>
+        <item name="colorAccent">@color/orange</item>
         <!-- Action Mode theme -->
         <item name="android:actionModeBackground">@color/orange</item>
         <item name="windowActionModeOverlay">true</item>

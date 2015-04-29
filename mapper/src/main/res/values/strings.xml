@@ -11,6 +11,10 @@
     <string name="info">Informazioni</string>
     <string name="aggiungi_foto">Aggiungi foto</string>
 
+    <!-- dialogs -->
+    <string name="aggiungi_viaggio">Nome del viaggio</string>
+    <string name="aggiungi_citta">Nome della città</string>
+    <string name="aggiungi_posto">Nome del posto</string>
 
     <!-- MainActivity -->
     <string name="add_viaggio">Come vuoi intitolare il nuovo viaggio?</string>
