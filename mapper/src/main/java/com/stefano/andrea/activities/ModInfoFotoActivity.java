@@ -1,18 +1,25 @@
 package com.stefano.andrea.activities;
 
-import android.support.v7.app.ActionBarActivity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.stefano.andrea.activities.R;
+import android.widget.ImageView;
 
 public class ModInfoFotoActivity extends ActionBarActivity {
+
+    Bitmap image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mod_info_foto);
+        if (getIntent() != null) {
+            image = (Bitmap) getIntent().getExtras().getParcelable(MainActivity.EXTRA_FOTO);
+            ImageView view = (ImageView) findViewById(R.id.thumb_mod_info_foto);
+            view.setImageBitmap(image);
+        }
     }
 
 
