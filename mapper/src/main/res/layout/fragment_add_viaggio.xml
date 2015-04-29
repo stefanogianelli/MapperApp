@@ -20,6 +20,7 @@
         android:layout_marginBottom="4dp"
         android:textColor="@color/black"
         android:scrollHorizontally="false"
+        android:singleLine="true"
         android:hint="@string/add_viaggio" />
 
 </LinearLayout>
