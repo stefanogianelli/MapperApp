@@ -18,6 +18,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
+        android:textColor="@color/black"
         android:hint="@string/add_citta" />
     <EditText
         android:id="@+id/text_add_citta_nn"
@@ -27,6 +28,8 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
+        android:textColor="@color/black"
+        android:scrollHorizontally="false"
         android:hint="@string/add_citta_nn" />
 
 </LinearLayout>
