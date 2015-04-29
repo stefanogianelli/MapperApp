@@ -1,7 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:mapper="http://schemas.android.com/apk/res-auto"
     tools:context="com.stefano.andrea.activities.ModInfoFotoActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_salva_foto"
+        android:icon="@drawable/ic_photo_camera_white_24dp"
+        mapper:showAsAction="ifRoom|withText"
+        android:title="@string/save" />
+
+    <item
+        android:id="@+id/action_annula_foto"
+        android:icon="@drawable/ic_photo_camera_white_24dp"
+        mapper:showAsAction="ifRoom|withText"
+        android:title="@string/cancel" />
+
 </menu>
