@@ -5,13 +5,13 @@
 
     <item
         android:id="@+id/action_salva_foto"
-        android:icon="@drawable/ic_photo_camera_white_24dp"
+        android:icon="@drawable/ic_save_white_24dp"
         mapper:showAsAction="ifRoom|withText"
         android:title="@string/save" />
 
     <item
         android:id="@+id/action_annula_foto"
-        android:icon="@drawable/ic_photo_camera_white_24dp"
+        android:icon="@drawable/ic_clear_white_24dp"
         mapper:showAsAction="ifRoom|withText"
         android:title="@string/cancel" />
 
