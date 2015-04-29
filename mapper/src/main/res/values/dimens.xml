@@ -11,6 +11,9 @@
     <dimen name="standard_touch_icon_margin">8dp</dimen>
     <dimen name="standard_touch_icon_margin_min">12dp</dimen>
 
+    <!-- Scroll RecyclerVIew -->
+    <dimen name="padding_scroll_rv">56dp</dimen>
+
     <!-- FAB -->
     <dimen name="fab_elevation">8dp</dimen>
     <dimen name="fab_margin_top">16dp</dimen>
