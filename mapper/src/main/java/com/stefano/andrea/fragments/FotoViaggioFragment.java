@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.RecyclerViewFotoViaggioAdapter;
-import com.stefano.andrea.models.ImageItem;
+import com.stefano.andrea.models.Foto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,13 +64,13 @@ public class FotoViaggioFragment extends Fragment {
 
 
     // FZIONE TEMPORANEA...per caricare le varie immagini
-    private List<ImageItem> getData() {
-        final List<ImageItem> imageItems = new ArrayList<>();
+    private List<Foto> getData() {
+        final List<Foto> imageItems = new ArrayList<>();
         TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
         //for (int i = 0; i < imgs.length(); i++) {
         for (int i = 0; i < 2; i++) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
-            imageItems.add(new ImageItem(bitmap, "Image#" + i));
+            imageItems.add(new Foto(bitmap, "Image#" + i));
         }
         return imageItems;
     }
