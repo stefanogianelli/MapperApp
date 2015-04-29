@@ -5,10 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
-import com.stefano.andrea.models.ImageItem;
+import com.stefano.andrea.models.Foto;
 
 import java.util.List;
 
@@ -17,9 +16,9 @@ import java.util.List;
  */
 public class RecyclerViewFotoViaggioAdapter extends RecyclerView.Adapter<RecyclerViewFotoViaggioAdapter.FotoHolder> {
 
-    private List<ImageItem> mListaFoto;
+    private List<Foto> mListaFoto;
 
-    public RecyclerViewFotoViaggioAdapter (List<ImageItem> listaFoto) {
+    public RecyclerViewFotoViaggioAdapter (List<Foto> listaFoto) {
         mListaFoto = listaFoto;
     }
 
@@ -32,7 +31,7 @@ public class RecyclerViewFotoViaggioAdapter extends RecyclerView.Adapter<Recycle
 
     @Override
     public void onBindViewHolder(FotoHolder holder, int position) {
-        ImageItem foto = mListaFoto.get(position);
+        Foto foto = mListaFoto.get(position);
         //holder.mNomeFoto.setText(foto.getTitle());
         holder.mFoto.setImageBitmap(foto.getImage());
     }

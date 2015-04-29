@@ -86,6 +86,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                     mDelegate = new InsertPosto();
                     break;
                 case INSERISCI_FOTO:
+                    mDelegate = new InsertFoto();
                     break;
                 default:
                     throw new UnsupportedOperationException();
@@ -366,4 +367,16 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             return RESULT_ERROR;
         }
     }
+
+    /**
+     * Classe che si occupa dell'inserimento di una foto
+     */
+    private class InsertFoto implements InsertInterface {
+        @Override
+        public int insertItem() {
+            ContentValues values = new ContentValues();
+            return 0;
+        }
+    }
+
 }
