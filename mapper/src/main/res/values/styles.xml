@@ -6,7 +6,13 @@
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryDark">@color/dark_orange</item>
         <item name="colorAccent">@color/orange</item>
-        <!-- Action Mode theme -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorPrimaryInverse">@color/black</item>
+            <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="popupTheme">@style/Toolbar_Popup</item>
+
+              <!-- Action Mode theme -->
         <item name="android:actionModeBackground">@color/orange</item>
     </style>
 
@@ -16,9 +22,20 @@
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryDark">@color/dark_orange</item>
         <item name="colorAccent">@color/orange</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorPrimaryInverse">@color/black</item>
+        <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="popupTheme">@style/Toolbar_Popup</item>
+
         <!-- Action Mode theme -->
         <item name="android:actionModeBackground">@color/orange</item>
         <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="Toolbar_Popup" parent="Base.ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">@color/orange</item>
     </style>
 
 </resources>
