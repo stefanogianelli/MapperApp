@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
-            DialogChooseFotoMode.mostraDialog(this);
+            DialogChooseFotoMode.mostraDialog(this, null);
         }
 
         return super.onOptionsItemSelected(item);
