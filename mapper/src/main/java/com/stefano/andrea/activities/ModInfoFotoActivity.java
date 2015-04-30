@@ -4,10 +4,8 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,13 +13,10 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
-import com.stefano.andrea.utils.SavePhotoHelper;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ModInfoFotoActivity extends ActionBarActivity {
 
@@ -29,9 +24,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
     public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.Foto";
 
-    private static final String TAG = "MadInfoFoto";
+    private static final String TAG = "ModInfoFotoActivity";
 
-    private Bitmap mImage;
+    private Uri mImageUri;
     private ContentResolver mResolver;
     private long mIdViaggio;
     private long mIdCitta;
@@ -43,23 +38,20 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         mResolver = getContentResolver();
         Intent intent = getIntent();
         if (intent != null) {
-
-            mImage = intent.getParcelableExtra(MainActivity.EXTRA_FOTO);
+            if (intent.hasExtra(EXTRA_FOTO))
+                mImageUri = Uri.parse(intent.getStringExtra(EXTRA_FOTO));
+            if (BuildConfig.DEBUG && mImageUri != null)
+                Log.v(TAG, "Foto URI: " + mImageUri.toString());
             mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
             mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
-            /*if (intent.hasExtra(EXTRA_ID_VIAGGIO)) {
-                mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
-            }
-            if (intent.hasExtra(EXTRA_ID_CITTA)) {
-                mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
-            }*/
         }
         //acquisisco riferimenti
-        ImageView view = (ImageView) findViewById(R.id.thumb_mod_info_foto);
+        ImageView imageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         TextView nomeViaggioView = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
         TextView nomeCittaView = (TextView) findViewById(R.id.txt_edit_citta_foto);
-        if (mImage != null) {
-            view.setImageBitmap(mImage);
+        //assegno i dati raccolti
+        if (mImageUri != null) {
+            Picasso.with(getApplicationContext()).load(mImageUri).into(imageView);
         }
         if (mIdViaggio != -1) {
             Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
@@ -100,13 +92,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
         if (id == R.id.action_salva_foto) {
             Foto foto = new Foto();
-            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            Uri uri = SavePhotoHelper.insertImage(mResolver, mImage, "mapper" + timestamp + ".jpg", "MapperApp");
-            String path = getFotoPath(uri);
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "Salvata foto in " + path);
-            }
-            foto.setPath(path);
+            foto.setPath(mImageUri.toString());
             foto.setLatitudine(0);
             foto.setLongitudine(0);
             foto.setIdCitta(mIdCitta);
@@ -121,16 +107,4 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private String getFotoPath (Uri uri) {
-
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null,null);
-
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-
-        return path;
-    }
 }

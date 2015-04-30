@@ -1,7 +1,7 @@
 package com.stefano.andrea.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,10 +23,13 @@ import com.stefano.andrea.utils.SlidingTabLayout;
 
 public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener {
 
+    private static final String TAG = "DettagliCittaActivity";
+
     private CharSequence [] mTitles = {"Posti","Foto"};
     private int mNumbOfTabs = 2;
     private long mIdViaggio;
     private long mIdCitta;
+    private Uri mImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,10 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_aggiungi_foto_dettagli_citta) {
-            DialogChooseFotoMode.mostraDialog(this);
+            mImageUri = DialogChooseFotoMode.getImageUri();
+            if (BuildConfig.DEBUG && mImageUri == null)
+                throw new AssertionError();
+            DialogChooseFotoMode.mostraDialog(this, mImageUri);
             return true;
         }
 
@@ -99,17 +105,11 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    Log.v("MainActivity", data.getData().toString());
-                }
-            }
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
+            Log.v("MainActivity", data.getData().toString());
         } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
             Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, imageBitmap);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, mIdCitta);
             startActivity(intent);
