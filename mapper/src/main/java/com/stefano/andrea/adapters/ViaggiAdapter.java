@@ -1,12 +1,17 @@
 package com.stefano.andrea.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
@@ -25,6 +30,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
     private Context mContext;
+    private Activity mActivity;
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
@@ -34,6 +40,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         super(activity, callback);
         mContext = activity.getApplicationContext();
         mListener = listener;
+        mActivity = activity;
     }
 
     public void setListaViaggi (List<Viaggio> lista) {
@@ -81,17 +88,49 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
         private TextView nomeViaggio;
         private TextView viaggioLabel;
+        private ImageButton button1;
 
         public ViaggiHolder(View itemView) {
             super(itemView);
             nomeViaggio = (TextView) itemView.findViewById(R.id.viaggio_item_label);
             viaggioLabel = (TextView) itemView.findViewById(R.id.viaggio_item_label_subtitle);
+            button1 = (ImageButton) itemView.findViewById(R.id.button_popup);
         }
 
-        public void bindViaggio (Viaggio viaggio) {
+        public void bindViaggio (final Viaggio viaggio) {
             this.itemView.setTag(viaggio);
             nomeViaggio.setText(viaggio.getNome());
             viaggioLabel.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_viaggio, viaggio.getCountPosti(), viaggio.getCountCitta(), viaggio.getCountPosti()));
+
+            button1.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //Creating the instance of PopupMenu
+                    PopupMenu popup = new PopupMenu(mActivity, button1);
+                    //Inflating the Popup using xml file
+                    popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+
+                    //registering popup with OnMenuItemClickListener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            int id = item.getItemId();
+                            switch (id) {
+                                case R.id.menu_remove:
+                                     Toast.makeText(mActivity, "Vuoi eliminare : " + viaggio.getNome(), Toast.LENGTH_SHORT).show();
+                                    break;
+                                case R.id.menu_rename:
+                                       Toast.makeText(mActivity, "Vuoi rinominare : " + viaggio.getNome(), Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+
+                    popup.show();//showing popup menu
+                }
+            });
+
         }
 
         @Override

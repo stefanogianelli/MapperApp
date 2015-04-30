@@ -54,11 +54,12 @@
 
             </LinearLayout>
 
-              <ImageButton android:id="@+id/secondary_action"
+              <ImageButton android:id="@+id/button_popup"
                 style="?android:borderlessButtonStyle"
                 android:layout_width="@dimen/standard_touch_target_size"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_info_outline_white_18dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@android:drawable/ic_menu_more"
                 android:contentDescription="@string/info" />
 
         </LinearLayout>

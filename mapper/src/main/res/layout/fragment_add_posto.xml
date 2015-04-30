@@ -24,6 +24,8 @@
         android:textColor="@color/black"
         android:scrollHorizontally="false"
         android:singleLine="true"
+        android:inputType="textCapSentences|textAutoCorrect"
+        android:imeOptions="actionSend"
         android:hint="@string/add_posto" />
 
 </LinearLayout>

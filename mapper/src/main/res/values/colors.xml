@@ -16,6 +16,9 @@
     <!-- Linea orizzontale -->
     <color name="horizontal_sep_color">#15170432</color>
 
+    <!-- Popup menu -->
+    <color name="popup_background">#e7333333</color>
+
     <!-- FAB -->
     <color name="fab_color_normal">#ff5252</color>
     <color name="fab_color_pressed">#ff8080</color>
