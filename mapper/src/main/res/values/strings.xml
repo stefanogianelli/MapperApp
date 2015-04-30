@@ -20,8 +20,8 @@
     <string name="aggiungi_posto">Nome del posto</string>
 
     <!-- Insert foto -->
-    <string name="camera">Camera</string>
-    <string name="gallery">Gallery</string>
+    <string name="camera">Fotocamera</string>
+    <string name="gallery">Galleria</string>
 
     <!-- MainActivity -->
     <string name="add_viaggio">Nome del viaggio?</string>
