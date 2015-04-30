@@ -7,6 +7,7 @@
     <string name="save">Salva</string>
     <string name="cancel">Cancella</string>
     <string name="edit">Modifica</string>
+    <string name="completa_azione">Completa azione usando</string>
     <string name="action_settings">Impostazioni</string>
     <string name="info">Informazioni</string>
     <string name="aggiungi_foto">Aggiungi foto</string>
@@ -16,8 +17,12 @@
     <string name="aggiungi_citta">Nome della città</string>
     <string name="aggiungi_posto">Nome del posto</string>
 
+    <!-- Insert foto -->
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+
     <!-- MainActivity -->
-    <string name="add_viaggio">Come vuoi intitolare il nuovo viaggio?</string>
+    <string name="add_viaggio">Nome del viaggio?</string>
     <string name="add_citta">Quale città?</string>
     <string name="add_citta_nn">In quale nazione?</string>
     <plurals name="statistiche_viaggio">
