@@ -15,6 +15,7 @@ import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -103,7 +104,8 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         mDialog.dismiss();
         if (result == RESULT_OK) {
             //comunico l'avvenuto inserimento all'adapter
-            mAdapter.insertItem(mItem);
+            if (mAdapter != null)
+                mAdapter.insertItem(mItem);
         } else {
             //mostro dialog d'errore
             new CommonAlertDialog(mActivity, R.string.errore_inserimento_titolo_dialog, R.string.errore_inserimento_messaggio_dialog);
@@ -372,10 +374,27 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
      * Classe che si occupa dell'inserimento di una foto
      */
     private class InsertFoto implements InsertInterface {
+
+        private Foto foto;
+
+        public InsertFoto () {
+            foto = (Foto) mItem;
+        }
+
         @Override
         public int insertItem() {
             ContentValues values = new ContentValues();
-            return 0;
+            values.put(MapperContract.Foto.PATH, foto.getPath());
+            values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
+            values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
+            values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
+            Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);
+            long id = Long.parseLong(uri.getLastPathSegment());
+            if (id != -1) {
+                foto.setId(id);
+                return RESULT_OK;
+            }
+            return RESULT_ERROR;
         }
     }
 

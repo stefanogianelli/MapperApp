@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,6 +27,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
+import com.stefano.andrea.utils.DialogChooseFotoMode;
 
 import java.util.List;
 
@@ -37,8 +37,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.nomeViaggio";
     public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.mainActivity.Foto";
     private final static int VIAGGI_LOADER = 0;
-    protected static final int CAMERA_REQUEST = 0;
-    protected static final int GALLERY_PICTURE = 1;
 
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
@@ -81,32 +79,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            startActivity(intent);
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle("Titolo");
-            dialog.setMessage("Scegli foto");
-            dialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
-                    intent.setType("image/*");
-                    intent.putExtra("return-data", true);
-                    startActivityForResult(intent, GALLERY_PICTURE);
-                }
-            });
-            dialog.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, CAMERA_REQUEST);
-                }
-            });
-            dialog.show();
+            DialogChooseFotoMode.mostraDialog(this);
         }
 
         return super.onOptionsItemSelected(item);
@@ -193,17 +169,17 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GALLERY_PICTURE) {
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     Log.v("MainActivity", data.getData().toString());
                 }
             }
-        } else if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(EXTRA_FOTO, imageBitmap);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, imageBitmap);
             startActivity(intent);
         }
     }

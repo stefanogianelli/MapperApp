@@ -1,10 +1,13 @@
 package com.stefano.andrea.activities;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +16,7 @@ import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
 import com.stefano.andrea.fragments.FotoViaggioFragment;
 import com.stefano.andrea.models.Posto;
+import com.stefano.andrea.utils.DialogChooseFotoMode;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
@@ -79,7 +83,8 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_aggiungi_foto_dettagli_citta) {
+            DialogChooseFotoMode.mostraDialog(this);
             return true;
         }
 
@@ -89,6 +94,26 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     @Override
     public void selezionatoPosto(Posto posto) {
         //TODO: completare
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    Log.v("MainActivity", data.getData().toString());
+                }
+            }
+        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Intent intent = new Intent(this, ModInfoFotoActivity.class);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, imageBitmap);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, mIdCitta);
+            startActivity(intent);
+        }
     }
 
     public class TabDettagliCittaAdapter extends ScrollableTabAdapter {
