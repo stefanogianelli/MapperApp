@@ -21,6 +21,7 @@
         android:textColor="@color/black"
         android:scrollHorizontally="false"
         android:singleLine="true"
+        android:inputType="textCapSentences|textAutoCorrect"
         android:hint="@string/add_citta" />
     <EditText
         android:id="@+id/text_add_citta_nn"
@@ -33,6 +34,8 @@
         android:textColor="@color/black"
         android:scrollHorizontally="false"
         android:singleLine="true"
+        android:inputType="textCapSentences|textAutoCorrect"
+        android:imeOptions="actionSend"
         android:hint="@string/add_citta_nn" />
 
 </LinearLayout>
