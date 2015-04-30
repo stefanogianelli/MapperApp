@@ -28,12 +28,14 @@ android:layout_marginRight="@dimen/activity_horizontal_margin"-->
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:scaleType="fitXY"
-            android:src="@drawable/prova04"/>
+            android:src="@drawable/prova04"
+            android:layout_weight="1" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="15">
             <TextView   style="?android:textAppearanceSearchResultSubtitle"
                 android:id="@+id/citta_item_label"
                 android:layout_width="match_parent"
@@ -46,6 +48,13 @@ android:layout_marginRight="@dimen/activity_horizontal_margin"-->
 
         </LinearLayout>
 
+        <ImageButton android:id="@+id/button_popup_item_citta"
+            style="?android:borderlessButtonStyle"
+            android:layout_width="@dimen/standard_touch_target_size"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_more_vert_grey600_18dp"
+            android:contentDescription="@string/info" />
 
     </LinearLayout>
 

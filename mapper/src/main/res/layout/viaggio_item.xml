@@ -54,12 +54,12 @@
 
             </LinearLayout>
 
-              <ImageButton android:id="@+id/button_popup"
+              <ImageButton android:id="@+id/button_popup_item_viaggio"
                 style="?android:borderlessButtonStyle"
                 android:layout_width="@dimen/standard_touch_target_size"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackground"
-                android:src="@android:drawable/ic_menu_more"
+                android:src="@drawable/ic_more_vert_white_24dp"
                 android:contentDescription="@string/info" />
 
         </LinearLayout>

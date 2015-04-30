@@ -94,7 +94,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
             super(itemView);
             nomeViaggio = (TextView) itemView.findViewById(R.id.viaggio_item_label);
             viaggioLabel = (TextView) itemView.findViewById(R.id.viaggio_item_label_subtitle);
-            button1 = (ImageButton) itemView.findViewById(R.id.button_popup);
+            button1 = (ImageButton) itemView.findViewById(R.id.button_popup_item_viaggio);
         }
 
         public void bindViaggio (final Viaggio viaggio) {
