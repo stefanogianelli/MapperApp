@@ -14,7 +14,8 @@ import android.view.View;
 
 import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
-import com.stefano.andrea.fragments.FotoViaggioFragment;
+import com.stefano.andrea.fragments.ElencoFotoFragment;
+import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.utils.DialogChooseFotoMode;
 import com.stefano.andrea.utils.ScrollableTabActivity;
@@ -132,7 +133,7 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
             if(position == 0) {
                 return DettagliCittaFragment.newInstance(mIdViaggio, mIdCitta);
             } else {
-                return new FotoViaggioFragment();
+                return ElencoFotoFragment.newInstance(mIdCitta, FotoLoader.FOTO_CITTA);
             }
         }
 

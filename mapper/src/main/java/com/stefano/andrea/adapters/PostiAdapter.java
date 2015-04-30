@@ -81,7 +81,7 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
         notifyItemRemoved(pos);
     }
 
-    public class PostiHolder extends SelectableHolder {
+    protected class PostiHolder extends SelectableHolder {
 
         private TextView nomePosto;
         private ImageButton button1;

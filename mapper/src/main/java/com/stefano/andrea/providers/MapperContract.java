@@ -87,6 +87,8 @@ public final class MapperContract {
         String LATITUDINE = "latitudine";
         /** Longitudine dove e stata scattata la foto */
         String LONGITUDINE = "longitudine";
+        /** ID del viaggio associato alla foto */
+        String ID_VIAGGIO = "ref_viaggio";
         /** ID della citta in cui e stata scattata la foto */
         String ID_CITTA = "ref_citta";
         /** ID del luogo dove e stata scattata la foto */
@@ -176,11 +178,14 @@ public final class MapperContract {
     public static final class Foto implements FotoColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperDatabase.Tables.FOTO).build();
+        public static final Uri FOTO_IN_VIAGGIO_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperDatabase.Tables.FOTO).appendPath("viaggio").build();
+        public static final Uri FOTO_IN_CITTA_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperDatabase.Tables.FOTO).appendPath("citta").build();
+        public static final Uri FOTO_IN_POSTO_URI = BASE_CONTENT_URI.buildUpon().appendPath(MapperDatabase.Tables.FOTO).appendPath("posto").build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.foto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.foto";
 
-        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_CITTA, ID_POSTO};
+        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_VIAGGIO, ID_CITTA, ID_POSTO};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = FotoColumns.DATA + " ASC";

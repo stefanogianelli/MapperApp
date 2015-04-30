@@ -40,6 +40,9 @@ public class MapperContentProvider extends ContentProvider {
 
     private static final int FOTO = 600;
     private static final int FOTO_ID = 601;
+    private static final int FOTO_IN_VIAGGIO = 602;
+    private static final int FOTO_IN_CITTA = 603;
+    private static final int FOTO_IN_POSTO = 604;
 
     private static UriMatcher buildUriMatcher () {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -64,6 +67,9 @@ public class MapperContentProvider extends ContentProvider {
 
         matcher.addURI(authority, MapperDatabase.Tables.FOTO, FOTO);
         matcher.addURI(authority, MapperDatabase.Tables.FOTO + "/#", FOTO_ID);
+        matcher.addURI(authority, MapperDatabase.Tables.FOTO + "/viaggio/#", FOTO_IN_VIAGGIO);
+        matcher.addURI(authority, MapperDatabase.Tables.FOTO + "/citta/#", FOTO_IN_CITTA);
+        matcher.addURI(authority, MapperDatabase.Tables.FOTO + "/posto/#", FOTO_IN_POSTO);
 
         return matcher;
     }
@@ -131,6 +137,21 @@ public class MapperContentProvider extends ContentProvider {
             case FOTO:
                 builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
                 break;
+            case FOTO_IN_VIAGGIO:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Foto.ID_VIAGGIO + "=?", id);
+                builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
+                break;
+            case FOTO_IN_CITTA:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Foto.ID_CITTA + "=?", id);
+                builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
+                break;
+            case FOTO_IN_POSTO:
+                id = uri.getLastPathSegment();
+                builder.where(MapperContract.Foto.ID_POSTO + "=?", id);
+                builder.table(MapperDatabase.Tables.FOTO).where(selection, selectionArgs);
+                break;
             default:
                 throw new UnsupportedOperationException(ctx.getResources().getString(R.string.unsupported_uri_error) + " " + uri);
         }
@@ -168,6 +189,9 @@ public class MapperContentProvider extends ContentProvider {
                 return MapperContract.Luogo.CONTENT_TYPE;
             case LUOGHI_ID:
                 return MapperContract.Luogo.CONTENT_ITEM_TYPE;
+            case FOTO_IN_VIAGGIO:
+            case FOTO_IN_CITTA:
+            case FOTO_IN_POSTO:
             case FOTO:
                 return MapperContract.Foto.CONTENT_TYPE;
             case FOTO_ID:

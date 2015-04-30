@@ -8,12 +8,14 @@ import android.graphics.Bitmap;
 public class Foto {
 
     private long id;
-    private Bitmap image;
+    private Bitmap image;   //deprecato
     private String path;
-    private String title;
+    private String title;   //deprecato
     private double latitudine;
     private double longitudine;
+    private double idViaggio;
     private double idCitta;
+    private double idPosto;
 
     public Foto () { }
 
@@ -70,11 +72,27 @@ public class Foto {
         this.longitudine = longitudine;
     }
 
+    public double getIdViaggio() {
+        return idViaggio;
+    }
+
+    public void setIdViaggio(double idViaggio) {
+        this.idViaggio = idViaggio;
+    }
+
     public double getIdCitta() {
         return idCitta;
     }
 
     public void setIdCitta(double idCitta) {
         this.idCitta = idCitta;
+    }
+
+    public double getIdPosto() {
+        return idPosto;
+    }
+
+    public void setIdPosto(double idPosto) {
+        this.idPosto = idPosto;
     }
 }

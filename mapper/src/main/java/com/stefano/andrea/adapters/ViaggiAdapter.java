@@ -84,7 +84,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         notifyItemRemoved(pos);
     }
 
-    public class ViaggiHolder extends SelectableHolder {
+    protected class ViaggiHolder extends SelectableHolder {
 
         private TextView nomeViaggio;
         private TextView viaggioLabel;

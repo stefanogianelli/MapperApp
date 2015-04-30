@@ -83,7 +83,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
         notifyItemRemoved(pos);
     }
 
-    public class CittaHolder extends SelectableHolder {
+    protected class CittaHolder extends SelectableHolder {
 
         private TextView nomeCitta;
         private TextView statCitta;

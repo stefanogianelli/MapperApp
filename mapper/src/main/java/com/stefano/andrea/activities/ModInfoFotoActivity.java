@@ -95,6 +95,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             foto.setPath(mImageUri.toString());
             foto.setLatitudine(0);
             foto.setLongitudine(0);
+            foto.setIdViaggio(mIdViaggio);
             foto.setIdCitta(mIdCitta);
             new InsertTask<>(this, mResolver, null, foto).execute(InsertTask.INSERISCI_FOTO);
             //startActivity(new Intent(this, MainActivity.class));
