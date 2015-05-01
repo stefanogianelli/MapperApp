@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class PhotoUtils {
 
     public static final int CAMERA_REQUEST = 0;
     public static final int GALLERY_PICTURE = 1;
+    public static final int GALLERY_PICTURE_KITKAT = 2;
 
     /**
      * Mostra il dialog per scegliere da dove acquisire la foto
@@ -61,10 +63,20 @@ public class PhotoUtils {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                activity.startActivityForResult(Intent.createChooser(intent,"Select Picture"), GALLERY_PICTURE);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    //pre-kitkat version
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    activity.startActivityForResult(intent, GALLERY_PICTURE);
+                } else {
+                    //kitkat version
+                    intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    activity.startActivityForResult(intent, GALLERY_PICTURE_KITKAT);
+                }
                 dialog.dismiss();
             }
         });
@@ -84,25 +96,29 @@ public class PhotoUtils {
     public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta) {
         Intent intent = null;
         ArrayList<String> fotoUris = new ArrayList<>();
-        if (requestCode == PhotoUtils.GALLERY_PICTURE && resultCode == activity.RESULT_OK) {
+        if ((requestCode == GALLERY_PICTURE || requestCode == GALLERY_PICTURE_KITKAT) && resultCode == Activity.RESULT_OK) {
             //singola immagine
             if (data.getData() != null) {
                 intent = new Intent(activity, ModInfoFotoActivity.class);
+                if (requestCode == GALLERY_PICTURE_KITKAT)
+                    activity.getContentResolver().takePersistableUriPermission(data.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 fotoUris.add(data.getData().toString());
-                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             } else if (data.getClipData() != null) {
                 intent = new Intent(activity, ModInfoFotoActivity.class);
                 ClipData clipData = data.getClipData();
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     ClipData.Item item = clipData.getItemAt(i);
+                    if (requestCode == GALLERY_PICTURE_KITKAT)
+                        activity.getContentResolver().takePersistableUriPermission(item.getUri(), Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     fotoUris.add(item.getUri().toString());
                 }
-                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             }
-        } else if (requestCode == PhotoUtils.CAMERA_REQUEST && resultCode == activity.RESULT_OK) {
+        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             intent = new Intent(activity, ModInfoFotoActivity.class);
             fotoUris.add(imageUri.toString());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.CAMERA_REQUEST);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, CAMERA_REQUEST);
         }
         if (intent != null) {
             intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
