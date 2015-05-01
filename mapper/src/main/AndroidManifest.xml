@@ -27,8 +27,7 @@
             android:name=".DettagliViaggioActivity"
             android:label="@string/title_activity_dettagli_viaggio"
             android:theme="@style/AppThemeNoToolbar"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop">
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

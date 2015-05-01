@@ -30,6 +30,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
+import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.IOException;
@@ -40,10 +41,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     private final static String TAG = "MainActivity";
     private final static int VIAGGI_LOADER = 0;
-
-    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.idViaggio";
-    public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.nomeViaggio";
-    public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.mainActivity.Foto";
 
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
@@ -111,9 +108,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      */
     @Override
     public void selezionatoViaggio(Viaggio viaggio) {
+        MapperContext context = MapperContext.getInstance();
+        context.setIdViaggio(viaggio.getId());
+        context.setNomeViaggio(viaggio.getNome());
         Intent intent = new Intent(this, DettagliViaggioActivity.class);
-        intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
-        intent.putExtra(EXTRA_NOME_VIAGGIO, viaggio.getNome());
         startActivity(intent);
     }
 

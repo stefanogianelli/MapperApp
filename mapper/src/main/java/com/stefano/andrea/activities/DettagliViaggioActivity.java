@@ -20,6 +20,7 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
@@ -31,26 +32,22 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
 
     private static final String TAG = "DettagliViaggioActivity";
 
-    public static final String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.DettagliViaggioActivity.idViaggio";
-    public static final String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.idCitta";
-    public static final String EXTRA_NOME_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.nomeCitta";
-
     private CharSequence [] mTitles = {"Dettagli", "Foto"};
     private int mNumbOfTabs = 2;
     private long mIdViaggio;
     private String mNomeViaggio;
     private TabDettagliViaggioAdapter mAdapter;
     private Uri mImageUri;
+    private MapperContext mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
-        //salvo i parametri ricevuti dall'intent
-        if (getIntent().getExtras() != null) {
-            mNomeViaggio = getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
-            mIdViaggio = getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
-        }
+        //recupero i parametri dal contesto
+        mContext = MapperContext.getInstance();
+        mNomeViaggio = mContext.getNomeViaggio();
+        mIdViaggio = mContext.getIdViaggio();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
         View headerView = findViewById(R.id.dettagli_viaggio_header);
@@ -129,10 +126,9 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
      */
     @Override
     public void selezionataCitta(Citta citta) {
+        mContext.setIdCitta(citta.getIdCitta());
+        mContext.setNomeCitta(citta.getNome());
         Intent intent = new Intent(this, DettagliCittaActivity.class);
-        intent.putExtra(EXTRA_ID_VIAGGIO, mIdViaggio);
-        intent.putExtra(EXTRA_ID_CITTA, citta.getId());
-        intent.putExtra(EXTRA_NOME_CITTA, citta.getNome());
         startActivity(intent);
     }
 

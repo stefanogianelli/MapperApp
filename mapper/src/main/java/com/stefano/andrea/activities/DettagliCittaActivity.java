@@ -19,6 +19,7 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
+import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
@@ -35,18 +36,17 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     private long mIdViaggio;
     private long mIdCitta;
     private Uri mImageUri;
+    private MapperContext mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_citta);
-        //salvo i parametri ricevuti dall'intent
-        String nomeCitta = "";
-        if (getIntent() != null) {
-            mIdViaggio = getIntent().getExtras().getLong(DettagliViaggioActivity.EXTRA_ID_VIAGGIO);
-            mIdCitta = getIntent().getExtras().getLong(DettagliViaggioActivity.EXTRA_ID_CITTA);
-            nomeCitta = getIntent().getExtras().getString(DettagliViaggioActivity.EXTRA_NOME_CITTA);
-        }
+        //recupero i parametri dal contesto
+        mContext = MapperContext.getInstance();
+        mIdViaggio = mContext.getIdViaggio();
+        mIdCitta = mContext.getIdCitta();
+        String nomeCitta = mContext.getNomeCitta();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_citta_toolbar);
         View headerView = findViewById(R.id.dettagli_citta_header);
