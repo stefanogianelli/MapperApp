@@ -118,9 +118,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     mFotoSalvata = true;
                     finish();
                 } else {
-                    Toast.makeText(this, "Selezionare una citta", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getApplicationContext().getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Selezionare un viaggio", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getApplicationContext().getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
             }
             return true;
         } else if (id == R.id.action_annula_foto) {

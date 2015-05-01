@@ -51,7 +51,7 @@ public class PhotoUtils {
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                         activity.startActivityForResult(intent, CAMERA_REQUEST);
                     } else {
-                        Toast.makeText(activity, "Impossibile scattare foto", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, activity.getApplicationContext().getResources().getString(R.string.foto_not_allowed), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.v(TAG, "URI dell'immagine non settata!");

@@ -329,6 +329,9 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     }
 
+    /**
+     * Classe che si occupa di inserire un nuovo luogo
+     */
     private class InsertLuogo implements InsertInterface {
 
         private Posto posto;
