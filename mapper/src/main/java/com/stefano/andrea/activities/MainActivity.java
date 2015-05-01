@@ -40,7 +40,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private final static String TAG = "MainActivity";
     private final static int VIAGGI_LOADER = 0;
 
-    private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private ContentResolver mResolver;
     private List<Viaggio> mListaViaggi;
@@ -54,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         //acquisisco riferimento al content provider
         mResolver = getContentResolver();
         //inizializzo recyclerview
-        mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -117,7 +116,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * Crea un nuovo viaggio nel database
      * @param nome Il nome del viaggio
      */
-    public void creaViaggio (String nome) {
+    private void creaViaggio(String nome) {
         Viaggio viaggio = new Viaggio(nome);
         new InsertTask<>(this, mResolver, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
     }
@@ -125,7 +124,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     /**
      * Cancella i viaggi selezionati dall'utente
      */
-    public void cancellaViaggi () {
+    private void cancellaViaggi() {
         new DeleteTask<>(this, mResolver, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 

@@ -55,7 +55,6 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
     private ContentResolver mResolver;
     private InsertAdapter mAdapter;
     private T mItem;
-    private InsertInterface mDelegate;
     private ProgressDialog mDialog;
 
     public InsertTask (Activity activity, ContentResolver resolver, InsertAdapter adapter, T item) {
@@ -77,6 +76,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
         if (params.length == 1) {
+            InsertInterface mDelegate;
             switch (params[0]) {
                 case INSERISCI_VIAGGIO:
                     mDelegate = new InsertViaggio();

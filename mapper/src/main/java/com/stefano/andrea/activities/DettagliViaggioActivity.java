@@ -29,13 +29,7 @@ import java.io.IOException;
 
 public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener, FotoAdapter.FotoOnClickListener {
 
-    private static final String TAG = "DettagliViaggioActivity";
-
-    private CharSequence [] mTitles = {"Dettagli", "Foto"};
-    private int mNumbOfTabs = 2;
     private long mIdViaggio;
-    private String mNomeViaggio;
-    private TabDettagliViaggioAdapter mAdapter;
     private Uri mImageUri;
     private MapperContext mContext;
 
@@ -45,7 +39,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         setContentView(R.layout.activity_dettagli_viaggio);
         //recupero i parametri dal contesto
         mContext = MapperContext.getInstance();
-        mNomeViaggio = mContext.getNomeViaggio();
+        String mNomeViaggio = mContext.getNomeViaggio();
         mIdViaggio = mContext.getIdViaggio();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
@@ -59,7 +53,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
         //Creo l'adapter per le tab
-        mAdapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        TabDettagliViaggioAdapter mAdapter = new TabDettagliViaggioAdapter(getSupportFragmentManager());
         //assegno al pager l'adapter
         pager.setAdapter(mAdapter);
         //assegno i parametri alla superclasse per lo scrolling
@@ -144,13 +138,11 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
 
     private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {
 
-        private CharSequence [] mTitles;
-        private int mNumbOfTabs;
+        private CharSequence [] mTitles = {"Dettagli", "Foto"};
+        private int mNumbOfTabs = 2;
 
-        public TabDettagliViaggioAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
+        public TabDettagliViaggioAdapter(FragmentManager fm) {
             super(fm);
-            mTitles = titles;
-            mNumbOfTabs = numbOfTabSum;
         }
 
         @Override

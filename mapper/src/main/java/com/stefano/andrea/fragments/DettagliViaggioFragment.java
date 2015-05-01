@@ -44,14 +44,12 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private static final int CITTA_LOADER = 0;
     private static final String ID_VIAGGIO = "id_viaggio";
 
-    private ObservableRecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
     private long mIdViaggio;
     private List<Citta> mElencoCitta;
     private CustomFAB mFab;
     private Activity mParentActivity;
-    private ActionModeCallback mActionMode;
 
     public DettagliViaggioFragment () { }
 
@@ -75,7 +73,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         //acquisisco content resolver
         mResolver = mParentActivity.getContentResolver();
         //creo action mode
-        mActionMode = new ActionModeCallback();
+        ActionModeCallback mActionMode = new ActionModeCallback();
         //creo l'adapter
         mAdapter = new CittaAdapter(mParentActivity, mActionMode, (CittaAdapter.CittaOnClickListener) mParentActivity);
         //avvio il loader delle citta
@@ -87,7 +85,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
         mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
-        mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
+        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
@@ -118,7 +116,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
      * @param nomeCitta Il nome della citta
      * @param nomeNazione Il nome della nazione
      */
-    public void creaNuovaCitta (String nomeCitta, String nomeNazione) {
+    private void creaNuovaCitta(String nomeCitta, String nomeNazione) {
         Citta citta = new Citta();
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
@@ -129,11 +127,11 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     /**
      * Cancella le citta selezionate dall'utente
      */
-    public void cancellaElencoCitta () {
+    private void cancellaElencoCitta() {
         new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
     }
 
-    public void openDialogAddCitta(View view) {
+    private void openDialogAddCitta(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
         LayoutInflater inflater = mParentActivity.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.fragment_add_citta, null))

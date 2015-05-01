@@ -2,7 +2,6 @@ package com.stefano.andrea.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 
 import com.stefano.andrea.activities.R;
@@ -30,7 +29,7 @@ public class CommonAlertDialog {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ((Dialog) dialog).dismiss();
+                dialog.dismiss();
             }
         });
         builder.create().show();

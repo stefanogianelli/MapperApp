@@ -40,7 +40,6 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     private ContentResolver mResolver;
     private DeleteAdapter mAdapter;
-    private DeleteInterface mDelegate;
     private List<T> mList;
     private List<Integer> mSelectedItems;
     private Activity mActivity;
@@ -57,6 +56,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     protected Integer doInBackground(Integer... params) {
         if (params.length == 1) {
             //assegno il delegate corretto
+            DeleteInterface mDelegate;
             switch (params[0]) {
                 case CANCELLA_VIAGGIO:
                     mDelegate = new CancellaViaggio();

@@ -29,12 +29,11 @@ import java.util.List;
  */
 public class ElencoFotoFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Foto>> {
 
-    public static final String EXTRA_ID = "id_elenco_foto";
-    public static final String EXTRA_TIPO_ELENCO = "tipo_elenco";
+    private static final String EXTRA_ID = "id_elenco_foto";
+    private static final String EXTRA_TIPO_ELENCO = "tipo_elenco";
 
     private static final int FOTO_LOADER = 0;
 
-    private ObservableRecyclerView mRecyclerView;
     private int mTipoElenco;
     private long mId;
     private Activity mParentActivity;
@@ -81,7 +80,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_elenco_foto,container,false);
         //acquisisco riferimenti
-        mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
+        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));

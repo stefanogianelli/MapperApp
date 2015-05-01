@@ -29,21 +29,16 @@ import java.io.IOException;
 
 public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener, FotoAdapter.FotoOnClickListener {
 
-    private static final String TAG = "DettagliCittaActivity";
-
-    private CharSequence [] mTitles = {"Posti","Foto"};
-    private int mNumbOfTabs = 2;
     private long mIdViaggio;
     private long mIdCitta;
     private Uri mImageUri;
-    private MapperContext mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_citta);
         //recupero i parametri dal contesto
-        mContext = MapperContext.getInstance();
+        MapperContext mContext = MapperContext.getInstance();
         mIdViaggio = mContext.getIdViaggio();
         mIdCitta = mContext.getIdCitta();
         String nomeCitta = mContext.getNomeCitta();
@@ -59,7 +54,7 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         //aggiungo il titolo alla action bar
         this.setTitle(nomeCitta);
         //creo l'adapter per le tab
-        TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager());
         //assegno l'adapter al pager
         pager.setAdapter(adapter);
         //assegno i parametri alla superclasse per lo scrolling
@@ -122,13 +117,11 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
 
     public class TabDettagliCittaAdapter extends ScrollableTabAdapter {
 
-        private CharSequence [] mTitles;
-        private int mNumbOfTabs;
+        private CharSequence [] mTitles = {"Posti","Foto"};
+        private int mNumbOfTabs = 2;
 
-        public TabDettagliCittaAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
+        public TabDettagliCittaAdapter(FragmentManager fm) {
             super(fm);
-            mTitles = titles;
-            mNumbOfTabs = numbOfTabSum;
         }
 
         @Override

@@ -1,7 +1,6 @@
 package com.stefano.andrea.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import java.util.List;
  */
 public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> implements DeleteTask.DeleteAdapter<Foto>, InsertTask.InsertAdapter<List<Foto>> {
 
-    private Context mContext;
     private FotoOnClickListener mListener;
     private List<Foto> mElencoFoto;
     private ImageLoader mImageLoader;
@@ -35,7 +33,6 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
     public FotoAdapter(Activity activity, ActionMode.Callback callback, FotoOnClickListener listener) {
         super(activity, callback);
         mListener = listener;
-        mContext = activity.getApplicationContext();
         mImageLoader = ImageLoader.getInstance();
     }
 

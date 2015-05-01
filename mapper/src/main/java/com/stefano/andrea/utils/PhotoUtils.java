@@ -30,8 +30,8 @@ public class PhotoUtils {
     private static final String TAG = "DialogFoto";
 
     public static final int CAMERA_REQUEST = 0;
-    public static final int GALLERY_PICTURE = 1;
-    public static final int GALLERY_PICTURE_KITKAT = 2;
+    private static final int GALLERY_PICTURE = 1;
+    private static final int GALLERY_PICTURE_KITKAT = 2;
 
     /**
      * Mostra il dialog per scegliere da dove acquisire la foto
@@ -136,18 +136,18 @@ public class PhotoUtils {
      */
     public static Uri getImageUri () throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File photo = createFile("mapper_" + timestamp, ".jpg");
+        File photo = createFile("mapper_" + timestamp);
         photo.delete();
         return Uri.fromFile(photo);
     }
 
-    private static File createFile(String part, String ext) throws IOException {
+    private static File createFile(String part) throws IOException {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         dir = new File(dir.getAbsolutePath() + "/Mapper/");
         if(!dir.exists()) {
             dir.mkdir();
         }
-        return File.createTempFile(part, ext, dir);
+        return File.createTempFile(part, ".jpg", dir);
     }
 
 }
