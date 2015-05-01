@@ -7,7 +7,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private ContentResolver mResolver;
     private List<Viaggio> mListaViaggi;
     private CustomFAB mFab;
+    private Uri mImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
-            DialogChooseFotoMode.mostraDialog(this, null);
+            mImageUri = DialogChooseFotoMode.getImageUri();
+            DialogChooseFotoMode.mostraDialog(this, mImageUri);
         }
 
         return super.onOptionsItemSelected(item);
@@ -176,17 +178,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    Log.v(TAG, data.getData().toString());
-                }
-            }
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
+            Log.v(TAG, data.getData().toString());
         } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
             Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, imageBitmap);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
             startActivity(intent);
         }
     }

@@ -90,8 +90,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
 
         if (id == R.id.action_aggiungi_foto_dettagli_citta) {
             mImageUri = DialogChooseFotoMode.getImageUri();
-            if (BuildConfig.DEBUG && mImageUri == null)
-                throw new AssertionError();
             DialogChooseFotoMode.mostraDialog(this, mImageUri);
             return true;
         }
@@ -113,7 +111,7 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
-            Log.v("MainActivity", data.getData().toString());
+            Log.v(TAG, data.getData().toString());
         } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, ModInfoFotoActivity.class);
             intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());

@@ -1,11 +1,13 @@
 package com.stefano.andrea.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +19,14 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.utils.DialogChooseFotoMode;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
 public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener, FotoAdapter.FotoOnClickListener {
+
+    private static final String TAG = "DettagliViaggioActivity";
 
     public static final String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.DettagliViaggioActivity.idViaggio";
     public static final String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.idCitta";
@@ -32,6 +37,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
     private long mIdViaggio;
     private String mNomeViaggio;
     private TabDettagliViaggioAdapter mAdapter;
+    private Uri mImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +96,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_dettagli_viaggio, menu);
+        getMenuInflater().inflate(R.menu.menu_dettagli_viaggio, menu);
         return true;
     }
 
@@ -101,8 +107,9 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_aggiungi_foto_dettagli_viaggio) {
+            mImageUri = DialogChooseFotoMode.getImageUri();
+            DialogChooseFotoMode.mostraDialog(this, mImageUri);
             return true;
         }
 
@@ -125,6 +132,19 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
     @Override
     public void selezionataFoto(Foto foto) {
         //TODO: completare
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
+            Log.v(TAG, data.getData().toString());
+        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Intent intent = new Intent(this, ModInfoFotoActivity.class);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);
+            startActivity(intent);
+        }
     }
 
     private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {

@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Foto;
@@ -93,18 +94,24 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_salva_foto) {
-            Foto foto = new Foto();
-            foto.setPath(mImagePath);
-            foto.setLatitudine(0);
-            foto.setLongitudine(0);
-            foto.setIdViaggio(mIdViaggio);
-            foto.setIdCitta(mIdCitta);
-            new InsertTask<>(this, mResolver, null, foto).execute(InsertTask.INSERISCI_FOTO);
+            if (mIdViaggio != -1)
+                if (mIdCitta != -1) {
+                    Foto foto = new Foto();
+                    foto.setPath(mImagePath);
+                    foto.setLatitudine(0);
+                    foto.setLongitudine(0);
+                    foto.setIdViaggio(mIdViaggio);
+                    foto.setIdCitta(mIdCitta);
+                    new InsertTask<>(this, mResolver, null, foto).execute(InsertTask.INSERISCI_FOTO);
+                } else {
+                    Toast.makeText(this, "Selezionare una citta", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Selezionare un viaggio", Toast.LENGTH_SHORT).show();
+            }
             finish();
             return true;
         } else if (id == R.id.action_annula_foto) {
-            File file = new File(mImagePath.substring(7));
-            boolean res = file.delete();
+            boolean res = cancellaFoto();
             if (BuildConfig.DEBUG && res)
                 Log.v(TAG, "Foto cancellata con successo");
             else
@@ -116,4 +123,14 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean cancellaFoto () {
+        File file = new File(mImagePath.substring(7));
+        return file.delete();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancellaFoto();
+    }
 }
