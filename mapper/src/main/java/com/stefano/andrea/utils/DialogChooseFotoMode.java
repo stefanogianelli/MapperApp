@@ -32,7 +32,7 @@ public class DialogChooseFotoMode {
      * @param imageUri L'uri dove si vuole salvare l'immagine (solo nel caso della fotocamera)
      */
     public static void mostraDialog (final Activity activity, final Uri imageUri) {
-        Dialog dialog = new Dialog(activity);
+        final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // Tolgo lo spazio per il titolo di default
         dialog.setContentView(R.layout.fragment_add_foto);
         dialog.findViewById(R.id.action_fotocamera).setOnClickListener(new View.OnClickListener() {
@@ -45,6 +45,7 @@ public class DialogChooseFotoMode {
                 } else {
                     Log.v(TAG, "URI dell'immagine non settata!");
                 }
+                dialog.dismiss();
             }
         });
         dialog.findViewById(R.id.action_galleria).setOnClickListener(new View.OnClickListener() {
@@ -54,29 +55,9 @@ public class DialogChooseFotoMode {
                 intent.setType("image/*");
                 intent.putExtra("return-data", true);
                 activity.startActivityForResult(intent, GALLERY_PICTURE);
+                dialog.dismiss();
             }
         });
-        /*dialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
-                intent.setType("image/*");
-                intent.putExtra("return-data", true);
-                activity.startActivityForResult(intent, GALLERY_PICTURE);
-            }
-        });
-        dialog.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (imageUri != null) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                    activity.startActivityForResult(intent, CAMERA_REQUEST);
-                } else {
-                    Log.v(TAG, "URI dell'immagine non settata!");
-                }
-            }
-        });*/
         dialog.show();
     }
 

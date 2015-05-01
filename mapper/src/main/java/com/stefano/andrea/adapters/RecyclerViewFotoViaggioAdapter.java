@@ -33,7 +33,7 @@ public class RecyclerViewFotoViaggioAdapter extends RecyclerView.Adapter<Recycle
     public void onBindViewHolder(FotoHolder holder, int position) {
         Foto foto = mListaFoto.get(position);
         //holder.mNomeFoto.setText(foto.getTitle());
-        holder.mFoto.setImageBitmap(foto.getImage());
+        //holder.mFoto.setImageBitmap(foto.getImage());
     }
 
     @Override

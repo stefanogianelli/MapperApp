@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/mod_title"
-                    android:text="Viaggio 1"/>
+                    android:text="nome viaggio"/>
             </LinearLayout>
             <ImageButton android:id="@+id/icon_edit_viaggio_foto"
                 style="?android:borderlessButtonStyle"
@@ -133,7 +133,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_title"
-                android:text="Italia"/>
+                android:text="nazione"/>
         </LinearLayout>
         <ImageButton android:id="@+id/icon_edit_nazione_foto"
             style="?android:borderlessButtonStyle"
@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_title"
-                android:text="Roma"/>
+                android:text="nome citta"/>
         </LinearLayout>
         <ImageButton android:id="@+id/icon_edit_citta_foto"
             style="?android:borderlessButtonStyle"
@@ -231,7 +231,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_title"
-                android:text="Colosseo"/>
+                android:text="nome posto"/>
         </LinearLayout>
         <ImageButton android:id="@+id/icon_edit_posto_foto"
             style="?android:borderlessButtonStyle"

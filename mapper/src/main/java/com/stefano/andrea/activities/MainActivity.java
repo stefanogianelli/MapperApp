@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
@@ -63,6 +65,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         //acquisisco riferimento al fab
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         mFab.attachToRecyclerView(mRecyclerView);
+        //Inizializzo imageloader
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoader.getInstance().init(config);
     }
 
     @Override
@@ -118,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     /**
      * Mostra la finestra di dialogo per creare un nuovo viaggio
-     * @param view
+     * @param view View
      */
     public void openDialogAddViaggio(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

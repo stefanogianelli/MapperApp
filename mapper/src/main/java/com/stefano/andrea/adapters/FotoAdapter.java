@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.tasks.DeleteTask;
+import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.SelectableAdapter;
 import com.stefano.andrea.utils.SelectableHolder;
 
@@ -19,11 +21,12 @@ import java.util.List;
 /**
  * FotoAdapter
  */
-public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> {
+public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> implements DeleteTask.DeleteAdapter<Foto>, InsertTask.InsertAdapter<Foto> {
 
     private Context mContext;
     private FotoOnClickListener mListener;
     private List<Foto> mElencoFoto;
+    private ImageLoader mImageLoader;
 
     public interface FotoOnClickListener {
         void selezionataFoto (Foto foto);
@@ -33,6 +36,7 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> {
         super(activity, callback);
         mListener = listener;
         mContext = activity.getApplicationContext();
+        mImageLoader = ImageLoader.getInstance();
     }
 
     public void setElencoFoto (List<Foto> elencoFoto) {
@@ -62,6 +66,20 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> {
             return 0;
     }
 
+    @Override
+    public void insertItem(Foto item) {
+        mElencoFoto.add(0, item);
+        notifyItemInserted(0);
+    }
+
+
+    @Override
+    public void cancellaItem(Foto item) {
+        int pos = mElencoFoto.indexOf(item);
+        mElencoFoto.remove(pos);
+        notifyItemRemoved(pos);
+    }
+
     protected class FotoHolder extends SelectableHolder {
 
         private ImageView fotoView;
@@ -72,17 +90,24 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> {
         }
 
         public void bindFoto (Foto foto) {
-            Picasso.with(mContext).load(foto.getPath()).into(fotoView);
+            this.itemView.setTag(foto);
+            mImageLoader.displayImage(foto.getPath(), fotoView);
         }
 
         @Override
         public void onClick(View v) {
-
+            if (isEnabledSelectionMode())
+                toggleSelection(getLayoutPosition());
+            else
+                mListener.selezionataFoto((Foto) v.getTag());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return false;
+            if (!isEnabledSelectionMode())
+                startActionMode();
+            toggleSelection(getLayoutPosition());
+            return true;
         }
     }
 

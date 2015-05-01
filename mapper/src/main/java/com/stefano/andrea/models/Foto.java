@@ -1,14 +1,11 @@
 package com.stefano.andrea.models;
 
-import android.graphics.Bitmap;
-
 /**
  * Foto
  */
 public class Foto {
 
     private long id;
-    private Bitmap image;   //deprecato
     private String path;
     private String title;   //deprecato
     private double latitudine;
@@ -19,25 +16,12 @@ public class Foto {
 
     public Foto () { }
 
-    public Foto(Bitmap image, String title) {
-        this.image = image;
-        this.title = title;
-    }
-
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Bitmap getImage() {
-        return image;
-    }
-
-    public void setImage(Bitmap image) {
-        this.image = image;
     }
 
     public String getPath() {
