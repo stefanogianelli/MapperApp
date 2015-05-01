@@ -35,10 +35,12 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
 
+    private final static String TAG = "MainActivity";
+    private final static int VIAGGI_LOADER = 0;
+
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.idViaggio";
     public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.nomeViaggio";
     public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.mainActivity.Foto";
-    private final static int VIAGGI_LOADER = 0;
 
     private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
@@ -177,7 +179,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    Log.v("MainActivity", data.getData().toString());
+                    Log.v(TAG, data.getData().toString());
                 }
             }
         } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {

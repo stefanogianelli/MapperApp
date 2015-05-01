@@ -18,6 +18,8 @@ import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
 
+import java.io.File;
+
 public class ModInfoFotoActivity extends ActionBarActivity {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
@@ -101,6 +103,13 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             finish();
             return true;
         } else if (id == R.id.action_annula_foto) {
+            File file = new File(mImagePath.substring(7));
+            boolean res = file.delete();
+            if (BuildConfig.DEBUG && res)
+                Log.v(TAG, "Foto cancellata con successo");
+            else
+                Log.v(TAG, "Errore durante l'eliminazione della foto");
+            finish();
             return true;
         }
 
