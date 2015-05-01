@@ -58,6 +58,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         mParentActivity = getActivity();
         mResolver = mParentActivity.getContentResolver();
         mAdapter = new FotoAdapter(mParentActivity, null, null);
+        getLoaderManager().initLoader(FOTO_LOADER, null, this);
     }
 
     @Override

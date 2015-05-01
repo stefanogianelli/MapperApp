@@ -98,8 +98,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             foto.setIdViaggio(mIdViaggio);
             foto.setIdCitta(mIdCitta);
             new InsertTask<>(this, mResolver, null, foto).execute(InsertTask.INSERISCI_FOTO);
-            //startActivity(new Intent(this, MainActivity.class));
-            finish();
+            startActivity(new Intent(this, MainActivity.class));
             return true;
         } else if (id == R.id.action_annula_foto) {
             return true;

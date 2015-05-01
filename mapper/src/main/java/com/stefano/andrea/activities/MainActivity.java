@@ -50,8 +50,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         //acquisisco riferimento al content provider
         mResolver = getContentResolver();
-        //inizializzo il caricamento dei dati dei viaggi
-        getLoaderManager().initLoader(VIAGGI_LOADER, null, this);
         //inizializzo recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);
@@ -60,6 +58,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         //inizializzo l'adapter
         mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback());
         mRecyclerView.setAdapter(mAdapter);
+        //inizializzo il caricamento dei dati dei viaggi
+        getLoaderManager().initLoader(VIAGGI_LOADER, null, this);
         //acquisisco riferimento al fab
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         mFab.attachToRecyclerView(mRecyclerView);

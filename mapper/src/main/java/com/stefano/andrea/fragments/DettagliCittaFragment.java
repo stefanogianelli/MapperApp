@@ -78,10 +78,10 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         mParentActivity = getActivity();
         //acquisisco il content resolver
         mResolver = mParentActivity.getContentResolver();
-        //avvio il loader dei posto
-        getLoaderManager().initLoader(POSTI_LOADER, null, this);
         //creo l'adapter
         mAdapter = new PostiAdapter((PostiAdapter.PostoOnClickListener) mParentActivity, mParentActivity, new ActionModeCallback());
+        //avvio il loader dei posto
+        getLoaderManager().initLoader(POSTI_LOADER, null, this);
     }
 
     @Override

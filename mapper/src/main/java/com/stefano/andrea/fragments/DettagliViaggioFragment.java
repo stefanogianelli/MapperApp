@@ -76,10 +76,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mParentActivity = getActivity();
         //acquisisco content resolver
         mResolver = mParentActivity.getContentResolver();
-        //avvio il loader delle citta
-        getLoaderManager().initLoader(CITTA_LOADER, null, this);
         //creo l'adapter
         mAdapter = new CittaAdapter(mParentActivity, new ActionModeCallback(), (CittaAdapter.CittaOnClickListener) mParentActivity);
+        //avvio il loader delle citta
+        getLoaderManager().initLoader(CITTA_LOADER, null, this);
     }
 
     @Override
