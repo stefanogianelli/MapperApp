@@ -20,6 +20,7 @@ import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.tasks.DeleteTask;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private ContentResolver mResolver;
     private FotoAdapter mAdapter;
     private FotoAdapter.FotoOnClickListener mListener;
+    private List<Foto> mElencoFoto;
 
     public ElencoFotoFragment () { }
 
@@ -89,6 +91,13 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         return v;
     }
 
+    /**
+     * Cancella le foto selezionate dall'utente
+     */
+    private void cancellaElencoFoto () {
+        new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoFoto, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_FOTO);
+    }
+
     @Override
     public Loader<List<Foto>> onCreateLoader(int id, Bundle args) {
         switch (id) {
@@ -105,6 +114,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         switch (id) {
             case FOTO_LOADER:
                 mAdapter.setElencoFoto(data);
+                mElencoFoto = data;
         }
     }
 
@@ -130,7 +140,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_cancella_foto:
-                    //TODO: cancellazione foto
+                    cancellaElencoFoto();
                     mode.finish();
                     return true;
                 default:

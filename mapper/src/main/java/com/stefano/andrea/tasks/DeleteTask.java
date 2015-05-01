@@ -9,10 +9,12 @@ import android.os.AsyncTask;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -66,6 +68,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
                     mDelegate = new CancellaPosto();
                     break;
                 case CANCELLA_FOTO:
+                    mDelegate = new CancellaFoto();
                     break;
                 default:
                     throw new UnsupportedOperationException();
@@ -94,9 +97,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
     }
 
-    /**
-     * Classe che si occupa dell'eliminazione dei viaggi
-     */
+    /** Classe che si occupa dell'eliminazione dei viaggi */
     private class CancellaViaggio implements DeleteInterface<Viaggio> {
         @Override
         public int cancellaItem(Viaggio item) {
@@ -105,9 +106,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
     }
 
-    /**
-     * Classe che si occupa dell'eliminazione delle citta
-     */
+    /** Classe che si occupa dell'eliminazione delle citta */
     private class CancellaCitta implements DeleteInterface<Citta> {
         @Override
         public int cancellaItem(Citta item) {
@@ -116,13 +115,24 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
     }
 
-    /**
-     * Classe che si occupa dell'eliminazione di un posto
-     */
+    /** Classe che si occupa dell'eliminazione di un posto */
     private class CancellaPosto implements DeleteInterface<Posto> {
         @Override
         public int cancellaItem(Posto item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, item.getId());
+            return mResolver.delete(uri, null, null);
+        }
+    }
+
+    /** Classe che si occupa dell'eliminazione di un posto */
+    private class CancellaFoto implements DeleteInterface<Foto> {
+        @Override
+        public int cancellaItem(Foto item) {
+            //cancello il file
+            File foto = new File(item.getPath().substring(7));
+            boolean res = foto.delete();
+            //cancello il riferimento dal database
+            Uri uri = ContentUris.withAppendedId(MapperContract.Foto.CONTENT_URI, item.getId());
             return mResolver.delete(uri, null, null);
         }
     }
