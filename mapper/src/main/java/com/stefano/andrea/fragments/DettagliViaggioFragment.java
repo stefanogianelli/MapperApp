@@ -44,8 +44,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private static final int CITTA_LOADER = 0;
     private static final String ID_VIAGGIO = "id_viaggio";
 
-    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
-
     private ObservableRecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
@@ -53,6 +51,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private List<Citta> mElencoCitta;
     private CustomFAB mFab;
     private Activity mParentActivity;
+    private ActionModeCallback mActionMode;
 
     public DettagliViaggioFragment () { }
 
@@ -75,8 +74,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mParentActivity = getActivity();
         //acquisisco content resolver
         mResolver = mParentActivity.getContentResolver();
+        //creo action mode
+        mActionMode = new ActionModeCallback();
         //creo l'adapter
-        mAdapter = new CittaAdapter(mParentActivity, new ActionModeCallback(), (CittaAdapter.CittaOnClickListener) mParentActivity);
+        mAdapter = new CittaAdapter(mParentActivity, mActionMode, (CittaAdapter.CittaOnClickListener) mParentActivity);
         //avvio il loader delle citta
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
     }

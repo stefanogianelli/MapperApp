@@ -99,7 +99,7 @@ public abstract class ScrollableTabActivity extends ActionBarActivity implements
         return mAdapter.getItem(mPager.getCurrentItem());
     }
 
-    private void propagateToolbarState(boolean isShown) {
+    protected void propagateToolbarState(boolean isShown) {
         int toolbarHeight = mToolbarView.getHeight();
 
         // Set scrollY for the fragments that are not created yet
@@ -144,11 +144,11 @@ public abstract class ScrollableTabActivity extends ActionBarActivity implements
         }
     }
 
-    private boolean toolbarIsShown() {
+    protected boolean toolbarIsShown() {
         return ViewHelper.getTranslationY(mHeaderView) == 0;
     }
 
-    private boolean toolbarIsHidden() {
+    protected boolean toolbarIsHidden() {
         return ViewHelper.getTranslationY(mHeaderView) == -mToolbarView.getHeight();
     }
 

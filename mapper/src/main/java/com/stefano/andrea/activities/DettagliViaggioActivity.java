@@ -31,6 +31,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
     private int mNumbOfTabs = 2;
     private long mIdViaggio;
     private String mNomeViaggio;
+    private TabDettagliViaggioAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +54,11 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
         //Creo l'adapter per le tab
-        TabDettagliViaggioAdapter adapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        mAdapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
         //assegno al pager l'adapter
-        pager.setAdapter(adapter);
+        pager.setAdapter(mAdapter);
         //assegno i parametri alla superclasse per lo scrolling
-        setParameters(adapter, pager, toolbarView, headerView);
+        setParameters(mAdapter, pager, toolbarView, headerView);
         //configuro le tab
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -67,6 +68,23 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
             }
         });
         tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                propagateToolbarState(toolbarIsShown());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        propagateToolbarState(toolbarIsShown());
     }
 
     @Override
