@@ -33,6 +33,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private ContentResolver mResolver;
     private long mIdViaggio;
     private long mIdCitta;
+    private boolean fotoSalvata = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     foto.setIdViaggio(mIdViaggio);
                     foto.setIdCitta(mIdCitta);
                     new InsertTask<>(this, mResolver, null, foto).execute(InsertTask.INSERISCI_FOTO);
+                    fotoSalvata = true;
                 } else {
                     Toast.makeText(this, "Selezionare una citta", Toast.LENGTH_SHORT).show();
             } else {
@@ -131,6 +133,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cancellaFoto();
+        if (!fotoSalvata)
+            cancellaFoto();
     }
 }

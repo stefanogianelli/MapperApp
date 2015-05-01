@@ -40,8 +40,10 @@ public class DialogChooseFotoMode {
             public void onClick(View v) {
                 if (imageUri != null) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                    activity.startActivityForResult(intent, CAMERA_REQUEST);
+                    if (intent.resolveActivity(activity.getPackageManager()) != null) {
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                        activity.startActivityForResult(intent, CAMERA_REQUEST);
+                    }
                 } else {
                     Log.v(TAG, "URI dell'immagine non settata!");
                 }
