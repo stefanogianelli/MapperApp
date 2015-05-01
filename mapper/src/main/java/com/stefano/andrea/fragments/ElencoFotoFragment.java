@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,6 +39,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private Activity mParentActivity;
     private ContentResolver mResolver;
     private FotoAdapter mAdapter;
+    private FotoAdapter.FotoOnClickListener mListener;
 
     public ElencoFotoFragment () { }
 
@@ -49,15 +53,25 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (FotoAdapter.FotoOnClickListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " deve implementare FotoOnClickListener");
+        }
+        mParentActivity = activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTipoElenco = getArguments().getInt(EXTRA_TIPO_ELENCO);
             mId = getArguments().getLong(EXTRA_ID);
         }
-        mParentActivity = getActivity();
         mResolver = mParentActivity.getContentResolver();
-        mAdapter = new FotoAdapter(mParentActivity, null, null);
+        mAdapter = new FotoAdapter(mParentActivity, new ActionModeCallback(), mListener);
         getLoaderManager().initLoader(FOTO_LOADER, null, this);
     }
 
@@ -98,4 +112,36 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     public void onLoaderReset(Loader<List<Foto>> loader) {
         //do nothing
     }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.menu_foto_selezionate, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_foto:
+                    //TODO: cancellazione foto
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.stopActionMode();
+        }
+    }
+
 }

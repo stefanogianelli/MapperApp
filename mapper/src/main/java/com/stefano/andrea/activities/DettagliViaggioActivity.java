@@ -11,14 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.stefano.andrea.adapters.CittaAdapter;
+import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.models.Citta;
+import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener {
+public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener, FotoAdapter.FotoOnClickListener {
 
     public static final String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.DettagliViaggioActivity.idViaggio";
     public static final String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.idCitta";
@@ -99,6 +101,11 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         intent.putExtra(EXTRA_ID_CITTA, citta.getId());
         intent.putExtra(EXTRA_NOME_CITTA, citta.getNome());
         startActivity(intent);
+    }
+
+    @Override
+    public void selezionataFoto(Foto foto) {
+        //TODO: completare
     }
 
     private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {

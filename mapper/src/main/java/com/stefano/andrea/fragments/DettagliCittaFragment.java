@@ -55,6 +55,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private ObservableRecyclerView mRecyclerView;
     private CustomFAB mFab;
     private List<Posto> mElencoPosti;
+    private PostiAdapter.PostoOnClickListener mListener;
 
     public DettagliCittaFragment () { }
 
@@ -68,18 +69,27 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (PostiAdapter.PostoOnClickListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " deve implementare PostoOnClickListener");
+        }
+        mParentActivity = activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mIdViaggio = getArguments().getLong(ID_VIAGGIO);
             mIdCitta = getArguments().getLong(ID_CITTA);
         }
-        //acquisisco riferimento dell'activity
-        mParentActivity = getActivity();
         //acquisisco il content resolver
         mResolver = mParentActivity.getContentResolver();
         //creo l'adapter
-        mAdapter = new PostiAdapter((PostiAdapter.PostoOnClickListener) mParentActivity, mParentActivity, new ActionModeCallback());
+        mAdapter = new PostiAdapter(mListener, mParentActivity, new ActionModeCallback());
         //avvio il loader dei posto
         getLoaderManager().initLoader(POSTI_LOADER, null, this);
     }

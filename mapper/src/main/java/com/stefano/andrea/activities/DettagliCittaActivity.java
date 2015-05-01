@@ -12,17 +12,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
+import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.utils.DialogChooseFotoMode;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
-public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener {
+public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener, FotoAdapter.FotoOnClickListener {
 
     private static final String TAG = "DettagliCittaActivity";
 
@@ -86,7 +88,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_aggiungi_foto_dettagli_citta) {
             mImageUri = DialogChooseFotoMode.getImageUri();
             if (BuildConfig.DEBUG && mImageUri == null)
@@ -100,6 +101,11 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
 
     @Override
     public void selezionatoPosto(Posto posto) {
+        //TODO: completare
+    }
+
+    @Override
+    public void selezionataFoto(Foto foto) {
         //TODO: completare
     }
 
