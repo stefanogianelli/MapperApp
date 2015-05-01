@@ -14,6 +14,7 @@ import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
+import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.utils.ScrollableTabActivity;
@@ -124,7 +125,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
             if(position == 0) {
                 return DettagliViaggioFragment.newInstance(mIdViaggio);
             } else {
-                return new ElencoFotoFragment();
+                return ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO);
             }
         }
 

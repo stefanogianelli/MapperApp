@@ -7,7 +7,6 @@ public class Foto {
 
     private long id;
     private String path;
-    private String title;   //deprecato
     private double latitudine;
     private double longitudine;
     private double idViaggio;
@@ -30,14 +29,6 @@ public class Foto {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public double getLatitudine() {
