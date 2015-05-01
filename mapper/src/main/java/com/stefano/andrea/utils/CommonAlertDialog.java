@@ -1,4 +1,4 @@
-package com.stefano.andrea.helpers;
+package com.stefano.andrea.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;

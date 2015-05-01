@@ -20,7 +20,7 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
-import com.stefano.andrea.utils.DialogChooseFotoMode;
+import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
@@ -112,11 +112,11 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
 
         if (id == R.id.action_aggiungi_foto_dettagli_viaggio) {
             try {
-                mImageUri = DialogChooseFotoMode.getImageUri();
+                mImageUri = PhotoUtils.getImageUri();
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
-            DialogChooseFotoMode.mostraDialog(this, mImageUri);
+            PhotoUtils.mostraDialog(this, mImageUri);
             return true;
         }
 
@@ -144,9 +144,9 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == PhotoUtils.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
             Log.v(TAG, data.getData().toString());
-        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
+        } else if (requestCode == PhotoUtils.CAMERA_REQUEST && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, ModInfoFotoActivity.class);
             intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);

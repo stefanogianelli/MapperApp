@@ -27,11 +27,11 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
-import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.CommonAlertDialog;
 import com.stefano.andrea.utils.CustomFAB;
 
 import java.util.List;

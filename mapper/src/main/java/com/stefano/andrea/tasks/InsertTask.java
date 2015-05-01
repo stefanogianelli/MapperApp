@@ -13,12 +13,12 @@ import android.util.Log;
 
 import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
-import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.CommonAlertDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;

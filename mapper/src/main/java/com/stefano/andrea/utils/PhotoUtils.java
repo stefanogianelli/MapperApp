@@ -2,6 +2,7 @@ package com.stefano.andrea.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -11,17 +12,19 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * DialogChooseFotoMode
+ * PhotoUtils
  */
-public class DialogChooseFotoMode {
+public class PhotoUtils {
 
     private static final String TAG = "DialogFoto";
 
@@ -66,6 +69,49 @@ public class DialogChooseFotoMode {
             }
         });
         dialog.show();
+    }
+
+    /**
+     * Avvia l'intent per il salvataggio della foto
+     * @param activity L'activity di riferimento
+     * @param requestCode Il codice di risposta
+     * @param resultCode Il risultato dell'operazione
+     * @param data I dati risultanti
+     * @param imageUri L'uri dell'immagine
+     * @param idViaggio L'id del viaggio
+     * @param idCitta L'id della citta'
+     */
+    public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta) {
+        Intent intent = null;
+        ArrayList<String> fotoUris = new ArrayList<>();
+        if (requestCode == PhotoUtils.GALLERY_PICTURE && resultCode == activity.RESULT_OK) {
+            //singola immagine
+            if (data.getData() != null) {
+                intent = new Intent(activity, ModInfoFotoActivity.class);
+                fotoUris.add(data.getData().toString());
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
+            } else if (data.getClipData() != null) {
+                intent = new Intent(activity, ModInfoFotoActivity.class);
+                ClipData clipData = data.getClipData();
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    fotoUris.add(item.getUri().toString());
+                }
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
+            }
+        } else if (requestCode == PhotoUtils.CAMERA_REQUEST && resultCode == activity.RESULT_OK) {
+            intent = new Intent(activity, ModInfoFotoActivity.class);
+            fotoUris.add(imageUri.toString());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.CAMERA_REQUEST);
+        }
+        if (intent != null) {
+            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
+            if (idViaggio != -1)
+                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
+            if (idCitta != -1)
+                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, idCitta);
+            activity.startActivity(intent);
+        }
     }
 
     /**

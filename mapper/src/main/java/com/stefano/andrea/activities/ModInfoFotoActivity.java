@@ -18,7 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
-import com.stefano.andrea.utils.DialogChooseFotoMode;
+import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -137,7 +137,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     }
 
     private boolean cancellaFoto () {
-        if (mTipoFoto == DialogChooseFotoMode.CAMERA_REQUEST) {
+        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
             File file = new File(mImagePath.get(0).substring(7));
             return file.delete();
         } else

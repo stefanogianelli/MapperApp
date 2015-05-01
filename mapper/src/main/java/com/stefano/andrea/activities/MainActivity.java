@@ -30,7 +30,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
-import com.stefano.andrea.utils.DialogChooseFotoMode;
+import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,12 +94,12 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
             try {
-                mImageUri = DialogChooseFotoMode.getImageUri();
+                mImageUri = PhotoUtils.getImageUri();
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
             if (mImageUri != null)
-                DialogChooseFotoMode.mostraDialog(this, mImageUri);
+                PhotoUtils.mostraDialog(this, mImageUri);
         }
 
         return super.onOptionsItemSelected(item);
@@ -188,12 +188,12 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         super.onActivityResult(requestCode, resultCode, data);
         Intent intent = null;
         ArrayList<String> fotoUris = new ArrayList<>();
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK) {
+        if (requestCode == PhotoUtils.GALLERY_PICTURE && resultCode == RESULT_OK) {
             //singola immagine
             if (data.getData() != null) {
                 intent = new Intent(this, ModInfoFotoActivity.class);
                 fotoUris.add(data.getData().toString());
-                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.GALLERY_PICTURE);
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
             } else if (data.getClipData() != null) {
                 intent = new Intent(this, ModInfoFotoActivity.class);
                 ClipData clipData = data.getClipData();
@@ -201,12 +201,12 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                     ClipData.Item item = clipData.getItemAt(i);
                     fotoUris.add(item.getUri().toString());
                 }
-                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.GALLERY_PICTURE);
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
             }
-        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
+        } else if (requestCode == PhotoUtils.CAMERA_REQUEST && resultCode == RESULT_OK) {
             intent = new Intent(this, ModInfoFotoActivity.class);
             fotoUris.add(mImageUri.toString());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.CAMERA_REQUEST);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.CAMERA_REQUEST);
         }
         if (intent != null) {
             intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
