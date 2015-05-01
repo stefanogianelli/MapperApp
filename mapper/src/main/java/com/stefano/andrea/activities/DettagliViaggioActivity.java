@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -140,14 +139,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PhotoUtils.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
-            Log.v(TAG, data.getData().toString());
-        } else if (requestCode == PhotoUtils.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);
-            startActivity(intent);
-        }
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, -1);
     }
 
     private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {

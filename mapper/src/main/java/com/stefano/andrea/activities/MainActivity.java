@@ -3,7 +3,6 @@ package com.stefano.andrea.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
-import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,7 +33,6 @@ import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
@@ -184,32 +182,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Intent intent = null;
-        ArrayList<String> fotoUris = new ArrayList<>();
-        if (requestCode == PhotoUtils.GALLERY_PICTURE && resultCode == RESULT_OK) {
-            //singola immagine
-            if (data.getData() != null) {
-                intent = new Intent(this, ModInfoFotoActivity.class);
-                fotoUris.add(data.getData().toString());
-                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
-            } else if (data.getClipData() != null) {
-                intent = new Intent(this, ModInfoFotoActivity.class);
-                ClipData clipData = data.getClipData();
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    ClipData.Item item = clipData.getItemAt(i);
-                    fotoUris.add(item.getUri().toString());
-                }
-                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.GALLERY_PICTURE);
-            }
-        } else if (requestCode == PhotoUtils.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            intent = new Intent(this, ModInfoFotoActivity.class);
-            fotoUris.add(mImageUri.toString());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, PhotoUtils.CAMERA_REQUEST);
-        }
-        if (intent != null) {
-            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
-            startActivity(intent);
-        }
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, -1, -1);
     }
 
     private class ActionModeCallback implements ActionMode.Callback {
