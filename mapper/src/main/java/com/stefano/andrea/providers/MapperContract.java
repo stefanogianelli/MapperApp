@@ -16,6 +16,8 @@ public final class MapperContract {
         String COUNT_CITTA = "count_citta";
         /** Totale dei posti presenti nel viaggio */
         String COUNT_POSTI = "count_posti";
+        /** Totale delle foto presenti nel viaggio */
+        String COUNT_FOTO = "count_foto";
         /** Percorso della foto di copertina del viaggio */
         String PATH_FOTO = "path_foto";
     }
@@ -33,6 +35,8 @@ public final class MapperContract {
         String COUNT_POSTI = "count_posti";
         /** Numero dei posti visitati */
         String POSTI_VISITATI = "count_posti_visitati";
+        /** Totale delle foto scattate nella citta */
+        String COUNT_FOTO = "count_foto";
     }
 
     interface PostoColumns {
@@ -108,7 +112,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.viaggi";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.viaggio";
 
-        public static final String[] PROJECTION_ALL = {ID_VIAGGIO, NOME, COUNT_CITTA, COUNT_POSTI, PATH_FOTO};
+        public static final String[] PROJECTION_ALL = {ID_VIAGGIO, NOME, COUNT_CITTA, COUNT_POSTI, COUNT_FOTO, PATH_FOTO};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_VIAGGIO + " DESC";
@@ -123,8 +127,8 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";
 
-        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI};
-        public static final String [] PROJECTION_JOIN = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
+        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO};
+        public static final String [] PROJECTION_JOIN = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_CITTA + " DESC";

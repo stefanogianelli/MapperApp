@@ -44,6 +44,7 @@ public class ViaggiLoader extends AsyncTaskLoader<List<Viaggio>> {
                 viaggio.setNome(c.getString(c.getColumnIndex(MapperContract.Viaggio.NOME)));
                 viaggio.setCountCitta(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_CITTA)));
                 viaggio.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_POSTI)));
+                viaggio.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_FOTO)));
                 mViaggi.add(viaggio);
             }
             c.close();

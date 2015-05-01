@@ -99,7 +99,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
         public void bindCitta (final Citta citta) {
             this.itemView.setTag(citta);
             nomeCitta.setText(citta.getNome());
-            statCitta.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_citta, citta.getCountPosti(), citta.getCountPosti()));
+            statCitta.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_citta, citta.getCountPosti(), citta.getCountPosti(), citta.getCountFoto()));
 
             button1.setOnClickListener(new View.OnClickListener() {
 

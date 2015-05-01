@@ -9,6 +9,7 @@ public class Viaggio {
     private String nome;
     private int countCitta;
     private int countPosti;
+    private int countFoto;
     private String pathFoto;
 
     public Viaggio () {}
@@ -52,6 +53,14 @@ public class Viaggio {
 
     public void setCountPosti(int countPosti) {
         this.countPosti = countPosti;
+    }
+
+    public int getCountFoto() {
+        return countFoto;
+    }
+
+    public void setCountFoto(int countFoto) {
+        this.countFoto = countFoto;
     }
 
     public String getPathFoto() {

@@ -100,7 +100,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         public void bindViaggio (final Viaggio viaggio) {
             this.itemView.setTag(viaggio);
             nomeViaggio.setText(viaggio.getNome());
-            viaggioLabel.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_viaggio, viaggio.getCountPosti(), viaggio.getCountCitta(), viaggio.getCountPosti()));
+            viaggioLabel.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_viaggio, viaggio.getCountPosti(), viaggio.getCountCitta(), viaggio.getCountPosti(), viaggio.getCountFoto()));
 
             button1.setOnClickListener(new View.OnClickListener() {
 

@@ -14,6 +14,7 @@ public class Citta {
     private double longitudine;
     private double percentuale;
     private int countPosti;
+    private int countFoto;
 
     public long getId() {
         return id;
@@ -85,5 +86,13 @@ public class Citta {
 
     public void setCountPosti(int countPosti) {
         this.countPosti = countPosti;
+    }
+
+    public int getCountFoto() {
+        return countFoto;
+    }
+
+    public void setCountFoto(int countFoto) {
+        this.countFoto = countFoto;
     }
 }
