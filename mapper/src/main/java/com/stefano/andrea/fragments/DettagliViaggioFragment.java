@@ -25,7 +25,6 @@ import android.widget.EditText;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.helpers.CommonAlertDialog;
@@ -94,17 +93,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mParentActivity instanceof ObservableScrollViewCallbacks) {
-            // Scroll to the specified offset after layout
-            Bundle args = getArguments();
-            if (args != null && args.containsKey(ARG_INITIAL_POSITION)) {
-                final int initialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
-                ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.scrollVerticallyToPosition(initialPosition);
-                    }
-                });
-            }
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
         }
         //configuro fab
