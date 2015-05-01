@@ -128,9 +128,11 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     private class CancellaFoto implements DeleteInterface<Foto> {
         @Override
         public int cancellaItem(Foto item) {
-            //cancello il file
-            File foto = new File(item.getPath().substring(7));
-            boolean res = foto.delete();
+            //cancello il file se scattato dall'app
+            if (item.getPath().contains("Mapper")) {
+                File foto = new File(item.getPath().substring(7));
+                boolean res = foto.delete();
+            }
             //cancello il riferimento dal database
             Uri uri = ContentUris.withAppendedId(MapperContract.Foto.CONTENT_URI, item.getId());
             return mResolver.delete(uri, null, null);

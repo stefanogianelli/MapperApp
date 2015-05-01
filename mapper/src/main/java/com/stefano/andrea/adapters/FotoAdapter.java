@@ -3,6 +3,7 @@ package com.stefano.andrea.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,7 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
 
         public void bindFoto (Foto foto) {
             this.itemView.setTag(foto);
+            Log.v("FotoAdapter", "Path immagine: " + foto.getPath());
             mImageLoader.displayImage(foto.getPath(), fotoView);
         }
 

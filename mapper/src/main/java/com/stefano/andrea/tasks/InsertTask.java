@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 /**
  * InsertTask
@@ -375,27 +376,30 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
      */
     private class InsertFoto implements InsertInterface {
 
-        private Foto foto;
+        private List<Foto> elencoFoto;
 
         public InsertFoto () {
-            foto = (Foto) mItem;
+            elencoFoto = (List<Foto>) mItem;
         }
 
         @Override
         public int insertItem() {
             ContentValues values = new ContentValues();
-            values.put(MapperContract.Foto.PATH, foto.getPath());
-            values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
-            values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
-            values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
-            values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
-            Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);
-            long id = Long.parseLong(uri.getLastPathSegment());
-            if (id != -1) {
-                foto.setId(id);
-                return RESULT_OK;
+            for (int i = 0; i < elencoFoto.size(); i++) {
+                Foto foto = elencoFoto.get(i);
+                values.clear();
+                values.put(MapperContract.Foto.PATH, foto.getPath());
+                values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
+                values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
+                values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
+                values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
+                Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);
+                long id = Long.parseLong(uri.getLastPathSegment());
+                if (id != -1) {
+                    foto.setId(id);
+                }
             }
-            return RESULT_ERROR;
+            return RESULT_OK;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.stefano.andrea.activities;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,10 +8,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.adapters.PostiAdapter;
@@ -23,6 +24,9 @@ import com.stefano.andrea.utils.DialogChooseFotoMode;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener, FotoAdapter.FotoOnClickListener {
 
@@ -89,8 +93,13 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         int id = item.getItemId();
 
         if (id == R.id.action_aggiungi_foto_dettagli_citta) {
-            mImageUri = DialogChooseFotoMode.getImageUri();
-            DialogChooseFotoMode.mostraDialog(this, mImageUri);
+            try {
+                mImageUri = DialogChooseFotoMode.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
+            if (mImageUri != null)
+                DialogChooseFotoMode.mostraDialog(this, mImageUri);
             return true;
         }
 
@@ -110,11 +119,30 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
-            Log.v(TAG, data.getData().toString());
+        Intent intent = null;
+        ArrayList<String> fotoUris = new ArrayList<>();
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK) {
+            //singola immagine
+            if (data.getData() != null) {
+                intent = new Intent(this, ModInfoFotoActivity.class);
+                fotoUris.add(data.getData().toString());
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.GALLERY_PICTURE);
+            } else if (data.getClipData() != null) {
+                intent = new Intent(this, ModInfoFotoActivity.class);
+                ClipData clipData = data.getClipData();
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    fotoUris.add(item.getUri().toString());
+                }
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.GALLERY_PICTURE);
+            }
         } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
+            intent = new Intent(this, ModInfoFotoActivity.class);
+            fotoUris.add(mImageUri.toString());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.CAMERA_REQUEST);
+        }
+        if (intent != null) {
+            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, mIdCitta);
             startActivity(intent);

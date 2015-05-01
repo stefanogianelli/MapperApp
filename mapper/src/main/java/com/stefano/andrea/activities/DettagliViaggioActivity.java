@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.adapters.FotoAdapter;
@@ -23,6 +24,8 @@ import com.stefano.andrea.utils.DialogChooseFotoMode;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
+
+import java.io.IOException;
 
 public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener, FotoAdapter.FotoOnClickListener {
 
@@ -108,7 +111,11 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         int id = item.getItemId();
 
         if (id == R.id.action_aggiungi_foto_dettagli_viaggio) {
-            mImageUri = DialogChooseFotoMode.getImageUri();
+            try {
+                mImageUri = DialogChooseFotoMode.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
             DialogChooseFotoMode.mostraDialog(this, mImageUri);
             return true;
         }

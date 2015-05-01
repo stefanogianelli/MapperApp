@@ -9,10 +9,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.stefano.andrea.activities.R;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -43,6 +45,8 @@ public class DialogChooseFotoMode {
                     if (intent.resolveActivity(activity.getPackageManager()) != null) {
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                         activity.startActivityForResult(intent, CAMERA_REQUEST);
+                    } else {
+                        Toast.makeText(activity, "Impossibile scattare foto", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.v(TAG, "URI dell'immagine non settata!");
@@ -53,10 +57,11 @@ public class DialogChooseFotoMode {
         dialog.findViewById(R.id.action_galleria).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
-                intent.putExtra("return-data", true);
-                activity.startActivityForResult(intent, GALLERY_PICTURE);
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                activity.startActivityForResult(Intent.createChooser(intent,"Select Picture"), GALLERY_PICTURE);
                 dialog.dismiss();
             }
         });
@@ -67,20 +72,14 @@ public class DialogChooseFotoMode {
      * Crea l'uri per l'immagine da salvare da fotocamera
      * @return L'uri dell'immagine
      */
-    public static Uri getImageUri () {
-        File photo;
-        try {
-            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            photo = createFile("photo" + timestamp, ".jpg");
-            photo.delete();
-            return Uri.fromFile(photo);
-        } catch (Exception e) {
-            Log.v(TAG, "Impossibile creare il file!");
-        }
-        return null;
+    public static Uri getImageUri () throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File photo = createFile("mapper_" + timestamp, ".jpg");
+        photo.delete();
+        return Uri.fromFile(photo);
     }
 
-    private static File createFile(String part, String ext) throws Exception {
+    private static File createFile(String part, String ext) throws IOException {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         dir = new File(dir.getAbsolutePath() + "/Mapper/");
         if(!dir.exists()) {

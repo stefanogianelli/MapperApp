@@ -3,6 +3,7 @@ package com.stefano.andrea.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,12 +15,12 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -31,6 +32,8 @@ import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.DialogChooseFotoMode;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
@@ -90,8 +93,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
-            mImageUri = DialogChooseFotoMode.getImageUri();
-            DialogChooseFotoMode.mostraDialog(this, mImageUri);
+            try {
+                mImageUri = DialogChooseFotoMode.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
+            if (mImageUri != null)
+                DialogChooseFotoMode.mostraDialog(this, mImageUri);
         }
 
         return super.onOptionsItemSelected(item);
@@ -178,11 +186,30 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
-            Log.v(TAG, data.getData().toString());
+        Intent intent = null;
+        ArrayList<String> fotoUris = new ArrayList<>();
+        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK) {
+            //singola immagine
+            if (data.getData() != null) {
+                intent = new Intent(this, ModInfoFotoActivity.class);
+                fotoUris.add(data.getData().toString());
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.GALLERY_PICTURE);
+            } else if (data.getClipData() != null) {
+                intent = new Intent(this, ModInfoFotoActivity.class);
+                ClipData clipData = data.getClipData();
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    fotoUris.add(item.getUri().toString());
+                }
+                intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.GALLERY_PICTURE);
+            }
         } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
+            intent = new Intent(this, ModInfoFotoActivity.class);
+            fotoUris.add(mImageUri.toString());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, DialogChooseFotoMode.CAMERA_REQUEST);
+        }
+        if (intent != null) {
+            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
             startActivity(intent);
         }
     }
