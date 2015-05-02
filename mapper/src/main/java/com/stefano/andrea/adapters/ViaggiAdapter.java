@@ -1,7 +1,9 @@
 package com.stefano.andrea.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
+        void rimuoviViaggio (Viaggio viaggio);
     }
 
     public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback) {
@@ -117,7 +120,22 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
                             int id = item.getItemId();
                             switch (id) {
                                 case R.id.menu_remove:
-                                     Toast.makeText(mActivity, "Vuoi eliminare : " + viaggio.getNome(), Toast.LENGTH_SHORT).show();
+                                    AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
+                                    dialog.setMessage(R.string.conferma_cancellazione_viaggio);
+                                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mListener.rimuoviViaggio(viaggio);
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    dialog.create().show();
                                     break;
                                 case R.id.menu_rename:
                                        Toast.makeText(mActivity, "Vuoi rinominare : " + viaggio.getNome(), Toast.LENGTH_SHORT).show();

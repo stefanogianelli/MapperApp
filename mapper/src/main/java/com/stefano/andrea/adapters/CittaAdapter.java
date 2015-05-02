@@ -1,7 +1,9 @@
 package com.stefano.andrea.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,6 +35,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
 
     public interface CittaOnClickListener {
         void selezionataCitta (Citta citta);
+        void cancellaCitta (Citta citta);
     }
 
     public CittaAdapter (Activity activity, ActionMode.Callback callback, CittaOnClickListener listener) {
@@ -116,7 +119,22 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
                             int id = item.getItemId();
                             switch (id) {
                                 case R.id.menu_remove:
-                                    Toast.makeText(mActivity, "Vuoi eliminare : " + citta.getNome(), Toast.LENGTH_SHORT).show();
+                                    AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
+                                    dialog.setMessage(R.string.conferma_cancellazione_viaggio);
+                                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mListener.cancellaCitta(citta);
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    dialog.create().show();
                                     break;
                                 case R.id.menu_rename:
                                     Toast.makeText(mActivity, "Vuoi rinominare : " + citta.getNome(), Toast.LENGTH_SHORT).show();

@@ -12,13 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.stefano.andrea.adapters.FotoAdapter;
-import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
-import com.stefano.andrea.models.Foto;
-import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
@@ -27,7 +23,7 @@ import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
-public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener, FotoAdapter.FotoOnClickListener {
+public class DettagliCittaActivity extends ScrollableTabActivity {
 
     private long mIdViaggio;
     private long mIdCitta;
@@ -97,16 +93,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void selezionatoPosto(Posto posto) {
-        //TODO: completare
-    }
-
-    @Override
-    public void selezionataFoto(Foto foto) {
-        //TODO: completare
     }
 
     @Override

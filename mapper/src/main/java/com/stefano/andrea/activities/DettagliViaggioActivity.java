@@ -12,13 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.stefano.andrea.adapters.CittaAdapter;
-import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
-import com.stefano.andrea.models.Citta;
-import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
@@ -27,7 +23,7 @@ import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
-public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener, FotoAdapter.FotoOnClickListener {
+public class DettagliViaggioActivity extends ScrollableTabActivity {
 
     private long mIdViaggio;
     private Uri mImageUri;
@@ -111,23 +107,6 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Avvia l'activity con i dettagli della citta
-     * @param citta La citta selezionata
-     */
-    @Override
-    public void selezionataCitta(Citta citta) {
-        mContext.setIdCitta(citta.getIdCitta());
-        mContext.setNomeCitta(citta.getNome());
-        Intent intent = new Intent(this, DettagliCittaActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    public void selezionataFoto(Foto foto) {
-        //TODO: completare
     }
 
     @Override

@@ -33,12 +33,13 @@ import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CommonAlertDialog;
 import com.stefano.andrea.utils.CustomFAB;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * DettagliCittaFragment
  */
-public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>> {
+public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener {
 
     private static final String ID_VIAGGIO = "id_viaggio";
     private static final String ID_CITTA = "id_citta";
@@ -52,7 +53,57 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private ObservableRecyclerView mRecyclerView;
     private CustomFAB mFab;
     private List<Posto> mElencoPosti;
-    private PostiAdapter.PostoOnClickListener mListener;
+
+    private ActionMode.Callback mCallback = new ActionMode.Callback () {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mFab.hide();
+            mFab.setForceHide(true);
+            mode.getMenuInflater().inflate (R.menu.menu_posti_selezionati, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_posto:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
+                    dialog.setMessage(R.string.conferma_cancellazione_posti);
+                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            cancellaElencoPosti();
+                            dialog.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialog.create().show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.stopActionMode();
+            mFab.setForceHide(false);
+            mFab.show();
+        }
+    };
 
     public DettagliCittaFragment () { }
 
@@ -68,11 +119,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (PostiAdapter.PostoOnClickListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " deve implementare PostoOnClickListener");
-        }
         mParentActivity = activity;
     }
 
@@ -86,7 +132,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         //acquisisco il content resolver
         mResolver = mParentActivity.getContentResolver();
         //creo l'adapter
-        mAdapter = new PostiAdapter(mListener, mParentActivity, new ActionModeCallback());
+        mAdapter = new PostiAdapter(this, mParentActivity, mCallback);
         //avvio il loader dei posto
         getLoaderManager().initLoader(POSTI_LOADER, null, this);
     }
@@ -114,13 +160,22 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                 ConnectivityManager connMgr = (ConnectivityManager) mParentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-                    openDialogAddPosto (v);
+                    openDialogAddPosto(v);
                 } else {
                     new CommonAlertDialog(mParentActivity, R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
                 }
             }
         });
         return view;
+    }
+
+    /**
+     * Avvio l'activity con l'elenco delle foto relative al posto selezionato
+     * @param posto Il posto desiderato
+     */
+    @Override
+    public void selezionatoPosto(Posto posto) {
+        //TODO: completare
     }
 
     /**
@@ -132,6 +187,19 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         posto.setNome(nomePosto);
         posto.setIdCitta(mIdCitta);
         new InsertTask<>(mParentActivity, mResolver, mAdapter, posto).execute(InsertTask.INSERISCI_POSTO);
+    }
+
+    /**
+     * Cancella un posto
+     * @param posto Il posto da eliminare
+     */
+    @Override
+    public void cancellaPosto(Posto posto) {
+        List<Posto> elencoPosti = new ArrayList<>();
+        elencoPosti.add(posto);
+        List<Integer> indici = new ArrayList<>();
+        indici.add(0);
+        new DeleteTask<>(mParentActivity, mResolver, mAdapter, elencoPosti, indici).execute(DeleteTask.CANCELLA_POSTO);
     }
 
     /**
@@ -186,41 +254,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<List<Posto>> loader) {
         //do nothing
-    }
-
-    private class ActionModeCallback implements ActionMode.Callback {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mFab.hide();
-            mFab.setForceHide(true);
-            mode.getMenuInflater().inflate (R.menu.menu_posti_selezionati, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.menu_cancella_posto:
-                    cancellaElencoPosti();
-                    mode.finish();
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mAdapter.stopActionMode();
-            mFab.setForceHide(false);
-            mFab.show();
-        }
     }
 
 }

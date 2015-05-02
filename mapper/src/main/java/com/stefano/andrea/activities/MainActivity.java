@@ -33,11 +33,11 @@ import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
 
-    private final static String TAG = "MainActivity";
     private final static int VIAGGI_LOADER = 0;
 
     private ViaggiAdapter mAdapter;
@@ -45,6 +45,57 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private List<Viaggio> mListaViaggi;
     private CustomFAB mFab;
     private Uri mImageUri;
+
+    private ActionMode.Callback mCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mFab.hide();
+            mFab.setForceHide(true);
+            mode.getMenuInflater().inflate (R.menu.menu_viaggi_selezionati, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_viaggio:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                    dialog.setMessage(R.string.conferma_cancellazione_viaggi);
+                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            cancellaViaggi();
+                            dialog.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialog.create().show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelection();
+            mFab.setForceHide(false);
+            mFab.show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //inizializzo l'adapter
-        mAdapter = new ViaggiAdapter(this, this, new ActionModeCallback());
+        mAdapter = new ViaggiAdapter(this, this, mCallback);
         mRecyclerView.setAdapter(mAdapter);
         //inizializzo il caricamento dei dati dei viaggi
         getLoaderManager().initLoader(VIAGGI_LOADER, null, this);
@@ -110,6 +161,15 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         context.setNomeViaggio(viaggio.getNome());
         Intent intent = new Intent(this, DettagliViaggioActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void rimuoviViaggio(Viaggio viaggio) {
+        List<Viaggio> elencoViaggi = new ArrayList<>();
+        elencoViaggi.add(viaggio);
+        List<Integer> indici = new ArrayList<>();
+        indici.add(0);
+        new DeleteTask<>(this, mResolver, mAdapter, elencoViaggi, indici).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**
@@ -184,38 +244,4 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, -1, -1);
     }
 
-    private class ActionModeCallback implements ActionMode.Callback {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mFab.hide();
-            mFab.setForceHide(true);
-            mode.getMenuInflater().inflate (R.menu.menu_viaggi_selezionati, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.menu_cancella_viaggio:
-                    cancellaViaggi();
-                    mode.finish();
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mAdapter.clearSelection();
-            mFab.setForceHide(false);
-            mFab.show();
-        }
-    }
 }

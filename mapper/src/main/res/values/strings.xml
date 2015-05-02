@@ -31,9 +31,13 @@
         <item quantity="one">%1$d citta, %2$d posto, %3$d foto</item>
         <item quantity="other">%1$d citta, %2$d posti, %3$d foto</item>
     </plurals>
+    <string name="conferma_cancellazione_viaggi">Vuoi cancellare i viaggi?</string>
+    <string name="conferma_cancellazione_viaggio">Vuoi cancellare il viaggio?</string>
 
     <!-- DettagliViaggioActivity -->
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
+    <string name="conferma_cancellazione_piu_citta">Vuoi cancellare le citta?</string>
+    <string name="conferma_cancellazione_citta">Vuoi cancellare la citta?</string>
 
     <!-- DettagliViaggioFragment -->
     <string name="nuova_citta_loading_dialog">Recupero informazioni &#8230;</string>
@@ -61,16 +65,11 @@
 
     <!-- DettagliCittaFragment -->
     <string name="add_posto">Nome del posto</string>
+    <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
+    <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
 
-    <!-- PER TESTARE GALLERIA IMAGES -->
-    <string-array name="image_ids">
-        <item>@drawable/prova01</item>
-        <item>@drawable/prova02</item>
-        <item>@drawable/prova03</item>
-        <item>@drawable/prova04</item>
-        <item>@drawable/prova05</item>
-        <item>@drawable/prova06</item>
-    </string-array>
+    <!-- ElencoFotoFragment -->
+    <string name="conferma_cancellazione_foto">Vuoi cancellare le foto?</string>
 
     <!-- Action Mode stringhe selezione -->
     <plurals name="action_mode_count_selected">

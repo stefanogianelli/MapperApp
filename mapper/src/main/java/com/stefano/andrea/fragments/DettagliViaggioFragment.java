@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.EditText;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.loaders.CittaLoader;
@@ -33,13 +35,15 @@ import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CommonAlertDialog;
 import com.stefano.andrea.utils.CustomFAB;
+import com.stefano.andrea.utils.MapperContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * DettagliViaggioFragment
  */
-public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>> {
+public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
 
     private static final int CITTA_LOADER = 0;
     private static final String ID_VIAGGIO = "id_viaggio";
@@ -50,6 +54,58 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private List<Citta> mElencoCitta;
     private CustomFAB mFab;
     private Activity mParentActivity;
+    private MapperContext mContext;
+
+    private ActionMode.Callback mCallback = new ActionMode.Callback () {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mFab.hide();
+            mFab.setForceHide(true);
+            mode.getMenuInflater().inflate (R.menu.menu_citta_selezionate, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancella_citta:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
+                    dialog.setMessage(R.string.conferma_cancellazione_piu_citta);
+                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            cancellaElencoCitta();
+                            dialog.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialog.create().show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.stopActionMode();
+            mFab.setForceHide(false);
+            mFab.show();
+        }
+    };
 
     public DettagliViaggioFragment () { }
 
@@ -62,22 +118,26 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mParentActivity = activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //recupero id del viaggio
         if (getArguments() != null) {
             mIdViaggio = getArguments().getLong(ID_VIAGGIO);
         }
-        //acquisisco riferimento all'activity
-        mParentActivity = getActivity();
         //acquisisco content resolver
         mResolver = mParentActivity.getContentResolver();
-        //creo action mode
-        ActionModeCallback mActionMode = new ActionModeCallback();
         //creo l'adapter
-        mAdapter = new CittaAdapter(mParentActivity, mActionMode, (CittaAdapter.CittaOnClickListener) mParentActivity);
+        mAdapter = new CittaAdapter(mParentActivity, mCallback, this);
         //avvio il loader delle citta
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
+        //acquisisco contesto
+        mContext = MapperContext.getInstance();
     }
 
     @Override
@@ -122,6 +182,31 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         citta.setNome(nomeCitta);
         citta.setNazione(nomeNazione);
         new InsertTask<>(mParentActivity, mResolver, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
+    }
+
+    /**
+     * Avvia l'activity con i dettagli della citta
+     * @param citta La citta selezionata
+     */
+    @Override
+    public void selezionataCitta(Citta citta) {
+        mContext.setIdCitta(citta.getIdCitta());
+        mContext.setNomeCitta(citta.getNome());
+        Intent intent = new Intent(mParentActivity, DettagliCittaActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Cancella una citta
+     * @param citta La citta da rimuovere
+     */
+    @Override
+    public void cancellaCitta(Citta citta) {
+        List<Citta> elencoCitta = new ArrayList<>();
+        elencoCitta.add(citta);
+        List<Integer> indici = new ArrayList<>();
+        indici.add(0);
+        new DeleteTask<>(mParentActivity, mResolver, mAdapter, elencoCitta, indici).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     /**
@@ -179,38 +264,4 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         //do nothing
     }
 
-    private class ActionModeCallback implements ActionMode.Callback {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mFab.hide();
-            mFab.setForceHide(true);
-            mode.getMenuInflater().inflate (R.menu.menu_citta_selezionate, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.menu_cancella_citta:
-                    cancellaElencoCitta();
-                    mode.finish();
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mAdapter.stopActionMode();
-            mFab.setForceHide(false);
-            mFab.show();
-        }
-    }
 }
