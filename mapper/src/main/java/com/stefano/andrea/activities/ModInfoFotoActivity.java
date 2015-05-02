@@ -145,7 +145,7 @@ public class ModInfoFotoActivity extends ActionBarActivity{
 
     private void inizializzaViaggio() {
         List<Viaggio> elencoViaggi = new ArrayList<>();
-        //controllo se è stato selezionato un viaggio
+        //controllo se e' stato selezionato un viaggio
         if (mIdViaggio != -1) {
             //viaggio selezionato
             Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
@@ -171,7 +171,7 @@ public class ModInfoFotoActivity extends ActionBarActivity{
                 cViaggio.close();
             }
         }
-        final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, android.R.layout.simple_spinner_item, elencoViaggi);
+        ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, R.layout.spinner_viaggio_item, elencoViaggi);
         mViaggioSpinner.setAdapter(viaggiAdapter);
         mViaggioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -209,16 +209,15 @@ public class ModInfoFotoActivity extends ActionBarActivity{
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            Viaggio viaggio = getItem(position);
-            if (convertView == null)
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_viaggio_item, parent, false);
-            TextView nomeViaggio = (TextView) convertView.findViewById(R.id.spinner_nome_viaggio);
-            nomeViaggio.setText(viaggio.getNome());
-            return convertView;
+            return getCustomView(position, convertView, parent);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        public View getCustomView (int position, View convertView, ViewGroup parent) {
             Viaggio viaggio = getItem(position);
             if (convertView == null)
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_viaggio_item, parent, false);
