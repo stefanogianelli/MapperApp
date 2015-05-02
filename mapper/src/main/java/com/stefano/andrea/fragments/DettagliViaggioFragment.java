@@ -190,7 +190,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
      */
     @Override
     public void selezionataCitta(Citta citta) {
-        mContext.setIdCitta(citta.getIdCitta());
+        mContext.setIdCitta(citta.getId());
         mContext.setNomeCitta(citta.getNome());
         Intent intent = new Intent(mParentActivity, DettagliCittaActivity.class);
         startActivity(intent);
