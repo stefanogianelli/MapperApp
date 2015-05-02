@@ -3,8 +3,10 @@ package com.stefano.andrea.loaders;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 
 import com.stefano.andrea.models.Foto;
@@ -26,21 +28,25 @@ public class FotoLoader extends AsyncTaskLoader<List<Foto>> {
     private ContentResolver mResolver;
     private long mId;
     private int selection;
+    private FotoObserver mObserver;
 
     public FotoLoader(Context context, ContentResolver resolver, long id, int type) {
         super(context);
         mResolver = resolver;
         mId = id;
         selection = type;
+        mObserver = new FotoObserver(null, this);
+        mResolver.registerContentObserver(MapperContract.Foto.CONTENT_URI, false, mObserver);
     }
 
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
-        if (mElencoFoto == null || takeContentChanged())
+        if (mElencoFoto == null || takeContentChanged()) {
             forceLoad();
-        if (mElencoFoto != null)
+        } else if (mElencoFoto != null) {
             deliverResult(mElencoFoto);
+        }
     }
 
     @Override
@@ -76,5 +82,27 @@ public class FotoLoader extends AsyncTaskLoader<List<Foto>> {
             c.close();
         }
         return mElencoFoto;
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        mResolver.unregisterContentObserver(mObserver);
+    }
+
+    private class FotoObserver extends ContentObserver {
+
+        private FotoLoader mLoader;
+
+        public FotoObserver(Handler handler, FotoLoader loader) {
+            super(handler);
+            mLoader = loader;
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+            mLoader.onContentChanged();
+        }
     }
 }

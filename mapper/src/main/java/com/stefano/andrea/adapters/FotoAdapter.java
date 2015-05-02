@@ -37,10 +37,8 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
     }
 
     public void setElencoFoto (List<Foto> elencoFoto) {
-        if (mElencoFoto == null) {
-            mElencoFoto = elencoFoto;
-            notifyDataSetChanged();
-        }
+        mElencoFoto = elencoFoto;
+        notifyDataSetChanged();
     }
 
     @Override
