@@ -29,7 +29,8 @@
             android:name=".DettagliViaggioActivity"
             android:label="@string/title_activity_dettagli_viaggio"
             android:theme="@style/AppThemeNoToolbar"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -52,6 +53,14 @@
         <activity
             android:name=".ModInfoFotoActivity"
             android:label="@string/title_activity_mod_info_foto" >
+        </activity>
+        <activity
+            android:name=".DettagliPostoActivity"
+            android:label="@string/title_activity_dettagli_posto"
+            android:parentActivityName=".DettagliCittaActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.stefano.andrea.activities.DettagliCittaActivity" />
         </activity>
     </application>
 
