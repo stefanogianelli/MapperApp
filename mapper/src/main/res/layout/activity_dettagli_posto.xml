@@ -6,7 +6,12 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.stefano.andrea.activities.DettagliPostoActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
+     <android.support.v4.view.ViewPager
+        android:id="@+id/pager_lista_foto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 
 </RelativeLayout>
