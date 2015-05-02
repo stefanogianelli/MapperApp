@@ -75,10 +75,7 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
      * @return true if selection mode enabled, false otherwise
      */
     public boolean isEnabledSelectionMode () {
-        if (mActionMode != null)
-            return true;
-        else
-            return false;
+        return mActionMode != null;
     }
 
     /**

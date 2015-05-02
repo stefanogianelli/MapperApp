@@ -24,14 +24,13 @@ import android.widget.EditText;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
-import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.CommonAlertDialog;
 import com.stefano.andrea.utils.CustomFAB;
 
 import java.util.List;
@@ -44,8 +43,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private static final String ID_VIAGGIO = "id_viaggio";
     private static final String ID_CITTA = "id_citta";
     private static final int POSTI_LOADER = 0;
-
-    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
 
     private long mIdViaggio;
     private long mIdCitta;
@@ -107,17 +104,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mParentActivity instanceof ObservableScrollViewCallbacks) {
-            // Scroll to the specified offset after layout
-            Bundle args = getArguments();
-            if (args != null && args.containsKey(ARG_INITIAL_POSITION)) {
-                final int initialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
-                ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.scrollVerticallyToPosition(initialPosition);
-                    }
-                });
-            }
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
         }
         //configuro fab
@@ -141,7 +127,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
      * Aggiunge un nuovo posto all'interno di una citta'
      * @param nomePosto Il nome del posto
      */
-    public void creaNuovoPosto (String nomePosto) {
+    private void creaNuovoPosto(String nomePosto) {
         Posto posto = new Posto();
         posto.setNome(nomePosto);
         posto.setIdCitta(mIdCitta);
@@ -151,11 +137,11 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     /**
      * Cancella i posti selezionati dall'utente
      */
-    public void cancellaElencoPosti () {
+    private void cancellaElencoPosti() {
         new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoPosti, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_POSTO);
     }
 
-    public void openDialogAddPosto (View view) {
+    private void openDialogAddPosto(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
         LayoutInflater inflater = mParentActivity.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.fragment_add_posto, null))

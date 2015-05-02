@@ -7,10 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.adapters.PostiAdapter;
@@ -19,17 +19,16 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
-import com.stefano.andrea.utils.DialogChooseFotoMode;
+import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
+import java.io.IOException;
+
 public class DettagliCittaActivity extends ScrollableTabActivity implements PostiAdapter.PostoOnClickListener, FotoAdapter.FotoOnClickListener {
 
-    private static final String TAG = "DettagliCittaActivity";
-
-    private CharSequence [] mTitles = {"Posti","Foto"};
-    private int mNumbOfTabs = 2;
     private long mIdViaggio;
     private long mIdCitta;
     private Uri mImageUri;
@@ -38,13 +37,11 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_citta);
-        //salvo i parametri ricevuti dall'intent
-        String nomeCitta = "";
-        if (getIntent() != null) {
-            mIdViaggio = getIntent().getExtras().getLong(DettagliViaggioActivity.EXTRA_ID_VIAGGIO);
-            mIdCitta = getIntent().getExtras().getLong(DettagliViaggioActivity.EXTRA_ID_CITTA);
-            nomeCitta = getIntent().getExtras().getString(DettagliViaggioActivity.EXTRA_NOME_CITTA);
-        }
+        //recupero i parametri dal contesto
+        MapperContext mContext = MapperContext.getInstance();
+        mIdViaggio = mContext.getIdViaggio();
+        mIdCitta = mContext.getIdCitta();
+        String nomeCitta = mContext.getNomeCitta();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_citta_toolbar);
         View headerView = findViewById(R.id.dettagli_citta_header);
@@ -57,7 +54,7 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         //aggiungo il titolo alla action bar
         this.setTitle(nomeCitta);
         //creo l'adapter per le tab
-        TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager());
         //assegno l'adapter al pager
         pager.setAdapter(adapter);
         //assegno i parametri alla superclasse per lo scrolling
@@ -89,10 +86,13 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
         int id = item.getItemId();
 
         if (id == R.id.action_aggiungi_foto_dettagli_citta) {
-            mImageUri = DialogChooseFotoMode.getImageUri();
-            if (BuildConfig.DEBUG && mImageUri == null)
-                throw new AssertionError();
-            DialogChooseFotoMode.mostraDialog(this, mImageUri);
+            try {
+                mImageUri = PhotoUtils.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
+            if (mImageUri != null)
+                PhotoUtils.mostraDialog(this, mImageUri);
             return true;
         }
 
@@ -112,26 +112,16 @@ public class DettagliCittaActivity extends ScrollableTabActivity implements Post
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE && resultCode == RESULT_OK && data != null) {
-            Log.v("MainActivity", data.getData().toString());
-        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, mImageUri.toString());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mIdViaggio);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, mIdCitta);
-            startActivity(intent);
-        }
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta);
     }
 
     public class TabDettagliCittaAdapter extends ScrollableTabAdapter {
 
-        private CharSequence [] mTitles;
-        private int mNumbOfTabs;
+        private CharSequence [] mTitles = {"Posti","Foto"};
+        private int mNumbOfTabs = 2;
 
-        public TabDettagliCittaAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
+        public TabDettagliCittaAdapter(FragmentManager fm) {
             super(fm);
-            mTitles = titles;
-            mNumbOfTabs = numbOfTabSum;
         }
 
         @Override

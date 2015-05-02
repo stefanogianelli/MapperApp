@@ -13,12 +13,12 @@ import android.util.Log;
 
 import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
-import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.CommonAlertDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 /**
  * InsertTask
@@ -54,7 +55,6 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
     private ContentResolver mResolver;
     private InsertAdapter mAdapter;
     private T mItem;
-    private InsertInterface mDelegate;
     private ProgressDialog mDialog;
 
     public InsertTask (Activity activity, ContentResolver resolver, InsertAdapter adapter, T item) {
@@ -76,6 +76,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
         if (params.length == 1) {
+            InsertInterface mDelegate;
             switch (params[0]) {
                 case INSERISCI_VIAGGIO:
                     mDelegate = new InsertViaggio();
@@ -328,6 +329,9 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     }
 
+    /**
+     * Classe che si occupa di inserire un nuovo luogo
+     */
     private class InsertLuogo implements InsertInterface {
 
         private Posto posto;
@@ -375,27 +379,30 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
      */
     private class InsertFoto implements InsertInterface {
 
-        private Foto foto;
+        private List<Foto> elencoFoto;
 
         public InsertFoto () {
-            foto = (Foto) mItem;
+            elencoFoto = (List<Foto>) mItem;
         }
 
         @Override
         public int insertItem() {
             ContentValues values = new ContentValues();
-            values.put(MapperContract.Foto.PATH, foto.getPath());
-            values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
-            values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
-            values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
-            values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
-            Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);
-            long id = Long.parseLong(uri.getLastPathSegment());
-            if (id != -1) {
-                foto.setId(id);
-                return RESULT_OK;
+            for (int i = 0; i < elencoFoto.size(); i++) {
+                Foto foto = elencoFoto.get(i);
+                values.clear();
+                values.put(MapperContract.Foto.PATH, foto.getPath());
+                values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
+                values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
+                values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
+                values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
+                Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);
+                long id = Long.parseLong(uri.getLastPathSegment());
+                if (id != -1) {
+                    foto.setId(id);
+                }
             }
-            return RESULT_ERROR;
+            return RESULT_OK;
         }
     }
 

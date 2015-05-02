@@ -12,26 +12,33 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModInfoFotoActivity extends ActionBarActivity {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
     public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.Foto";
+    public final static String EXTRA_TIPO_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.tipoFoto";
 
     private static final String TAG = "ModInfoFotoActivity";
 
-    private String mImagePath;
+    private ArrayList<String> mImagePath;
     private ContentResolver mResolver;
     private long mIdViaggio;
     private long mIdCitta;
+    private boolean mFotoSalvata = false;
+    private int mTipoFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +48,10 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(EXTRA_FOTO))
-                mImagePath = intent.getStringExtra(EXTRA_FOTO);
-            if (BuildConfig.DEBUG && mImagePath != null)
-                Log.v(TAG, "Foto URI: " + mImagePath);
+                mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
             mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
             mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
+            mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
         }
         //acquisisco riferimenti
         ImageView imageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
@@ -53,7 +59,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         TextView nomeCittaView = (TextView) findViewById(R.id.txt_edit_citta_foto);
         //assegno i dati raccolti
         if (mImagePath != null) {
-            ImageLoader.getInstance().displayImage(mImagePath, imageView);
+            //TODO: mostrare indicatore del numero delle imamgini selezionate
+            ImageLoader.getInstance().displayImage(mImagePath.get(0), imageView);
         }
         if (mIdViaggio != -1) {
             Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
@@ -63,6 +70,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 cViaggio.moveToFirst();
                 String nomeViaggio = cViaggio.getString(cViaggio.getColumnIndex(projection[0]));
                 nomeViaggioView.setText(nomeViaggio);
+                cViaggio.close();
             }
         }
         if (mIdCitta != -1) {
@@ -73,6 +81,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 cCitta.moveToFirst();
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
                 nomeCittaView.setText(nomeCitta);
+                cCitta.close();
             }
         }
     }
@@ -93,18 +102,29 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_salva_foto) {
-            Foto foto = new Foto();
-            foto.setPath(mImagePath);
-            foto.setLatitudine(0);
-            foto.setLongitudine(0);
-            foto.setIdViaggio(mIdViaggio);
-            foto.setIdCitta(mIdCitta);
-            new InsertTask<>(this, mResolver, null, foto).execute(InsertTask.INSERISCI_FOTO);
-            finish();
+            if (mIdViaggio != -1)
+                if (mIdCitta != -1) {
+                    List<Foto> elencoFoto = new ArrayList<>();
+                    for (int i = 0; i < mImagePath.size(); i++) {
+                        Foto foto = new Foto();
+                        foto.setPath(mImagePath.get(i));
+                        foto.setLatitudine(0);
+                        foto.setLongitudine(0);
+                        foto.setIdViaggio(mIdViaggio);
+                        foto.setIdCitta(mIdCitta);
+                        elencoFoto.add(foto);
+                    }
+                    new InsertTask<>(this, mResolver, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
+                    mFotoSalvata = true;
+                    finish();
+                } else {
+                    Toast.makeText(this, getApplicationContext().getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getApplicationContext().getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
+            }
             return true;
         } else if (id == R.id.action_annula_foto) {
-            File file = new File(mImagePath.substring(7));
-            boolean res = file.delete();
+            boolean res = cancellaFoto();
             if (BuildConfig.DEBUG && res)
                 Log.v(TAG, "Foto cancellata con successo");
             else
@@ -116,4 +136,18 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean cancellaFoto () {
+        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
+            File file = new File(mImagePath.get(0).substring(7));
+            return file.delete();
+        } else
+            return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!mFotoSalvata)
+            cancellaFoto();
+    }
 }

@@ -7,19 +7,19 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -29,8 +29,10 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
-import com.stefano.andrea.utils.DialogChooseFotoMode;
+import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.PhotoUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
@@ -38,15 +40,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private final static String TAG = "MainActivity";
     private final static int VIAGGI_LOADER = 0;
 
-    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.idViaggio";
-    public final static String EXTRA_NOME_VIAGGIO = "com.stefano.andrea.mapper.mainActivity.nomeViaggio";
-    public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.mainActivity.Foto";
-
-    private RecyclerView mRecyclerView;
     private ViaggiAdapter mAdapter;
     private ContentResolver mResolver;
     private List<Viaggio> mListaViaggi;
     private CustomFAB mFab;
+    private Uri mImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         //acquisisco riferimento al content provider
         mResolver = getContentResolver();
         //inizializzo recyclerview
-        mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -89,7 +87,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
-            DialogChooseFotoMode.mostraDialog(this, null);
+            try {
+                mImageUri = PhotoUtils.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
+            if (mImageUri != null)
+                PhotoUtils.mostraDialog(this, mImageUri);
         }
 
         return super.onOptionsItemSelected(item);
@@ -101,9 +105,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      */
     @Override
     public void selezionatoViaggio(Viaggio viaggio) {
+        MapperContext context = MapperContext.getInstance();
+        context.setIdViaggio(viaggio.getId());
+        context.setNomeViaggio(viaggio.getNome());
         Intent intent = new Intent(this, DettagliViaggioActivity.class);
-        intent.putExtra(EXTRA_ID_VIAGGIO, viaggio.getId());
-        intent.putExtra(EXTRA_NOME_VIAGGIO, viaggio.getNome());
         startActivity(intent);
     }
 
@@ -111,7 +116,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * Crea un nuovo viaggio nel database
      * @param nome Il nome del viaggio
      */
-    public void creaViaggio (String nome) {
+    private void creaViaggio(String nome) {
         Viaggio viaggio = new Viaggio(nome);
         new InsertTask<>(this, mResolver, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
     }
@@ -119,7 +124,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     /**
      * Cancella i viaggi selezionati dall'utente
      */
-    public void cancellaViaggi () {
+    private void cancellaViaggi() {
         new DeleteTask<>(this, mResolver, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
@@ -176,19 +181,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DialogChooseFotoMode.GALLERY_PICTURE) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    Log.v(TAG, data.getData().toString());
-                }
-            }
-        } else if (requestCode == DialogChooseFotoMode.CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            Intent intent = new Intent(this, ModInfoFotoActivity.class);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_FOTO, imageBitmap);
-            startActivity(intent);
-        }
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, -1, -1);
     }
 
     private class ActionModeCallback implements ActionMode.Callback {

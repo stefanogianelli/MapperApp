@@ -25,14 +25,13 @@ import android.widget.EditText;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
-import com.stefano.andrea.helpers.CommonAlertDialog;
 import com.stefano.andrea.loaders.CittaLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.CommonAlertDialog;
 import com.stefano.andrea.utils.CustomFAB;
 
 import java.util.List;
@@ -45,9 +44,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private static final int CITTA_LOADER = 0;
     private static final String ID_VIAGGIO = "id_viaggio";
 
-    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
-
-    private ObservableRecyclerView mRecyclerView;
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
     private long mIdViaggio;
@@ -76,8 +72,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mParentActivity = getActivity();
         //acquisisco content resolver
         mResolver = mParentActivity.getContentResolver();
+        //creo action mode
+        ActionModeCallback mActionMode = new ActionModeCallback();
         //creo l'adapter
-        mAdapter = new CittaAdapter(mParentActivity, new ActionModeCallback(), (CittaAdapter.CittaOnClickListener) mParentActivity);
+        mAdapter = new CittaAdapter(mParentActivity, mActionMode, (CittaAdapter.CittaOnClickListener) mParentActivity);
         //avvio il loader delle citta
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
     }
@@ -87,24 +85,13 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
         mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
-        mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
+        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mParentActivity instanceof ObservableScrollViewCallbacks) {
-            // Scroll to the specified offset after layout
-            Bundle args = getArguments();
-            if (args != null && args.containsKey(ARG_INITIAL_POSITION)) {
-                final int initialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
-                ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.scrollVerticallyToPosition(initialPosition);
-                    }
-                });
-            }
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
         }
         //configuro fab
@@ -129,7 +116,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
      * @param nomeCitta Il nome della citta
      * @param nomeNazione Il nome della nazione
      */
-    public void creaNuovaCitta (String nomeCitta, String nomeNazione) {
+    private void creaNuovaCitta(String nomeCitta, String nomeNazione) {
         Citta citta = new Citta();
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
@@ -140,11 +127,11 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     /**
      * Cancella le citta selezionate dall'utente
      */
-    public void cancellaElencoCitta () {
+    private void cancellaElencoCitta() {
         new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
     }
 
-    public void openDialogAddCitta(View view) {
+    private void openDialogAddCitta(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
         LayoutInflater inflater = mParentActivity.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.fragment_add_citta, null))

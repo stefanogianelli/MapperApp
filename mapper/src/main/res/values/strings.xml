@@ -3,7 +3,7 @@
     <string name="app_name">Mapper</string>
     <!-- Azioni -->
     <string name="delete">Elimina</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="save">Salva</string>
     <string name="cancel">Cancella</string>
     <string name="edit">Modifica</string>
@@ -49,6 +49,8 @@
     <string name="citta">Città</string>
     <string name="nazione">Nazione</string>
     <string name="posto">Posto</string>
+    <string name="viaggio_non_selezionato">Selezionare un viaggio</string>
+    <string name="citta_non_selezionata">Selezionare una citta\'</string>
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
@@ -88,6 +90,7 @@
     <!-- Messaggi di errore -->
     <string name="unsupported_uri_error">URI non supportata</string>
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
+    <string name="foto_not_allowed">Impossibile scattare una foto</string>
 
     <string name="hello_world">Hello world!</string>
 

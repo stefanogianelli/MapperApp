@@ -1,6 +1,7 @@
 package com.stefano.andrea.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.adapters.FotoAdapter;
@@ -17,30 +19,28 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.ScrollableTabActivity;
 import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
+import java.io.IOException;
+
 public class DettagliViaggioActivity extends ScrollableTabActivity implements CittaAdapter.CittaOnClickListener, FotoAdapter.FotoOnClickListener {
 
-    public static final String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.DettagliViaggioActivity.idViaggio";
-    public static final String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.idCitta";
-    public static final String EXTRA_NOME_CITTA = "com.stefano.andrea.mapper.DettagliViaggioActivity.nomeCitta";
-
-    private CharSequence [] mTitles = {"Dettagli", "Foto"};
-    private int mNumbOfTabs = 2;
     private long mIdViaggio;
-    private String mNomeViaggio;
+    private Uri mImageUri;
+    private MapperContext mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
-        //salvo i parametri ricevuti dall'intent
-        if (getIntent().getExtras() != null) {
-            mNomeViaggio = getIntent().getExtras().getString(MainActivity.EXTRA_NOME_VIAGGIO);
-            mIdViaggio = getIntent().getExtras().getLong(MainActivity.EXTRA_ID_VIAGGIO);
-        }
+        //recupero i parametri dal contesto
+        mContext = MapperContext.getInstance();
+        String mNomeViaggio = mContext.getNomeViaggio();
+        mIdViaggio = mContext.getIdViaggio();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
         View headerView = findViewById(R.id.dettagli_viaggio_header);
@@ -53,11 +53,11 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
         //Creo l'adapter per le tab
-        TabDettagliViaggioAdapter adapter =  new TabDettagliViaggioAdapter(getSupportFragmentManager(), mTitles, mNumbOfTabs);
+        TabDettagliViaggioAdapter mAdapter = new TabDettagliViaggioAdapter(getSupportFragmentManager());
         //assegno al pager l'adapter
-        pager.setAdapter(adapter);
+        pager.setAdapter(mAdapter);
         //assegno i parametri alla superclasse per lo scrolling
-        setParameters(adapter, pager, toolbarView, headerView);
+        setParameters(mAdapter, pager, toolbarView, headerView);
         //configuro le tab
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -67,12 +67,29 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
             }
         });
         tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                propagateToolbarState(toolbarIsShown());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        propagateToolbarState(toolbarIsShown());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_dettagli_viaggio, menu);
+        getMenuInflater().inflate(R.menu.menu_dettagli_viaggio, menu);
         return true;
     }
 
@@ -83,8 +100,13 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_aggiungi_foto_dettagli_viaggio) {
+            try {
+                mImageUri = PhotoUtils.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
+            PhotoUtils.mostraDialog(this, mImageUri);
             return true;
         }
 
@@ -97,10 +119,9 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
      */
     @Override
     public void selezionataCitta(Citta citta) {
+        mContext.setIdCitta(citta.getIdCitta());
+        mContext.setNomeCitta(citta.getNome());
         Intent intent = new Intent(this, DettagliCittaActivity.class);
-        intent.putExtra(EXTRA_ID_VIAGGIO, mIdViaggio);
-        intent.putExtra(EXTRA_ID_CITTA, citta.getId());
-        intent.putExtra(EXTRA_NOME_CITTA, citta.getNome());
         startActivity(intent);
     }
 
@@ -109,15 +130,19 @@ public class DettagliViaggioActivity extends ScrollableTabActivity implements Ci
         //TODO: completare
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, -1);
+    }
+
     private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {
 
-        private CharSequence [] mTitles;
-        private int mNumbOfTabs;
+        private CharSequence [] mTitles = {"Dettagli", "Foto"};
+        private int mNumbOfTabs = 2;
 
-        public TabDettagliViaggioAdapter(FragmentManager fm, CharSequence [] titles, int numbOfTabSum) {
+        public TabDettagliViaggioAdapter(FragmentManager fm) {
             super(fm);
-            mTitles = titles;
-            mNumbOfTabs = numbOfTabSum;
         }
 
         @Override
