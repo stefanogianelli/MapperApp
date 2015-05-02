@@ -125,10 +125,12 @@ public class ModInfoFotoActivity extends ActionBarActivity{
             return true;
         } else if (id == R.id.action_annula_foto) {
             boolean res = cancellaFoto();
-            if (BuildConfig.DEBUG && res)
-                Log.v(TAG, "Foto cancellata con successo");
-            else
-                Log.v(TAG, "Errore durante l'eliminazione della foto");
+            if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
+                if (res)
+                    Log.d(TAG, "Foto cancellata con successo");
+                else
+                    Log.d(TAG, "Errore durante l'eliminazione della foto");
+            }
             finish();
             return true;
         }
@@ -190,7 +192,7 @@ public class ModInfoFotoActivity extends ActionBarActivity{
             File file = new File(mImagePath.get(0).substring(7));
             return file.delete();
         } else
-            return true;
+            return false;
     }
 
     @Override
