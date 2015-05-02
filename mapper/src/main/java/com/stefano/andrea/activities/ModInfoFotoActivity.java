@@ -2,20 +2,28 @@ package com.stefano.andrea.activities;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.PhotoUtils;
@@ -24,7 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModInfoFotoActivity extends ActionBarActivity {
+public class ModInfoFotoActivity extends ActionBarActivity{
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
@@ -39,6 +47,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private long mIdCitta;
     private boolean mFotoSalvata = false;
     private int mTipoFoto;
+    private ImageView mImageView;
+    private Spinner mViaggioSpinner;
+    private TextView mNomeCittaView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +65,14 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
         }
         //acquisisco riferimenti
-        ImageView imageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
-        TextView nomeViaggioView = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
-        TextView nomeCittaView = (TextView) findViewById(R.id.txt_edit_citta_foto);
-        //assegno i dati raccolti
-        if (mImagePath != null) {
-            //TODO: mostrare indicatore del numero delle imamgini selezionate
-            ImageLoader.getInstance().displayImage(mImagePath.get(0), imageView);
-        }
-        if (mIdViaggio != -1) {
-            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
-            String [] projection = {MapperContract.Viaggio.NOME};
-            Cursor cViaggio = mResolver.query(viaggio, projection, null, null, null);
-            if (cViaggio != null && cViaggio.getCount() > 0) {
-                cViaggio.moveToFirst();
-                String nomeViaggio = cViaggio.getString(cViaggio.getColumnIndex(projection[0]));
-                nomeViaggioView.setText(nomeViaggio);
-                cViaggio.close();
-            }
-        }
+        mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
+        mViaggioSpinner = (Spinner) findViewById(R.id.txt_edit_viaggio_foto);
+        mNomeCittaView = (TextView) findViewById(R.id.txt_edit_citta_foto);
+        //configuro immagine
+        inizializzaFoto();
+        //configuro viaggio
+        inizializzaViaggio();
+        //configuro citta
         if (mIdCitta != -1) {
             Uri citta = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
             String [] projection = {MapperContract.DatiCitta.NOME};
@@ -80,7 +80,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             if (cCitta != null && cCitta.getCount() > 0) {
                 cCitta.moveToFirst();
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
-                nomeCittaView.setText(nomeCitta);
+                mNomeCittaView.setText(nomeCitta);
                 cCitta.close();
             }
         }
@@ -136,6 +136,55 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void inizializzaFoto() {
+        if (mImagePath != null) {
+            //TODO: mostrare indicatore del numero delle imamgini selezionate
+            ImageLoader.getInstance().displayImage(mImagePath.get(0), mImageView);
+        }
+    }
+
+    private void inizializzaViaggio() {
+        List<Viaggio> elencoViaggi = new ArrayList<>();
+        //controllo se è stato selezionato un viaggio
+        if (mIdViaggio != -1) {
+            //viaggio selezionato
+            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
+            String [] projection = {MapperContract.Viaggio.NOME};
+            Cursor cViaggio = mResolver.query(viaggio, projection, null, null, null);
+            if (cViaggio != null && cViaggio.getCount() > 0) {
+                cViaggio.moveToFirst();
+                String nomeViaggio = cViaggio.getString(cViaggio.getColumnIndex(projection[0]));
+                elencoViaggi.add(new Viaggio(mIdViaggio, nomeViaggio));
+                cViaggio.close();
+            }
+        } else {
+            //viaggio non selezionato
+            String [] projection = {MapperContract.Viaggio.ID_VIAGGIO, MapperContract.Viaggio.NOME};
+            Cursor cViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, null);
+            if (cViaggio != null && cViaggio.getCount() > 0) {
+                while (cViaggio.moveToNext()) {
+                    Viaggio viaggio = new Viaggio();
+                    viaggio.setId(cViaggio.getLong(cViaggio.getColumnIndex(projection[0])));
+                    viaggio.setNome(cViaggio.getString(cViaggio.getColumnIndex(projection[1])));
+                    elencoViaggi.add(viaggio);
+                }
+                cViaggio.close();
+            }
+        }
+        final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, android.R.layout.simple_spinner_item, elencoViaggi);
+        mViaggioSpinner.setAdapter(viaggiAdapter);
+        mViaggioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Viaggio viaggio = (Viaggio) parent.getItemAtPosition(position);
+                mIdViaggio = viaggio.getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+    }
+
     private boolean cancellaFoto () {
         if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
             File file = new File(mImagePath.get(0).substring(7));
@@ -149,5 +198,33 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         super.onDestroy();
         if (!mFotoSalvata)
             cancellaFoto();
+    }
+
+    /** Adapter per lo spinner dei viaggi */
+    private class ViaggiSpinnerAdapter extends ArrayAdapter<Viaggio> {
+
+        public ViaggiSpinnerAdapter(Context context, int resource, List<Viaggio> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            Viaggio viaggio = getItem(position);
+            if (convertView == null)
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_viaggio_item, parent, false);
+            TextView nomeViaggio = (TextView) convertView.findViewById(R.id.spinner_nome_viaggio);
+            nomeViaggio.setText(viaggio.getNome());
+            return convertView;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Viaggio viaggio = getItem(position);
+            if (convertView == null)
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_viaggio_item, parent, false);
+            TextView nomeViaggio = (TextView) convertView.findViewById(R.id.spinner_nome_viaggio);
+            nomeViaggio.setText(viaggio.getNome());
+            return convertView;
+        }
     }
 }

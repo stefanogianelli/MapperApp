@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/mod_subtitle"
                     android:text="@string/viaggio"/>
-                <TextView style="?android:textAppearanceSearchResultSubtitle"
+                <Spinner style="?android:textAppearanceSearchResultSubtitle"
                     android:id="@+id/txt_edit_viaggio_foto"
                     android:layout_weight="3"
                     android:layout_width="wrap_content"
