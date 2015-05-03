@@ -26,13 +26,14 @@ import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModInfoFotoActivity extends ActionBarActivity{
+public class ModInfoFotoActivity extends ActionBarActivity {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
@@ -40,6 +41,8 @@ public class ModInfoFotoActivity extends ActionBarActivity{
     public final static String EXTRA_TIPO_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.tipoFoto";
 
     private static final String TAG = "ModInfoFotoActivity";
+
+    private static final int ADD_TAG = -42;
 
     private ArrayList<String> mImagePath;
     private ContentResolver mResolver;
@@ -169,13 +172,31 @@ public class ModInfoFotoActivity extends ActionBarActivity{
                 cViaggio.close();
             }
         }
+        elencoViaggi.add(new Viaggio(ADD_TAG, "Crea nuovo"));
         ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, R.layout.spinner_viaggio_item, elencoViaggi);
         mViaggioSpinner.setAdapter(viaggiAdapter);
         mViaggioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Viaggio viaggio = (Viaggio) parent.getItemAtPosition(position);
-                mIdViaggio = viaggio.getId();
+                if (viaggio.getId() == ADD_TAG) {
+                    DialogHelper.showDialogAggiungiViaggio(ModInfoFotoActivity.this, new DialogHelper.AggiungiViaggioCallback() {
+                        @Override
+                        public void creaViaggio(String nomeViaggio) {
+                            Viaggio viaggio = new Viaggio(nomeViaggio);
+                            InsertTask.InsertAdapter<Viaggio> adapter = new InsertTask.InsertAdapter<Viaggio>() {
+                                @Override
+                                public void insertItem(Viaggio item) {
+                                    mIdViaggio = item.getId();
+                                    Log.v(TAG, "Id nuovo viaggio: " + mIdViaggio);
+                                }
+                            };
+                            new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+                        }
+                    });
+                } else {
+                    mIdViaggio = viaggio.getId();
+                }
             }
 
             @Override
