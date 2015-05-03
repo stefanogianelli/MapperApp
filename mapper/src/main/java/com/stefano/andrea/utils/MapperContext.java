@@ -11,6 +11,7 @@ public class MapperContext {
     private long idCitta;
     private String nomeCitta;
     private long idPosto;
+    private String nomePosto;
 
     private MapperContext () {
         idViaggio = -1;
@@ -18,6 +19,7 @@ public class MapperContext {
         idPosto = -1;
         nomeViaggio = null;
         nomeCitta = null;
+        nomePosto = null;
     }
 
     public static MapperContext getInstance () {
@@ -64,5 +66,13 @@ public class MapperContext {
 
     public void setIdPosto(long idPosto) {
         this.idPosto = idPosto;
+    }
+
+    public String getNomePosto() {
+        return nomePosto;
+    }
+
+    public void setNomePosto(String nomePosto) {
+        this.nomePosto = nomePosto;
     }
 }
