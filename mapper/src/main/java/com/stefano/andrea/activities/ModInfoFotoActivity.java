@@ -145,7 +145,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
      * Carica i viaggi nei quali e' possibile salvare la foto
      */
     private void inizializzaViaggio() {
-        List<Viaggio> elencoViaggi = new ArrayList<>();
+        final List<Viaggio> elencoViaggi = new ArrayList<>();
         //controllo se e' stato selezionato un viaggio
         if (mIdViaggio != -1) {
             //viaggio selezionato
@@ -161,7 +161,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         } else {
             //viaggio non selezionato
             String [] projection = {MapperContract.Viaggio.ID_VIAGGIO, MapperContract.Viaggio.NOME};
-            Cursor cViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, null);
+            Cursor cViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, MapperContract.Viaggio.DEFAULT_SORT);
             if (cViaggio != null && cViaggio.getCount() > 0) {
                 while (cViaggio.moveToNext()) {
                     Viaggio viaggio = new Viaggio();
@@ -173,7 +173,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             }
         }
         elencoViaggi.add(new Viaggio(ADD_TAG, "Crea nuovo"));
-        ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, R.layout.spinner_viaggio_item, elencoViaggi);
+        final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, R.layout.spinner_viaggio_item, elencoViaggi);
         mViaggioSpinner.setAdapter(viaggiAdapter);
         mViaggioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -187,8 +187,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                             InsertTask.InsertAdapter<Viaggio> adapter = new InsertTask.InsertAdapter<Viaggio>() {
                                 @Override
                                 public void insertItem(Viaggio item) {
-                                    mIdViaggio = item.getId();
-                                    Log.v(TAG, "Id nuovo viaggio: " + mIdViaggio);
+                                    elencoViaggi.add(0, new Viaggio(item.getId(), item.getNome()));
+                                    viaggiAdapter.notifyDataSetChanged();
+                                    mViaggioSpinner.setSelection(0);
                                 }
                             };
                             new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
