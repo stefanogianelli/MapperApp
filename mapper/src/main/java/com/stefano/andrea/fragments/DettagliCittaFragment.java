@@ -2,7 +2,6 @@ package com.stefano.andrea.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -39,7 +37,7 @@ import java.util.List;
 /**
  * DettagliCittaFragment
  */
-public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener {
+public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener, DialogHelper.AggiungiPostoCallback {
 
     private static final String ID_VIAGGIO = "id_viaggio";
     private static final String ID_CITTA = "id_citta";
@@ -182,7 +180,8 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
      * Aggiunge un nuovo posto all'interno di una citta'
      * @param nomePosto Il nome del posto
      */
-    private void creaNuovoPosto(String nomePosto) {
+    @Override
+    public void creaNuovoPosto(String nomePosto) {
         Posto posto = new Posto();
         posto.setNome(nomePosto);
         posto.setIdCitta(mIdCitta);
@@ -210,25 +209,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     }
 
     private void openDialogAddPosto(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
-        LayoutInflater inflater = mParentActivity.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_add_posto, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Dialog d = (Dialog) dialog;
-                        EditText nomePosto = (EditText) d.findViewById(R.id.text_add_posto);
-                        creaNuovoPosto(nomePosto.getText().toString());
-                        d.dismiss();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        builder.create().show();
+        DialogHelper.showDialogAggiungiPosto(mParentActivity, this);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -14,11 +13,9 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -29,6 +26,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
+import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 
@@ -36,7 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener {
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener, DialogHelper.AggiungiViaggioCallback {
 
     private final static int VIAGGI_LOADER = 0;
 
@@ -117,8 +115,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         mFab.attachToRecyclerView(mRecyclerView);
         //Inizializzo imageloader
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-        ImageLoader.getInstance().init(config);
+        if (!ImageLoader.getInstance().isInited()) {
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+            ImageLoader.getInstance().init(config);
+        }
     }
 
     @Override
@@ -176,7 +176,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * Crea un nuovo viaggio nel database
      * @param nome Il nome del viaggio
      */
-    private void creaViaggio(String nome) {
+    @Override
+    public void creaViaggio(String nome) {
         Viaggio viaggio = new Viaggio(nome);
         new InsertTask<>(this, mResolver, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
     }
@@ -193,24 +194,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * @param view View
      */
     public void openDialogAddViaggio(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_add_viaggio, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Dialog d = (Dialog) dialog;
-                        EditText nomeViaggio = (EditText) d.findViewById(R.id.text_add_viaggio);
-                        creaViaggio(nomeViaggio.getText().toString());
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        builder.create().show();
+        DialogHelper.showDialogAggiungiViaggio(this, this);
     }
 
     @Override

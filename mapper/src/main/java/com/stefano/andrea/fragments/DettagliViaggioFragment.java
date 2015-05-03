@@ -3,7 +3,6 @@ package com.stefano.andrea.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -43,7 +41,7 @@ import java.util.List;
 /**
  * DettagliViaggioFragment
  */
-public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener {
+public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, DialogHelper.AggiungiCittaCallback {
 
     private static final int CITTA_LOADER = 0;
     private static final String ID_VIAGGIO = "id_viaggio";
@@ -176,7 +174,8 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
      * @param nomeCitta Il nome della citta
      * @param nomeNazione Il nome della nazione
      */
-    private void creaNuovaCitta(String nomeCitta, String nomeNazione) {
+    @Override
+    public void creaNuovaCitta(String nomeCitta, String nomeNazione) {
         Citta citta = new Citta();
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
@@ -217,26 +216,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     private void openDialogAddCitta(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
-        LayoutInflater inflater = mParentActivity.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_add_citta, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Dialog d = (Dialog) dialog;
-                        EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
-                        EditText nomeCitta = (EditText) d.findViewById(R.id.text_add_citta);
-                        creaNuovaCitta(nomeCitta.getText().toString(), nomeNazione.getText().toString());
-                        d.dismiss();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        builder.create().show();
+        DialogHelper.showDialogAggiungiCitta(mParentActivity, this);
     }
 
     @Override
