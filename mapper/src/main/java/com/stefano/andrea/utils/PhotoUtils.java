@@ -33,6 +33,11 @@ public class PhotoUtils {
     private static final int GALLERY_PICTURE = 1;
     private static final int GALLERY_PICTURE_KITKAT = 2;
 
+    private static final String PHOTO_PREFIX = "mapper_";
+    private static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
+    private static final String PHOTO_POSTFIX = ".jpg";
+    private static final String FOLDER = "Mapper";
+
     /**
      * Mostra il dialog per scegliere da dove acquisire la foto
      * @param activity L'activity sulla quale si vuole mostrare il dialog
@@ -135,19 +140,19 @@ public class PhotoUtils {
      * @return L'uri dell'immagine
      */
     public static Uri getImageUri () throws IOException {
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File photo = createFile("mapper_" + timestamp);
+        String timestamp = new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date());
+        File photo = createFile(PHOTO_PREFIX + timestamp);
         photo.delete();
         return Uri.fromFile(photo);
     }
 
     private static File createFile(String part) throws IOException {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        dir = new File(dir.getAbsolutePath() + "/Mapper/");
+        dir = new File(dir.getAbsolutePath() + "/" + FOLDER + "/");
         if(!dir.exists()) {
             dir.mkdir();
         }
-        return File.createTempFile(part, ".jpg", dir);
+        return File.createTempFile(part, PHOTO_POSTFIX, dir);
     }
 
 }
