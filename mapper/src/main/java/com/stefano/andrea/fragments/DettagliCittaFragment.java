@@ -30,8 +30,8 @@ import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
-import com.stefano.andrea.utils.CommonAlertDialog;
 import com.stefano.andrea.utils.CustomFAB;
+import com.stefano.andrea.utils.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +162,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                 if (networkInfo != null && networkInfo.isConnected()) {
                     openDialogAddPosto(v);
                 } else {
-                    new CommonAlertDialog(mParentActivity, R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
+                    DialogHelper.showAlertDialog(mParentActivity, R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
                 }
             }
         });

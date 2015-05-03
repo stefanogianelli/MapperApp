@@ -18,7 +18,7 @@ import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
-import com.stefano.andrea.utils.CommonAlertDialog;
+import com.stefano.andrea.utils.DialogHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,7 +109,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 mAdapter.insertItem(mItem);
         } else {
             //mostro dialog d'errore
-            new CommonAlertDialog(mActivity, R.string.errore_inserimento_titolo_dialog, R.string.errore_inserimento_messaggio_dialog);
+            DialogHelper.showAlertDialog(mActivity, R.string.errore_inserimento_titolo_dialog, R.string.errore_inserimento_messaggio_dialog);
         }
     }
 

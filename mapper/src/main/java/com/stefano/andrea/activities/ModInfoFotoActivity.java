@@ -139,7 +139,7 @@ public class ModInfoFotoActivity extends ActionBarActivity{
     }
 
     /**
-     * Carica i viaggi nei quali è possibile salvare la foto
+     * Carica i viaggi nei quali e' possibile salvare la foto
      */
     private void inizializzaViaggio() {
         List<Viaggio> elencoViaggi = new ArrayList<>();
@@ -184,7 +184,7 @@ public class ModInfoFotoActivity extends ActionBarActivity{
     }
 
     /**
-     * Carica le citta nelle quali è possibile salvare la foto
+     * Carica le citta nelle quali e' possibile salvare la foto
      */
     private void inizializzaCitta () {
         if (mIdCitta != -1) {

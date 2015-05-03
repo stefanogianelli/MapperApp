@@ -12,7 +12,7 @@ import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
-import com.stefano.andrea.utils.CommonAlertDialog;
+import com.stefano.andrea.utils.DialogHelper;
 
 import java.io.File;
 import java.util.List;
@@ -93,7 +93,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
         if (result == RESULT_ERROR) {
-            new CommonAlertDialog(mActivity, R.string.errore_eliminazione_titolo_dialog, R.string.errore_eliminazione_messaggio_dialog);
+            DialogHelper.showAlertDialog(mActivity, R.string.errore_eliminazione_titolo_dialog, R.string.errore_eliminazione_messaggio_dialog);
         }
     }
 
