@@ -14,6 +14,11 @@
     <!-- Scroll RecyclerVIew -->
     <dimen name="padding_scroll_rv">56dp</dimen>
 
+    <!-- Spinner -->
+    <dimen name="spinner_container_height">56dp</dimen>
+    <dimen name="spinner_marg_v">8dp</dimen>
+    <dimen name="spinner_marg_h">16dp</dimen>
+
     <!-- FAB -->
     <dimen name="fab_elevation">8dp</dimen>
     <dimen name="fab_margin_top">16dp</dimen>

@@ -45,12 +45,12 @@
         android:background="@color/mod_background"
         android:layout_marginTop="@dimen/info_margin">
 
-        <!--    Edit nazione -->
+        <!--    Edit viaggio -->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:minHeight="?android:listPreferredItemHeight"
-            android:layout_height="@dimen/standard_horizontal_tab_height"   >
+            android:layout_height="@dimen/spinner_container_height"   >
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -65,26 +65,16 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/mod_subtitle"
                     android:text="@string/viaggio"/>
-                <Spinner style="?android:textAppearanceSearchResultSubtitle"
+                <Spinner
                     android:id="@+id/txt_edit_viaggio_foto"
-                    android:layout_weight="3"
+                    android:layout_weight="10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:dropDownWidth="fill_parent"
                     android:textColor="@color/mod_title"
-                    android:text="nome viaggio"/>
+                    android:layout_gravity="center"
+                    android:text="@string/viaggio"/>
             </LinearLayout>
-            <ImageButton android:id="@+id/icon_edit_viaggio_foto"
-                style="?android:borderlessButtonStyle"
-                android:src="@drawable/ic_edit_grey600_24dp"
-                android:layout_height="@dimen/standard_touch_icon_size_min"
-                android:layout_width="@dimen/standard_touch_icon_size_min"
-                android:background="?android:selectableItemBackground"
-                android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
-                android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
-                android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/edit" />
         </LinearLayout>
     </LinearLayout>
 
@@ -129,7 +119,7 @@
                 android:text="@string/nazione"/>
             <TextView style="?android:textAppearanceSearchResultSubtitle"
                 android:id="@+id/txt_edit_nazione_foto"
-                android:layout_weight="3"
+                android:layout_weight="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_title"
@@ -178,7 +168,7 @@
                 android:text="@string/citta"/>
             <TextView style="?android:textAppearanceSearchResultSubtitle"
                 android:id="@+id/txt_edit_citta_foto"
-                android:layout_weight="3"
+                android:layout_weight="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_title"
@@ -227,7 +217,7 @@
                 android:text="@string/posto"/>
             <TextView style="?android:textAppearanceSearchResultSubtitle"
                 android:id="@+id/txt_edit_posto_foto"
-                android:layout_weight="3"
+                android:layout_weight="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_title"
