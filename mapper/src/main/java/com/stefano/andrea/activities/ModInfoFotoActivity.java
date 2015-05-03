@@ -73,17 +73,7 @@ public class ModInfoFotoActivity extends ActionBarActivity{
         //configuro viaggio
         inizializzaViaggio();
         //configuro citta
-        if (mIdCitta != -1) {
-            Uri citta = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
-            String [] projection = {MapperContract.DatiCitta.NOME};
-            Cursor cCitta = mResolver.query(citta, projection, null, null, null);
-            if (cCitta != null && cCitta.getCount() > 0) {
-                cCitta.moveToFirst();
-                String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
-                mNomeCittaView.setText(nomeCitta);
-                cCitta.close();
-            }
-        }
+        inizializzaCitta();
     }
 
 
@@ -138,6 +128,9 @@ public class ModInfoFotoActivity extends ActionBarActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Mostra la foto scelta nell'apposita view
+     */
     private void inizializzaFoto() {
         if (mImagePath != null) {
             //TODO: mostrare indicatore del numero delle imamgini selezionate
@@ -145,6 +138,9 @@ public class ModInfoFotoActivity extends ActionBarActivity{
         }
     }
 
+    /**
+     * Carica i viaggi nei quali è possibile salvare la foto
+     */
     private void inizializzaViaggio() {
         List<Viaggio> elencoViaggi = new ArrayList<>();
         //controllo se e' stato selezionato un viaggio
@@ -187,6 +183,29 @@ public class ModInfoFotoActivity extends ActionBarActivity{
         });
     }
 
+    /**
+     * Carica le citta nelle quali è possibile salvare la foto
+     */
+    private void inizializzaCitta () {
+        if (mIdCitta != -1) {
+            Uri citta = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
+            String [] projection = {MapperContract.DatiCitta.NOME};
+            Cursor cCitta = mResolver.query(citta, projection, null, null, null);
+            if (cCitta != null && cCitta.getCount() > 0) {
+                cCitta.moveToFirst();
+                String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
+                mNomeCittaView.setText(nomeCitta);
+                cCitta.close();
+            }
+        }
+    }
+
+    /**
+     * Cancella la foto selezionata
+     * Funziona solo se la foto e' stata scattata dalla fotocamera
+     * @return true se il file e' stato eliminato, falso se si e' verificato un errore o il file era
+     * stato aggiunto dalla galleria
+     */
     private boolean cancellaFoto () {
         if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
             File file = new File(mImagePath.get(0).substring(7));
