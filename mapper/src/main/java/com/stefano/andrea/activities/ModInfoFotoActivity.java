@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
@@ -40,6 +41,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
+    public final static String EXTRA_ID_POSTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idPosto";
     public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.Foto";
     public final static String EXTRA_TIPO_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.tipoFoto";
 
@@ -54,6 +56,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private TextView mViaggioText;
     private TextView mCittaText;
     private ImageView mAddCittaButton;
+    private TextView mPostoText;
+    private ImageView mAddPostoButton;
     //elenco dei percorsi delle imamgini
     private ArrayList<String> mImagePath;
     //indica se la foto e' stata scattata dalla fotocamera o acquisita dalla galleria
@@ -62,6 +66,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private Viaggio mViaggioSelezionato;
     //citta alla quale associare la/e foto
     private Citta mCittaSelezionata;
+    /** posto al quale associare la/e foto */
+    private Posto mPostoSelezionato;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,14 +81,18 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
         long idViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
         long idCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
+        long idPosto = intent.getLongExtra(EXTRA_ID_POSTO, -1);
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         mViaggioText = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
         mCittaText = (TextView) findViewById(R.id.txt_edit_citta_foto);
         mAddCittaButton = (ImageButton) findViewById(R.id.mod_foto_add_citta);
+        mPostoText = (TextView) findViewById(R.id.txt_edit_posto_foto);
+        mAddPostoButton = (ImageButton) findViewById(R.id.mod_foto_add_posto);
         //setup dei pulsanti
         setupAddViaggioButton();
         setupAddCittaButton();
+        setupAddPostoButton();
         //inizializzo immagine
         inizializzaFoto();
         //carico elenchi
@@ -91,6 +101,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         inizializzaViaggio(idViaggio);
         //inizializzo citta
         inizializzaCitta(idCitta);
+        //inizializzo posto
+        inizializzaPosto(idPosto);
     }
 
 
@@ -173,6 +185,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     /**
      * Seleziona il vaggio se l'id e' diverso da -1
+     * @param idViaggio L'id del viaggio
      */
     private void inizializzaViaggio(long idViaggio) {
         //controllo se e' stato selezionato un viaggio
@@ -256,6 +269,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     /**
      * Seleziona la citta' se l'id e' diverso da -1
+     * @param idCitta L'id della citta'
      */
     private void inizializzaCitta (long idCitta) {
         if (idCitta != -1) {
@@ -271,6 +285,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 mCittaSelezionata.setNome(nomeCitta);
                 cCitta.close();
             }
+            updatePosti();
         }
     }
 
@@ -305,6 +320,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                         Citta citta = elencoCitta.get(position);
                         mCittaSelezionata = citta;
                         mCittaText.setText(citta.getNome());
+                        updatePosti();
                     }
                 });
             }
@@ -339,6 +355,90 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     }
 
     /**
+     * Inizializza il posto se l'id e' diverso da -1
+     * @param idPosto L'id del posto
+     */
+    private void inizializzaPosto (long idPosto) {
+        if (idPosto != -1) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, idPosto);
+            String [] projection = {MapperContract.Luogo.NOME};
+            Cursor curPosto = mResolver.query(query, projection, null, null, null);
+            if (curPosto != null && curPosto.getCount() > 0) {
+                curPosto.moveToNext();
+                String nomePosto = curPosto.getString(curPosto.getColumnIndex(projection[0]));
+                mPostoText.setText(nomePosto);
+                mPostoSelezionato = new Posto();
+                mPostoSelezionato.setId(idPosto);
+                mPostoSelezionato.setNome(nomePosto);
+                curPosto.close();
+            }
+        }
+    }
+
+    /**
+     * Aggiorna l'elenco dei posti disponibili
+     */
+    private void updatePosti () {
+        clearSelection(CLEAR_POSTO);
+        final List<Posto> elencoPosti = new ArrayList<>();
+        Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
+        String [] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
+        Cursor curPosto = mResolver.query(query, projection, null, null, MapperContract.Luogo.DEFAULT_SORT);
+        if (curPosto != null && curPosto.getCount() > 0) {
+            while (curPosto.moveToNext()) {
+                Posto posto = new Posto();
+                posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
+                posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
+                elencoPosti.add(posto);
+            }
+            curPosto.close();
+        }
+        final PostoSpinnerAdapter postoAdapter = new PostoSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoPosti);
+        mPostoText.setClickable(true);
+        mAddPostoButton.setClickable(true);
+        mPostoText.setTextColor(getResources().getColor(R.color.black));
+        mPostoText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_posto, postoAdapter, new DialogHelper.ListDialogCallback() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Posto posto = elencoPosti.get(position);
+                        mPostoSelezionato = posto;
+                        mPostoText.setText(posto.getNome());
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Imposta il pulsante per l'aggiunta dei posti
+     */
+    private void setupAddPostoButton () {
+        mAddPostoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogHelper.showDialogAggiungiPosto(ModInfoFotoActivity.this, new DialogHelper.AggiungiPostoCallback() {
+                    @Override
+                    public void creaNuovoPosto(String nomePosto) {
+                        Posto posto = new Posto();
+                        posto.setIdCitta(mCittaSelezionata.getId());
+                        posto.setNome(nomePosto);
+                        InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
+                            @Override
+                            public void insertItem(Posto item) {
+                                inizializzaPosto(item.getId());
+                            }
+                        };
+                        new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
      * Rimuove le selezioni effettuate
      * @param level CITTA se si vuole resettare sia la citta' che il posto, POSTO resetta solo il posto
      */
@@ -350,6 +450,10 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 mCittaText.setTextColor(getResources().getColor(R.color.mod_subtitle));
                 mAddCittaButton.setClickable(false);
             case CLEAR_POSTO:
+                mPostoSelezionato = null;
+                mPostoText.setText(R.string.seleziona_posto);
+                mPostoText.setTextColor(getResources().getColor(R.color.mod_subtitle));
+                mAddPostoButton.setClickable(false);
         }
     }
 
@@ -406,6 +510,24 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_row_item, parent, false);
             TextView nomeCitta = (TextView) convertView.findViewById(R.id.spinner_nome_item);
             nomeCitta.setText(citta.getNome());
+            return convertView;
+        }
+    }
+
+    /** Adapter per lo spinner dei posti' */
+    private class PostoSpinnerAdapter extends ArrayAdapter<Posto> {
+
+        public PostoSpinnerAdapter(Context context, int resource, List<Posto> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Posto posto = getItem(position);
+            if (convertView == null)
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_row_item, parent, false);
+            TextView nomePosto = (TextView) convertView.findViewById(R.id.spinner_nome_item);
+            nomePosto.setText(posto.getNome());
             return convertView;
         }
     }

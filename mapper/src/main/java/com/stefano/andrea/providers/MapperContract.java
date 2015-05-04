@@ -127,8 +127,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";
 
-        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO};
-        public static final String [] PROJECTION_JOIN = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
+        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_CITTA + " DESC";
@@ -158,7 +157,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.daticitta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.daticitta";
 
-        public static final String[] PROJECTION_ALL = {ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE, COUNT};
+        public static final String[] PROJECTION_ALL = {ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE, COUNT, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = DatiCittaColumns.NOME + " ASC";

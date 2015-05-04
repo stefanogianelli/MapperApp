@@ -112,7 +112,7 @@ public class MapperContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 builder.where(MapperContract.Posto.ID_POSTO + "=?", id);
             case POSTI:
-                builder.table(MapperDatabase.Tables.POSTO).where(selection, selectionArgs);
+                builder.table(MapperDatabase.Tables.POSTO_JOIN_DATI_POSTO).where(selection, selectionArgs);
                 break;
             case POSTI_IN_CITTA:
                 id = uri.getLastPathSegment();
