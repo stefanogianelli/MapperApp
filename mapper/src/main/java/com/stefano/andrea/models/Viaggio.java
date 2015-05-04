@@ -12,9 +12,12 @@ public class Viaggio {
     private int countFoto;
     private String pathFoto;
 
-    public Viaggio () {}
+    public Viaggio () {
+        this.id = -1;
+    }
 
     public Viaggio (String nome) {
+        this.id = -1;
         this.nome = nome;
     }
 

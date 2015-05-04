@@ -14,6 +14,10 @@ public class Posto {
     private double longitudine;
     private long idDatiCitta;
 
+    public Posto () {
+        this.id = -1;
+    }
+
     public long getId() {
         return id;
     }

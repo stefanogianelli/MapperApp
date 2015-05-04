@@ -13,7 +13,9 @@ public class Foto {
     private double idCitta;
     private double idPosto;
 
-    public Foto () { }
+    public Foto () {
+        this.id = -1;
+    }
 
     public long getId() {
         return id;

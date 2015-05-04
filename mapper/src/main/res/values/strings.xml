@@ -55,6 +55,7 @@
     <string name="posto">Posto</string>
     <string name="viaggio_non_selezionato">Selezionare un viaggio</string>
     <string name="citta_non_selezionata">Selezionare una citta\'</string>
+    <string name="spinner_voce_crea_viaggio">Crea nuovo</string>
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>

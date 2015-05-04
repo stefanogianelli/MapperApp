@@ -16,6 +16,10 @@ public class Citta {
     private int countPosti;
     private int countFoto;
 
+    public Citta () {
+        this.id = -1;
+    }
+
     public long getId() {
         return id;
     }

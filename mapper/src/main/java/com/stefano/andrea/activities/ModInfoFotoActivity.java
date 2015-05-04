@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -47,29 +48,37 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     private static final int ADD_TAG = -42;
 
-    private ArrayList<String> mImagePath;
     private ContentResolver mResolver;
-    private long mIdViaggio;
-    private long mIdCitta;
     private boolean mFotoSalvata = false;
-    private int mTipoFoto;
     private ImageView mImageView;
     private Spinner mViaggioSpinner;
     private TextView mNomeCittaView;
+    //elenco dei percorsi delle imamgini
+    private ArrayList<String> mImagePath;
+    //indica se la foto e' stata scattata dalla fotocamera o acquisita dalla galleria
+    private int mTipoFoto;
+    //viaggio al quale associare la/e foto
+    private Viaggio mViaggioSelezionato;
+    //citta alla quale associare la/e foto
+    private Citta mCittaSelezionata;
+
+    public ModInfoFotoActivity () {
+        mViaggioSelezionato = new Viaggio();
+        mCittaSelezionata = new Citta();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mod_info_foto);
         mResolver = getContentResolver();
+        //acquisisco parametri dall'intent e inizializzo a -1 quelli senza valore
         Intent intent = getIntent();
-        if (intent != null) {
-            if (intent.hasExtra(EXTRA_FOTO))
-                mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
-            mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
-            mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
-            mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
-        }
+        if (intent.hasExtra(EXTRA_FOTO))
+            mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
+        mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
+        long idViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
+        long idCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         mViaggioSpinner = (Spinner) findViewById(R.id.txt_edit_viaggio_foto);
@@ -77,9 +86,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         //configuro immagine
         inizializzaFoto();
         //configuro viaggio
-        inizializzaViaggio();
+        inizializzaViaggio(idViaggio);
         //configuro citta
-        inizializzaCitta();
+        inizializzaCitta(idCitta);
     }
 
 
@@ -98,8 +107,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_salva_foto) {
-            if (mIdViaggio != -1)
-                if (mIdCitta != -1) {
+            if (mViaggioSelezionato.getId() != -1)
+                if (mCittaSelezionata.getId() != -1) {
                     List<Foto> elencoFoto = new ArrayList<>();
                     for (int i = 0; i < mImagePath.size(); i++) {
                         Foto foto = new Foto();
@@ -110,14 +119,19 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                                 LatLng coord = LocationHelper.getCoordinatesFromExif(foto.getPath());
                                 foto.setLongitudine(coord.longitude);
                                 foto.setLatitudine(coord.latitude);
+                                Log.v(TAG, "Dati EXIF: lat = " + coord.latitude + ", lon = " + coord.longitude);
                             } catch (IOException e) {
                                 //utilizzo i dati della citta
+                                Log.i(TAG, "Impossibile ottenere dati EXIF");
+                                foto.setLatitudine(mCittaSelezionata.getLatitudine());
+                                foto.setLongitudine(mCittaSelezionata.getLongitudine());
                             }
+                        } else {
+                            foto.setLatitudine(mCittaSelezionata.getLatitudine());
+                            foto.setLongitudine(mCittaSelezionata.getLongitudine());
                         }
-                        foto.setLatitudine(0);
-                        foto.setLongitudine(0);
-                        foto.setIdViaggio(mIdViaggio);
-                        foto.setIdCitta(mIdCitta);
+                        foto.setIdViaggio(mViaggioSelezionato.getId());
+                        foto.setIdCitta(mCittaSelezionata.getId());
                         elencoFoto.add(foto);
                     }
                     new InsertTask<>(this, mResolver, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
@@ -150,6 +164,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private void inizializzaFoto() {
         if (mImagePath != null) {
             //TODO: mostrare indicatore del numero delle imamgini selezionate
+            //mostro la prima immagine a campione
             ImageLoader.getInstance().displayImage(mImagePath.get(0), mImageView);
         }
     }
@@ -157,18 +172,18 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     /**
      * Carica i viaggi nei quali e' possibile salvare la foto
      */
-    private void inizializzaViaggio() {
+    private void inizializzaViaggio(long idViaggio) {
         final List<Viaggio> elencoViaggi = new ArrayList<>();
         //controllo se e' stato selezionato un viaggio
-        if (mIdViaggio != -1) {
+        if (idViaggio != -1) {
             //viaggio selezionato
-            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
-            String [] projection = {MapperContract.Viaggio.NOME};
+            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, idViaggio);
+            String [] projection = { MapperContract.Viaggio.NOME };
             Cursor cViaggio = mResolver.query(viaggio, projection, null, null, null);
             if (cViaggio != null && cViaggio.getCount() > 0) {
                 cViaggio.moveToFirst();
                 String nomeViaggio = cViaggio.getString(cViaggio.getColumnIndex(projection[0]));
-                elencoViaggi.add(new Viaggio(mIdViaggio, nomeViaggio));
+                elencoViaggi.add(new Viaggio(idViaggio, nomeViaggio));
                 cViaggio.close();
             }
         } else {
@@ -184,8 +199,12 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 }
                 cViaggio.close();
             }
+            if (elencoViaggi.size() == 0) {
+                elencoViaggi.add(new Viaggio(-1, "Seleziona un viaggio"));
+            }
+            //aggiungo la possibilita' di creare un nuovo viaggio al quale associare la/e immagine/i
+            elencoViaggi.add(new Viaggio(ADD_TAG, getResources().getString(R.string.spinner_voce_crea_viaggio)));
         }
-        elencoViaggi.add(new Viaggio(ADD_TAG, "Crea nuovo"));
         final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, R.layout.spinner_viaggio_item, elencoViaggi);
         mViaggioSpinner.setAdapter(viaggiAdapter);
         mViaggioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -193,6 +212,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Viaggio viaggio = (Viaggio) parent.getItemAtPosition(position);
                 if (viaggio.getId() == ADD_TAG) {
+                    //selezionata la voce di creazione di un nuovo viaggio
                     DialogHelper.showDialogAggiungiViaggio(ModInfoFotoActivity.this, new DialogHelper.AggiungiViaggioCallback() {
                         @Override
                         public void creaViaggio(String nomeViaggio) {
@@ -209,7 +229,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                         }
                     });
                 } else {
-                    mIdViaggio = viaggio.getId();
+                    //selezionato un viaggio
+                    mViaggioSelezionato = viaggio;
                 }
             }
 
@@ -221,9 +242,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     /**
      * Carica le citta nelle quali e' possibile salvare la foto
      */
-    private void inizializzaCitta () {
-        if (mIdCitta != -1) {
-            Uri citta = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
+    private void inizializzaCitta (long idCitta) {
+        if (idCitta != -1) {
+            Uri citta = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idCitta);
             String [] projection = {MapperContract.DatiCitta.NOME};
             Cursor cCitta = mResolver.query(citta, projection, null, null, null);
             if (cCitta != null && cCitta.getCount() > 0) {
@@ -233,6 +254,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 cCitta.close();
             }
         }
+        mCittaSelezionata.setId(idCitta);
     }
 
     /**
