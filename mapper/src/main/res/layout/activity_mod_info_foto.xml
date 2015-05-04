@@ -32,8 +32,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            android:paddingTop="@dimen/num_foto_padding_v"
-            android:paddingBottom="@dimen/num_foto_padding_v"
+            android:paddingTop="@dimen/num_foto_padding_top"
+            android:paddingBottom="@dimen/num_foto_padding_bottom"
             android:paddingLeft="@dimen/num_foto_padding_h"
             android:paddingRight="@dimen/num_foto_padding_h"
             android:background="@color/info_background"
@@ -66,7 +66,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:minHeight="?android:listPreferredItemHeight"
-            android:layout_height="@dimen/spinner_container_height"   >
+            android:layout_height="@dimen/standard_horizontal_tab_height"   >
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
