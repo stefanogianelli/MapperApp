@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:orientation="vertical"
-        android:background="@drawable/prova02" >
+        android:background="@drawable/noimg" >
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"

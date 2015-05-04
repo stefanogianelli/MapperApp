@@ -5,7 +5,7 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -32,8 +32,10 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
+            android:paddingTop="@dimen/num_foto_padding_v"
+            android:paddingBottom="@dimen/num_foto_padding_v"
+            android:paddingLeft="@dimen/num_foto_padding_h"
+            android:paddingRight="@dimen/num_foto_padding_h"
             android:background="@color/info_background"
             android:textColor="#ffffff"
             android:text="14 immagini" />
@@ -70,8 +72,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:paddingLeft="?android:listPreferredItemPaddingLeft"
-                android:paddingRight="?android:listPreferredItemPaddingRight"
+                android:paddingStart="?android:listPreferredItemPaddingLeft"
+                android:paddingEnd="?android:listPreferredItemPaddingRight"
                 android:gravity="center_vertical">
                 <TextView style="?android:textAppearanceListItemSmall"
                     android:layout_weight="1"
@@ -85,10 +87,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:dropDownWidth="fill_parent"
-                    android:textColor="@color/mod_title"
+                    android:textColor="@color/mod_subtitle"
                     android:layout_gravity="center"
                     android:text="@string/seleziona_viaggio" />
             </LinearLayout>
+            <ImageButton android:id="@+id/mod_foto_add_viaggio"
+                style="?android:borderlessButtonStyle"
+                android:src="@drawable/ic_add_grey600_24dp"
+                android:layout_height="@dimen/standard_touch_icon_size_min"
+                android:layout_width="@dimen/standard_touch_icon_size_min"
+                android:background="?android:selectableItemBackground"
+                android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
+                android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
+                android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/add_viaggio" />
         </LinearLayout>
     </LinearLayout>
 
@@ -129,8 +143,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-            android:paddingRight="?android:listPreferredItemPaddingRight"
+            android:paddingStart="?android:listPreferredItemPaddingLeft"
+            android:paddingEnd="?android:listPreferredItemPaddingRight"
             android:gravity="center_vertical">
             <TextView style="?android:textAppearanceListItemSmall"
                 android:layout_weight="1"
@@ -143,18 +157,18 @@
                 android:layout_weight="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/mod_title"
+                android:textColor="@color/mod_subtitle"
                 android:text="nome citta"/>
         </LinearLayout>
         <ImageButton android:id="@+id/icon_edit_citta_foto"
             style="?android:borderlessButtonStyle"
-            android:src="@drawable/ic_edit_grey600_24dp"
+            android:src="@drawable/ic_add_grey600_24dp"
             android:layout_height="@dimen/standard_touch_icon_size_min"
             android:layout_width="@dimen/standard_touch_icon_size_min"
             android:background="?android:selectableItemBackground"
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
-            android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
+            android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
             android:clickable="true"
             android:focusable="true"
             android:contentDescription="@string/edit" />
@@ -178,8 +192,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-            android:paddingRight="?android:listPreferredItemPaddingRight"
+            android:paddingStart="?android:listPreferredItemPaddingLeft"
+            android:paddingEnd="?android:listPreferredItemPaddingRight"
             android:gravity="center_vertical">
             <TextView style="?android:textAppearanceListItemSmall"
                 android:layout_weight="1"
@@ -192,18 +206,18 @@
                 android:layout_weight="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/mod_title"
+                android:textColor="@color/mod_subtitle"
                 android:text="nome posto"/>
         </LinearLayout>
         <ImageButton android:id="@+id/icon_edit_posto_foto"
             style="?android:borderlessButtonStyle"
-            android:src="@drawable/ic_edit_grey600_24dp"
+            android:src="@drawable/ic_add_grey600_24dp"
             android:layout_height="@dimen/standard_touch_icon_size_min"
             android:layout_width="@dimen/standard_touch_icon_size_min"
             android:background="?android:selectableItemBackground"
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
-            android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
+            android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
             android:clickable="true"
             android:focusable="true"
             android:contentDescription="@string/edit" />
