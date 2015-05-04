@@ -168,7 +168,6 @@
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
-            android:clickable="false"
             android:focusable="true"
             android:contentDescription="@string/edit" />
     </LinearLayout>
@@ -217,7 +216,6 @@
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
-            android:clickable="false"
             android:focusable="true"
             android:contentDescription="@string/edit" />
     </LinearLayout>

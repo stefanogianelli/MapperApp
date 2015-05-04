@@ -352,6 +352,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 });
             }
         });
+        mAddCittaButton.setClickable(false);
     }
 
     /**
@@ -436,6 +437,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 });
             }
         });
+        mAddPostoButton.setClickable(false);
     }
 
     /**
