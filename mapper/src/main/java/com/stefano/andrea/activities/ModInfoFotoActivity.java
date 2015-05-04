@@ -14,10 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +49,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private ContentResolver mResolver;
     private boolean mFotoSalvata = false;
     private ImageView mImageView;
-    private Spinner mViaggioSpinner;
+    private TextView mViaggioText;
     private TextView mNomeCittaView;
     //elenco dei percorsi delle imamgini
     private ArrayList<String> mImagePath;
@@ -81,7 +79,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         long idCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
-        mViaggioSpinner = (Spinner) findViewById(R.id.txt_edit_viaggio_foto);
+        mViaggioText = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
         mNomeCittaView = (TextView) findViewById(R.id.txt_edit_citta_foto);
         //configuro immagine
         inizializzaFoto();
@@ -173,7 +171,6 @@ public class ModInfoFotoActivity extends ActionBarActivity {
      * Carica i viaggi nei quali e' possibile salvare la foto
      */
     private void inizializzaViaggio(long idViaggio) {
-        final List<Viaggio> elencoViaggi = new ArrayList<>();
         //controllo se e' stato selezionato un viaggio
         if (idViaggio != -1) {
             //viaggio selezionato
@@ -183,10 +180,12 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             if (cViaggio != null && cViaggio.getCount() > 0) {
                 cViaggio.moveToFirst();
                 String nomeViaggio = cViaggio.getString(cViaggio.getColumnIndex(projection[0]));
-                elencoViaggi.add(new Viaggio(idViaggio, nomeViaggio));
+                mViaggioSelezionato = new Viaggio(idViaggio, nomeViaggio);
+                mViaggioText.setText(nomeViaggio);
                 cViaggio.close();
             }
         } else {
+            final List<Viaggio> elencoViaggi = new ArrayList<>();
             //viaggio non selezionato
             String [] projection = {MapperContract.Viaggio.ID_VIAGGIO, MapperContract.Viaggio.NOME};
             Cursor cViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, MapperContract.Viaggio.DEFAULT_SORT);
@@ -199,44 +198,22 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 }
                 cViaggio.close();
             }
-            if (elencoViaggi.size() == 0) {
-                elencoViaggi.add(new Viaggio(-1, "Seleziona un viaggio"));
-            }
-            //aggiungo la possibilita' di creare un nuovo viaggio al quale associare la/e immagine/i
-            elencoViaggi.add(new Viaggio(ADD_TAG, getResources().getString(R.string.spinner_voce_crea_viaggio)));
-        }
-        final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(this, R.layout.spinner_viaggio_item, elencoViaggi);
-        mViaggioSpinner.setAdapter(viaggiAdapter);
-        mViaggioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Viaggio viaggio = (Viaggio) parent.getItemAtPosition(position);
-                if (viaggio.getId() == ADD_TAG) {
-                    //selezionata la voce di creazione di un nuovo viaggio
-                    DialogHelper.showDialogAggiungiViaggio(ModInfoFotoActivity.this, new DialogHelper.AggiungiViaggioCallback() {
+            final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_viaggio_item, elencoViaggi);
+            mViaggioText.setClickable(true);
+            mViaggioText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.spinner_elenco_viaggio_titolo, viaggiAdapter, new DialogHelper.ListDialogCallback() {
                         @Override
-                        public void creaViaggio(String nomeViaggio) {
-                            Viaggio viaggio = new Viaggio(nomeViaggio);
-                            InsertTask.InsertAdapter<Viaggio> adapter = new InsertTask.InsertAdapter<Viaggio>() {
-                                @Override
-                                public void insertItem(Viaggio item) {
-                                    elencoViaggi.add(0, new Viaggio(item.getId(), item.getNome()));
-                                    viaggiAdapter.notifyDataSetChanged();
-                                    mViaggioSpinner.setSelection(0);
-                                }
-                            };
-                            new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+                        public void onItemClick(int position) {
+                            Viaggio viaggio = elencoViaggi.get(position);
+                            mViaggioSelezionato = viaggio;
+                            mViaggioText.setText(viaggio.getNome());
                         }
                     });
-                } else {
-                    //selezionato un viaggio
-                    mViaggioSelezionato = viaggio;
                 }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
+            });
+        }
     }
 
     /**
@@ -286,16 +263,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         }
 
         @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        public View getCustomView (int position, View convertView, ViewGroup parent) {
             Viaggio viaggio = getItem(position);
             if (convertView == null)
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_viaggio_item, parent, false);

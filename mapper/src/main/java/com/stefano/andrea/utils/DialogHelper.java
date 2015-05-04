@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.stefano.andrea.activities.R;
@@ -121,6 +122,22 @@ public class DialogHelper {
                     }
                 })
                 .setNegativeButton(R.string.cancel, null);
+        builder.create().show();
+    }
+
+    public interface ListDialogCallback {
+        void onItemClick (int position);
+    }
+
+    public static void showListDialog (Activity activity, int titolo, ArrayAdapter adapter, final ListDialogCallback callback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(titolo);
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                callback.onItemClick(which);
+            }
+        });
         builder.create().show();
     }
 

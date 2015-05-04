@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/mod_subtitle"
                     android:text="@string/viaggio"/>
-                <Spinner
+                <TextView
                     android:id="@+id/txt_edit_viaggio_foto"
                     android:layout_weight="10"
                     android:layout_width="wrap_content"
@@ -87,7 +87,7 @@
                     android:dropDownWidth="fill_parent"
                     android:textColor="@color/mod_title"
                     android:layout_gravity="center"
-                    android:text="@string/viaggio"/>
+                    android:text="@string/seleziona_viaggio" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

@@ -50,12 +50,14 @@
     <string name="scattata_presso">Presso:</string>
     <string name="durante_il_viaggio">Scattata durante il viaggio:</string>
     <string name="viaggio">Viaggio</string>
+    <string name="seleziona_viaggio">Seleziona un viaggio</string>
     <string name="citta">Città</string>
     <string name="nazione">Nazione</string>
     <string name="posto">Posto</string>
     <string name="viaggio_non_selezionato">Selezionare un viaggio</string>
     <string name="citta_non_selezionata">Selezionare una citta\'</string>
     <string name="spinner_voce_crea_viaggio">Crea nuovo</string>
+    <string name="spinner_elenco_viaggio_titolo">Seleziona un viaggio</string>
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
