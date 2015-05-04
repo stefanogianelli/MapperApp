@@ -159,7 +159,7 @@
                 android:textColor="@color/mod_subtitle"
                 android:text="@string/seleziona_citta"/>
         </LinearLayout>
-        <ImageButton android:id="@+id/icon_edit_citta_foto"
+        <ImageButton android:id="@+id/mod_foto_add_citta"
             style="?android:borderlessButtonStyle"
             android:src="@drawable/ic_add_grey600_24dp"
             android:layout_height="@dimen/standard_touch_icon_size_min"
@@ -206,9 +206,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_subtitle"
-                android:text="nome posto"/>
+                android:text="@string/seleziona_posto"/>
         </LinearLayout>
-        <ImageButton android:id="@+id/icon_edit_posto_foto"
+        <ImageButton android:id="@+id/mod_foto_add_posto"
             style="?android:borderlessButtonStyle"
             android:src="@drawable/ic_add_grey600_24dp"
             android:layout_height="@dimen/standard_touch_icon_size_min"

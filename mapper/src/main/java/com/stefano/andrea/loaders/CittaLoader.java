@@ -41,7 +41,7 @@ public class CittaLoader extends AsyncTaskLoader<List<Citta>> {
     public List<Citta> loadInBackground() {
         mElencoCitta = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);
-        Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_JOIN, null, null, MapperContract.Citta.DEFAULT_SORT);
+        Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_ALL, null, null, MapperContract.Citta.DEFAULT_SORT);
         if (c != null) {
             while (c.moveToNext()) {
                 Citta citta = new Citta();
