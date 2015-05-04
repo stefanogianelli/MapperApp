@@ -450,11 +450,13 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 mCittaSelezionata = null;
                 mCittaText.setText(R.string.seleziona_citta);
                 mCittaText.setTextColor(getResources().getColor(R.color.mod_subtitle));
+                mCittaText.setClickable(false);
                 mAddCittaButton.setClickable(false);
             case CLEAR_POSTO:
                 mPostoSelezionato = null;
                 mPostoText.setText(R.string.seleziona_posto);
                 mPostoText.setTextColor(getResources().getColor(R.color.mod_subtitle));
+                mPostoText.setClickable(false);
                 mAddPostoButton.setClickable(false);
         }
     }
