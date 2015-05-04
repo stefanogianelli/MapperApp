@@ -50,7 +50,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private boolean mFotoSalvata = false;
     private ImageView mImageView;
     private TextView mViaggioText;
-    private TextView mNomeCittaView;
+    private TextView mCittaText;
     //elenco dei percorsi delle imamgini
     private ArrayList<String> mImagePath;
     //indica se la foto e' stata scattata dalla fotocamera o acquisita dalla galleria
@@ -80,13 +80,11 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         mViaggioText = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
-        mNomeCittaView = (TextView) findViewById(R.id.txt_edit_citta_foto);
+        mCittaText = (TextView) findViewById(R.id.txt_edit_citta_foto);
         //configuro immagine
         inizializzaFoto();
         //configuro viaggio
-        inizializzaViaggio(idViaggio);
-        //configuro citta
-        inizializzaCitta(idCitta);
+        inizializzaViaggio(idViaggio, idCitta);
     }
 
 
@@ -136,9 +134,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     mFotoSalvata = true;
                     finish();
                 } else {
-                    Toast.makeText(this, getApplicationContext().getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, getApplicationContext().getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
             }
             return true;
         } else if (id == R.id.action_annula_foto) {
@@ -170,36 +168,38 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     /**
      * Carica i viaggi nei quali e' possibile salvare la foto
      */
-    private void inizializzaViaggio(long idViaggio) {
+    private void inizializzaViaggio(final long idViaggio, final long idCitta) {
         //controllo se e' stato selezionato un viaggio
         if (idViaggio != -1) {
             //viaggio selezionato
             Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, idViaggio);
             String [] projection = { MapperContract.Viaggio.NOME };
-            Cursor cViaggio = mResolver.query(viaggio, projection, null, null, null);
-            if (cViaggio != null && cViaggio.getCount() > 0) {
-                cViaggio.moveToFirst();
-                String nomeViaggio = cViaggio.getString(cViaggio.getColumnIndex(projection[0]));
+            Cursor curViaggio = mResolver.query(viaggio, projection, null, null, null);
+            if (curViaggio != null && curViaggio.getCount() > 0) {
+                curViaggio.moveToFirst();
+                String nomeViaggio = curViaggio.getString(curViaggio.getColumnIndex(projection[0]));
                 mViaggioSelezionato = new Viaggio(idViaggio, nomeViaggio);
                 mViaggioText.setText(nomeViaggio);
-                cViaggio.close();
+                curViaggio.close();
             }
+            inizializzaCitta(idCitta);
         } else {
-            final List<Viaggio> elencoViaggi = new ArrayList<>();
             //viaggio non selezionato
+            final List<Viaggio> elencoViaggi = new ArrayList<>();
             String [] projection = {MapperContract.Viaggio.ID_VIAGGIO, MapperContract.Viaggio.NOME};
-            Cursor cViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, MapperContract.Viaggio.DEFAULT_SORT);
-            if (cViaggio != null && cViaggio.getCount() > 0) {
-                while (cViaggio.moveToNext()) {
+            Cursor curViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, MapperContract.Viaggio.DEFAULT_SORT);
+            if (curViaggio != null && curViaggio.getCount() > 0) {
+                while (curViaggio.moveToNext()) {
                     Viaggio viaggio = new Viaggio();
-                    viaggio.setId(cViaggio.getLong(cViaggio.getColumnIndex(projection[0])));
-                    viaggio.setNome(cViaggio.getString(cViaggio.getColumnIndex(projection[1])));
+                    viaggio.setId(curViaggio.getLong(curViaggio.getColumnIndex(projection[0])));
+                    viaggio.setNome(curViaggio.getString(curViaggio.getColumnIndex(projection[1])));
                     elencoViaggi.add(viaggio);
                 }
-                cViaggio.close();
+                curViaggio.close();
             }
-            final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_viaggio_item, elencoViaggi);
+            final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoViaggi);
             mViaggioText.setClickable(true);
+            mViaggioText.setTextColor(getResources().getColor(R.color.black));
             mViaggioText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -209,6 +209,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                             Viaggio viaggio = elencoViaggi.get(position);
                             mViaggioSelezionato = viaggio;
                             mViaggioText.setText(viaggio.getNome());
+                            //abilito il caricamento delle citta'
+                            inizializzaCitta(idCitta);
                         }
                     });
                 }
@@ -221,17 +223,49 @@ public class ModInfoFotoActivity extends ActionBarActivity {
      */
     private void inizializzaCitta (long idCitta) {
         if (idCitta != -1) {
-            Uri citta = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idCitta);
+            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idCitta);
             String [] projection = {MapperContract.DatiCitta.NOME};
-            Cursor cCitta = mResolver.query(citta, projection, null, null, null);
+            Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta != null && cCitta.getCount() > 0) {
                 cCitta.moveToFirst();
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
-                mNomeCittaView.setText(nomeCitta);
+                mCittaText.setText(nomeCitta);
+                mCittaSelezionata = new Citta();
+                mCittaSelezionata.setId(idCitta);
+                mCittaSelezionata.setNome(nomeCitta);
                 cCitta.close();
             }
+        } else {
+            final List<Citta> elencoCitta = new ArrayList<>();
+            Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mViaggioSelezionato.getId());
+            String [] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME};
+            Cursor curCitta = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
+            if (curCitta != null && curCitta.getCount() > 0) {
+                while (curCitta.moveToNext()) {
+                    Citta citta = new Citta();
+                    citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
+                    citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
+                    elencoCitta.add(citta);
+                }
+                curCitta.close();
+            }
+            final CittaSpinnerAdapter cittaAdapter = new CittaSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoCitta);
+            mCittaText.setClickable(true);
+            mCittaText.setTextColor(getResources().getColor(R.color.black));
+            mCittaText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_citta, cittaAdapter, new DialogHelper.ListDialogCallback() {
+                        @Override
+                        public void onItemClick(int position) {
+                            Citta citta = elencoCitta.get(position);
+                            mCittaSelezionata = citta;
+                            mCittaText.setText(citta.getNome());
+                        }
+                    });
+                }
+            });
         }
-        mCittaSelezionata.setId(idCitta);
     }
 
     /**
@@ -266,9 +300,27 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             Viaggio viaggio = getItem(position);
             if (convertView == null)
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_viaggio_item, parent, false);
-            TextView nomeViaggio = (TextView) convertView.findViewById(R.id.spinner_nome_viaggio);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_row_item, parent, false);
+            TextView nomeViaggio = (TextView) convertView.findViewById(R.id.spinner_nome_item);
             nomeViaggio.setText(viaggio.getNome());
+            return convertView;
+        }
+    }
+
+    /** Adapter per lo spinner delle citta' */
+    private class CittaSpinnerAdapter extends ArrayAdapter<Citta> {
+
+        public CittaSpinnerAdapter(Context context, int resource, List<Citta> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Citta citta = getItem(position);
+            if (convertView == null)
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_row_item, parent, false);
+            TextView nomeCitta = (TextView) convertView.findViewById(R.id.spinner_nome_item);
+            nomeCitta.setText(citta.getNome());
             return convertView;
         }
     }
