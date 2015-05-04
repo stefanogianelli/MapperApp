@@ -53,6 +53,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private ContentResolver mResolver;
     private boolean mFotoSalvata = false;
     private ImageView mImageView;
+    private TextView mCountImages;
     private TextView mViaggioText;
     private TextView mCittaText;
     private ImageView mAddCittaButton;
@@ -84,6 +85,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         long idPosto = intent.getLongExtra(EXTRA_ID_POSTO, -1);
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
+        mCountImages = (TextView) findViewById(R.id.numero_immagini);
         mViaggioText = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
         mCittaText = (TextView) findViewById(R.id.txt_edit_citta_foto);
         mAddCittaButton = (ImageButton) findViewById(R.id.mod_foto_add_citta);
@@ -177,9 +179,12 @@ public class ModInfoFotoActivity extends ActionBarActivity {
      */
     private void inizializzaFoto() {
         if (mImagePath != null) {
-            //TODO: mostrare indicatore del numero delle imamgini selezionate
             //mostro la prima immagine a campione
             ImageLoader.getInstance().displayImage(mImagePath.get(0), mImageView);
+            if (mImagePath.size() > 1) {
+                mCountImages.setText(mImagePath.size() + " immagini");
+                mCountImages.setVisibility(View.VISIBLE);
+            }
         }
     }
 
