@@ -38,7 +38,7 @@
             android:paddingRight="@dimen/num_foto_padding_h"
             android:background="@color/info_background"
             android:textColor="#ffffff"
-            android:text="14 immagini" />
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
@@ -81,12 +81,11 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/mod_subtitle"
                     android:text="@string/viaggio"/>
-                <TextView
+                <TextView    style="?android:textAppearanceSearchResultSubtitle"
                     android:id="@+id/txt_edit_viaggio_foto"
                     android:layout_weight="10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:dropDownWidth="fill_parent"
                     android:textColor="@color/mod_subtitle"
                     android:layout_gravity="center"
                     android:text="@string/seleziona_viaggio" />
@@ -169,7 +168,7 @@
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
-            android:clickable="true"
+            android:clickable="false"
             android:focusable="true"
             android:contentDescription="@string/edit" />
     </LinearLayout>
@@ -218,7 +217,7 @@
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
-            android:clickable="true"
+            android:clickable="false"
             android:focusable="true"
             android:contentDescription="@string/edit" />
     </LinearLayout>
