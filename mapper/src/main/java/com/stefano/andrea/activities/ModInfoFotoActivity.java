@@ -21,15 +21,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.DialogHelper;
+import com.stefano.andrea.utils.LocationHelper;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +104,16 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     for (int i = 0; i < mImagePath.size(); i++) {
                         Foto foto = new Foto();
                         foto.setPath(mImagePath.get(i));
+                        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
+                            //acquisisco lat/lon dai dati Exif
+                            try {
+                                LatLng coord = LocationHelper.getCoordinatesFromExif(foto.getPath());
+                                foto.setLongitudine(coord.longitude);
+                                foto.setLatitudine(coord.latitude);
+                            } catch (IOException e) {
+                                //utilizzo i dati della citta
+                            }
+                        }
                         foto.setLatitudine(0);
                         foto.setLongitudine(0);
                         foto.setIdViaggio(mIdViaggio);
