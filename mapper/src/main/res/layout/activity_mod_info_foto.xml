@@ -38,7 +38,7 @@
             android:paddingRight="@dimen/num_foto_padding_h"
             android:background="@color/info_background"
             android:textColor="#ffffff"
-            android:text="14 immagini" />
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
@@ -168,7 +168,7 @@
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
-            android:clickable="true"
+            android:clickable="false"
             android:focusable="true"
             android:contentDescription="@string/edit" />
     </LinearLayout>
@@ -217,7 +217,7 @@
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
-            android:clickable="true"
+            android:clickable="false"
             android:focusable="true"
             android:contentDescription="@string/edit" />
     </LinearLayout>
