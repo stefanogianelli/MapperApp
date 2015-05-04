@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     private ImageView mImageView;
     private TextView mViaggioText;
     private TextView mCittaText;
+    private ImageView mAddCittaButton;
     //elenco dei percorsi delle imamgini
     private ArrayList<String> mImagePath;
     //indica se la foto e' stata scattata dalla fotocamera o acquisita dalla galleria
@@ -77,6 +79,10 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         mViaggioText = (TextView) findViewById(R.id.txt_edit_viaggio_foto);
         mCittaText = (TextView) findViewById(R.id.txt_edit_citta_foto);
+        mAddCittaButton = (ImageButton) findViewById(R.id.mod_foto_add_citta);
+        //setup dei pulsanti
+        setupAddViaggioButton();
+        setupAddCittaButton();
         //inizializzo immagine
         inizializzaFoto();
         //carico elenchi
@@ -166,7 +172,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     }
 
     /**
-     * Carica i viaggi nei quali e' possibile salvare la foto
+     * Seleziona il vaggio se l'id e' diverso da -1
      */
     private void inizializzaViaggio(long idViaggio) {
         //controllo se e' stato selezionato un viaggio
@@ -186,6 +192,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Carica l'elenco dei viaggi disponibili
+     */
     private void updateViaggi () {
         final List<Viaggio> elencoViaggi = new ArrayList<>();
         String [] projection = {MapperContract.Viaggio.ID_VIAGGIO, MapperContract.Viaggio.NOME};
@@ -220,7 +229,33 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     }
 
     /**
-     * Carica le citta nelle quali e' possibile salvare la foto
+     * Imposta il pulsante per l'aggiunta del viaggio
+     */
+    private void setupAddViaggioButton () {
+        ImageButton addViaggio = (ImageButton) findViewById(R.id.mod_foto_add_viaggio);
+        addViaggio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogHelper.showDialogAggiungiViaggio(ModInfoFotoActivity.this, new DialogHelper.AggiungiViaggioCallback() {
+                    @Override
+                    public void creaViaggio(String nomeViaggio) {
+                        Viaggio viaggio = new Viaggio();
+                        viaggio.setNome(nomeViaggio);
+                        InsertTask.InsertAdapter<Viaggio> adapter = new InsertTask.InsertAdapter<Viaggio>() {
+                            @Override
+                            public void insertItem(Viaggio item) {
+                                inizializzaViaggio(item.getId());
+                            }
+                        };
+                        new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Seleziona la citta' se l'id e' diverso da -1
      */
     private void inizializzaCitta (long idCitta) {
         if (idCitta != -1) {
@@ -239,6 +274,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Aggiorna l'elenco delle citta' disponibili
+     */
     private void updateCitta () {
         clearSelection(CLEAR_CITTA);
         final List<Citta> elencoCitta = new ArrayList<>();
@@ -256,6 +294,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         }
         final CittaSpinnerAdapter cittaAdapter = new CittaSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoCitta);
         mCittaText.setClickable(true);
+        mAddCittaButton.setClickable(true);
         mCittaText.setTextColor(getResources().getColor(R.color.black));
         mCittaText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -272,12 +311,44 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         });
     }
 
+    /**
+     * Imposta il pulsante per l'aggiunta della citta'
+     */
+    private void setupAddCittaButton () {
+        mAddCittaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogHelper.showDialogAggiungiCitta(ModInfoFotoActivity.this, new DialogHelper.AggiungiCittaCallback() {
+                    @Override
+                    public void creaNuovaCitta(String nomeCitta, String nomeNazione) {
+                        Citta citta = new Citta();
+                        citta.setIdViaggio(mViaggioSelezionato.getId());
+                        citta.setNome(nomeCitta);
+                        citta.setNazione(nomeNazione);
+                        InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
+                            @Override
+                            public void insertItem(Citta item) {
+                                inizializzaCitta(item.getId());
+                            }
+                        };
+                        new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Rimuove le selezioni effettuate
+     * @param level CITTA se si vuole resettare sia la citta' che il posto, POSTO resetta solo il posto
+     */
     private void clearSelection (int level) {
         switch (level) {
             case CLEAR_CITTA:
                 mCittaSelezionata = null;
                 mCittaText.setText(R.string.seleziona_citta);
                 mCittaText.setTextColor(getResources().getColor(R.color.mod_subtitle));
+                mAddCittaButton.setClickable(false);
             case CLEAR_POSTO:
         }
     }
