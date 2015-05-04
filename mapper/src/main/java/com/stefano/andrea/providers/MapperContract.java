@@ -142,8 +142,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.posto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.posto";
 
-        public static final String [] PROJECTION_ALL = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO};
-        public static final String [] PROJECTION_JOIN = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA };
+        public static final String [] PROJECTION_ALL = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA };
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_POSTO + " DESC";
@@ -157,7 +156,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.daticitta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.daticitta";
 
-        public static final String[] PROJECTION_ALL = {ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE, COUNT, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA};
+        public static final String[] PROJECTION_ALL = {ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE, COUNT};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = DatiCittaColumns.NOME + " ASC";

@@ -18,9 +18,9 @@ public class DialogHelper {
 
     /**
      * Mostra un alert dialog standard, con solo il pulsante OK
-     * @param context
-     * @param titleId
-     * @param messageId
+     * @param context Il contesto dell'applicazione
+     * @param titleId L'id del titolo
+     * @param messageId L'id del messaggio
      */
     public static void showAlertDialog (Context context, int titleId, int messageId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -58,6 +58,7 @@ public class DialogHelper {
                         Dialog d = (Dialog) dialog;
                         EditText nomeViaggio = (EditText) d.findViewById(R.id.text_add_viaggio);
                         callback.creaViaggio(nomeViaggio.getText().toString());
+                        d.dismiss();
                     }
                 })
                 .setNegativeButton(R.string.cancel,  null);
@@ -125,10 +126,20 @@ public class DialogHelper {
         builder.create().show();
     }
 
+    /**
+     * Callback invocata dal list dialog
+     */
     public interface ListDialogCallback {
         void onItemClick (int position);
     }
 
+    /**
+     * Mostra un elenco in un dialog. Permette una singola scelta
+     * @param activity L'activity corrente
+     * @param titolo L'id del titolo
+     * @param adapter L'adapter che genera la lista da mostrare
+     * @param callback L'implementazione dell'azione associata al dialog
+     */
     public static void showListDialog (Activity activity, int titolo, ArrayAdapter adapter, final ListDialogCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(titolo);
@@ -136,6 +147,7 @@ public class DialogHelper {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 callback.onItemClick(which);
+                dialog.dismiss();
             }
         });
         builder.create().show();

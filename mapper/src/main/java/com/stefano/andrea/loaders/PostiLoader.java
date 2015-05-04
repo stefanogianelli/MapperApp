@@ -41,7 +41,7 @@ public class PostiLoader extends AsyncTaskLoader<List<Posto>> {
     public List<Posto> loadInBackground() {
         mElencoPosti = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mIdCitta);
-        Cursor c = mResolver.query(uri, MapperContract.Posto.PROJECTION_JOIN, null, null, MapperContract.Posto.DEFAULT_SORT);
+        Cursor c = mResolver.query(uri, MapperContract.Posto.PROJECTION_ALL, null, null, MapperContract.Posto.DEFAULT_SORT);
         if (c != null) {
             while (c.moveToNext()) {
                 Posto posto = new Posto();
