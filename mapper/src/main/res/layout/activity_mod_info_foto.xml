@@ -12,7 +12,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="200dp" >
 
@@ -24,7 +24,21 @@
             android:layout_gravity="center"
             android:src="@drawable/prova02"/>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/numero_immagini"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:background="@color/info_background"
+            android:textColor="#ffffff"
+            android:text="14 immagini" />
+
+    </RelativeLayout>
 
 
 
@@ -82,7 +96,7 @@
 
 
 
-    <!-- edit luoghi -->
+    <!-- Edit luoghi -->
     <TextView style="?android:textAppearanceSmall"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -96,48 +110,6 @@
         android:orientation="vertical"
         android:background="@color/mod_background"
         android:layout_marginTop="@dimen/info_margin">
-
-    <!--    Edit nazione -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:minHeight="?android:listPreferredItemHeight"
-        android:layout_height="@dimen/standard_horizontal_tab_height"   >
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-            android:paddingRight="?android:listPreferredItemPaddingRight"
-            android:gravity="center_vertical">
-            <TextView style="?android:textAppearanceListItemSmall"
-                android:layout_weight="1"
-                android:layout_width="@dimen/width_horizz_tab_title_container"
-                android:layout_height="wrap_content"
-                android:textColor="@color/mod_subtitle"
-                android:text="@string/nazione"/>
-            <TextView style="?android:textAppearanceSearchResultSubtitle"
-                android:id="@+id/txt_edit_nazione_foto"
-                android:layout_weight="10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/mod_title"
-                android:text="nazione"/>
-        </LinearLayout>
-        <ImageButton android:id="@+id/icon_edit_nazione_foto"
-            style="?android:borderlessButtonStyle"
-            android:src="@drawable/ic_edit_grey600_24dp"
-            android:layout_height="@dimen/standard_touch_icon_size_min"
-            android:layout_width="@dimen/standard_touch_icon_size_min"
-            android:background="?android:selectableItemBackground"
-            android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
-            android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
-            android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="@string/edit" />
-    </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
