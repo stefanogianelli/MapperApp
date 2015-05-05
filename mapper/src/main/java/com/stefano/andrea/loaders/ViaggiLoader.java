@@ -1,9 +1,9 @@
 package com.stefano.andrea.loaders;
 
-import android.content.AsyncTaskLoader;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.AsyncTaskLoader;
 
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;

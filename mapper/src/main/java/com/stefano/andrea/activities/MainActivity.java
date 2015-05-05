@@ -1,13 +1,13 @@
 package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
-import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -110,7 +110,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mAdapter = new ViaggiAdapter(this, this, mCallback);
         mRecyclerView.setAdapter(mAdapter);
         //inizializzo il caricamento dei dati dei viaggi
-        getLoaderManager().initLoader(VIAGGI_LOADER, null, this);
+        getSupportLoaderManager().initLoader(VIAGGI_LOADER, null, this);
         //acquisisco riferimento al fab
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         mFab.attachToRecyclerView(mRecyclerView);
@@ -198,6 +198,12 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, -1, -1);
+    }
+
+    @Override
     public Loader<List<Viaggio>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case VIAGGI_LOADER:
@@ -221,11 +227,4 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<List<Viaggio>> loader) {
         //do nothing
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, -1, -1);
-    }
-
 }
