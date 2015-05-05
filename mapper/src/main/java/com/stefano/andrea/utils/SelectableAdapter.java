@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 
@@ -30,10 +31,11 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
+        CardView card = (CardView) holder.itemView;
         if (isSelected(position)) {
-            holder.itemView.setBackgroundColor(mActivity.getResources().getColor(R.color.selected_overlay));
+            card.setCardBackgroundColor(mActivity.getResources().getColor(R.color.selected_overlay));
         } else {
-            holder.itemView.setBackgroundColor(Color.WHITE);
+            card.setCardBackgroundColor(Color.WHITE);
         }
         onBindViewHolder1(holder, position);
     }
