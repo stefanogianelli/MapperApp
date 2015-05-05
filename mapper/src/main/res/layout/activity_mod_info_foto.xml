@@ -88,11 +88,12 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/mod_subtitle"
                     android:layout_gravity="center"
-                    android:text="@string/seleziona_viaggio" />
+                    android:text="@string/seleziona_viaggio"
+                    android:background="@drawable/custom_spinner"/>
             </LinearLayout>
             <ImageButton android:id="@+id/mod_foto_add_viaggio"
                 style="?android:borderlessButtonStyle"
-                android:src="@drawable/ic_add_grey600_24dp"
+                android:src="@drawable/custom_add"
                 android:layout_height="@dimen/standard_touch_icon_size_min"
                 android:layout_width="@dimen/standard_touch_icon_size_min"
                 android:background="?android:selectableItemBackground"
@@ -101,7 +102,7 @@
                 android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="@string/add_viaggio" />
+                android:contentDescription="@string/new_viaggio" />
         </LinearLayout>
     </LinearLayout>
 
@@ -157,11 +158,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_subtitle"
-                android:text="@string/seleziona_citta"/>
+                android:text="@string/seleziona_citta"
+                android:background="@drawable/custom_spinner"/>
         </LinearLayout>
         <ImageButton android:id="@+id/mod_foto_add_citta"
             style="?android:borderlessButtonStyle"
-            android:src="@drawable/ic_add_grey600_24dp"
+            android:src="@drawable/custom_add"
             android:layout_height="@dimen/standard_touch_icon_size_min"
             android:layout_width="@dimen/standard_touch_icon_size_min"
             android:background="?android:selectableItemBackground"
@@ -169,7 +171,7 @@
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
             android:focusable="true"
-            android:contentDescription="@string/edit" />
+            android:contentDescription="@string/new_citta" />
     </LinearLayout>
 
         <View
@@ -205,11 +207,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mod_subtitle"
-                android:text="@string/seleziona_posto"/>
+                android:text="@string/seleziona_posto"
+                android:background="@drawable/custom_spinner"/>
         </LinearLayout>
         <ImageButton android:id="@+id/mod_foto_add_posto"
             style="?android:borderlessButtonStyle"
-            android:src="@drawable/ic_add_grey600_24dp"
+            android:src="@drawable/custom_add"
             android:layout_height="@dimen/standard_touch_icon_size_min"
             android:layout_width="@dimen/standard_touch_icon_size_min"
             android:background="?android:selectableItemBackground"
@@ -217,7 +220,7 @@
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
             android:focusable="true"
-            android:contentDescription="@string/edit" />
+            android:contentDescription="@string/new_posto" />
     </LinearLayout>
 
     </LinearLayout>

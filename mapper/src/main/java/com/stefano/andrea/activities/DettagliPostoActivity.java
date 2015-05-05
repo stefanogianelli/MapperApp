@@ -1,9 +1,14 @@
 package com.stefano.andrea.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.stefano.andrea.fragments.ElencoFotoFragment;
+import com.stefano.andrea.loaders.FotoLoader;
 
 public class DettagliPostoActivity extends ActionBarActivity {
 
@@ -11,6 +16,14 @@ public class DettagliPostoActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_posto);
+
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        ElencoFotoFragment fragment = ElencoFotoFragment.newInstance(0, FotoLoader.FOTO_POSTO);
+        fragmentTransaction.add(R.id.container_lista_foto_posto, fragment);
+        fragmentTransaction.commit();
     }
 
 
