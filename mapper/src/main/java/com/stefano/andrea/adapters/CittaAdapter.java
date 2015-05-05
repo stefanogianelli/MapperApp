@@ -46,10 +46,8 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
     }
 
     public void setElencoCitta (List<Citta> elencoCitta) {
-        if (mElencoCitta == null) {
-            mElencoCitta = elencoCitta;
-            notifyDataSetChanged();
-        }
+        mElencoCitta = elencoCitta;
+        notifyDataSetChanged();
     }
 
     @Override

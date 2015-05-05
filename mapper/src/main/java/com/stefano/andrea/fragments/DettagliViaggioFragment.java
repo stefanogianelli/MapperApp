@@ -223,7 +223,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     public Loader<List<Citta>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case CITTA_LOADER:
-                return new CittaLoader(mParentActivity, mResolver, mIdViaggio);
+                return new CittaLoader(mParentActivity, mIdViaggio);
             default:
                 return null;
         }
@@ -241,7 +241,12 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
     @Override
     public void onLoaderReset(Loader<List<Citta>> loader) {
-        //do nothing
+        int id = loader.getId();
+        switch (id) {
+            case CITTA_LOADER:
+                mAdapter.setElencoCitta(null);
+                mElencoCitta = null;
+        }
     }
 
 }

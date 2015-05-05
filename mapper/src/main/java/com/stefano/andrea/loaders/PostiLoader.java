@@ -5,10 +5,10 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.BaseAsyncTaskLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,30 +16,20 @@ import java.util.List;
 /**
  * PostiLoader
  */
-public class PostiLoader extends AsyncTaskLoader<List<Posto>> {
+public class PostiLoader extends BaseAsyncTaskLoader<List<Posto>> {
 
     private ContentResolver mResolver;
     private long mIdCitta;
-    private List<Posto> mElencoPosti;
 
-    public PostiLoader(Context context, ContentResolver resolver, long idCitta) {
+    public PostiLoader(Context context, long idCitta) {
         super(context);
-        mResolver = resolver;
+        mResolver = context.getContentResolver();
         mIdCitta = idCitta;
     }
 
     @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        if (mElencoPosti != null)
-            deliverResult(mElencoPosti);
-        if (mElencoPosti == null || takeContentChanged())
-            forceLoad();
-    }
-
-    @Override
     public List<Posto> loadInBackground() {
-        mElencoPosti = new ArrayList<>();
+        List<Posto> elencoPosti = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mIdCitta);
         Cursor c = mResolver.query(uri, MapperContract.Posto.PROJECTION_ALL, null, null, MapperContract.Posto.DEFAULT_SORT);
         if (c != null) {
@@ -53,11 +43,10 @@ public class PostiLoader extends AsyncTaskLoader<List<Posto>> {
                 posto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LATITUDINE)));
                 posto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LONGITUDINE)));
                 posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Luogo.ID_CITTA)));
-                mElencoPosti.add(posto);
+                elencoPosti.add(posto);
             }
             c.close();
-            return mElencoPosti;
         }
-        return null;
+        return elencoPosti;
     }
 }

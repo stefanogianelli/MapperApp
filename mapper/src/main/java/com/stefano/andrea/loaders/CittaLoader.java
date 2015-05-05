@@ -5,10 +5,10 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.utils.BaseAsyncTaskLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,30 +16,20 @@ import java.util.List;
 /**
  * CittaLoader
  */
-public class CittaLoader extends AsyncTaskLoader<List<Citta>> {
+public class CittaLoader extends BaseAsyncTaskLoader<List<Citta>> {
 
     private ContentResolver mResolver;
     private long mIdViaggio;
-    private List<Citta> mElencoCitta;
 
-    public CittaLoader(Context context, ContentResolver resolver, long idViaggio) {
+    public CittaLoader(Context context, long idViaggio) {
         super(context);
-        mResolver = resolver;
+        mResolver = context.getContentResolver();
         mIdViaggio = idViaggio;
     }
 
     @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        if (mElencoCitta != null)
-            deliverResult(mElencoCitta);
-        if (mElencoCitta == null || takeContentChanged())
-            this.forceLoad();
-    }
-
-    @Override
     public List<Citta> loadInBackground() {
-        mElencoCitta = new ArrayList<>();
+        List<Citta> elencoCitta = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);
         Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_ALL, null, null, MapperContract.Citta.DEFAULT_SORT);
         if (c != null) {
@@ -55,11 +45,10 @@ public class CittaLoader extends AsyncTaskLoader<List<Citta>> {
                 citta.setPercentuale(c.getDouble(c.getColumnIndex(MapperContract.Citta.PERCENTUALE)));
                 citta.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_POSTI)));
                 citta.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_FOTO)));
-                mElencoCitta.add(citta);
+                elencoCitta.add(citta);
             }
             c.close();
-            return mElencoCitta;
         }
-        return null;
+        return elencoCitta;
     }
 }

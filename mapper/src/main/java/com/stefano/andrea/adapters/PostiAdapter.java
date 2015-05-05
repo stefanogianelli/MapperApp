@@ -43,10 +43,8 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
     }
 
     public void setElencoPosti (List<Posto> elencoPosti) {
-        if (mElencoPosti == null) {
-            mElencoPosti = elencoPosti;
-            notifyDataSetChanged();
-        }
+        mElencoPosti = elencoPosti;
+        notifyDataSetChanged();
     }
 
     @Override

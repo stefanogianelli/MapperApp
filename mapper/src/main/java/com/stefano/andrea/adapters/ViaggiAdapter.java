@@ -47,10 +47,8 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     }
 
     public void setListaViaggi (List<Viaggio> lista) {
-        if (mListaViaggi == null) {
-            mListaViaggi = lista;
-            notifyDataSetChanged();
-        }
+        mListaViaggi = lista;
+        notifyDataSetChanged();
     }
 
     @Override

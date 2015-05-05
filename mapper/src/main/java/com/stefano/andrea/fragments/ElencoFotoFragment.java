@@ -149,7 +149,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     public Loader<List<Foto>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case FOTO_LOADER:
-                return new FotoLoader(mParentActivity, mResolver, mId, mTipoElenco);
+                return new FotoLoader(mParentActivity, mId, mTipoElenco);
             default:
                 return null;
         }
@@ -167,7 +167,12 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoaderReset(Loader<List<Foto>> loader) {
-        //do nothing
+        int id = loader.getId();
+        switch (id) {
+            case FOTO_LOADER:
+                mAdapter.setElencoFoto(null);
+                mElencoFoto = null;
+        }
     }
 
 }

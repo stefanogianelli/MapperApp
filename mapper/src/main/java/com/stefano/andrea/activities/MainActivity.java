@@ -207,7 +207,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     public Loader<List<Viaggio>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case VIAGGI_LOADER:
-                return new ViaggiLoader(this, mResolver);
+                return new ViaggiLoader(this);
             default:
                 return null;
         }
@@ -225,6 +225,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<List<Viaggio>> loader) {
-        //do nothing
+        int id = loader.getId();
+        switch (id) {
+            case VIAGGI_LOADER:
+                mAdapter.setListaViaggi(null);
+                mListaViaggi = null;
+        }
     }
 }

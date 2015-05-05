@@ -216,7 +216,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     public Loader<List<Posto>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case POSTI_LOADER:
-                return new PostiLoader(mParentActivity, mResolver, mIdCitta);
+                return new PostiLoader(mParentActivity, mIdCitta);
             default:
                 return null;
         }
@@ -234,7 +234,12 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<List<Posto>> loader) {
-        //do nothing
+        int id = loader.getId();
+        switch (id) {
+            case POSTI_LOADER:
+                mAdapter.setElencoPosti(null);
+                mElencoPosti = null;
+        }
     }
 
 }
