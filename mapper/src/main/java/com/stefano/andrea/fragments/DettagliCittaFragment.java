@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.view.ViewGroup;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.loaders.PostiLoader;
@@ -30,6 +32,7 @@ import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.DialogHelper;
+import com.stefano.andrea.utils.MapperContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private ObservableRecyclerView mRecyclerView;
     private CustomFAB mFab;
     private List<Posto> mElencoPosti;
+    private MapperContext mContext;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -133,6 +137,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         mAdapter = new PostiAdapter(this, mParentActivity, mCallback);
         //avvio il loader dei posto
         getLoaderManager().initLoader(POSTI_LOADER, null, this);
+        mContext = MapperContext.getInstance();
     }
 
     @Override
@@ -173,7 +178,10 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
      */
     @Override
     public void selezionatoPosto(Posto posto) {
-        //TODO: completare
+        mContext.setIdPosto(posto.getId());
+        mContext.setNomePosto(posto.getNome());
+        Intent intent = new Intent(mParentActivity, DettagliPostoActivity.class);
+        startActivity(intent);
     }
 
     /**

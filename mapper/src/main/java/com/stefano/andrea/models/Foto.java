@@ -15,6 +15,7 @@ public class Foto {
 
     public Foto () {
         this.id = -1;
+        this.idPosto = -1;
     }
 
     public long getId() {

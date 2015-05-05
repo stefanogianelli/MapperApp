@@ -396,6 +396,8 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
                 values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
                 values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
+                if (foto.getIdPosto() != -1)
+                    values.put(MapperContract.Foto.ID_POSTO, foto.getIdPosto());
                 Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {

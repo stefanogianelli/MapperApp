@@ -148,6 +148,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                         }
                         foto.setIdViaggio(mViaggioSelezionato.getId());
                         foto.setIdCitta(mCittaSelezionata.getId());
+                        if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
+                            foto.setIdPosto(mPostoSelezionato.getId());
                         elencoFoto.add(foto);
                     }
                     new InsertTask<>(this, mResolver, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);

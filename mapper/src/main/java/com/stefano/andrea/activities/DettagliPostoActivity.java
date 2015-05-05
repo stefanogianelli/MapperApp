@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
+import com.stefano.andrea.utils.MapperContext;
 
 public class DettagliPostoActivity extends ActionBarActivity {
 
@@ -16,13 +17,15 @@ public class DettagliPostoActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_posto);
-
-
+        //acquisisco riferimenti
+        MapperContext context = MapperContext.getInstance();
+        long idPosto = context.getIdPosto();
+        String nomePosto = context.getNomePosto();
+        this.setTitle(nomePosto);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        ElencoFotoFragment fragment = ElencoFotoFragment.newInstance(0, FotoLoader.FOTO_POSTO);
-        fragmentTransaction.add(R.id.container_lista_foto_posto, fragment);
+        ElencoFotoFragment fragment = ElencoFotoFragment.newInstance(idPosto, FotoLoader.FOTO_POSTO);
+        fragmentTransaction.add(R.id.posti_container, fragment);
         fragmentTransaction.commit();
     }
 
