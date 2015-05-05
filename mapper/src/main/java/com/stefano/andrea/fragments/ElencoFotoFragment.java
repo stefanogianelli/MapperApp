@@ -6,6 +6,8 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
@@ -24,12 +26,15 @@ import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.tasks.DeleteTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * ElencoFotoFragment
  */
 public class ElencoFotoFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Foto>>, FotoAdapter.FotoOnClickListener {
+
+    private static final String TAG = "com.stefano.andrea.fragments.ElencoFotoFragments";
 
     private static final String EXTRA_ID = "id_elenco_foto";
     private static final String EXTRA_TIPO_ELENCO = "tipo_elenco";
@@ -41,7 +46,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private Activity mParentActivity;
     private ContentResolver mResolver;
     private FotoAdapter mAdapter;
-    private List<Foto> mElencoFoto;
+    private ArrayList<Foto> mElencoFoto;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -134,8 +139,13 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void selezionataFoto(Foto foto) {
-        //TODO: completare
+    public void selezionataFoto(int posizione) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FullFotoFragment fragment = FullFotoFragment.newInstance(mElencoFoto, posizione);
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.addToBackStack(TAG);
+        fragmentTransaction.commit();
     }
 
     /**
@@ -161,7 +171,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         switch (id) {
             case FOTO_LOADER:
                 mAdapter.setElencoFoto(data);
-                mElencoFoto = data;
+                mElencoFoto = (ArrayList<Foto>) data;
         }
     }
 

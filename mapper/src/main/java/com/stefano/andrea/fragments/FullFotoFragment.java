@@ -1,9 +1,9 @@
 package com.stefano.andrea.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -21,31 +21,60 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.models.Foto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * FullFotoFragment
  */
 public class FullFotoFragment extends Fragment {
 
-    public static final String IMAGE_POSITION = "com.stefano.andrea.fragments.FullFotoFragment.imagePositio";
+    private static final String EXTRA_LISTA_FOTO = "com.stefano.andrea.fragments.FullFotoFragment.listaFoto";
+    private static final String EXTRA_IMAGE_POSITION = "com.stefano.andrea.fragments.FullFotoFragment.imagePosition";
+
+    private Activity mParentActivity;
+    private List<Foto> mElencoFoto;
+    private int position;
+
+    public FullFotoFragment () { }
+
+    public static FullFotoFragment newInstance (ArrayList<Foto> elencoFoto, int posizione) {
+        FullFotoFragment fragment = new FullFotoFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(EXTRA_LISTA_FOTO, elencoFoto);
+        args.putInt(EXTRA_IMAGE_POSITION, posizione);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mParentActivity = activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_full_foto, container, false);
         ViewPager pager = (ViewPager) rootView.findViewById(R.id.pager);
-        pager.setAdapter(new ImageAdapter(getActivity()));
-        pager.setCurrentItem(getArguments().getInt(IMAGE_POSITION, 0));
+        Bundle args = getArguments();
+        if (args != null) {
+            mElencoFoto = args.getParcelableArrayList(EXTRA_LISTA_FOTO);
+            position = args.getInt(EXTRA_IMAGE_POSITION);
+        }
+        pager.setAdapter(new ImageAdapter(mParentActivity));
+        pager.setCurrentItem(position);
         return rootView;
     }
 
-    private static class ImageAdapter extends PagerAdapter {
-
-        private static final String[] IMAGE_URLS = {};
+    private class ImageAdapter extends PagerAdapter {
 
         private LayoutInflater inflater;
         private DisplayImageOptions options;
 
-        ImageAdapter(Context context) {
+        public ImageAdapter(Context context) {
             inflater = LayoutInflater.from(context);
 
             options = new DisplayImageOptions.Builder()
@@ -67,17 +96,16 @@ public class FullFotoFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return IMAGE_URLS.length;
+            return mElencoFoto.size();
         }
 
         @Override
         public Object instantiateItem(ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_full_image, view, false);
-            assert imageLayout != null;
             ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
-            ImageLoader.getInstance().displayImage(IMAGE_URLS[position], imageView, options, new SimpleImageLoadingListener() {
+            ImageLoader.getInstance().displayImage(mElencoFoto.get(position).getPath(), imageView, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     spinner.setVisibility(View.VISIBLE);
@@ -121,15 +149,6 @@ public class FullFotoFragment extends Fragment {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);
-        }
-
-        @Override
-        public void restoreState(Parcelable state, ClassLoader loader) {
-        }
-
-        @Override
-        public Parcelable saveState() {
-            return null;
         }
     }
 }

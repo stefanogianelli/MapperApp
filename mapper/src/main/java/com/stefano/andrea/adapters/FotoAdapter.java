@@ -27,7 +27,7 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
     private ImageLoader mImageLoader;
 
     public interface FotoOnClickListener {
-        void selezionataFoto (Foto foto);
+        void selezionataFoto (int posizione);
     }
 
     public FotoAdapter(Activity activity, ActionMode.Callback callback, FotoOnClickListener listener) {
@@ -88,7 +88,6 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
         }
 
         public void bindFoto (Foto foto) {
-            this.itemView.setTag(foto);
             mImageLoader.displayImage(foto.getPath(), fotoView);
         }
 
@@ -97,7 +96,7 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
             if (isEnabledSelectionMode())
                 toggleSelection(getLayoutPosition());
             else
-                mListener.selezionataFoto((Foto) v.getTag());
+                mListener.selezionataFoto(getLayoutPosition());
         }
 
         @Override
