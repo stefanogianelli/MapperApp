@@ -59,7 +59,7 @@ public class PhotoUtils {
                         Toast.makeText(activity, activity.getApplicationContext().getResources().getString(R.string.foto_not_allowed), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.v(TAG, "URI dell'immagine non settata!");
+                    Log.e(TAG, "URI dell'immagine non settata!");
                 }
                 dialog.dismiss();
             }

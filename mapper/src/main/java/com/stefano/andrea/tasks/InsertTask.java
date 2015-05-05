@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.stefano.andrea.activities.BuildConfig;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
@@ -33,6 +32,8 @@ import java.util.List;
  * InsertTask
  */
 public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
+
+    private static final String TAG = "InsertTask";
 
     private interface InsertInterface {
         int insertItem ();
@@ -216,8 +217,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 citta.setLongitudine(longitudine);
                 values.put(MapperContract.DatiCitta.LATITUDINE, latitudine);
                 values.put(MapperContract.DatiCitta.LONGITUDINE, longitudine);
-                if (BuildConfig.DEBUG)
-                    Log.v("InsertTask", citta.getNome() + " - Lat: " + latitudine + " , Lng: " + longitudine);
+                Log.d(TAG, citta.getNome() + " - Lat: " + latitudine + " , Lng: " + longitudine);
                 Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
                 long idCitta = Long.parseLong(uri.getLastPathSegment());
                 if (idCitta != -1) {

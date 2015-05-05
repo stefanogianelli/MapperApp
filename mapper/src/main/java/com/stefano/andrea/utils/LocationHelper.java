@@ -20,12 +20,12 @@ public class LocationHelper {
     public static LatLng getCoordinatesFromExif (String filePath) throws IOException {
         double lat, lon;
         lat = lon = 0;
-        ExifInterface exif = new ExifInterface(filePath);
+        ExifInterface exif = new ExifInterface(filePath.substring(7));
         String latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
         String latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
         String longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
         String longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-        if(latitude !=null && latitudeRef !=null && longitude != null && longitudeRef !=null) {
+        if(latitude != null && latitudeRef != null && longitude != null && longitudeRef != null) {
             if (latitudeRef.equals("N")) {
                 lat = convertToDegree(latitude);
             } else {

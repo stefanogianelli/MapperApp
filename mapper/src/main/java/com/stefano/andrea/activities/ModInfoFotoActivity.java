@@ -135,7 +135,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                                 LatLng coord = LocationHelper.getCoordinatesFromExif(foto.getPath());
                                 foto.setLongitudine(coord.longitude);
                                 foto.setLatitudine(coord.latitude);
-                                Log.v(TAG, "Dati EXIF: lat = " + coord.latitude + ", lon = " + coord.longitude);
+                                Log.d(TAG, "Dati EXIF: lat = " + coord.latitude + ", lon = " + coord.longitude);
                             } catch (IOException e) {
                                 //utilizzo i dati della citta
                                 Log.i(TAG, "Impossibile ottenere dati EXIF");
