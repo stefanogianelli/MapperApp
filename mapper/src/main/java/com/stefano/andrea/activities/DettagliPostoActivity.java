@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,6 +22,9 @@ public class DettagliPostoActivity extends ActionBarActivity {
         MapperContext context = MapperContext.getInstance();
         long idPosto = context.getIdPosto();
         String nomePosto = context.getNomePosto();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.dettagli_posto_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.setTitle(nomePosto);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

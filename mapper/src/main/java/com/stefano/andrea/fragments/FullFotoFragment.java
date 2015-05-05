@@ -7,7 +7,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,7 +41,7 @@ public class FullFotoFragment extends Fragment {
 
     private Activity mParentActivity;
     private List<Foto> mElencoFoto;
-    private int position;
+    private int mPosition;
 
     public FullFotoFragment () { }
 
@@ -56,17 +61,43 @@ public class FullFotoFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_full_foto, container, false);
         ViewPager pager = (ViewPager) rootView.findViewById(R.id.pager);
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.full_foto_toolbar);
         Bundle args = getArguments();
         if (args != null) {
             mElencoFoto = args.getParcelableArrayList(EXTRA_LISTA_FOTO);
-            position = args.getInt(EXTRA_IMAGE_POSITION);
+            mPosition = args.getInt(EXTRA_IMAGE_POSITION);
         }
+        ((ActionBarActivity) mParentActivity).setSupportActionBar(toolbar);
+        ((ActionBarActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((ActionBarActivity) mParentActivity).getSupportActionBar().setTitle("Foto");
         pager.setAdapter(new ImageAdapter(mParentActivity));
-        pager.setCurrentItem(position);
+        pager.setCurrentItem(mPosition);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_full_foto, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            getFragmentManager().popBackStack();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class ImageAdapter extends PagerAdapter {
@@ -151,6 +182,7 @@ public class FullFotoFragment extends Fragment {
             return view.equals(object);
         }
     }
+
 }
 
 

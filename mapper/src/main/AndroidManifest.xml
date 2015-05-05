@@ -50,6 +50,7 @@
         <activity
             android:name=".DettagliPostoActivity"
             android:label="@string/title_activity_dettagli_posto"
+            android:theme="@style/AppThemeNoToolbar"
             android:parentActivityName=".DettagliCittaActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

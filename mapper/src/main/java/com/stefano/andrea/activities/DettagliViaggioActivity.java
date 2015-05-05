@@ -45,7 +45,6 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
         //attivo action bar
         setSupportActionBar((Toolbar) toolbarView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
         //Creo l'adapter per le tab

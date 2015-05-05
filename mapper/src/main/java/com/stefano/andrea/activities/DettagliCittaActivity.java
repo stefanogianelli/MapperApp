@@ -46,7 +46,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
         //attivo action bar
         setSupportActionBar((Toolbar) toolbarView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         //aggiungo il titolo alla action bar
         this.setTitle(nomeCitta);
         //creo l'adapter per le tab
@@ -64,8 +63,24 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
             }
         });
         tabs.setViewPager(pager);
-    }
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                propagateToolbarState(toolbarIsShown());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        propagateToolbarState(toolbarIsShown());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
