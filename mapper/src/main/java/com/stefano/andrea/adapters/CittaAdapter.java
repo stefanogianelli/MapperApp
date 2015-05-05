@@ -14,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
@@ -89,19 +90,21 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
         private TextView nomeCitta;
         private TextView statCitta;
         private ImageButton button1;
+        private DonutProgress cityStatus;
 
         public CittaHolder(View itemView) {
             super(itemView);
             nomeCitta = (TextView) itemView.findViewById(R.id.citta_item_label);
             statCitta = (TextView) itemView.findViewById(R.id.citta_item_label_subtitle);
             button1 = (ImageButton) itemView.findViewById(R.id.button_popup_item_citta);
+            cityStatus = (DonutProgress) itemView.findViewById(R.id.donut_progress_city);
         }
 
         public void bindCitta (final Citta citta) {
             this.itemView.setTag(citta);
             nomeCitta.setText(citta.getNome());
             statCitta.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_citta, citta.getCountPosti(), citta.getCountPosti(), citta.getCountFoto()));
-
+            cityStatus.setProgress(75);
             button1.setOnClickListener(new View.OnClickListener() {
 
                 @Override

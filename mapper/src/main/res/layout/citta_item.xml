@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapper="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,14 +28,26 @@ android:layout_marginRight="@dimen/activity_horizontal_margin"-->
             android:layout_weight="1"
             android:orientation="horizontal">
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/citta_item_thumbnail"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_location_city_grey600_48dp" />
+            android:src="@drawable/ic_location_city_grey600_48dp" />-->
+            <com.github.lzyzsd.circleprogress.DonutProgress
+                android:id="@+id/donut_progress_city"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                mapper:donut_finished_color="@color/green"
+                mapper:donut_unfinished_color="@color/light_grey"
+                mapper:donut_finished_stroke_width="4dp"
+                mapper:donut_unfinished_stroke_width="5dp"
+                mapper:donut_text_color="@color/black"
+                mapper:donut_text_size="12dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
