@@ -22,6 +22,7 @@
     <!-- Insert foto -->
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
+    <string name="image">Immagine</string>
 
     <!-- MainActivity -->
     <string name="add_viaggio">Nome del viaggio?</string>
