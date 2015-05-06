@@ -73,9 +73,12 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
 
     @Override
     public void cancellaItem(Foto item) {
-        int pos = mElencoFoto.indexOf(item);
-        mElencoFoto.remove(pos);
-        notifyItemRemoved(pos);
+        mElencoFoto.remove(item);
+    }
+
+    @Override
+    public void notificaChange() {
+        notifyDataSetChanged();
     }
 
     protected class FotoHolder extends SelectableHolder {

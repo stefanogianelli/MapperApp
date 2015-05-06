@@ -79,6 +79,9 @@
     <!-- ElencoFotoFragment -->
     <string name="conferma_cancellazione_foto">Vuoi cancellare le foto?</string>
 
+    <!-- FullFotoFragment -->
+    <string name="full_foto_fragment_title">Foto</string>
+
     <!-- Action Mode stringhe selezione -->
     <plurals name="action_mode_count_selected">
         <item quantity="one">%d elemento selezionato</item>

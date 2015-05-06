@@ -77,9 +77,12 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
 
     @Override
     public void cancellaItem(Posto item) {
-        int pos = mElencoPosti.indexOf(item);
-        mElencoPosti.remove(pos);
-        notifyItemRemoved(pos);
+        mElencoPosti.remove(item);
+    }
+
+    @Override
+    public void notificaChange() {
+        notifyDataSetChanged();
     }
 
     protected class PostiHolder extends SelectableHolder {

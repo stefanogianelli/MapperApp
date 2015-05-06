@@ -28,6 +28,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     public interface DeleteAdapter<T> {
         void cancellaItem (T item);
+        void notificaChange ();
     }
 
     public final static int CANCELLA_VIAGGIO = 0;
@@ -92,6 +93,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
+        if (result == RESULT_OK)
+            mAdapter.notificaChange();
         if (result == RESULT_ERROR) {
             DialogHelper.showAlertDialog(mActivity, R.string.errore_eliminazione_titolo_dialog, R.string.errore_eliminazione_messaggio_dialog);
         }

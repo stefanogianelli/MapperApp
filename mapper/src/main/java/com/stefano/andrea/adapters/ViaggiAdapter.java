@@ -80,9 +80,12 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     @Override
     public void cancellaItem(Viaggio item) {
-        int pos = mListaViaggi.indexOf(item);
-        mListaViaggi.remove(pos);
-        notifyItemRemoved(pos);
+        mListaViaggi.remove(item);
+    }
+
+    @Override
+    public void notificaChange() {
+        notifyDataSetChanged();
     }
 
     protected class ViaggiHolder extends SelectableHolder {

@@ -61,12 +61,6 @@ public class FullFotoFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_full_foto, container, false);
         ViewPager pager = (ViewPager) rootView.findViewById(R.id.pager);
@@ -78,9 +72,10 @@ public class FullFotoFragment extends Fragment {
         }
         ((ActionBarActivity) mParentActivity).setSupportActionBar(toolbar);
         ((ActionBarActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((ActionBarActivity) mParentActivity).getSupportActionBar().setTitle("Foto");
+        ((ActionBarActivity) mParentActivity).getSupportActionBar().setTitle(mParentActivity.getResources().getString(R.id.full_foto_toolbar));
         pager.setAdapter(new ImageAdapter(mParentActivity));
         pager.setCurrentItem(mPosition);
+        setHasOptionsMenu(true);
         return rootView;
     }
 

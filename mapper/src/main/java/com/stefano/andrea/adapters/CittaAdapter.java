@@ -80,9 +80,12 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
 
     @Override
     public void cancellaItem(Citta item) {
-        int pos = mElencoCitta.indexOf(item);
-        mElencoCitta.remove(pos);
-        notifyItemRemoved(pos);
+        mElencoCitta.remove(item);
+    }
+
+    @Override
+    public void notificaChange() {
+        notifyDataSetChanged();
     }
 
     protected class CittaHolder extends SelectableHolder {
