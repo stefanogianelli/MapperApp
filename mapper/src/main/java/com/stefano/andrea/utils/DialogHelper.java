@@ -96,22 +96,41 @@ public class DialogHelper {
      * @param callback L'implementazione della callback per la creazione della citta
      */
     public static void showDialogAggiungiCitta (Activity activity, final AggiungiCittaCallback callback) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_add_citta, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        View v = inflater.inflate(R.layout.fragment_add_citta, null);
+        builder.setView(v);
+
+        final EditText nomeCitta = (EditText) v.findViewById(R.id.text_add_citta);
+
+        // Add action buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         Dialog d = (Dialog) dialog;
                         EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
-                        EditText nomeCitta = (EditText) d.findViewById(R.id.text_add_citta);
                         callback.creaNuovaCitta(nomeCitta.getText().toString(), nomeNazione.getText().toString());
-                        d.dismiss();
+                        dialog.dismiss();
                     }
                 })
-                .setNegativeButton(R.string.cancel, null);
-        builder.create().show();
+        .setNegativeButton(R.string.cancel, null);
+
+        final AlertDialog dialog = builder.create();
+
+        nomeCitta.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override public void onTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() == 0){
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
     /**
@@ -127,21 +146,39 @@ public class DialogHelper {
      * @param callback L'implementazione della callback per l'aggiunta di un posto
      */
     public static void showDialogAggiungiPosto(Activity activity, final AggiungiPostoCallback callback) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_add_posto, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        View v = inflater.inflate(R.layout.fragment_add_posto, null);
+        builder.setView(v);
+
+        final EditText nomePosto = (EditText) v.findViewById(R.id.text_add_posto);
+            // Add action buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        Dialog d = (Dialog) dialog;
-                        EditText nomePosto = (EditText) d.findViewById(R.id.text_add_posto);
-                        callback.creaNuovoPosto(nomePosto.getText().toString());
-                        d.dismiss();
-                    }
+                    Dialog d = (Dialog) dialog;
+                    callback.creaNuovoPosto(nomePosto.getText().toString());
+                    d.dismiss();
+                }
                 })
-                .setNegativeButton(R.string.cancel, null);
-        builder.create().show();
+            .setNegativeButton(R.string.cancel, null);
+
+        final AlertDialog dialog = builder.create();
+
+        nomePosto.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override public void onTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() == 0){
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
     /**
