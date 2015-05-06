@@ -3,7 +3,7 @@
     xmlns:mapper="http://schemas.android.com/apk/res-auto"
     tools:context="com.stefano.andrea.activities.DettagliPostoActivity">
     <item
-        android:id="@+id/action_aggiungi_foto_dettagli_citta"
+        android:id="@+id/action_aggiungi_foto_dettagli_posto"
         android:icon="@drawable/ic_photo_camera_white_24dp"
         mapper:showAsAction="ifRoom"
         android:title="@string/aggiungi_foto" />

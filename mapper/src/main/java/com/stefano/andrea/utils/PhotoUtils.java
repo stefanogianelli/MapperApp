@@ -99,6 +99,21 @@ public class PhotoUtils {
      * @param idCitta L'id della citta'
      */
     public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta) {
+        startIntent(activity, requestCode, resultCode, data, imageUri, idViaggio, idCitta, -1);
+    }
+
+    /**
+     * Avvia l'intent per il salvataggio della foto
+     * @param activity L'activity di riferimento
+     * @param requestCode Il codice di risposta
+     * @param resultCode Il risultato dell'operazione
+     * @param data I dati risultanti
+     * @param imageUri L'uri dell'immagine
+     * @param idViaggio L'id del viaggio
+     * @param idCitta L'id della citta'
+     * @param idPosto L'id del posto
+     */
+    public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta, long idPosto) {
         Intent intent = null;
         ArrayList<String> fotoUris = new ArrayList<>();
         if ((requestCode == GALLERY_PICTURE || requestCode == GALLERY_PICTURE_KITKAT) && resultCode == Activity.RESULT_OK) {
@@ -131,6 +146,8 @@ public class PhotoUtils {
                 intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
             if (idCitta != -1)
                 intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, idCitta);
+            if (idPosto != -1)
+                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, idPosto);
             activity.startActivity(intent);
         }
     }

@@ -72,7 +72,7 @@ public class FullFotoFragment extends Fragment {
         }
         ((ActionBarActivity) mParentActivity).setSupportActionBar(toolbar);
         ((ActionBarActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((ActionBarActivity) mParentActivity).getSupportActionBar().setTitle(mParentActivity.getResources().getString(R.id.full_foto_toolbar));
+        ((ActionBarActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
         pager.setAdapter(new ImageAdapter(mParentActivity));
         pager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
@@ -81,7 +81,7 @@ public class FullFotoFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+        //super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_full_foto, menu);
     }
 

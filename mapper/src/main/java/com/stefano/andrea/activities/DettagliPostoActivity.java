@@ -1,5 +1,7 @@
 package com.stefano.andrea.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -7,12 +9,21 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.PhotoUtils;
+
+import java.io.IOException;
 
 public class DettagliPostoActivity extends ActionBarActivity {
+
+    private Uri mImageUri;
+    private long mIdViaggio;
+    private long mIdCitta;
+    private long mIdPosto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +31,9 @@ public class DettagliPostoActivity extends ActionBarActivity {
         setContentView(R.layout.activity_dettagli_posto);
         //acquisisco riferimenti
         MapperContext context = MapperContext.getInstance();
-        long idPosto = context.getIdPosto();
+        mIdViaggio = context.getIdViaggio();
+        mIdCitta = context.getIdCitta();
+        mIdPosto = context.getIdPosto();
         String nomePosto = context.getNomePosto();
         Toolbar toolbar = (Toolbar) findViewById(R.id.dettagli_posto_toolbar);
         setSupportActionBar(toolbar);
@@ -28,7 +41,7 @@ public class DettagliPostoActivity extends ActionBarActivity {
         this.setTitle(nomePosto);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        ElencoFotoFragment fragment = ElencoFotoFragment.newInstance(idPosto, FotoLoader.FOTO_POSTO);
+        ElencoFotoFragment fragment = ElencoFotoFragment.newInstance(mIdPosto, FotoLoader.FOTO_POSTO);
         fragmentTransaction.add(R.id.posti_container, fragment);
         fragmentTransaction.commit();
     }
@@ -48,11 +61,23 @@ public class DettagliPostoActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_aggiungi_foto_dettagli_posto) {
+            try {
+                mImageUri = PhotoUtils.getImageUri();
+            } catch (IOException e) {
+                Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
+            }
+            if (mImageUri != null)
+                PhotoUtils.mostraDialog(this, mImageUri);
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta, mIdPosto);
+    }
+
 }
