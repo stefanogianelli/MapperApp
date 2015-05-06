@@ -12,7 +12,7 @@ public class Citta {
     private String nazione;
     private double latitudine;
     private double longitudine;
-    private double percentuale;
+    private int countPostiVisitati;
     private int countPosti;
     private int countFoto;
 
@@ -76,12 +76,12 @@ public class Citta {
         this.longitudine = longitudine;
     }
 
-    public double getPercentuale() {
-        return percentuale;
+    public int getCountPostiVisitati() {
+        return countPostiVisitati;
     }
 
-    public void setPercentuale(double percentuale) {
-        this.percentuale = percentuale;
+    public void setCountPostiVisitati(int countPostiVisitati) {
+        this.countPostiVisitati = countPostiVisitati;
     }
 
     public int getCountPosti() {

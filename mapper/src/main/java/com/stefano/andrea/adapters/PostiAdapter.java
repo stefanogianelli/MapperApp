@@ -104,11 +104,12 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
         private void bindPosto (final Posto posto) {
             this.itemView.setTag(posto);
             nomePosto.setText(posto.getNome());
-            checkBox.setSelected(posto.isVisitato());
+            checkBox.setChecked(posto.isVisitato());
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mListener.visitatoPosto((Posto) itemView.getTag());
+                    posto.setVisitato(isChecked);
+                    mListener.visitatoPosto(posto);
                 }
             });
             menuButton.setOnClickListener(new View.OnClickListener() {
