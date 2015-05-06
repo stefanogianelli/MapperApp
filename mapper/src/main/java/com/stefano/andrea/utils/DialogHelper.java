@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -79,6 +80,25 @@ public class DialogHelper {
                 }
             }
         });
+
+        //  Setto il tasto INVIO (solo se il testo non è vuoto)
+        nomeViaggio.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (nomeViaggio.getText().toString().length() != 0)) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            callback.creaViaggio(nomeViaggio.getText().toString());
+                            dialog.dismiss();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
@@ -177,6 +197,29 @@ public class DialogHelper {
                 }
             }
         });
+
+        //  Setto il tasto INVIO (solo se il testo non è vuoto)
+        nomePosto.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (nomePosto.getText().toString().length()!=0))
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            callback.creaNuovoPosto(nomePosto.getText().toString());
+                            dialog.dismiss();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
