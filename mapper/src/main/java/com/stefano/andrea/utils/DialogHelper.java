@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
@@ -48,21 +51,36 @@ public class DialogHelper {
      * @param callback L'implementazione della callback di creazione del viaggio
      */
     public static void showDialogAggiungiViaggio(Activity activity, final AggiungiViaggioCallback callback) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_add_viaggio, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Dialog d = (Dialog) dialog;
-                        EditText nomeViaggio = (EditText) d.findViewById(R.id.text_add_viaggio);
-                        callback.creaViaggio(nomeViaggio.getText().toString());
-                        d.dismiss();
-                    }
-                })
-                .setNegativeButton(R.string.cancel,  null);
-        builder.create().show();
+        View v = inflater.inflate(R.layout.fragment_add_viaggio, null);
+        builder.setView(v);
+
+        final EditText nomeViaggio = (EditText) v.findViewById(R.id.text_add_viaggio);
+        // Add action buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                callback.creaViaggio(nomeViaggio.getText().toString());
+                dialog.dismiss();
+            }
+        })
+        .setNegativeButton(R.string.cancel, null);
+        final AlertDialog dialog = builder.create();
+        nomeViaggio.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override public void onTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() == 0){
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
     /**
