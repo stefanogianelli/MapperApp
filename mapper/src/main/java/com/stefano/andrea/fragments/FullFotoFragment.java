@@ -16,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -31,6 +30,8 @@ import com.stefano.andrea.models.Foto;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 /**
  * FullFotoFragment
@@ -129,10 +130,11 @@ public class FullFotoFragment extends Fragment {
         @Override
         public Object instantiateItem(ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_full_image, view, false);
-            final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            final ImageViewTouch imageView = (ImageViewTouch) imageLayout.findViewById(R.id.image);
+            //imageView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_IF_BIGGER);
+            imageView.setSingleTapListener(new ImageViewTouch.OnImageViewTouchSingleTapListener() {
                 @Override
-                public void onClick(View v) {
+                public void onSingleTapConfirmed() {
                     toggleHideyBar();
                 }
             });
@@ -172,7 +174,7 @@ public class FullFotoFragment extends Fragment {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     spinner.setVisibility(View.GONE);
-                    imageView.setImageBitmap(loadedImage);
+                    imageView.setImageBitmap(loadedImage, null, - 1, 8f);
                 }
             });
 
