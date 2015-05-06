@@ -129,7 +129,7 @@ public class FullFotoFragment extends Fragment {
         @Override
         public Object instantiateItem(ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_full_image, view, false);
-            ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
+            final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -138,7 +138,7 @@ public class FullFotoFragment extends Fragment {
             });
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
-            ImageLoader.getInstance().displayImage(mElencoFoto.get(position).getPath(), imageView, options, new SimpleImageLoadingListener() {
+            ImageLoader.getInstance().loadImage(mElencoFoto.get(position).getPath(), options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     spinner.setVisibility(View.VISIBLE);
@@ -172,6 +172,7 @@ public class FullFotoFragment extends Fragment {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     spinner.setVisibility(View.GONE);
+                    imageView.setImageBitmap(loadedImage);
                 }
             });
 
