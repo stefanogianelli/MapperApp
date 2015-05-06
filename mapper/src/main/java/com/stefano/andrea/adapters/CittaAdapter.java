@@ -107,7 +107,10 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
             this.itemView.setTag(citta);
             nomeCitta.setText(citta.getNome());
             statCitta.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_citta, citta.getCountPosti(), citta.getCountPosti(), citta.getCountFoto()));
-            cityStatus.setProgress((int) citta.getPercentuale());
+            int percentuale = 0;
+            if (citta.getCountPosti() != 0)
+                percentuale = (int) ((((float) citta.getCountPostiVisitati()) / ((float) citta.getCountPosti())) * 100.0f);
+            cityStatus.setProgress(percentuale);
             button1.setOnClickListener(new View.OnClickListener() {
 
                 @Override

@@ -29,8 +29,6 @@ public final class MapperContract {
         String ID_DATI_CITTA = "ref_dati_citta";
         /** ID del viaggio nel quale e stata visitata la citta */
         String ID_VIAGGIO = "ref_viaggio";
-        /** Percentuale di completamento della visita */
-        String PERCENTUALE = "percentuale";
         /** Totale dei posti inclusi nella citta */
         String COUNT_POSTI = "count_posti";
         /** Numero dei posti visitati */
@@ -127,7 +125,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";
 
-        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, PERCENTUALE, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
+        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_CITTA + " DESC";
