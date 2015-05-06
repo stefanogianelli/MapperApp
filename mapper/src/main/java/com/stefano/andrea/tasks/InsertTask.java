@@ -163,7 +163,6 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 ContentValues values = new ContentValues();
                 values.put(MapperContract.Citta.ID_VIAGGIO, citta.getIdViaggio());
                 values.put(MapperContract.Citta.ID_DATI_CITTA, citta.getIdCitta());
-                values.put(MapperContract.Citta.PERCENTUALE, 0);
                 Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {

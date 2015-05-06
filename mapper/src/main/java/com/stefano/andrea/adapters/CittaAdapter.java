@@ -107,7 +107,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
             this.itemView.setTag(citta);
             nomeCitta.setText(citta.getNome());
             statCitta.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_citta, citta.getCountPosti(), citta.getCountPosti(), citta.getCountFoto()));
-            cityStatus.setProgress(75);
+            cityStatus.setProgress((int) citta.getPercentuale());
             button1.setOnClickListener(new View.OnClickListener() {
 
                 @Override

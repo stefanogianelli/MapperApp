@@ -32,6 +32,9 @@ public class MapperDatabase extends SQLiteOpenHelper {
         String DECREMENTA_COUNT_POSTI = "decrementa_count_posti";
         String INCREMENTA_COUNT_FOTO = "incrementa_count_foto";
         String DECREMENTA_COUNT_FOTO = "decrementa_count_foto";
+        String CAMBIA_IMMAGINE_VIAGGIO = "cambia_immagine_viaggio";
+        String AGGIORNA_POSTI_VISITATI = "aggiorna_posti_visitati";
+        String AGGIORNA_PERCENTUALE = "aggiorna_percentuale";
         String ELIMINA_DATI_CITTA = "elimina_dati_citta";
         String ELIMINA_LUOGO = "elimina_luogo";
     }
@@ -157,6 +160,20 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_FOTO + " = " + MapperContract.Viaggio.COUNT_FOTO + " - 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = old." + MapperContract.Foto.ID_VIAGGIO + "; " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " - 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = old." + MapperContract.Foto.ID_CITTA + "; END;";
 
+    //Trigger che modifica immagine al viaggio
+    private static final String TRIGGER_CAMBIA_IMMAGINE_VIAGGIO = "CREATE TRIGGER " + Triggers.CAMBIA_IMMAGINE_VIAGGIO + " AFTER UPDATE ON " + Tables.FOTO + " BEGIN " +
+            "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.PATH_FOTO + " = " + MapperContract.Foto.PATH + " WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = new." + MapperContract.Foto.ID_VIAGGIO + "; END;";
+
+    //Trigger che aggiorna il contatore dei posti visitati
+    private static final String TRIGGER_AGGIORNA_POSTI_VISITATI = "CREATE TRIGGER " + Triggers.AGGIORNA_POSTI_VISITATI + " AFTER UPDATE OF " + MapperContract.Posto.VISITATO + " ON " + Tables.POSTO + " BEGIN " +
+            "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.POSTI_VISITATI + " = " + MapperContract.Citta.POSTI_VISITATI + " + 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Posto.ID_CITTA + " AND new." + MapperContract.Posto.VISITATO + " = 1; " +
+            "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.POSTI_VISITATI + " = " + MapperContract.Citta.POSTI_VISITATI + " - 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Posto.ID_CITTA + " AND new." + MapperContract.Posto.VISITATO + " = 0; END;";
+
+    //Trigger che aggiorna le percentuali di completamento delle citta'
+    private static final String TRIGGER_AGGIORNA_PERCENTUALE = "CREATE TRIGGER " + Triggers.AGGIORNA_PERCENTUALE + " AFTER UPDATE OF " + MapperContract.Citta.COUNT_POSTI + ", " + MapperContract.Citta.POSTI_VISITATI + " ON " + Tables.CITTA + " BEGIN " +
+            "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.PERCENTUALE + " = (" + MapperContract.Citta.POSTI_VISITATI + "/" + MapperContract.Citta.COUNT_POSTI + ") * 100 " +
+            "WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Citta.ID_CITTA + "; END;";
+
     //Trigger che elimina i dati di una citta una volta che non sono piu' referenziati da nessuna citta
     private static final String TRIGGER_ELIMINA_DATI_CITTA = "CREATE TRIGGER " + Triggers.ELIMINA_DATI_CITTA +
             " AFTER UPDATE OF " + MapperContract.DatiCitta.COUNT + " ON " + Tables.DATI_CITTA +
@@ -167,10 +184,6 @@ public class MapperDatabase extends SQLiteOpenHelper {
     private static final String TRIGGER_ELIMINA_LUOGO = "CREATE TRIGGER " + Triggers.ELIMINA_LUOGO + "  AFTER UPDATE OF " + MapperContract.Luogo.COUNT + " ON " + Tables.LUOGO +
             " FOR EACH ROW WHEN new." + MapperContract.Luogo.COUNT + " = 0 BEGIN " +
             "DELETE FROM " + Tables.LUOGO + " WHERE " + MapperContract.Luogo.ID + " = new." + MapperContract.Luogo.ID + "; END;";
-
-    //Trigger che aggiorna la percentuale di completamento della citta
-    //TODO: completare
-    private static final String TRIGGER_UPDATE_PERCENTUALE = "";
 
     public MapperDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -203,6 +216,9 @@ public class MapperDatabase extends SQLiteOpenHelper {
         db.execSQL(TRIGGER_DECREMENTA_COUNT_POSTI);
         db.execSQL(TRIGGER_INCREMENTA_COUNT_FOTO);
         db.execSQL(TRIGGER_DECREMENTA_COUNT_FOTO);
+        db.execSQL(TRIGGER_CAMBIA_IMMAGINE_VIAGGIO);
+        db.execSQL(TRIGGER_AGGIORNA_POSTI_VISITATI);
+        db.execSQL(TRIGGER_AGGIORNA_PERCENTUALE);
         db.execSQL(TRIGGER_ELIMINA_DATI_CITTA);
         db.execSQL(TRIGGER_ELIMINA_LUOGO);
     }
@@ -225,6 +241,9 @@ public class MapperDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_POSTI);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.INCREMENTA_COUNT_FOTO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_FOTO);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.CAMBIA_IMMAGINE_VIAGGIO);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.AGGIORNA_POSTI_VISITATI);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.AGGIORNA_PERCENTUALE);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_DATI_CITTA);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_LUOGO);
         onCreate(db);

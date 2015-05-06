@@ -46,6 +46,13 @@ public class Posto {
         return visitato;
     }
 
+    public int getVisitato () {
+        if (visitato)
+            return 1;
+        else
+            return 0;
+    }
+
     public void setVisitato(boolean visitato) {
         this.visitato = visitato;
     }

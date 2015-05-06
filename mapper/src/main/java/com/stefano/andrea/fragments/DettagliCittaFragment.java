@@ -3,11 +3,14 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -28,6 +31,7 @@ import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
+import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
@@ -207,6 +211,18 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
         new DeleteTask<>(mParentActivity, mResolver, mAdapter, elencoPosti, indici).execute(DeleteTask.CANCELLA_POSTO);
+    }
+
+    /**
+     * Aggiorna il parametro visitato di un posto
+     * @param posto Il posto da modificare
+     */
+    @Override
+    public void visitatoPosto(Posto posto) {
+        Uri uri = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, posto.getId());
+        ContentValues values = new ContentValues();
+        values.put(MapperContract.Posto.VISITATO, posto.getVisitato());
+        mResolver.update(uri, values, null, null);
     }
 
     /**

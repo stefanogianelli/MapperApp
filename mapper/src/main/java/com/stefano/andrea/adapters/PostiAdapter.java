@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
     public interface PostoOnClickListener {
         void selezionatoPosto (Posto posto);
         void cancellaPosto (Posto posto);
+        void visitatoPosto (Posto posto);
     }
 
     public PostiAdapter(PostoOnClickListener listener, Activity activity, ActionMode.Callback callback) {
@@ -56,7 +59,7 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
     @Override
     public PostiHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view =  LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.checkbox_item, parent, false);
+                .inflate(R.layout.posti_item, parent, false);
         return new PostiHolder(view);
     }
 
@@ -87,25 +90,33 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
 
     protected class PostiHolder extends SelectableHolder {
 
+        private CheckBox checkBox;
         private TextView nomePosto;
-        private ImageButton button1;
+        private ImageButton menuButton;
 
         public PostiHolder(View itemView) {
             super(itemView);
             nomePosto = (TextView) itemView.findViewById(R.id.nome_posto);
-            button1 = (ImageButton) itemView.findViewById(R.id.button_popup_item_posto);
+            menuButton = (ImageButton) itemView.findViewById(R.id.button_popup_item_posto);
+            checkBox = (CheckBox) itemView.findViewById(R.id.checkbox_posto);
         }
 
         private void bindPosto (final Posto posto) {
             this.itemView.setTag(posto);
             nomePosto.setText(posto.getNome());
-
-            button1.setOnClickListener(new View.OnClickListener() {
+            checkBox.setSelected(posto.isVisitato());
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mListener.visitatoPosto((Posto) itemView.getTag());
+                }
+            });
+            menuButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     //Creating the instance of PopupMenu
-                    PopupMenu popup = new PopupMenu(mActivity, button1);
+                    PopupMenu popup = new PopupMenu(mActivity, menuButton);
                     //Inflating the Popup using xml file
                     popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
 
