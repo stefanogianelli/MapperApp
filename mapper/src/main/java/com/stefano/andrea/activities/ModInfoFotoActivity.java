@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
@@ -29,11 +28,9 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.DialogHelper;
-import com.stefano.andrea.utils.LocationHelper;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,23 +126,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     for (int i = 0; i < mImagePath.size(); i++) {
                         Foto foto = new Foto();
                         foto.setPath(mImagePath.get(i));
-                        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
-                            //acquisisco lat/lon dai dati Exif
-                            try {
-                                LatLng coord = LocationHelper.getCoordinatesFromExif(foto.getPath());
-                                foto.setLongitudine(coord.longitude);
-                                foto.setLatitudine(coord.latitude);
-                                Log.d(TAG, "Dati EXIF: lat = " + coord.latitude + ", lon = " + coord.longitude);
-                            } catch (IOException e) {
-                                //utilizzo i dati della citta
-                                Log.i(TAG, "Impossibile ottenere dati EXIF");
-                                foto.setLatitudine(mCittaSelezionata.getLatitudine());
-                                foto.setLongitudine(mCittaSelezionata.getLongitudine());
-                            }
-                        } else {
-                            foto.setLatitudine(mCittaSelezionata.getLatitudine());
-                            foto.setLongitudine(mCittaSelezionata.getLongitudine());
-                        }
+                        foto.setLatitudine(mCittaSelezionata.getLatitudine());
+                        foto.setLongitudine(mCittaSelezionata.getLongitudine());
                         foto.setIdViaggio(mViaggioSelezionato.getId());
                         foto.setIdCitta(mCittaSelezionata.getId());
                         if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)

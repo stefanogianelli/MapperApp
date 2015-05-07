@@ -18,14 +18,12 @@ import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
+import com.stefano.andrea.utils.LocationHelper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -208,12 +206,17 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             ContentValues values = new ContentValues();
             values.put(MapperContract.DatiCitta.NOME, citta.getNome());
             values.put(MapperContract.DatiCitta.NAZIONE, citta.getNazione());
-            JSONObject geoInfo = getGeocodeInformations();
+            JSONObject geoInfo = null;
+            try {
+                geoInfo = LocationHelper.getGeocodeInformations(citta.getNome() + "," + citta.getNazione());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             if (geoInfo != null) {
-                double latitudine = this.getLatitudine(geoInfo);
-                double longitudine = this.getLongitudine(geoInfo);
-                citta.setLatitudine(latitudine);
-                citta.setLongitudine(longitudine);
+                double latitudine = LocationHelper.getLatitudine(geoInfo);
+                double longitudine = LocationHelper.getLongitudine(geoInfo);
                 values.put(MapperContract.DatiCitta.LATITUDINE, latitudine);
                 values.put(MapperContract.DatiCitta.LONGITUDINE, longitudine);
                 Log.d(TAG, citta.getNome() + " - Lat: " + latitudine + " , Lng: " + longitudine);
@@ -227,55 +230,6 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             return RESULT_ERROR;
         }
 
-        private JSONObject getGeocodeInformations () {
-            String indirizzo = citta.getNome() + "," + citta.getNazione();
-            try {
-                HttpURLConnection conn;
-                StringBuilder jsonResults = new StringBuilder();
-                String googleMapUrl = "http://maps.googleapis.com/maps/api/geocode/json?address=" + indirizzo;
-
-                URL url = new URL(googleMapUrl);
-                conn = (HttpURLConnection) url.openConnection();
-                InputStreamReader in = new InputStreamReader(
-                        conn.getInputStream());
-                int read;
-                char[] buff = new char[1024];
-                while ((read = in.read(buff)) != -1) {
-                    jsonResults.append(buff, 0, read);
-                }
-
-                JSONObject jsonObj = new JSONObject(jsonResults.toString());
-                JSONArray resultJsonArray = jsonObj.getJSONArray("results");
-                JSONObject before_geometry_jsonObj = resultJsonArray.getJSONObject(0);
-                JSONObject geometry_jsonObj = before_geometry_jsonObj.getJSONObject("geometry");
-                return geometry_jsonObj.getJSONObject("location");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        private double getLongitudine (JSONObject location) {
-            double lng = 0;
-            try {
-                String lng_helper = location.getString("lng");
-                lng = Double.valueOf(lng_helper);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return lng;
-        }
-
-        private double getLatitudine (JSONObject location) {
-            double lat = 0;
-            try {
-                String lat_helper = location.getString("lat");
-                lat = Double.valueOf(lat_helper);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return lat;
-        }
     }
 
     /**
@@ -341,19 +295,31 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
         @Override
         public int insertItem() {
-            ContentValues values = new ContentValues();
-            values.put(MapperContract.Luogo.NOME, posto.getNome());
-            //TODO: implementare lookup delle coordinate
-            values.put(MapperContract.Luogo.LATITUDINE, 0);
-            values.put(MapperContract.Luogo.LONGITUDINE, 0);
-            int res = getIdDatiCitta();
-            if (res == RESULT_OK) {
-                values.put(MapperContract.Luogo.ID_CITTA, posto.getIdDatiCitta());
-                Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
-                long id = Long.parseLong(uri.getLastPathSegment());
-                if (id != -1) {
-                    posto.setIdLuogo(id);
-                    return RESULT_OK;
+            JSONObject geoInfo = null;
+            try {
+                geoInfo = LocationHelper.getGeocodeInformations(posto.getNome());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (geoInfo != null) {
+                ContentValues values = new ContentValues();
+                values.put(MapperContract.Luogo.NOME, posto.getNome());
+                double latitudine = LocationHelper.getLatitudine(geoInfo);
+                double longitudine = LocationHelper.getLongitudine(geoInfo);
+                values.put(MapperContract.Luogo.LATITUDINE, latitudine);
+                values.put(MapperContract.Luogo.LONGITUDINE, longitudine);
+                Log.d(TAG, "Posto " + posto.getNome() + ", lat = " + latitudine + ", long = " + longitudine);
+                int res = getIdDatiCitta();
+                if (res == RESULT_OK) {
+                    values.put(MapperContract.Luogo.ID_CITTA, posto.getIdDatiCitta());
+                    Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
+                    long id = Long.parseLong(uri.getLastPathSegment());
+                    if (id != -1) {
+                        posto.setIdLuogo(id);
+                        return RESULT_OK;
+                    }
                 }
             }
             return RESULT_ERROR;
