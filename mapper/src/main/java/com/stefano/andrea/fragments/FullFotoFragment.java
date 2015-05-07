@@ -82,8 +82,17 @@ public class FullFotoFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.removeItem(R.id.action_aggiungi_foto_main);
+        menu.removeItem(R.id.action_aggiungi_foto_dettagli_viaggio);
+        menu.removeItem(R.id.action_aggiungi_foto_dettagli_citta);
+        menu.removeItem(R.id.action_aggiungi_foto_dettagli_posto);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //super.onCreateOptionsMenu(menu, inflater);
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_full_foto, menu);
     }
 
