@@ -76,7 +76,7 @@ public class DettagliViaggioActivity extends ActionBarActivity {
 
         if (id == R.id.action_aggiungi_foto_dettagli_viaggio) {
             try {
-                mImageUri = PhotoUtils.getImageUri();
+                mImageUri = PhotoUtils.getOutputMediaFileUri();
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }

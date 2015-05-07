@@ -1,5 +1,6 @@
 package com.stefano.andrea.utils;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -135,13 +136,16 @@ public class PhotoUtils {
                     ClipData.Item item = clipData.getItemAt(i);
                     String path = item.getUri().toString();
                     if (requestCode == GALLERY_PICTURE_KITKAT) {
-                        path = "file:/" + getGalleryPhotoPath(item.getUri(), activity.getContentResolver());
+                        path = "file://" + getGalleryPhotoPath(item.getUri(), activity.getContentResolver());
                     }
                     fotoUris.add(path);
                 }
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             }
         } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(imageUri);
+            activity.sendBroadcast(mediaScanIntent);
             fotoUris.add(imageUri.toString());
             intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, CAMERA_REQUEST);
         }
@@ -156,25 +160,11 @@ public class PhotoUtils {
     }
 
     /**
-     * Crea l'uri per l'immagine da salvare da fotocamera
-     * @return L'uri dell'immagine
+     * Restituisce il path corretto dell'immagine selezionata dalla galleria
+     * @param imageUri L'uri dell'immagine acquisita dal document provider
+     * @param resolver Il content resolver dell'applicazione
+     * @return Il path correto dell'immagine
      */
-    public static Uri getImageUri () throws IOException {
-        String timestamp = new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date());
-        File photo = createFile(PHOTO_PREFIX + timestamp);
-        photo.delete();
-        return Uri.fromFile(photo);
-    }
-
-    private static File createFile(String part) throws IOException {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        dir = new File(dir.getAbsolutePath() + "/" + FOLDER + "/");
-        if(!dir.exists()) {
-            dir.mkdir();
-        }
-        return File.createTempFile(part, PHOTO_POSTFIX, dir);
-    }
-
     @TargetApi(19)
     private static String getGalleryPhotoPath (Uri imageUri, ContentResolver resolver) {
         String wholeID = DocumentsContract.getDocumentId(imageUri);
@@ -190,6 +180,46 @@ public class PhotoUtils {
         }
         cursor.close();
         return filePath;
+    }
+
+    /**
+     * Create a file Uri for saving an image
+     * @return L'uri del file creato
+     * @throws IOException In caso di errori durante la creazione del file
+     */
+    public static Uri getOutputMediaFileUri() throws IOException {
+        return Uri.fromFile(getOutputMediaFile());
+    }
+
+    /**
+     * Create a File for saving an image
+     * @return Il file creato
+     * @throws IOException In caso di errore durante la creazione del file
+     */
+    @SuppressLint("SimpleDateFormat")
+    private static File getOutputMediaFile() throws IOException {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), FOLDER);
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                throw new IOException();
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                PHOTO_PREFIX + timeStamp + PHOTO_POSTFIX);
+
+        return mediaFile;
     }
 
 }

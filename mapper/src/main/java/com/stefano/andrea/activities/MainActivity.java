@@ -139,7 +139,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
             try {
-                mImageUri = PhotoUtils.getImageUri();
+                mImageUri = PhotoUtils.getOutputMediaFileUri();
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
