@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,29 +19,25 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
-import com.stefano.andrea.utils.ScrollableTabActivity;
-import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
-public class DettagliViaggioActivity extends ScrollableTabActivity {
+public class DettagliViaggioActivity extends ActionBarActivity {
 
     private long mIdViaggio;
     private Uri mImageUri;
-    private MapperContext mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_viaggio);
         //recupero i parametri dal contesto
-        mContext = MapperContext.getInstance();
-        String mNomeViaggio = mContext.getNomeViaggio();
-        mIdViaggio = mContext.getIdViaggio();
+        MapperContext context = MapperContext.getInstance();
+        String mNomeViaggio = context.getNomeViaggio();
+        mIdViaggio = context.getIdViaggio();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
-        View headerView = findViewById(R.id.dettagli_viaggio_header);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         //attivo action bar
@@ -51,8 +49,6 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
         TabDettagliViaggioAdapter mAdapter = new TabDettagliViaggioAdapter(getSupportFragmentManager());
         //assegno al pager l'adapter
         pager.setAdapter(mAdapter);
-        //assegno i parametri alla superclasse per lo scrolling
-        setParameters(mAdapter, pager, toolbarView, headerView);
         //configuro le tab
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -62,23 +58,6 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
             }
         });
         tabs.setViewPager(pager);
-        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                propagateToolbarState(toolbarIsShown());
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        propagateToolbarState(toolbarIsShown());
     }
 
     @Override
@@ -114,7 +93,7 @@ public class DettagliViaggioActivity extends ScrollableTabActivity {
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, -1);
     }
 
-    private class TabDettagliViaggioAdapter extends ScrollableTabAdapter {
+    private class TabDettagliViaggioAdapter extends FragmentStatePagerAdapter {
 
         private CharSequence [] mTitles = {"Dettagli", "Foto"};
         private int mNumbOfTabs = 2;

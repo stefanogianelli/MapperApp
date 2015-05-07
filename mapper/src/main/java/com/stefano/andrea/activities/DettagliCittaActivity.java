@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,13 +19,11 @@ import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
-import com.stefano.andrea.utils.ScrollableTabActivity;
-import com.stefano.andrea.utils.ScrollableTabAdapter;
 import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
-public class DettagliCittaActivity extends ScrollableTabActivity {
+public class DettagliCittaActivity extends ActionBarActivity {
 
     private long mIdViaggio;
     private long mIdCitta;
@@ -40,7 +40,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
         String nomeCitta = mContext.getNomeCitta();
         //acquisito riferimenti
         View toolbarView = findViewById(R.id.dettagli_citta_toolbar);
-        View headerView = findViewById(R.id.dettagli_citta_header);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         //attivo action bar
@@ -52,8 +51,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
         TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager());
         //assegno l'adapter al pager
         pager.setAdapter(adapter);
-        //assegno i parametri alla superclasse per lo scrolling
-        setParameters(adapter, pager, toolbarView, headerView);
         //configuro tab
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -63,23 +60,6 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
             }
         });
         tabs.setViewPager(pager);
-        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                propagateToolbarState(toolbarIsShown());
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        propagateToolbarState(toolbarIsShown());
     }
 
     @Override
@@ -116,7 +96,7 @@ public class DettagliCittaActivity extends ScrollableTabActivity {
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta);
     }
 
-    public class TabDettagliCittaAdapter extends ScrollableTabAdapter {
+    public class TabDettagliCittaAdapter extends FragmentStatePagerAdapter {
 
         private CharSequence [] mTitles = {"Posti","Foto"};
         private int mNumbOfTabs = 2;
