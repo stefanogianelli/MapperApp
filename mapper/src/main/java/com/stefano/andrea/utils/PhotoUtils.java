@@ -1,12 +1,16 @@
 package com.stefano.andrea.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -114,42 +118,41 @@ public class PhotoUtils {
      * @param idPosto L'id del posto
      */
     public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta, long idPosto) {
-        Intent intent = null;
+        Intent intent = new Intent(activity, ModInfoFotoActivity.class);
         ArrayList<String> fotoUris = new ArrayList<>();
         if ((requestCode == GALLERY_PICTURE || requestCode == GALLERY_PICTURE_KITKAT) && resultCode == Activity.RESULT_OK) {
             //singola immagine
             if (data.getData() != null) {
-                intent = new Intent(activity, ModInfoFotoActivity.class);
-                if (requestCode == GALLERY_PICTURE_KITKAT)
-                    activity.getContentResolver().takePersistableUriPermission(data.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                fotoUris.add(data.getData().toString());
+                String path = data.getData().toString();
+                if (requestCode == GALLERY_PICTURE_KITKAT) {
+                    path = "file:/" + getGalleryPhotoPath(data.getData(), activity.getContentResolver());
+                }
+                fotoUris.add(path);
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             } else if (data.getClipData() != null) {
-                intent = new Intent(activity, ModInfoFotoActivity.class);
                 ClipData clipData = data.getClipData();
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     ClipData.Item item = clipData.getItemAt(i);
-                    if (requestCode == GALLERY_PICTURE_KITKAT)
-                        activity.getContentResolver().takePersistableUriPermission(item.getUri(), Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    fotoUris.add(item.getUri().toString());
+                    String path = item.getUri().toString();
+                    if (requestCode == GALLERY_PICTURE_KITKAT) {
+                        path = "file:/" + getGalleryPhotoPath(item.getUri(), activity.getContentResolver());
+                    }
+                    fotoUris.add(path);
                 }
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             }
         } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            intent = new Intent(activity, ModInfoFotoActivity.class);
             fotoUris.add(imageUri.toString());
             intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, CAMERA_REQUEST);
         }
-        if (intent != null) {
-            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
-            if (idViaggio != -1)
-                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
-            if (idCitta != -1)
-                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, idCitta);
-            if (idPosto != -1)
-                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, idPosto);
-            activity.startActivity(intent);
-        }
+        intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
+        if (idViaggio != -1)
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
+        if (idCitta != -1)
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, idCitta);
+        if (idPosto != -1)
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, idPosto);
+        activity.startActivity(intent);
     }
 
     /**
@@ -170,6 +173,23 @@ public class PhotoUtils {
             dir.mkdir();
         }
         return File.createTempFile(part, PHOTO_POSTFIX, dir);
+    }
+
+    @TargetApi(19)
+    private static String getGalleryPhotoPath (Uri imageUri, ContentResolver resolver) {
+        String wholeID = DocumentsContract.getDocumentId(imageUri);
+        String id = wholeID.split(":")[1];
+        String [] projection = { MediaStore.Images.Media.DATA };
+        String selection = MediaStore.Images.Media._ID + "=?";
+        String [] selectionArgs = { id };
+        Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
+        String filePath = null;
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return filePath;
     }
 
 }
