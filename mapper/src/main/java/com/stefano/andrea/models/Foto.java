@@ -15,10 +15,13 @@ public class Foto implements Parcelable {
     private long idViaggio;
     private long idCitta;
     private long idPosto;
+    private int idMediaStore;
+    private int camera;
 
     public Foto () {
         this.id = -1;
         this.idPosto = -1;
+        this.camera = 0;
     }
 
     public Foto (Parcel pc) {
@@ -29,6 +32,8 @@ public class Foto implements Parcelable {
         idViaggio = pc.readLong();
         idCitta = pc.readLong();
         idPosto = pc.readLong();
+        idMediaStore = pc.readInt();
+        camera = pc.readInt();
     }
 
     public long getId() {
@@ -87,6 +92,22 @@ public class Foto implements Parcelable {
         this.idPosto = idPosto;
     }
 
+    public int getIdMediaStore() {
+        return idMediaStore;
+    }
+
+    public void setIdMediaStore(int idMediaStore) {
+        this.idMediaStore = idMediaStore;
+    }
+
+    public int getCamera() {
+        return camera;
+    }
+
+    public void setCamera(int camera) {
+        this.camera = camera;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -101,6 +122,8 @@ public class Foto implements Parcelable {
         dest.writeLong(idViaggio);
         dest.writeLong(idCitta);
         dest.writeLong(idPosto);
+        dest.writeInt(idMediaStore);
+        dest.writeInt(camera);
     }
 
     public static final Parcelable.Creator<Foto> CREATOR = new Parcelable.Creator<Foto>() {

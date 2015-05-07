@@ -126,7 +126,7 @@ public class PhotoUtils {
             if (data.getData() != null) {
                 String path = data.getData().toString();
                 if (requestCode == GALLERY_PICTURE_KITKAT) {
-                    path = "file:/" + getGalleryPhotoPath(data.getData(), activity.getContentResolver());
+                    path = "file://" + getGalleryPhotoPath(data.getData(), activity.getContentResolver());
                 }
                 fotoUris.add(path);
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);

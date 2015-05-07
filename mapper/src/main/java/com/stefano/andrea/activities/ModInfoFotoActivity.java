@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -102,6 +103,8 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         inizializzaCitta(idCitta);
         //inizializzo posto
         inizializzaPosto(idPosto);
+        //acquisisco id dell'immagine nel MediaStore
+        getMediaStoreId(mImagePath.get(0));
     }
 
 
@@ -126,12 +129,16 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     for (int i = 0; i < mImagePath.size(); i++) {
                         Foto foto = new Foto();
                         foto.setPath(mImagePath.get(i));
+                        foto.setIdMediaStore(getMediaStoreId(foto.getPath()));
+                        //TODO: recuperare info lat / lon dal MediaStore
                         foto.setLatitudine(mCittaSelezionata.getLatitudine());
                         foto.setLongitudine(mCittaSelezionata.getLongitudine());
                         foto.setIdViaggio(mViaggioSelezionato.getId());
                         foto.setIdCitta(mCittaSelezionata.getId());
                         if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
                             foto.setIdPosto(mPostoSelezionato.getId());
+                        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
+                            foto.setCamera(1);
                         elencoFoto.add(foto);
                     }
                     new InsertTask<>(this, mResolver, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
@@ -448,6 +455,25 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                 mPostoText.setClickable(false);
                 mAddPostoButton.setClickable(false);
         }
+    }
+
+    /**
+     * Resistuisce l'id della foto nel MediaSotre
+     * @param path Il percorso della foto
+     * @return L'id richiesto
+     */
+    private int getMediaStoreId (String path) {
+        String [] projection = { MediaStore.Images.Media._ID };
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        String [] selectionArgs = { path.substring(7) };
+        Cursor cursor = mResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
+        int id = -1;
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(columnIndex);
+        }
+        cursor.close();
+        return id;
     }
 
     /**
