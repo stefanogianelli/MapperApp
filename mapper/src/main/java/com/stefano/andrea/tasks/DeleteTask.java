@@ -137,8 +137,9 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
                 boolean res = foto.delete();
             }
             //cancello il riferimento dal database
-            Uri uri = ContentUris.withAppendedId(MapperContract.Foto.CONTENT_URI, item.getId());
-            return mResolver.delete(uri, null, null);
+            String selection = MapperContract.Foto.ID + "=?";
+            String [] selectionArgs = {Long.toString(item.getId())};
+            return mResolver.delete(MapperContract.Foto.CONTENT_URI, selection, selectionArgs);
         }
     }
 
