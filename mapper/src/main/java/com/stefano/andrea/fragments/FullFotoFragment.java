@@ -137,7 +137,7 @@ public class FullFotoFragment extends Fragment {
         }
 
         @Override
-        public Object instantiateItem(ViewGroup view, int position) {
+        public Object instantiateItem(final ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_full_image, view, false);
             final ImageViewTouch imageView = (ImageViewTouch) imageLayout.findViewById(R.id.image);
             //imageView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_IF_BIGGER);
@@ -145,6 +145,14 @@ public class FullFotoFragment extends Fragment {
                 @Override
                 public void onSingleTapConfirmed() {
                     toggleHideyBar();
+                    // Nascondo la toolbar
+                    int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+                    boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+                    if(isImmersiveModeEnabled){
+                        ((ActionBarActivity) mParentActivity).getSupportActionBar().hide();
+                    }else{
+                        ((ActionBarActivity) mParentActivity).getSupportActionBar().show();
+                    }
                 }
             });
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
