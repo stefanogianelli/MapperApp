@@ -54,6 +54,8 @@
     <dimen name="num_foto_padding_top">6dp</dimen>
     <dimen name="num_foto_padding_bottom">3dp</dimen>
 
+    <!-- foto_item degli elenchi foto (grid_item_foto_viaggio_layout) -->
+    <dimen name="foto_item_height">100dp</dimen>
 
 
 </resources>

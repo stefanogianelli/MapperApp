@@ -132,6 +132,17 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        /*
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.left=-3;
+                outRect.right=-3;
+                outRect.top=-3;
+                outRect.bottom=-3;
+            }
+        }); */
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
