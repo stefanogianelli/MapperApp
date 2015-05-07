@@ -109,7 +109,6 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         values.clear();
         values.put(MapperContract.Citta.ID_VIAGGIO, 1);
         values.put(MapperContract.Citta.ID_DATI_CITTA, id);
-        values.put(MapperContract.Citta.PERCENTUALE, 0);
         Uri cittaInViaggio = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
         //elimino la citta appena creata
         mResolver.delete(cittaInViaggio, null, null);
@@ -126,7 +125,6 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         ContentValues values = new ContentValues();
         values.put(MapperContract.Citta.ID_VIAGGIO, 1);
         values.put(MapperContract.Citta.ID_DATI_CITTA, 1);
-        values.put(MapperContract.Citta.PERCENTUALE, 0);
         Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
         assertNotNull(uri);
         assertEquals(uri.getLastPathSegment(), "1");
