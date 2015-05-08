@@ -83,7 +83,7 @@ public final class MapperContract {
         String ID = "id_foto";
         /** Percorso dove andare a recuperare la foto */
         String PATH = "path";
-        /** Data in cui e stata scattata la foto */
+        /** Data in cui e stata scattata la foto, a partire dal 1 Gennaio 1970 */
         String DATA = "data";
         /** Latitudine dove e stata scattata la foto */
         String LATITUDINE = "latitudine";
@@ -95,6 +95,10 @@ public final class MapperContract {
         String ID_CITTA = "ref_citta";
         /** ID del luogo dove e stata scattata la foto */
         String ID_POSTO = "ref_posto";
+        /** ID della foto nel MediaStore */
+        String ID_MEDIA_STORE = "id_media_store";
+        /** 1 se la foto e' stata scattata tramite l'app */
+        String CAMERA = "camera";
     }
 
     /** Nome dell'authority */
@@ -185,7 +189,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.foto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.foto";
 
-        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_VIAGGIO, ID_CITTA, ID_POSTO};
+        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_VIAGGIO, ID_CITTA, ID_POSTO, ID_MEDIA_STORE, CAMERA};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = FotoColumns.DATA + " ASC";

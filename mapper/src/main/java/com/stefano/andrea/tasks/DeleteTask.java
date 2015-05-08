@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Citta;
@@ -14,7 +15,6 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -132,9 +132,10 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int cancellaItem(Foto item) {
             //cancello il file se scattato dall'app
-            if (item.getPath().contains("Mapper")) {
-                File foto = new File(item.getPath().substring(7));
-                boolean res = foto.delete();
+            if (item.getCamera() == 1) {
+                String selection = MediaStore.Images.Media._ID + "=?";
+                String [] selectionArgs = { Integer.toString(item.getIdMediaStore()) };
+                mResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, selectionArgs);
             }
             //cancello il riferimento dal database
             String selection = MapperContract.Foto.ID + "=?";

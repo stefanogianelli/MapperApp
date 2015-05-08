@@ -119,11 +119,12 @@ public class PhotoUtils {
      * @param idPosto L'id del posto
      */
     public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta, long idPosto) {
-        Intent intent = new Intent(activity, ModInfoFotoActivity.class);
+        Intent intent = null;
         ArrayList<String> fotoUris = new ArrayList<>();
         if ((requestCode == GALLERY_PICTURE || requestCode == GALLERY_PICTURE_KITKAT) && resultCode == Activity.RESULT_OK) {
             //singola immagine
             if (data.getData() != null) {
+                intent = new Intent(activity, ModInfoFotoActivity.class);
                 String path = data.getData().toString();
                 if (requestCode == GALLERY_PICTURE_KITKAT) {
                     path = "file://" + getGalleryPhotoPath(data.getData(), activity.getContentResolver());
@@ -131,6 +132,7 @@ public class PhotoUtils {
                 fotoUris.add(path);
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             } else if (data.getClipData() != null) {
+                intent = new Intent(activity, ModInfoFotoActivity.class);
                 ClipData clipData = data.getClipData();
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     ClipData.Item item = clipData.getItemAt(i);
@@ -143,20 +145,23 @@ public class PhotoUtils {
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             }
         } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            intent = new Intent(activity, ModInfoFotoActivity.class);
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             mediaScanIntent.setData(imageUri);
             activity.sendBroadcast(mediaScanIntent);
             fotoUris.add(imageUri.toString());
             intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, CAMERA_REQUEST);
         }
-        intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
-        if (idViaggio != -1)
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
-        if (idCitta != -1)
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, idCitta);
-        if (idPosto != -1)
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, idPosto);
-        activity.startActivity(intent);
+        if (intent != null) {
+            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
+            if (idViaggio != -1)
+                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
+            if (idCitta != -1)
+                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, idCitta);
+            if (idPosto != -1)
+                intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, idPosto);
+            activity.startActivity(intent);
+        }
     }
 
     /**

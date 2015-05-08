@@ -31,7 +31,6 @@ import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.PhotoUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +49,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     private ContentResolver mResolver;
     private boolean mFotoSalvata = false;
+    private boolean mFotoCancellata = false;
     private ImageView mImageView;
     private TextView mCountImages;
     private TextView mViaggioText;
@@ -103,8 +103,6 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         inizializzaCitta(idCitta);
         //inizializzo posto
         inizializzaPosto(idPosto);
-        //acquisisco id dell'immagine nel MediaStore
-        getMediaStoreId(mImagePath.get(0));
     }
 
 
@@ -151,9 +149,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             }
             return true;
         } else if (id == R.id.action_annula_foto) {
-            boolean res = cancellaFoto();
             if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
-                if (res)
+                mFotoCancellata = cancellaFoto();
+                if (mFotoCancellata)
                     Log.d(TAG, "Foto cancellata con successo");
                 else
                     Log.d(TAG, "Errore durante l'eliminazione della foto");
@@ -459,7 +457,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     /**
      * Resistuisce l'id della foto nel MediaSotre
-     * @param path Il percorso della foto
+     * @param path Il percorso assoluto della foto
      * @return L'id richiesto
      */
     private int getMediaStoreId (String path) {
@@ -478,23 +476,27 @@ public class ModInfoFotoActivity extends ActionBarActivity {
 
     /**
      * Cancella la foto selezionata
-     * Funziona solo se la foto e' stata scattata dalla fotocamera
-     * @return true se il file e' stato eliminato, falso se si e' verificato un errore o il file era
-     * stato aggiunto dalla galleria
+     * Da richiamare solo se la foto e' stata scattata dalla fotocamera
+     * @return true se il file e' stato eliminato, falso se si e' verificato un errore o il file non e' stato trovato
      */
     private boolean cancellaFoto () {
-        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
-            File file = new File(mImagePath.get(0).substring(7));
-            return file.delete();
-        } else
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        String [] selectionArgs = {mImagePath.get(0).substring(7)};
+        int count = mResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, selectionArgs);
+        if (count > 0)
+            return true;
+        else
             return false;
     }
 
     @Override
     protected void onDestroy() {
+        //TODO: trovare fix per il fatto che la funzione non venga sempre chiamata
         super.onDestroy();
-        if (!mFotoSalvata)
-            cancellaFoto();
+        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST && !mFotoSalvata && !mFotoCancellata) {
+            boolean res = cancellaFoto();
+            Log.v(TAG, "onDestroy: cancellata immagine? " + res);
+        }
     }
 
     /** Adapter per lo spinner dei viaggi */

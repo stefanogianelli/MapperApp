@@ -61,6 +61,8 @@ public class FotoLoader extends BaseAsyncTaskLoader<List<Foto>> {
                 foto.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_VIAGGIO)));
                 foto.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_CITTA)));
                 foto.setIdPosto(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_POSTO)));
+                foto.setIdMediaStore(c.getInt(c.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE)));
+                foto.setCamera(c.getInt(c.getColumnIndex(MapperContract.Foto.CAMERA)));
                 elencoFoto.add(foto);
             }
             c.close();
