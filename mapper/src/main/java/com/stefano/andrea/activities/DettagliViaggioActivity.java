@@ -14,6 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
+import com.nineoldandroids.view.ViewHelper;
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.loaders.FotoLoader;
@@ -23,10 +27,15 @@ import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
-public class DettagliViaggioActivity extends ActionBarActivity {
+public class DettagliViaggioActivity extends ActionBarActivity implements ObservableScrollViewCallbacks {
 
     private long mIdViaggio;
     private Uri mImageUri;
+    private View mImageView;
+    private View mToolbarView;
+    private int mParallaxImageHeight;
+    private View mListBackgroundView;
+    private SlidingTabLayout mTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +46,24 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         String mNomeViaggio = context.getNomeViaggio();
         mIdViaggio = context.getIdViaggio();
         //acquisito riferimenti
-        View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
+        mImageView = findViewById(R.id.image);
+        mToolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
+        mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.test);
+        mListBackgroundView = findViewById(R.id.list_background);
+        final View contentView = getWindow().getDecorView().findViewById(android.R.id.content);
+        contentView.post(new Runnable() {
+            @Override
+            public void run() {
+                // mListBackgroundView's should fill its parent vertically
+                // but the height of the content view is 0 on 'onCreate'.
+                // So we should get it with post().
+                mListBackgroundView.getLayoutParams().height = contentView.getHeight();
+            }
+        });
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         //attivo action bar
-        setSupportActionBar((Toolbar) toolbarView);
+        setSupportActionBar((Toolbar) mToolbarView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
@@ -50,14 +72,14 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         //assegno al pager l'adapter
         pager.setAdapter(mAdapter);
         //configuro le tab
-        tabs.setDistributeEvenly(true);
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        mTabs.setDistributeEvenly(true);
+        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-        tabs.setViewPager(pager);
+        mTabs.setViewPager(pager);
     }
 
     @Override
@@ -91,6 +113,28 @@ public class DettagliViaggioActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, -1);
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+        int baseColor = getResources().getColor(R.color.orange);
+        float alpha = Math.min(1, (float) scrollY / mParallaxImageHeight);
+        mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
+        ViewHelper.setTranslationY(mImageView, -scrollY / 2);
+
+        // Translate list background
+        ViewHelper.setTranslationY(mListBackgroundView, Math.max(0, -scrollY + mParallaxImageHeight));
+        ViewHelper.setTranslationY(mTabs, Math.max(0, -scrollY + mParallaxImageHeight));
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+
     }
 
     private class TabDettagliViaggioAdapter extends FragmentStatePagerAdapter {
