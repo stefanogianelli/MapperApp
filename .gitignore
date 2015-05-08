@@ -41,3 +41,7 @@ local.properties
 
 # Sandbox stuff
 _sandbox
+
+#Certificate File
+mapper/release.jks
+mapper/signing.properties
