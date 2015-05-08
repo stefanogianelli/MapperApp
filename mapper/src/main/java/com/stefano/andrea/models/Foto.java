@@ -10,6 +10,7 @@ public class Foto implements Parcelable {
 
     private long id;
     private String path;
+    private int data;
     private double latitudine;
     private double longitudine;
     private long idViaggio;
@@ -27,6 +28,7 @@ public class Foto implements Parcelable {
     public Foto (Parcel pc) {
         id = pc.readLong();
         path = pc.readString();
+        data = pc.readInt();
         latitudine = pc.readDouble();
         longitudine = pc.readDouble();
         idViaggio = pc.readLong();
@@ -50,6 +52,14 @@ public class Foto implements Parcelable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public int getData() {
+        return data;
+    }
+
+    public void setData(int data) {
+        this.data = data;
     }
 
     public double getLatitudine() {
@@ -117,6 +127,7 @@ public class Foto implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(path);
+        dest.writeInt(data);
         dest.writeDouble(latitudine);
         dest.writeDouble(longitudine);
         dest.writeLong(idViaggio);

@@ -357,6 +357,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 Foto foto = elencoFoto.get(i);
                 values.clear();
                 values.put(MapperContract.Foto.PATH, foto.getPath());
+                values.put(MapperContract.Foto.DATA, foto.getData());
                 values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
                 values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
                 values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());

@@ -56,6 +56,7 @@ public class FotoLoader extends BaseAsyncTaskLoader<List<Foto>> {
                 Foto foto = new Foto();
                 foto.setId(c.getLong(c.getColumnIndex(MapperContract.Foto.ID)));
                 foto.setPath(c.getString(c.getColumnIndex(MapperContract.Foto.PATH)));
+                foto.setData(c.getInt(c.getColumnIndex(MapperContract.Foto.DATA)));
                 foto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Foto.LATITUDINE)));
                 foto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Foto.LONGITUDINE)));
                 foto.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_VIAGGIO)));

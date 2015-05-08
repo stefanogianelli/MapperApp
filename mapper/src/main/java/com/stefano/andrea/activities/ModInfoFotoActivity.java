@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.models.ImageDetails;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -127,10 +128,19 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                     for (int i = 0; i < mImagePath.size(); i++) {
                         Foto foto = new Foto();
                         foto.setPath(mImagePath.get(i));
-                        foto.setIdMediaStore(getMediaStoreId(foto.getPath()));
-                        //TODO: recuperare info lat / lon dal MediaStore
-                        foto.setLatitudine(mCittaSelezionata.getLatitudine());
-                        foto.setLongitudine(mCittaSelezionata.getLongitudine());
+                        //acquisisco dettagli dell'immagine
+                        ImageDetails dettagli = getMediaStoreData(foto.getPath());
+                        foto.setIdMediaStore(dettagli.getIdMediaStore());
+                        foto.setData(dettagli.getData());
+                        double lat = dettagli.getLatitudine();
+                        double lon = dettagli.getLongitudine();
+                        if (lat == 0 && lon == 0) {
+                            foto.setLatitudine(mCittaSelezionata.getLatitudine());
+                            foto.setLongitudine(mCittaSelezionata.getLongitudine());
+                        } else {
+                            foto.setLatitudine(lat);
+                            foto.setLongitudine(lon);
+                        }
                         foto.setIdViaggio(mViaggioSelezionato.getId());
                         foto.setIdCitta(mCittaSelezionata.getId());
                         if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
@@ -456,22 +466,24 @@ public class ModInfoFotoActivity extends ActionBarActivity {
     }
 
     /**
-     * Resistuisce l'id della foto nel MediaSotre
+     * Acquisisce i dettagli di un'immagine
      * @param path Il percorso assoluto della foto
-     * @return L'id richiesto
+     * @return I dati dell'immagine
      */
-    private int getMediaStoreId (String path) {
-        String [] projection = { MediaStore.Images.Media._ID };
+    private ImageDetails getMediaStoreData (String path) {
+        ImageDetails dettagli = new ImageDetails();
+        String [] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE };
         String selection = MediaStore.Images.Media.DATA + "=?";
         String [] selectionArgs = { path.substring(7) };
         Cursor cursor = mResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
-        int id = -1;
-        int columnIndex = cursor.getColumnIndex(projection[0]);
         if (cursor.moveToFirst()) {
-            id = cursor.getInt(columnIndex);
+            dettagli.setIdMediaStore(cursor.getInt(cursor.getColumnIndex(projection[0])));
+            dettagli.setData(cursor.getInt(cursor.getColumnIndex(projection[1])));
+            dettagli.setLatitudine(cursor.getDouble(cursor.getColumnIndex(projection[2])));
+            dettagli.setLongitudine(cursor.getDouble(cursor.getColumnIndex(projection[3])));
         }
         cursor.close();
-        return id;
+        return dettagli;
     }
 
     /**
