@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
+import com.stefano.andrea.fragments.MappaFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
@@ -95,8 +96,8 @@ public class DettagliViaggioActivity extends ActionBarActivity {
 
     private class TabDettagliViaggioAdapter extends FragmentStatePagerAdapter {
 
-        private CharSequence [] mTitles = {"Dettagli", "Foto"};
-        private int mNumbOfTabs = 2;
+        private CharSequence [] mTitles = {"Dettagli", "Foto", "Mappa"};
+        private int mNumbOfTabs = 3;
 
         public TabDettagliViaggioAdapter(FragmentManager fm) {
             super(fm);
@@ -106,8 +107,10 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             if(position == 0) {
                 return DettagliViaggioFragment.newInstance(mIdViaggio);
-            } else {
+            } else if (position == 1) {
                 return ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO);
+            } else {
+                return MappaFragment.newInstance();
             }
         }
 

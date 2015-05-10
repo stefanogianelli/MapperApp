@@ -24,15 +24,6 @@ import android.view.ViewGroup;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
@@ -50,7 +41,7 @@ import java.util.List;
 /**
  * DettagliViaggioFragment
  */
-public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, DialogHelper.AggiungiCittaCallback, OnMapReadyCallback {
+public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, DialogHelper.AggiungiCittaCallback {
 
     private static final int CITTA_LOADER = 0;
     private static final String ID_VIAGGIO = "id_viaggio";
@@ -62,7 +53,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private CustomFAB mFab;
     private Activity mParentActivity;
     private MapperContext mContext;
-    private GoogleMap mMap;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -154,7 +144,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         //acquisisco riferimenti
         mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
         ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
@@ -177,8 +166,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 }
             }
         });
-        //configuro mappa
-        mapFragment.getMapAsync(this);
         return v;
     }
 
@@ -249,7 +236,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             case CITTA_LOADER:
                 mAdapter.setElencoCitta(data);
                 mElencoCitta = data;
-                setMarkers();
         }
     }
 
@@ -260,32 +246,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             case CITTA_LOADER:
                 mAdapter.setElencoCitta(null);
                 mElencoCitta = null;
-                mMap.clear();
         }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap map) {
-        mMap = map;
-    }
-
-    private void setMarkers () {
-        if (mMap != null && mElencoCitta != null) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            if (mElencoCitta.size() > 0) {
-                for (Citta c : mElencoCitta) {
-                    Marker marker = mMap.addMarker(createMarker(c));
-                    builder.include(marker.getPosition());
-                }
-                LatLngBounds bounds = builder.build();
-                int padding = 150; // offset from edges of the map in pixels
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                mMap.animateCamera(cu);
-            }
-        }
-    }
-
-    private MarkerOptions createMarker (Citta citta) {
-        return new MarkerOptions().position(new LatLng(citta.getLatitudine(), citta.getLongitudine())).title(citta.getNome());
     }
 }
