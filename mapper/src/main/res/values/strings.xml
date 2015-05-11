@@ -74,7 +74,10 @@
     <string name="formato">Formato</string>
     <string name="dimensione">Dimensione</string>
     <string name="risoluzione">Risoluzione</string>
+    <string name="fotocamera">Fotocamera</string>
+    <string name="exif">EXIF</string>
     <string name="data">Data</string>
+    <string name="indirizzo">Indirizzo</string>
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
