@@ -37,19 +37,23 @@ public class CoordinateLoader extends BaseAsyncTaskLoader<List<GeoInfo>> {
     public List<GeoInfo> loadInBackground() {
         List<GeoInfo> elenco = new ArrayList<>();
         Uri uri;
-        String [] projection = new String[3];
+        String [] projection = new String[5];
         switch (mType) {
             case ELENCO_CITTA:
                 uri = MapperContract.Citta.DETTAGLI_VIAGGIO_URI;
                 projection[0] = MapperContract.DatiCitta.NOME;
                 projection[1] = MapperContract.DatiCitta.LATITUDINE;
                 projection[2] = MapperContract.DatiCitta.LONGITUDINE;
+                projection[3] = MapperContract.Citta.COUNT_FOTO;
+                projection[4] = MapperContract.Citta.ID_CITTA;
                 break;
             case ELENCO_POSTI:
                 uri = MapperContract.Posto.POSTI_IN_CITTA_URI;
                 projection[0] = MapperContract.Luogo.NOME;
                 projection[1] = MapperContract.Luogo.LATITUDINE;
                 projection[2] = MapperContract.Luogo.LONGITUDINE;
+                projection[3] = MapperContract.Posto.COUNT_FOTO;
+                projection[4] = MapperContract.Posto.ID_POSTO;
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -60,7 +64,9 @@ public class CoordinateLoader extends BaseAsyncTaskLoader<List<GeoInfo>> {
             String nome = c.getString(c.getColumnIndex(projection[0]));
             double lat = c.getDouble(c.getColumnIndex(projection[1]));
             double lon = c.getDouble(c.getColumnIndex(projection[2]));
-            elenco.add(new GeoInfo(nome, lat, lon));
+            int countFoto = c.getInt(c.getColumnIndex(projection[3]));
+            long id = c.getLong(c.getColumnIndex(projection[4]));
+            elenco.add(new GeoInfo(id, nome, lat, lon, countFoto));
         }
         c.close();
         return elenco;

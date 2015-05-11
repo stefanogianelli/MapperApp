@@ -181,9 +181,10 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private MarkerOptions createMarker (GeoInfo item) {
+        String title = mParentActivity.getResources().getString(R.string.map_bubble_title, item.getNome(), item.getCountFoto());
         return new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(item.getNome())))
-                .position(new LatLng(item.getLatitudine(), item.getLongitudine()));
+                .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(title)))
+                        .position(new LatLng(item.getLatitudine(), item.getLongitudine()));
     }
 
     private static LatLng move(LatLng startLL, double toNorth, double toEast) {
