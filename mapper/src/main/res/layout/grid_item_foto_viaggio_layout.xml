@@ -14,12 +14,27 @@
     android:background="@drawable/grid_color_selector"
     android:orientation="vertical">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <ImageView
         android:id="@+id/image_grid_item_foto_viaggio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
-
+    <LinearLayout
+        android:id="@+id/image_checked"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/info_background"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_check_white_48dp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+    </FrameLayout>
 
 
 </LinearLayout>

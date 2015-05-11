@@ -16,7 +16,7 @@
     <color name="light_grey">#FFB6B6B6</color>
     <color name="grey">#FF9E9E9E</color>
     <color name="dark_grey">#FF616161</color>
-    <color name="verydark_grey">#f1414141</color>
+    <color name="verydark_grey">#ff474747</color>
 
     <!-- Linea orizzontale -->
     <color name="horizontal_sep_color">#15170432</color>
