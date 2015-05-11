@@ -238,7 +238,9 @@
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
             android:text="blabla/bla/blablabla.png"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
 </LinearLayout>

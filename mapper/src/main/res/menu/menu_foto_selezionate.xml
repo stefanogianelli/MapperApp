@@ -6,4 +6,9 @@
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/cancel" />
 
+    <item
+        android:id="@+id/menu_modifica_foto"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/edit" />
+
 </menu>

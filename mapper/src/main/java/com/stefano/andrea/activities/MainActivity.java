@@ -3,6 +3,7 @@ package com.stefano.andrea.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -17,8 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
@@ -114,7 +117,17 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mFab.attachToRecyclerView(mRecyclerView);
         //Inizializzo imageloader
         if (!ImageLoader.getInstance().isInited()) {
-            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    /*.showImageForEmptyUri(R.drawable.ic_empty)
+                    .showImageOnFail(R.drawable.ic_error)   */
+                    .cacheOnDisk(true)
+                    .imageScaleType(ImageScaleType.EXACTLY)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .considerExifParams(true)
+                    .build();
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                    .defaultDisplayImageOptions(options)
+                    .build();
             ImageLoader.getInstance().init(config);
         }
     }

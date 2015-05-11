@@ -19,11 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
@@ -109,21 +106,11 @@ public class FullFotoFragment extends Fragment {
     private class ImageAdapter extends PagerAdapter {
 
         private LayoutInflater inflater;
-        private DisplayImageOptions options;
 
         public ImageAdapter(Context context) {
             inflater = LayoutInflater.from(context);
 
-            options = new DisplayImageOptions.Builder()
-                    /*.showImageForEmptyUri(R.drawable.ic_empty)
-                    .showImageOnFail(R.drawable.ic_error)   */
-                    .resetViewBeforeLoading(true)  //togliere
-                    .cacheOnDisk(true)
-                    .imageScaleType(ImageScaleType.EXACTLY)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .considerExifParams(true)
-                    .displayer(new FadeInBitmapDisplayer(300)) // togliere
-                    .build();
+
         }
 
         @Override
@@ -157,7 +144,7 @@ public class FullFotoFragment extends Fragment {
             });
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
-            ImageLoader.getInstance().loadImage(mElencoFoto.get(position).getPath(), options, new SimpleImageLoadingListener() {
+            ImageLoader.getInstance().loadImage(mElencoFoto.get(position).getPath(), new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     spinner.setVisibility(View.VISIBLE);
