@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.utils.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,9 @@ public class FullFotoFragment extends Fragment {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             getFragmentManager().popBackStack();
+            return true;
+        } else if (id == R.id.action_dettagli) {
+            DialogHelper.showDettagliFotoDialog(mParentActivity);
             return true;
         }
         return super.onOptionsItemSelected(item);
