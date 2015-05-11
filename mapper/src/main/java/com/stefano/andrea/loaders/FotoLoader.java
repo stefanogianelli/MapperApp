@@ -51,23 +51,21 @@ public class FotoLoader extends BaseAsyncTaskLoader<List<Foto>> {
                 throw new UnsupportedOperationException("Operazione non consentita");
         }
         Cursor c = mResolver.query(uri, MapperContract.Foto.PROJECTION_ALL, null, null, MapperContract.Foto.DEFAULT_SORT);
-        if (c != null) {
-            while (c.moveToNext()) {
-                Foto foto = new Foto();
-                foto.setId(c.getLong(c.getColumnIndex(MapperContract.Foto.ID)));
-                foto.setPath(c.getString(c.getColumnIndex(MapperContract.Foto.PATH)));
-                foto.setData(c.getInt(c.getColumnIndex(MapperContract.Foto.DATA)));
-                foto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Foto.LATITUDINE)));
-                foto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Foto.LONGITUDINE)));
-                foto.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_VIAGGIO)));
-                foto.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_CITTA)));
-                foto.setIdPosto(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_POSTO)));
-                foto.setIdMediaStore(c.getInt(c.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE)));
-                foto.setCamera(c.getInt(c.getColumnIndex(MapperContract.Foto.CAMERA)));
-                elencoFoto.add(foto);
-            }
-            c.close();
+        while (c.moveToNext()) {
+            Foto foto = new Foto();
+            foto.setId(c.getLong(c.getColumnIndex(MapperContract.Foto.ID)));
+            foto.setPath(c.getString(c.getColumnIndex(MapperContract.Foto.PATH)));
+            foto.setData(c.getInt(c.getColumnIndex(MapperContract.Foto.DATA)));
+            foto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Foto.LATITUDINE)));
+            foto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Foto.LONGITUDINE)));
+            foto.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_VIAGGIO)));
+            foto.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_CITTA)));
+            foto.setIdPosto(c.getLong(c.getColumnIndex(MapperContract.Foto.ID_POSTO)));
+            foto.setIdMediaStore(c.getInt(c.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE)));
+            foto.setCamera(c.getInt(c.getColumnIndex(MapperContract.Foto.CAMERA)));
+            elencoFoto.add(foto);
         }
+        c.close();
         return elencoFoto;
     }
 

@@ -43,8 +43,8 @@ import java.util.List;
  */
 public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, DialogHelper.AggiungiCittaCallback {
 
-    private static final int CITTA_LOADER = 0;
-    private static final String ID_VIAGGIO = "id_viaggio";
+    private static final int CITTA_LOADER = 1;
+    private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliViaggioFragment.idViaggio";
 
     private CittaAdapter mAdapter;
     private ContentResolver mResolver;
@@ -240,12 +240,5 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Citta>> loader) {
-        int id = loader.getId();
-        switch (id) {
-            case CITTA_LOADER:
-                mAdapter.setElencoCitta(null);
-                mElencoCitta = null;
-        }
-    }
+    public void onLoaderReset(Loader<List<Citta>> loader) { }
 }

@@ -32,23 +32,21 @@ public class CittaLoader extends BaseAsyncTaskLoader<List<Citta>> {
         List<Citta> elencoCitta = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mIdViaggio);
         Cursor c = mResolver.query(uri, MapperContract.Citta.PROJECTION_ALL, null, null, MapperContract.Citta.DEFAULT_SORT);
-        if (c != null) {
-            while (c.moveToNext()) {
-                Citta citta = new Citta();
-                citta.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
-                citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
-                citta.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_VIAGGIO)));
-                citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
-                citta.setNazione(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE)));
-                citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
-                citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
-                citta.setCountPostiVisitati(c.getInt(c.getColumnIndex(MapperContract.Citta.POSTI_VISITATI)));
-                citta.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_POSTI)));
-                citta.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_FOTO)));
-                elencoCitta.add(citta);
-            }
-            c.close();
+        while (c.moveToNext()) {
+            Citta citta = new Citta();
+            citta.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
+            citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
+            citta.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_VIAGGIO)));
+            citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
+            citta.setNazione(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE)));
+            citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
+            citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
+            citta.setCountPostiVisitati(c.getInt(c.getColumnIndex(MapperContract.Citta.POSTI_VISITATI)));
+            citta.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_POSTI)));
+            citta.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_FOTO)));
+            elencoCitta.add(citta);
         }
+        c.close();
         return elencoCitta;
     }
 }

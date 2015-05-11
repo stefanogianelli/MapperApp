@@ -34,12 +34,12 @@ import java.util.List;
  */
 public class ElencoFotoFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Foto>>, FotoAdapter.FotoOnClickListener {
 
-    private static final String TAG = "com.stefano.andrea.fragments.ElencoFotoFragments";
+    private static final String TAG = "ElencoFotoFragments";
 
-    private static final String EXTRA_ID = "id_elenco_foto";
-    private static final String EXTRA_TIPO_ELENCO = "tipo_elenco";
+    private static final String EXTRA_ID = "com.stefano.andrea.fragments.ElencoFotoFragment.id";
+    private static final String EXTRA_TIPO_ELENCO = "com.stefano.andrea.fragments.ElencoFotoFragment.tipoElenco";
 
-    private static final int FOTO_LOADER = 0;
+    private static final int FOTO_LOADER = 3;
 
     private int mTipoElenco;
     private long mId;
@@ -176,13 +176,6 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Foto>> loader) {
-        int id = loader.getId();
-        switch (id) {
-            case FOTO_LOADER:
-                mAdapter.setElencoFoto(null);
-                mElencoFoto = null;
-        }
-    }
+    public void onLoaderReset(Loader<List<Foto>> loader) { }
 
 }

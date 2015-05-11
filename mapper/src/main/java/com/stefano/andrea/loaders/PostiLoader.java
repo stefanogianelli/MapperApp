@@ -32,21 +32,19 @@ public class PostiLoader extends BaseAsyncTaskLoader<List<Posto>> {
         List<Posto> elencoPosti = new ArrayList<>();
         Uri uri = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mIdCitta);
         Cursor c = mResolver.query(uri, MapperContract.Posto.PROJECTION_ALL, null, null, MapperContract.Posto.DEFAULT_SORT);
-        if (c != null) {
-            while (c.moveToNext()) {
-                Posto posto = new Posto();
-                posto.setId(c.getLong(c.getColumnIndex(MapperContract.Posto.ID_POSTO)));
-                posto.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Posto.ID_CITTA)));
-                posto.setIdLuogo(c.getLong(c.getColumnIndex(MapperContract.Posto.ID_LUOGO)));
-                posto.setVisitato(c.getInt(c.getColumnIndex(MapperContract.Posto.VISITATO)));
-                posto.setNome(c.getString(c.getColumnIndex(MapperContract.Luogo.NOME)));
-                posto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LATITUDINE)));
-                posto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LONGITUDINE)));
-                posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Luogo.ID_CITTA)));
-                elencoPosti.add(posto);
-            }
-            c.close();
+        while (c.moveToNext()) {
+            Posto posto = new Posto();
+            posto.setId(c.getLong(c.getColumnIndex(MapperContract.Posto.ID_POSTO)));
+            posto.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Posto.ID_CITTA)));
+            posto.setIdLuogo(c.getLong(c.getColumnIndex(MapperContract.Posto.ID_LUOGO)));
+            posto.setVisitato(c.getInt(c.getColumnIndex(MapperContract.Posto.VISITATO)));
+            posto.setNome(c.getString(c.getColumnIndex(MapperContract.Luogo.NOME)));
+            posto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LATITUDINE)));
+            posto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LONGITUDINE)));
+            posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Luogo.ID_CITTA)));
+            elencoPosti.add(posto);
         }
+        c.close();
         return elencoPosti;
     }
 }

@@ -224,12 +224,5 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Viaggio>> loader) {
-        int id = loader.getId();
-        switch (id) {
-            case VIAGGI_LOADER:
-                mAdapter.setListaViaggi(null);
-                mListaViaggi = null;
-        }
-    }
+    public void onLoaderReset(Loader<List<Viaggio>> loader) { }
 }

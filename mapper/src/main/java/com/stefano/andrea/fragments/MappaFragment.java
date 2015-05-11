@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class MappaFragment extends Fragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>> {
 
-    private static final int MAP_COORD_LOADER = 10;
+    private static final int MAP_COORD_LOADER = 4;
     private static final int MAP_PADDING = 150;
     private static final String TAG = "MappaFragment";
 
@@ -117,13 +117,7 @@ public class MappaFragment extends Fragment implements OnMapReadyCallback, Loade
     }
 
     @Override
-    public void onLoaderReset(Loader<List<GeoInfo>> loader) {
-        int id = loader.getId();
-        switch (id) {
-            case MAP_COORD_LOADER:
-                markerData = null;
-        }
-    }
+    public void onLoaderReset(Loader<List<GeoInfo>> loader) { }
 
     private void setMarkers () {
         mMap.clear();

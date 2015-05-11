@@ -46,9 +46,9 @@ import java.util.List;
  */
 public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener, DialogHelper.AggiungiPostoCallback {
 
-    private static final String ID_VIAGGIO = "id_viaggio";
-    private static final String ID_CITTA = "id_citta";
-    private static final int POSTI_LOADER = 0;
+    private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliCittaFragment.idViaggio";
+    private static final String ID_CITTA = "com.stefano.andrea.fragments.DettagliCittaFragment.idCitta";
+    private static final int POSTI_LOADER = 2;
 
     private long mIdViaggio;
     private long mIdCitta;
@@ -257,13 +257,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Posto>> loader) {
-        int id = loader.getId();
-        switch (id) {
-            case POSTI_LOADER:
-                mAdapter.setElencoPosti(null);
-                mElencoPosti = null;
-        }
-    }
+    public void onLoaderReset(Loader<List<Posto>> loader) { }
 
 }
