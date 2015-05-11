@@ -18,14 +18,13 @@ import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
@@ -148,16 +147,13 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
         //acquisisco riferimenti
-        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.recyclerview_scroll);
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview_scroll);
         mFab = (CustomFAB) view.findViewById(R.id.fab_aggiunta_posto);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        if (mParentActivity instanceof ObservableScrollViewCallbacks) {
-            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
-        }
         //configuro fab
         mFab.attachToRecyclerView(mRecyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {

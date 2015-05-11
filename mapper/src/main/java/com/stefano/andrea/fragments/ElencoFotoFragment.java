@@ -12,13 +12,13 @@ import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.loaders.FotoLoader;
@@ -125,7 +125,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_elenco_foto,container,false);
         //acquisisco riferimenti
-        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
+        RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));

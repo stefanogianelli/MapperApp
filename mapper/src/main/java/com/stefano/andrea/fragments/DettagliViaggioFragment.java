@@ -3,7 +3,6 @@ package com.stefano.andrea.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,14 +15,13 @@ import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
@@ -47,7 +45,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliViaggioFragment.idViaggio";
 
     private CittaAdapter mAdapter;
-    private ContentResolver mResolver;
     private long mIdViaggio;
     private List<Citta> mElencoCitta;
     private CustomFAB mFab;
@@ -128,8 +125,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         if (getArguments() != null) {
             mIdViaggio = getArguments().getLong(ID_VIAGGIO);
         }
-        //acquisisco content resolver
-        mResolver = mParentActivity.getContentResolver();
         //creo l'adapter
         mAdapter = new CittaAdapter(mParentActivity, mCallback, this);
         //avvio il loader delle citta
@@ -143,15 +138,12 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         View v = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
         mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
-        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) v.findViewById(R.id.recyclerview_scroll);
+        RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerview_scroll);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        if (mParentActivity instanceof ObservableScrollViewCallbacks) {
-            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) mParentActivity);
-        }
         //configuro fab
         mFab.attachToRecyclerView(mRecyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {
