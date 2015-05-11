@@ -16,10 +16,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
@@ -49,6 +51,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private MapperContext mContext;
     private long mId;
     private int mType;
+    private IconGenerator mIconGenerator;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -87,6 +90,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             default:
                 mId = -1;
         }
+        mIconGenerator = new IconGenerator(mParentActivity);
+        mIconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
         if (mId != -1)
             getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
     }
@@ -176,7 +181,9 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private MarkerOptions createMarker (GeoInfo item) {
-        return new MarkerOptions().position(new LatLng(item.getLatitudine(), item.getLongitudine())).title(item.getNome());
+        return new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(item.getNome())))
+                .position(new LatLng(item.getLatitudine(), item.getLongitudine()));
     }
 
     private static LatLng move(LatLng startLL, double toNorth, double toEast) {

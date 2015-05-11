@@ -58,4 +58,5 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
+    compile 'com.google.maps.android:android-maps-utils:0.3.4'
 }
