@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
@@ -33,6 +35,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     private ViaggioOnClickListener mListener;
     private Context mContext;
     private Activity mActivity;
+    private ImageLoader mImageLoader;
 
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
@@ -45,6 +48,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         mContext = activity.getApplicationContext();
         mListener = listener;
         mActivity = activity;
+        mImageLoader = ImageLoader.getInstance();
     }
 
     public void setListaViaggi (List<Viaggio> lista) {
@@ -100,19 +104,21 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         private TextView nomeViaggio;
         private TextView viaggioLabel;
         private ImageButton button1;
+        private ImageView copertina;
 
         public ViaggiHolder(View itemView) {
             super(itemView);
             nomeViaggio = (TextView) itemView.findViewById(R.id.viaggio_item_label);
             viaggioLabel = (TextView) itemView.findViewById(R.id.viaggio_item_label_subtitle);
             button1 = (ImageButton) itemView.findViewById(R.id.button_popup_item_viaggio);
+            copertina = (ImageView) itemView.findViewById(R.id.copertina_viaggio);
         }
 
         public void bindViaggio (final Viaggio viaggio) {
             this.itemView.setTag(viaggio);
             nomeViaggio.setText(viaggio.getNome());
             viaggioLabel.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_viaggio, viaggio.getCountPosti(), viaggio.getCountCitta(), viaggio.getCountPosti(), viaggio.getCountFoto()));
-
+            mImageLoader.displayImage(viaggio.getPathFoto(), copertina);
             button1.setOnClickListener(new View.OnClickListener() {
 
                 @Override

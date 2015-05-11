@@ -263,4 +263,12 @@ public class DialogHelper {
         builder.create().show();
     }
 
+    public static void showDettagliFotoDialog (Activity activity) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_dettagli_foto, null);
+        builder.setView(v);
+        builder.create().show();
+    }
+
 }
