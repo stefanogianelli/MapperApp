@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.activities.R;
@@ -42,7 +43,13 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
     }
 
     @Override
-    public void onBindViewHolder1(FotoHolder holder, int position) {
+    public void onBindViewHolder(FotoHolder holder, int position) {
+        LinearLayout check = (LinearLayout) holder.itemView.findViewById(R.id.image_checked);
+        if (isSelected(position)) {
+            check.setVisibility(View.VISIBLE);
+        } else {
+            check.setVisibility(View.GONE);
+        }
         Foto foto = mElencoFoto.get(position);
         holder.bindFoto(foto);
     }

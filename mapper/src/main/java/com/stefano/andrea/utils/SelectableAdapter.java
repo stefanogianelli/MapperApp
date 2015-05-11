@@ -1,10 +1,8 @@
 package com.stefano.andrea.utils;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 
@@ -29,7 +27,7 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
         mCallback = callback;
     }
 
-    @Override
+    /*@Override
     public void onBindViewHolder(VH holder, int position) {
         CardView card = (CardView) holder.itemView;
         if (isSelected(position)) {
@@ -38,9 +36,7 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
             card.setCardBackgroundColor(Color.WHITE);
         }
         onBindViewHolder1(holder, position);
-    }
-
-    public abstract void onBindViewHolder1(VH holder, int position);
+    }*/
 
     /**
      * Indicates if the item at position position is selected

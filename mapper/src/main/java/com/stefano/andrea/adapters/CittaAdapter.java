@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,7 +60,13 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
     }
 
     @Override
-    public void onBindViewHolder1(CittaAdapter.CittaHolder holder, int position) {
+    public void onBindViewHolder(CittaAdapter.CittaHolder holder, int position) {
+        CardView card = (CardView) holder.itemView;
+        if (isSelected(position)) {
+            card.setCardBackgroundColor(mActivity.getResources().getColor(R.color.selected_overlay));
+        } else {
+            card.setCardBackgroundColor(Color.WHITE);
+        }
         Citta citta = mElencoCitta.get(position);
         holder.bindCitta(citta);
     }
