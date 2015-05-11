@@ -20,9 +20,9 @@ public class TabAdapter extends FragmentPagerAdapter {
     @SuppressLint("UseSparseArrays")
     public TabAdapter(FragmentManager fm) {
         super(fm);
-        mFragments = new HashMap<Integer, Fragment>(3);
-        mTabNums = new ArrayList<Integer>(3);
-        mTabTitles = new ArrayList<CharSequence>(2);
+        mFragments = new HashMap<>(3);
+        mTabNums = new ArrayList<>(3);
+        mTabTitles = new ArrayList<>(2);
     }
 
     public void addTab(String tabTitle, Fragment newFragment, int tabId) {

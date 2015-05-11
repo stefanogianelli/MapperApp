@@ -32,6 +32,10 @@ import java.util.List;
  */
 public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>> {
 
+    public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
+    public static final int MAPPA_CITTA = 0;
+    public static final int MAPPA_POSTI = 1;
+
     private static final int MAP_COORD_LOADER = 4;
     private static final int MAP_PADDING = 150;
     private static final String TAG = "MappaFragment";
@@ -40,9 +44,15 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private List<GeoInfo> markerData;
     private Activity mParentActivity;
     private MapperContext mContext;
+    private long mId;
+    private int mType;
 
-    public static MappaFragment newInstance() {
-        return new MappaFragment();
+    public static MappaFragment newInstance(int tipoMappa) {
+        MappaFragment fragment = new MappaFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_TIPO_MAPPA, tipoMappa);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public MappaFragment() { }
@@ -57,7 +67,25 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
+        Bundle args = getArguments();
+        int tipoMappa = Integer.MIN_VALUE;
+        if (args != null) {
+            tipoMappa = args.getInt(EXTRA_TIPO_MAPPA);
+        }
+        switch (tipoMappa) {
+            case MAPPA_CITTA:
+                mId = mContext.getIdViaggio();
+                mType = CoordinateLoader.ELENCO_CITTA;
+                break;
+            case MAPPA_POSTI:
+                mId = mContext.getIdCitta();
+                mType = CoordinateLoader.ELENCO_POSTI;
+                break;
+            default:
+                mId = -1;
+        }
+        if (mId != -1)
+            getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
     }
 
     @Override
@@ -79,10 +107,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public Loader<List<GeoInfo>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case MAP_COORD_LOADER:
-                if (mContext.getIdViaggio() != -1)
-                    return new CoordinateLoader(mParentActivity, mContext.getIdViaggio(), CoordinateLoader.ELENCO_CITTA);
-                else
-                    return null;
+                return new CoordinateLoader(mParentActivity, mId, mType);
             default:
                 return null;
         }

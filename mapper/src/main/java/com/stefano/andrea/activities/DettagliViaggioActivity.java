@@ -24,6 +24,10 @@ import java.io.IOException;
 
 public class DettagliViaggioActivity extends ActionBarActivity {
 
+    private static final int DETTAGLI_FRAGMENT = 0;
+    private static final int FOTO_FRAGMENT = 1;
+    private static final int MAPPA_FRAGMENT = 2;
+
     private long mIdViaggio;
     private Uri mImageUri;
 
@@ -49,9 +53,9 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         //assegno al pager l'adapter
         pager.setAdapter(adapter);
         //configuro le tab
-        adapter.addTab("Dettagli", DettagliViaggioFragment.newInstance(mIdViaggio), 0);
-        adapter.addTab("Foto", ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO), 1);
-        adapter.addTab("Mappa", MappaFragment.newInstance(), 2);
+        adapter.addTab(getString(R.string.title_tab_dettagli), DettagliViaggioFragment.newInstance(mIdViaggio), DETTAGLI_FRAGMENT);
+        adapter.addTab(getString(R.string.title_tab_foto), ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO), FOTO_FRAGMENT);
+        adapter.addTab(getString(R.string.title_tab_mappa), MappaFragment.newInstance(MappaFragment.MAPPA_CITTA), MAPPA_FRAGMENT);
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -110,36 +114,4 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, data);
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, -1);
     }
-
-    /*private class TabDettagliViaggioAdapter extends FragmentStatePagerAdapter {
-
-        private CharSequence [] mTitles = {"Dettagli", "Foto", "Mappa"};
-        private int mNumbOfTabs = 3;
-
-        public TabDettagliViaggioAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if(position == 0) {
-                return DettagliViaggioFragment.newInstance(mIdViaggio);
-            } else if (position == 1) {
-                return ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO);
-            } else {
-                return MappaFragment.newInstance();
-            }
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitles[position];
-        }
-
-        @Override
-        public int getCount() {
-            return mNumbOfTabs;
-        }
-    }*/
-
 }
