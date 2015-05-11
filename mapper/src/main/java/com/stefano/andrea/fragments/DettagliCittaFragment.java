@@ -55,7 +55,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private Activity mParentActivity;
     private ContentResolver mResolver;
     private PostiAdapter mAdapter;
-    private ObservableRecyclerView mRecyclerView;
     private CustomFAB mFab;
     private List<Posto> mElencoPosti;
     private MapperContext mContext;
@@ -149,7 +148,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
         //acquisisco riferimenti
-        mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.recyclerview_scroll);
+        ObservableRecyclerView mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.recyclerview_scroll);
         mFab = (CustomFAB) view.findViewById(R.id.fab_aggiunta_posto);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
@@ -197,7 +196,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         Posto posto = new Posto();
         posto.setNome(nomePosto);
         posto.setIdCitta(mIdCitta);
-        new InsertTask<>(mParentActivity, mResolver, mAdapter, posto).execute(InsertTask.INSERISCI_POSTO);
+        new InsertTask<>(mParentActivity, mAdapter, posto).execute(InsertTask.INSERISCI_POSTO);
     }
 
     /**
@@ -210,7 +209,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         elencoPosti.add(posto);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(mParentActivity, mResolver, mAdapter, elencoPosti, indici).execute(DeleteTask.CANCELLA_POSTO);
+        new DeleteTask<>(mParentActivity, mAdapter, elencoPosti, indici).execute(DeleteTask.CANCELLA_POSTO);
     }
 
     /**
@@ -229,7 +228,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
      * Cancella i posti selezionati dall'utente
      */
     private void cancellaElencoPosti() {
-        new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoPosti, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_POSTO);
+        new DeleteTask<>(mParentActivity, mAdapter, mElencoPosti, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_POSTO);
     }
 
     private void openDialogAddPosto(View view) {

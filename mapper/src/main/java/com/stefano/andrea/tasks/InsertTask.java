@@ -56,10 +56,10 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
     private T mItem;
     private ProgressDialog mDialog;
 
-    public InsertTask (Activity activity, ContentResolver resolver, InsertAdapter adapter, T item) {
+    public InsertTask (Activity activity, InsertAdapter adapter, T item) {
         mActivity = activity;
         mContext = activity.getApplicationContext();
-        mResolver = resolver;
+        mResolver = activity.getContentResolver();
         mAdapter = adapter;
         mItem = item;
         mDialog = new ProgressDialog(activity);

@@ -42,8 +42,8 @@ public class DialogHelper {
     /**
      * Callback invocata dal dialog della creazione del viaggio
      */
-    public interface AggiungiViaggioCallback {
-        void creaViaggio(String nomeViaggio);
+    public interface ViaggioDialogCallback {
+        void viaggioActionButton(int position, long id, String nomeViaggio);
     }
 
     /**
@@ -51,18 +51,19 @@ public class DialogHelper {
      * @param activity L'acitivity corrente
      * @param callback L'implementazione della callback di creazione del viaggio
      */
-    public static void showDialogAggiungiViaggio(Activity activity, final AggiungiViaggioCallback callback) {
+    public static void showViaggioDialog(Activity activity, final int position, final long idViaggio, final String nome, final ViaggioDialogCallback callback) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
         View v = inflater.inflate(R.layout.fragment_add_viaggio, null);
         builder.setView(v);
-
         final EditText nomeViaggio = (EditText) v.findViewById(R.id.text_add_viaggio);
+        if (nome != null && !nome.isEmpty())
+            nomeViaggio.setText(nome);
         // Add action buttons
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                callback.creaViaggio(nomeViaggio.getText().toString());
+                onViaggioPositiveButtonClick(position, idViaggio, nome, nomeViaggio, callback);
                 dialog.dismiss();
             }
         })
@@ -88,7 +89,7 @@ public class DialogHelper {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            callback.creaViaggio(nomeViaggio.getText().toString());
+                            onViaggioPositiveButtonClick(position, idViaggio, nome, nomeViaggio, callback);
                             dialog.dismiss();
                             return true;
                         default:
@@ -101,6 +102,17 @@ public class DialogHelper {
 
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+    }
+
+    private static void onViaggioPositiveButtonClick (int position, long id, String nome, EditText nomeViaggio, ViaggioDialogCallback callback) {
+        String input = nomeViaggio.getText().toString();
+        if (nome != null && !nome.isEmpty()) {
+            if (!nome.equals(input)) {
+                callback.viaggioActionButton(position, id, input);
+            }
+        } else {
+            callback.viaggioActionButton(position, id, input);
+        }
     }
 
     /**

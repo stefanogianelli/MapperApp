@@ -13,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.tasks.UpdateTask;
 import com.stefano.andrea.utils.SelectableAdapter;
 import com.stefano.andrea.utils.SelectableHolder;
 
@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * ViaggiAdapter
  */
-public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> implements DeleteTask.DeleteAdapter<Viaggio>, InsertTask.InsertAdapter<Viaggio> {
+public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> implements DeleteTask.DeleteAdapter<Viaggio>, InsertTask.InsertAdapter<Viaggio>, UpdateTask.UpdateAdapter {
 
     private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
@@ -37,6 +37,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     public interface ViaggioOnClickListener {
         void selezionatoViaggio (Viaggio viaggio);
         void rimuoviViaggio (Viaggio viaggio);
+        void rinominaViaggio (int position, Viaggio viaggio);
     }
 
     public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback) {
@@ -76,6 +77,12 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     public void insertItem(Viaggio item) {
         mListaViaggi.add(0, item);
         notifyItemInserted(0);
+    }
+
+    @Override
+    public void UpdateItem(int position, String nome) {
+        mListaViaggi.get(position).setNome(nome);
+        notifyItemChanged(position);
     }
 
     @Override
@@ -139,14 +146,14 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
                                     dialog.create().show();
                                     break;
                                 case R.id.menu_rename:
-                                       Toast.makeText(mActivity, "Vuoi rinominare : " + viaggio.getNome(), Toast.LENGTH_SHORT).show();
+                                    mListener.rinominaViaggio(getLayoutPosition(), viaggio);
                                     break;
                             }
                             return true;
                         }
                     });
 
-                    popup.show();//showing popup menu
+                    popup.show();
                 }
             });
 
