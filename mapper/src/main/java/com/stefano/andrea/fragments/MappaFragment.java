@@ -4,12 +4,12 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * MappaFragment
  */
-public class MappaFragment extends Fragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>> {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>> {
 
     private static final int MAP_COORD_LOADER = 4;
     private static final int MAP_PADDING = 150;
@@ -61,11 +61,12 @@ public class MappaFragment extends Fragment implements OnMapReadyCallback, Loade
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View mapView = super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_mappa, container, false);
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        FrameLayout layout = (FrameLayout) view.findViewById(R.id.container_mappa);
+        layout.addView(mapView, 0);
+        getMapAsync(this);
         return view;
     }
 

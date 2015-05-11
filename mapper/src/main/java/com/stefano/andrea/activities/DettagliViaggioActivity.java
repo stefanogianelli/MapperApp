@@ -3,9 +3,6 @@ package com.stefano.andrea.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.stefano.andrea.adapters.TabAdapter;
 import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.fragments.MappaFragment;
@@ -47,10 +45,13 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
         //Creo l'adapter per le tab
-        TabDettagliViaggioAdapter mAdapter = new TabDettagliViaggioAdapter(getSupportFragmentManager());
+        TabAdapter adapter = new TabAdapter(getSupportFragmentManager());
         //assegno al pager l'adapter
-        pager.setAdapter(mAdapter);
+        pager.setAdapter(adapter);
         //configuro le tab
+        adapter.addTab("Dettagli", DettagliViaggioFragment.newInstance(mIdViaggio), 0);
+        adapter.addTab("Foto", ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO), 1);
+        adapter.addTab("Mappa", MappaFragment.newInstance(), 2);
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -110,7 +111,7 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, -1);
     }
 
-    private class TabDettagliViaggioAdapter extends FragmentStatePagerAdapter {
+    /*private class TabDettagliViaggioAdapter extends FragmentStatePagerAdapter {
 
         private CharSequence [] mTitles = {"Dettagli", "Foto", "Mappa"};
         private int mNumbOfTabs = 3;
@@ -139,5 +140,6 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         public int getCount() {
             return mNumbOfTabs;
         }
-    }
+    }*/
+
 }
