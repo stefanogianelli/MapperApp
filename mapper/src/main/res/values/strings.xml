@@ -29,8 +29,8 @@
     <string name="image">Immagine</string>
 
     <!-- MainActivity -->
-    <string name="add_viaggio">Nome del viaggio?</string>
-    <string name="add_citta">Quale città?</string>
+    <string name="add_viaggio">Nome del viaggio</string>
+    <string name="add_citta">Nome della città</string>
     <string name="add_citta_nn">In quale nazione?</string>
     <plurals name="statistiche_viaggio">
         <item quantity="one">%1$d citta, %2$d posto, %3$d foto</item>
