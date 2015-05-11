@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.BaseAsyncTaskLoader;
@@ -22,7 +23,7 @@ public class CittaLoader extends BaseAsyncTaskLoader<List<Citta>> {
     private long mIdViaggio;
 
     public CittaLoader(Context context, long idViaggio) {
-        super(context);
+        super(context, MapperIntent.UPDATE_CITTA);
         mResolver = context.getContentResolver();
         mIdViaggio = idViaggio;
     }

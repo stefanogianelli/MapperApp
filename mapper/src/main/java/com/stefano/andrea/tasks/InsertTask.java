@@ -6,12 +6,14 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
@@ -165,6 +167,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
                     citta.setId(id);
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
                     return RESULT_OK;
                 }
             }
@@ -260,6 +263,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
                     posto.setId(id);
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
                     return RESULT_OK;
                 }
             }
@@ -370,6 +374,9 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
                     foto.setId(id);
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
                 }
             }
             return RESULT_OK;

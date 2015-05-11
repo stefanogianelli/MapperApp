@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.BaseAsyncTaskLoader;
@@ -27,7 +28,7 @@ public class FotoLoader extends BaseAsyncTaskLoader<List<Foto>> {
     private int selection;
 
     public FotoLoader(Context context,long id, int type) {
-        super(context);
+        super(context, MapperIntent.UPDATE_FOTO);
         mResolver = context.getContentResolver();
         mId = id;
         selection = type;

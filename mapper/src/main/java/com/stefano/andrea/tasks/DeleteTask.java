@@ -3,11 +3,13 @@ package com.stefano.andrea.tasks;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
@@ -114,7 +116,10 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int cancellaItem(Citta item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, item.getId());
-            return mResolver.delete(uri, null, null);
+            int count = mResolver.delete(uri, null, null);
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+            return count;
         }
     }
 
@@ -123,7 +128,10 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int cancellaItem(Posto item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, item.getId());
-            return mResolver.delete(uri, null, null);
+            int count = mResolver.delete(uri, null, null);
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+            return count;
         }
     }
 
@@ -140,7 +148,10 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
             //cancello il riferimento dal database
             String selection = MapperContract.Foto.ID + "=?";
             String [] selectionArgs = {Long.toString(item.getId())};
-            return mResolver.delete(MapperContract.Foto.CONTENT_URI, selection, selectionArgs);
+            int count = mResolver.delete(MapperContract.Foto.CONTENT_URI, selection, selectionArgs);
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+            return count;
         }
     }
 

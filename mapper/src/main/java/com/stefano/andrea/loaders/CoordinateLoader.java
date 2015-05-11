@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.GeoInfo;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.BaseAsyncTaskLoader;
@@ -26,7 +27,7 @@ public class CoordinateLoader extends BaseAsyncTaskLoader<List<GeoInfo>> {
     private int mType;
 
     public CoordinateLoader(Context context, long id, int type) {
-        super(context);
+        super(context, MapperIntent.UPDATE_MAPPA);
         mResolver = context.getContentResolver();
         mId = id;
         mType = type;
