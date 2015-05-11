@@ -180,7 +180,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
         citta.setNazione(nomeNazione);
-        new InsertTask<>(mParentActivity, mResolver, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
+        new InsertTask<>(mParentActivity, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
     }
 
     /**
@@ -205,14 +205,14 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         elencoCitta.add(citta);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(mParentActivity, mResolver, mAdapter, elencoCitta, indici).execute(DeleteTask.CANCELLA_CITTA);
+        new DeleteTask<>(mParentActivity, mAdapter, elencoCitta, indici).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     /**
      * Cancella le citta selezionate dall'utente
      */
     private void cancellaElencoCitta() {
-        new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
+        new DeleteTask<>(mParentActivity, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     private void openDialogAddCitta(View view) {

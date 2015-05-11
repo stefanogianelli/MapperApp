@@ -36,7 +36,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public static final int MAPPA_CITTA = 0;
     public static final int MAPPA_POSTI = 1;
 
-    private static final String TAG = "MappaFragment";
     private static final int MAP_COORD_LOADER = 4;
     private static final int MAP_PADDING = 150;
     private static final int TIMEOUT = 100;

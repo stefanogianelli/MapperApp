@@ -1,7 +1,6 @@
 package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -25,6 +24,7 @@ import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.tasks.UpdateTask;
 import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
@@ -34,12 +34,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener, DialogHelper.AggiungiViaggioCallback {
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener, DialogHelper.ViaggioDialogCallback {
 
     private final static int VIAGGI_LOADER = 0;
+    private static final String TAG = "MAinActivity";
 
     private ViaggiAdapter mAdapter;
-    private ContentResolver mResolver;
     private List<Viaggio> mListaViaggi;
     private CustomFAB mFab;
     private Uri mImageUri;
@@ -99,8 +99,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //acquisisco riferimento al content provider
-        mResolver = getContentResolver();
         //inizializzo recyclerview
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);
@@ -169,24 +167,34 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         elencoViaggi.add(viaggio);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(this, mResolver, mAdapter, elencoViaggi, indici).execute(DeleteTask.CANCELLA_VIAGGIO);
+        new DeleteTask<>(this, mAdapter, elencoViaggi, indici).execute(DeleteTask.CANCELLA_VIAGGIO);
+    }
+
+    @Override
+    public void rinominaViaggio(int position, Viaggio viaggio) {
+        DialogHelper.showViaggioDialog(this, position, viaggio.getId(), viaggio.getNome(), this);
     }
 
     /**
-     * Crea un nuovo viaggio nel database
+     * Crea o modifica un nuovo viaggio nel database
+     * @param id L'id del viaggio, -1 se il viaggio e' da creare
      * @param nome Il nome del viaggio
      */
     @Override
-    public void creaViaggio(String nome) {
-        Viaggio viaggio = new Viaggio(nome);
-        new InsertTask<>(this, mResolver, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+    public void viaggioActionButton(int position, long id, String nome) {
+        if (id == -1) {
+            Viaggio viaggio = new Viaggio(nome);
+            new InsertTask<>(this, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+        } else {
+            new UpdateTask(this, position, id, nome, mAdapter).execute();
+        }
     }
 
     /**
      * Cancella i viaggi selezionati dall'utente
      */
     private void cancellaViaggi() {
-        new DeleteTask<>(this, mResolver, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
+        new DeleteTask<>(this, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**
@@ -194,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * @param view View
      */
     public void openDialogAddViaggio(View view) {
-        DialogHelper.showDialogAggiungiViaggio(this, this);
+        DialogHelper.showViaggioDialog(this, -1, -1, null, this);
     }
 
     @Override

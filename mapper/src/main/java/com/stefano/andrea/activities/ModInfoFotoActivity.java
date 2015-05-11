@@ -149,7 +149,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                             foto.setCamera(1);
                         elencoFoto.add(foto);
                     }
-                    new InsertTask<>(this, mResolver, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
+                    new InsertTask<>(this, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
                     mFotoSalvata = true;
                     finish();
                 } else {
@@ -253,9 +253,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         addViaggio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogHelper.showDialogAggiungiViaggio(ModInfoFotoActivity.this, new DialogHelper.AggiungiViaggioCallback() {
+                DialogHelper.showViaggioDialog(ModInfoFotoActivity.this, -1, -1, null, new DialogHelper.ViaggioDialogCallback() {
                     @Override
-                    public void creaViaggio(String nomeViaggio) {
+                    public void viaggioActionButton(int position, long id, String nomeViaggio) {
                         Viaggio viaggio = new Viaggio();
                         viaggio.setNome(nomeViaggio);
                         InsertTask.InsertAdapter<Viaggio> adapter = new InsertTask.InsertAdapter<Viaggio>() {
@@ -264,7 +264,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                                 inizializzaViaggio(item.getId());
                             }
                         };
-                        new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+                        new InsertTask<>(ModInfoFotoActivity.this, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
                     }
                 });
             }
@@ -351,7 +351,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                                 inizializzaCitta(item.getId());
                             }
                         };
-                        new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
+                        new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
                     }
                 });
             }
@@ -436,7 +436,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                                 inizializzaPosto(item.getId());
                             }
                         };
-                        new InsertTask<>(ModInfoFotoActivity.this, mResolver, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
+                        new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
                     }
                 });
             }

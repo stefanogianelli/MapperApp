@@ -45,8 +45,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     private List<Integer> mSelectedItems;
     private Activity mActivity;
 
-    public DeleteTask (Activity activity, ContentResolver resolver, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems) {
-        mResolver = resolver;
+    public DeleteTask (Activity activity, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems) {
+        mResolver = activity.getContentResolver();
         mAdapter = adapter;
         mList = list;
         mSelectedItems = selectedItems;

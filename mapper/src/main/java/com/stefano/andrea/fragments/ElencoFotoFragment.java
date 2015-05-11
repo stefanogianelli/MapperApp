@@ -2,7 +2,6 @@ package com.stefano.andrea.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,7 +43,6 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private int mTipoElenco;
     private long mId;
     private Activity mParentActivity;
-    private ContentResolver mResolver;
     private FotoAdapter mAdapter;
     private ArrayList<Foto> mElencoFoto;
 
@@ -119,7 +117,6 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
             mTipoElenco = getArguments().getInt(EXTRA_TIPO_ELENCO);
             mId = getArguments().getLong(EXTRA_ID);
         }
-        mResolver = mParentActivity.getContentResolver();
         mAdapter = new FotoAdapter(mParentActivity, mCallback, this);
         getLoaderManager().initLoader(FOTO_LOADER, null, this);
     }
@@ -152,7 +149,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
      * Cancella le foto selezionate dall'utente
      */
     private void cancellaElencoFoto () {
-        new DeleteTask<>(mParentActivity, mResolver, mAdapter, mElencoFoto, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_FOTO);
+        new DeleteTask<>(mParentActivity, mAdapter, mElencoFoto, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_FOTO);
     }
 
     @Override
