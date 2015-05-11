@@ -8,9 +8,7 @@
         android:id="@+id/recyclerview_scroll"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/padding_scroll_rv"
-        android:clipToPadding="false" />
+        android:layout_height="match_parent"/>
 
     <com.stefano.andrea.utils.CustomFAB
         android:id="@+id/fab_aggiunta_citta"

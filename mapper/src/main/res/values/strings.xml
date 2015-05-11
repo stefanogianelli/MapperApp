@@ -66,6 +66,8 @@
     <string name="new_viaggio">Nuovo viaggio</string>
     <string name="new_citta">Nuova città</string>
     <string name="new_posto">Nuovo posto</string>
+    <string name="dettagli">Dettagli</string>
+    <string name="condividi">Condividi</string>
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
