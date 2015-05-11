@@ -36,9 +36,12 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public static final int MAPPA_CITTA = 0;
     public static final int MAPPA_POSTI = 1;
 
+    private static final String TAG = "MappaFragment";
     private static final int MAP_COORD_LOADER = 4;
     private static final int MAP_PADDING = 150;
-    private static final String TAG = "MappaFragment";
+    private static final int TIMEOUT = 100;
+    private static final double EARTHRADIUS = 6366198;
+    private static final int DISTANCE = 5000;
 
     private GoogleMap mMap;
     private List<GeoInfo> markerData;
@@ -126,7 +129,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                     public void run() {
                         while (mMap == null) {
                             try {
-                                Thread.sleep(100);
+                                Thread.sleep(TIMEOUT);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -153,6 +156,14 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 Marker marker = mMap.addMarker(createMarker(markerData.get(i)));
                 builder.include(marker.getPosition());
             }
+            if (markerData.size() == 1 && mType == CoordinateLoader.ELENCO_CITTA) {
+                LatLngBounds tmpBounds = builder.build();
+                LatLng center = tmpBounds.getCenter();
+                LatLng northEast = move(center, DISTANCE, DISTANCE);
+                LatLng southWest = move(center, -DISTANCE, -DISTANCE);
+                builder.include(southWest);
+                builder.include(northEast);
+            }
             LatLngBounds bounds = builder.build();
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING);
             mMap.moveCamera(cu);
@@ -161,6 +172,25 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private MarkerOptions createMarker (GeoInfo item) {
         return new MarkerOptions().position(new LatLng(item.getLatitudine(), item.getLongitudine())).title(item.getNome());
+    }
+
+    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+        double lonDiff = meterToLongitude(toEast, startLL.latitude);
+        double latDiff = meterToLatitude(toNorth);
+        return new LatLng(startLL.latitude + latDiff, startLL.longitude
+                + lonDiff);
+    }
+
+    private static double meterToLongitude(double meterToEast, double latitude) {
+        double latArc = Math.toRadians(latitude);
+        double radius = Math.cos(latArc) * EARTHRADIUS;
+        double rad = meterToEast / radius;
+        return Math.toDegrees(rad);
+    }
+
+    private static double meterToLatitude(double meterToNorth) {
+        double rad = meterToNorth / EARTHRADIUS;
+        return Math.toDegrees(rad);
     }
 
 }
