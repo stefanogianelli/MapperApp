@@ -17,7 +17,8 @@
         android:id="@+id/copertina_viaggio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/viaggio_item_default_bg"/>
+        android:scaleType="fitXY"
+        android:src="@drawable/noimg"/>
 
     <RelativeLayout
         android:id="@+id/viaggio_item_thumbnail"
