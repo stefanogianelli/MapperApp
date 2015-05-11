@@ -58,4 +58,8 @@
     <!-- foto_item degli elenchi foto (grid_item_foto_viaggio_layout) -->
     <dimen name="foto_item_height">100dp</dimen>
 
+    <!-- Dialog dettagli foto -->
+    <dimen name="df_margin_v">4dp</dimen>
+    <dimen name="df_margin_h">16dp</dimen>
+
 </resources>

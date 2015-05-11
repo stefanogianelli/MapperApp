@@ -69,6 +69,13 @@
     <string name="dettagli">Dettagli</string>
     <string name="condividi">Condividi</string>
 
+    <!-- Dialog dettagli foto -->
+    <string name="percorso">Percorso</string>
+    <string name="formato">Formato</string>
+    <string name="dimensione">Dimensione</string>
+    <string name="risoluzione">Risoluzione</string>
+    <string name="data">Data</string>
+
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
     <string name="no_internet_message_dialog">Impossibile creare la citta.\nNessuna connessione a Internet.</string>

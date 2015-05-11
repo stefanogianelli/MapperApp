@@ -1,0 +1,150 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/verydark_grey"
+    android:paddingBottom="@dimen/dialog_header_padding_left">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dettagli"
+        android:textColor="@color/white"
+        android:paddingLeft="@dimen/dialog_header_padding_left"
+        android:paddingRight="@dimen/dialog_header_padding_right"
+        android:paddingEnd="@dimen/dialog_header_padding_right"
+        android:paddingTop="@dimen/dialog_header_padding_left"
+        android:paddingBottom="@dimen/df_margin_v"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/light_grey"
+            android:text="@string/percorso"
+            android:gravity="end"/>
+        <TextView style="?android:titleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/white"
+            android:text="blabla/bla/blablabla.png"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/light_grey"
+            android:text="@string/formato"
+            android:gravity="end" />
+        <TextView style="?android:titleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/white"
+            android:text="blabla/bla/blablabla.png"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/light_grey"
+            android:text="@string/dimensione"
+            android:gravity="end" />
+        <TextView style="?android:titleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/white"
+            android:text="blabla/bla/blablabla.png"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/light_grey"
+            android:text="@string/risoluzione"
+            android:gravity="end"/>
+        <TextView style="?android:titleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/white"
+            android:text="blabla/bla/blablabla.png"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/light_grey"
+            android:text="@string/data"
+            android:gravity="end" />
+        <TextView style="?android:titleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/white"
+            android:text="blabla/bla/blablabla.png"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+</LinearLayout>
