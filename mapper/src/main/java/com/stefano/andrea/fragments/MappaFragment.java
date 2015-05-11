@@ -41,7 +41,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private static final int MAP_PADDING = 150;
     private static final int TIMEOUT = 100;
     private static final double EARTHRADIUS = 6366198;
-    private static final int DISTANCE = 5000;
+    private static final int DISTANCE_CITTA = 5000;
+    private static final int DISTANCE_LUOGO = 500;
 
     private GoogleMap mMap;
     private List<GeoInfo> markerData;
@@ -156,11 +157,16 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 Marker marker = mMap.addMarker(createMarker(markerData.get(i)));
                 builder.include(marker.getPosition());
             }
-            if (markerData.size() == 1 && mType == CoordinateLoader.ELENCO_CITTA) {
+            if (markerData.size() == 1) {
                 LatLngBounds tmpBounds = builder.build();
                 LatLng center = tmpBounds.getCenter();
-                LatLng northEast = move(center, DISTANCE, DISTANCE);
-                LatLng southWest = move(center, -DISTANCE, -DISTANCE);
+                int dist;
+                if (mType == CoordinateLoader.ELENCO_CITTA)
+                    dist = DISTANCE_CITTA;
+                else
+                    dist = DISTANCE_LUOGO;
+                LatLng northEast = move(center, dist, dist);
+                LatLng southWest = move(center, -dist, -dist);
                 builder.include(southWest);
                 builder.include(northEast);
             }

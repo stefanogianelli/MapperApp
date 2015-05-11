@@ -3,9 +3,6 @@ package com.stefano.andrea.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +11,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.stefano.andrea.adapters.TabAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
+import com.stefano.andrea.fragments.MappaFragment;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
@@ -24,6 +23,10 @@ import com.stefano.andrea.utils.SlidingTabLayout;
 import java.io.IOException;
 
 public class DettagliCittaActivity extends ActionBarActivity {
+
+    private static final int DETTAGLI_FRAGMENT = 0;
+    private static final int FOTO_FRAGMENT = 1;
+    private static final int MAPPA_FRAGMENT = 2;
 
     private long mIdViaggio;
     private long mIdCitta;
@@ -48,10 +51,13 @@ public class DettagliCittaActivity extends ActionBarActivity {
         //aggiungo il titolo alla action bar
         this.setTitle(nomeCitta);
         //creo l'adapter per le tab
-        TabDettagliCittaAdapter adapter =  new TabDettagliCittaAdapter(getSupportFragmentManager());
+        TabAdapter adapter =  new TabAdapter(getSupportFragmentManager());
         //assegno l'adapter al pager
         pager.setAdapter(adapter);
         //configuro tab
+        adapter.addTab(getString(R.string.title_tab_dettagli), DettagliCittaFragment.newInstance(mIdViaggio, mIdCitta), DETTAGLI_FRAGMENT);
+        adapter.addTab(getString(R.string.title_tab_foto), ElencoFotoFragment.newInstance(mIdCitta, FotoLoader.FOTO_CITTA), FOTO_FRAGMENT);
+        adapter.addTab(getString(R.string.title_tab_mappa), MappaFragment.newInstance(MappaFragment.MAPPA_POSTI), MAPPA_FRAGMENT);
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -112,7 +118,7 @@ public class DettagliCittaActivity extends ActionBarActivity {
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta);
     }
 
-    public class TabDettagliCittaAdapter extends FragmentStatePagerAdapter {
+    /*public class TabDettagliCittaAdapter extends FragmentStatePagerAdapter {
 
         private CharSequence [] mTitles = {"Posti","Foto"};
         private int mNumbOfTabs = 2;
@@ -139,6 +145,6 @@ public class DettagliCittaActivity extends ActionBarActivity {
         public int getCount() {
             return mNumbOfTabs;
         }
-    }
+    }*/
 
 }
