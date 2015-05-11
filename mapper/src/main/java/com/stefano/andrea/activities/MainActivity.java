@@ -118,8 +118,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         //Inizializzo imageloader
         if (!ImageLoader.getInstance().isInited()) {
             DisplayImageOptions options = new DisplayImageOptions.Builder()
-                    /*.showImageForEmptyUri(R.drawable.ic_empty)
-                    .showImageOnFail(R.drawable.ic_error)   */
+                    .showImageForEmptyUri(R.drawable.noimg)
+                    .showImageOnFail(R.drawable.noimg)
                     .cacheOnDisk(true)
                     .imageScaleType(ImageScaleType.EXACTLY)
                     .bitmapConfig(Bitmap.Config.RGB_565)
