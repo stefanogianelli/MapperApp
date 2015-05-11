@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
-
-    <item android:id="@+id/action_condividi" android:title="@string/dettagli" app:showAsAction="never" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:mapper="http://schemas.android.com/apk/res-auto" >
 
     <item android:id="@+id/action_dettagli" android:title="@string/dettagli" app:showAsAction="never" />
+    <item android:id="@+id/action_mostra_su_mappa" android:title="@string/mostra_su_mappa" app:showAsAction="never" />
+    <item android:id="@+id/action_modifica" android:title="@string/edit" app:showAsAction="never" />
 
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:id="@+id/action_condividi_foto"
+        android:icon="@drawable/ic_share_white_24dp"
+        mapper:showAsAction="ifRoom"
+        android:title="@string/condividi" />
+
+    <item
+        android:id="@+id/action_elimina_foto"
+        android:icon="@drawable/ic_delete_white_24dp"
+        mapper:showAsAction="ifRoom"
+        android:title="@string/delete" />
+
 
 </menu>

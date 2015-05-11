@@ -15,6 +15,7 @@
     <string name="completa_azione">Completa azione usando</string>
     <string name="action_settings">Impostazioni</string>
     <string name="info">Informazioni</string>
+    <string name="condividi">Condividi</string>
     <string name="aggiungi_foto">Aggiungi foto</string>
 
     <!-- dialogs -->
@@ -67,7 +68,6 @@
     <string name="new_citta">Nuova città</string>
     <string name="new_posto">Nuovo posto</string>
     <string name="dettagli">Dettagli</string>
-    <string name="condividi">Condividi</string>
 
     <!-- Dialog dettagli foto -->
     <string name="percorso">Percorso</string>
@@ -96,6 +96,7 @@
 
     <!-- FullFotoFragment -->
     <string name="full_foto_fragment_title">Foto</string>
+    <string name="mostra_su_mappa">Mostra su mappa</string>
 
     <!-- Action Mode stringhe selezione -->
     <plurals name="action_mode_count_selected">
