@@ -14,7 +14,7 @@
         android:id="@+id/autocomplete_citta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black" />
     <EditText
         android:id="@+id/text_add_citta"
         android:layout_width="match_parent"

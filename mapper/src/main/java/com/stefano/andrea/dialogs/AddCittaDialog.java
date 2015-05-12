@@ -88,7 +88,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
         autocompleteView.setOnItemClickListener(mAutocompleteClickListener);
         // Set up the adapter that will retrieve suggestions from the Places Geo Data API that cover
         // the entire world.
-        mAdapter = new PlaceAutocompleteAdapter(mParentActivity, android.R.layout.simple_list_item_1,
+        mAdapter = new PlaceAutocompleteAdapter(mParentActivity, R.layout.item_autocomplete,
                 mGoogleApiClient, BOUNDS_GREATER_SYDNEY, null);
         autocompleteView.setAdapter(mAdapter);
 
