@@ -14,6 +14,7 @@
     <!-- Scroll RecyclerVIew -->
     <dimen name="padding_scroll_rv">56dp</dimen>
     <dimen name="padding_top_rv">104dp</dimen>
+    <dimen name="padding_top_rv_act_detagli_posto">56dp</dimen>
 
     <!-- Spinner -->
     <dimen name="spinner_container_height">56dp</dimen>

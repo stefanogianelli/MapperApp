@@ -7,7 +7,7 @@
         android:id="@+id/posti_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/sliding_tab_height"/>
+        android:paddingTop="@dimen/padding_top_rv_act_detagli_posto"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/dettagli_posto_toolbar"
