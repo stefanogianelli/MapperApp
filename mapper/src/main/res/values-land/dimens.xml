@@ -4,7 +4,5 @@
     <!-- viaggio_item.xml -->
     <dimen name="distanza_card_viaggio">50dp</dimen>
 
-    <!-- foto_item degli elenchi foto (grid_item_foto_viaggio_layout) -->
-    <dimen name="foto_item_height">200dp</dimen>
 
 </resources>
