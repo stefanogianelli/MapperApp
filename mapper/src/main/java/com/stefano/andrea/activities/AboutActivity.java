@@ -33,7 +33,7 @@ public class AboutActivity extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        anno_inc.setText(year+" MappApp inc.");
+        anno_inc.setText("@ "+year+" MappApp inc.");
     }
 
 }
