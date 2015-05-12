@@ -126,7 +126,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
                     //Creating the instance of PopupMenu
                     PopupMenu popup = new PopupMenu(mActivity, button1);
                     //Inflating the Popup using xml file
-                    popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+                    popup.getMenuInflater().inflate(R.menu.popup_one, popup.getMenu());
 
                     //registering popup with OnMenuItemClickListener
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
