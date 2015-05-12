@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,9 +69,9 @@ public class FullFotoFragment extends Fragment {
             mElencoFoto = args.getParcelableArrayList(EXTRA_LISTA_FOTO);
             mPosition = args.getInt(EXTRA_IMAGE_POSITION);
         }
-        ((ActionBarActivity) mParentActivity).setSupportActionBar(toolbar);
-        ((ActionBarActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((ActionBarActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
+        ((AppCompatActivity) mParentActivity).setSupportActionBar(toolbar);
+        ((AppCompatActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
         pager.setAdapter(new ImageAdapter(mParentActivity));
         pager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
@@ -139,9 +139,9 @@ public class FullFotoFragment extends Fragment {
                     int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
                     boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
                     if(isImmersiveModeEnabled){
-                        ((ActionBarActivity) mParentActivity).getSupportActionBar().hide();
+                        ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
                     }else{
-                        ((ActionBarActivity) mParentActivity).getSupportActionBar().show();
+                        ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
                     }
                 }
             });
