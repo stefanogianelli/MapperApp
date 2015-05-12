@@ -62,5 +62,8 @@
     <!-- Dialog dettagli foto -->
     <dimen name="df_margin_v">4dp</dimen>
     <dimen name="df_margin_h">16dp</dimen>
+    <dimen name="df_btn_margin_v">16dp</dimen>
+    <dimen name="df_btn_margin_h">64dp</dimen>
+
 
 </resources>

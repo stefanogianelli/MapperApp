@@ -244,4 +244,23 @@
             android:focusable="true"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:gravity="right|end">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/ok"
+        android:textColor="@color/white"
+        android:paddingLeft="@dimen/df_btn_margin_h"
+        android:paddingRight="@dimen/df_btn_margin_h"
+        android:paddingTop="@dimen/df_btn_margin_v"
+        android:paddingBottom="@dimen/df_btn_margin_v"
+        android:clickable="true"
+        android:focusable="true" />
+    </LinearLayout>
+
 </LinearLayout>
