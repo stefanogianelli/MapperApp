@@ -121,6 +121,12 @@
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
     <string name="foto_not_allowed">Impossibile scattare una foto</string>
 
+    <!-- About -->
+    <string name="title_activity_about">About</string>
+    <string name="all_right_reserved">All rights reserved.</string>
+    <string name="about">About</string>
+
+
     <string name="hello_world">Hello world!</string>
 
 <!-- TODO: Remove or change this placeholder text -->

@@ -43,5 +43,8 @@
     <color name="mod_subtitle">#ff898989</color>
     <!-- dialogs -->
     <color name="dialog_header_bckg">#FFFFBB33</color>
+    <!-- About -->
+    <color name="about_title">#ff333333</color>
+    <color name="about_subtitle">#ff666666</color>
 
 </resources>
