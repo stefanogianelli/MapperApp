@@ -261,7 +261,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                         InsertTask.InsertAdapter<Viaggio> adapter = new InsertTask.InsertAdapter<Viaggio>() {
                             @Override
                             public void insertItem(Viaggio item) {
+                                clearSelection(CLEAR_CITTA);
                                 inizializzaViaggio(item.getId());
+                                updateViaggi();
                             }
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
@@ -321,6 +323,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                             Citta citta = elencoCitta.get(position);
                             mCittaSelezionata = citta;
                             mCittaText.setText(citta.getNome());
+                            clearSelection(CLEAR_POSTO);
                             updatePosti();
                         }
                     });
@@ -346,7 +349,9 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                         InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
                             @Override
                             public void insertItem(Citta item) {
+                                clearSelection(CLEAR_POSTO);
                                 inizializzaCitta(item.getId());
+                                updateCitta();
                             }
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
@@ -381,7 +386,6 @@ public class ModInfoFotoActivity extends ActionBarActivity {
      * Aggiorna l'elenco dei posti disponibili
      */
     private void updatePosti () {
-        clearSelection(CLEAR_POSTO);
         final List<Posto> elencoPosti = new ArrayList<>();
         Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
         String [] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
@@ -393,10 +397,10 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             elencoPosti.add(posto);
         }
         curPosto.close();
+        mAddPostoButton.setClickable(true);
         if (elencoPosti.size() > 0) {
             final PostoSpinnerAdapter postoAdapter = new PostoSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoPosti);
             mPostoText.setClickable(true);
-            mAddPostoButton.setClickable(true);
             mPostoText.setTextColor(getResources().getColor(R.color.black));
             mPostoText.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -431,6 +435,7 @@ public class ModInfoFotoActivity extends ActionBarActivity {
                             @Override
                             public void insertItem(Posto item) {
                                 inizializzaPosto(item.getId());
+                                updatePosti();
                             }
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
