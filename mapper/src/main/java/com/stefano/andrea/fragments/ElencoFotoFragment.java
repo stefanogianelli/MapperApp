@@ -3,6 +3,7 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -39,6 +40,9 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private static final String EXTRA_TIPO_ELENCO = "com.stefano.andrea.fragments.ElencoFotoFragment.tipoElenco";
 
     private static final int FOTO_LOADER = 3;
+
+    private static final int COLUMNS_PORTRAIT = 3;
+    private static final int COLUMNS_LANDSCAPE = 5;
 
     private int mTipoElenco;
     private long mId;
@@ -128,7 +132,12 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        int columns;
+        if (mParentActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            columns = COLUMNS_PORTRAIT;
+        else
+            columns = COLUMNS_LANDSCAPE;
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 

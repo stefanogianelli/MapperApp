@@ -27,17 +27,6 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
         mCallback = callback;
     }
 
-    /*@Override
-    public void onBindViewHolder(VH holder, int position) {
-        CardView card = (CardView) holder.itemView;
-        if (isSelected(position)) {
-            card.setCardBackgroundColor(mActivity.getResources().getColor(R.color.selected_overlay));
-        } else {
-            card.setCardBackgroundColor(Color.WHITE);
-        }
-        onBindViewHolder1(holder, position);
-    }*/
-
     /**
      * Indicates if the item at position position is selected
      * @param position Position of the item to check

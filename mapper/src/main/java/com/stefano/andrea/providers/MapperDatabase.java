@@ -67,6 +67,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "`" + MapperContract.Posto.VISITATO + "` INTEGER DEFAULT 0," +
             "`" + MapperContract.Posto.ID_CITTA + "` INTEGER NOT NULL," +
             "`" + MapperContract.Posto.ID_LUOGO + "` INTEGER NOT NULL," +
+            "`" + MapperContract.Posto.COUNT_FOTO + "` INTEGER DEFAULT 0," +
             "FOREIGN KEY(`" + MapperContract.Posto.ID_CITTA + "`) REFERENCES " + Tables.CITTA + " (`" + MapperContract.Citta.ID_CITTA + "`)," +
             "FOREIGN KEY(`" + MapperContract.Posto.ID_LUOGO + "`) REFERENCES " + Tables.LUOGO + " (`" + MapperContract.Luogo.ID + "`));";
 
@@ -153,11 +154,13 @@ public class MapperDatabase extends SQLiteOpenHelper {
     //Trigger che incrementa i contatori delle foto
     private static final String TRIGGER_INCREMENTA_COUNT_FOTO = "CREATE TRIGGER " + Triggers.INCREMENTA_COUNT_FOTO + " AFTER INSERT ON " + Tables.FOTO + " BEGIN " +
             "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_FOTO + " = " + MapperContract.Viaggio.COUNT_FOTO + " + 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = new." + MapperContract.Foto.ID_VIAGGIO + "; " +
+            "UPDATE " + Tables.POSTO + " SET " + MapperContract.Posto.COUNT_FOTO + " = " + MapperContract.Posto.COUNT_FOTO + " + 1 WHERE " + Tables.POSTO + "." + MapperContract.Posto.ID_POSTO + " = new." + MapperContract.Foto.ID_POSTO + "; " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " + 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Foto.ID_CITTA + "; END;";
 
     //Trigger che decrementa i contatori delle foto
     private static final String TRIGGER_DECREMENTA_COUNT_FOTO = "CREATE TRIGGER " + Triggers.DECREMENTA_COUNT_FOTO + " AFTER DELETE ON " + Tables.FOTO + " BEGIN " +
             "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_FOTO + " = " + MapperContract.Viaggio.COUNT_FOTO + " - 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = old." + MapperContract.Foto.ID_VIAGGIO + "; " +
+            "UPDATE " + Tables.POSTO + " SET " + MapperContract.Posto.COUNT_FOTO + " = " + MapperContract.Posto.COUNT_FOTO + " - 1 WHERE " + Tables.POSTO + "." + MapperContract.Posto.ID_POSTO + " = old." + MapperContract.Foto.ID_POSTO + "; " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " - 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = old." + MapperContract.Foto.ID_CITTA + "; END;";
 
     //Trigger che modifica immagine al viaggio

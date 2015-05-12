@@ -198,13 +198,12 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, idViaggio);
             String [] projection = { MapperContract.Viaggio.NOME };
             Cursor curViaggio = mResolver.query(viaggio, projection, null, null, null);
-            if (curViaggio != null && curViaggio.getCount() > 0) {
-                curViaggio.moveToFirst();
+            if (curViaggio.moveToFirst()) {
                 String nomeViaggio = curViaggio.getString(curViaggio.getColumnIndex(projection[0]));
                 mViaggioSelezionato = new Viaggio(idViaggio, nomeViaggio);
                 mViaggioText.setText(nomeViaggio);
-                curViaggio.close();
             }
+            curViaggio.close();
             updateCitta();
         }
     }
@@ -216,33 +215,34 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         final List<Viaggio> elencoViaggi = new ArrayList<>();
         String [] projection = {MapperContract.Viaggio.ID_VIAGGIO, MapperContract.Viaggio.NOME};
         Cursor curViaggio = mResolver.query(MapperContract.Viaggio.CONTENT_URI, projection, null, null, MapperContract.Viaggio.DEFAULT_SORT);
-        if (curViaggio != null && curViaggio.getCount() > 0) {
-            while (curViaggio.moveToNext()) {
-                Viaggio viaggio = new Viaggio();
-                viaggio.setId(curViaggio.getLong(curViaggio.getColumnIndex(projection[0])));
-                viaggio.setNome(curViaggio.getString(curViaggio.getColumnIndex(projection[1])));
-                elencoViaggi.add(viaggio);
-            }
-            curViaggio.close();
+        while (curViaggio.moveToNext()) {
+            Viaggio viaggio = new Viaggio();
+            viaggio.setId(curViaggio.getLong(curViaggio.getColumnIndex(projection[0])));
+            viaggio.setNome(curViaggio.getString(curViaggio.getColumnIndex(projection[1])));
+            elencoViaggi.add(viaggio);
         }
-        final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoViaggi);
-        mViaggioText.setClickable(true);
-        mViaggioText.setTextColor(getResources().getColor(R.color.black));
-        mViaggioText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.spinner_elenco_viaggio_titolo, viaggiAdapter, new DialogHelper.ListDialogCallback() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Viaggio viaggio = elencoViaggi.get(position);
-                        mViaggioSelezionato = viaggio;
-                        mViaggioText.setText(viaggio.getNome());
-                        //ricarico l'elenco delle citta'
-                        updateCitta();
-                    }
-                });
-            }
-        });
+        curViaggio.close();
+        if (elencoViaggi.size() > 0) {
+            final ViaggiSpinnerAdapter viaggiAdapter = new ViaggiSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoViaggi);
+            mViaggioText.setClickable(true);
+            mViaggioText.setTextColor(getResources().getColor(R.color.black));
+            mViaggioText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.spinner_elenco_viaggio_titolo, viaggiAdapter, new DialogHelper.ListDialogCallback() {
+                        @Override
+                        public void onItemClick(int position) {
+                            Viaggio viaggio = elencoViaggi.get(position);
+                            mViaggioSelezionato = viaggio;
+                            mViaggioText.setText(viaggio.getNome());
+                            //ricarico l'elenco delle citta'
+                            clearSelection(CLEAR_CITTA);
+                            updateCitta();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     /**
@@ -280,15 +280,14 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idCitta);
             String [] projection = {MapperContract.DatiCitta.NOME};
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
-            if (cCitta != null && cCitta.getCount() > 0) {
-                cCitta.moveToFirst();
+            if (cCitta.moveToFirst()) {
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
                 mCittaText.setText(nomeCitta);
                 mCittaSelezionata = new Citta();
                 mCittaSelezionata.setId(idCitta);
                 mCittaSelezionata.setNome(nomeCitta);
-                cCitta.close();
             }
+            cCitta.close();
             updatePosti();
         }
     }
@@ -297,38 +296,37 @@ public class ModInfoFotoActivity extends ActionBarActivity {
      * Aggiorna l'elenco delle citta' disponibili
      */
     private void updateCitta () {
-        clearSelection(CLEAR_CITTA);
         final List<Citta> elencoCitta = new ArrayList<>();
         Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mViaggioSelezionato.getId());
         String [] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME};
         Cursor curCitta = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
-        if (curCitta != null && curCitta.getCount() > 0) {
-            while (curCitta.moveToNext()) {
-                Citta citta = new Citta();
-                citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
-                citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
-                elencoCitta.add(citta);
-            }
-            curCitta.close();
+        while (curCitta.moveToNext()) {
+            Citta citta = new Citta();
+            citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
+            citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
+            elencoCitta.add(citta);
         }
-        final CittaSpinnerAdapter cittaAdapter = new CittaSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoCitta);
-        mCittaText.setClickable(true);
+        curCitta.close();
         mAddCittaButton.setClickable(true);
-        mCittaText.setTextColor(getResources().getColor(R.color.black));
-        mCittaText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_citta, cittaAdapter, new DialogHelper.ListDialogCallback() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Citta citta = elencoCitta.get(position);
-                        mCittaSelezionata = citta;
-                        mCittaText.setText(citta.getNome());
-                        updatePosti();
-                    }
-                });
-            }
-        });
+        if (elencoCitta.size() > 0) {
+            final CittaSpinnerAdapter cittaAdapter = new CittaSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoCitta);
+            mCittaText.setClickable(true);
+            mCittaText.setTextColor(getResources().getColor(R.color.black));
+            mCittaText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_citta, cittaAdapter, new DialogHelper.ListDialogCallback() {
+                        @Override
+                        public void onItemClick(int position) {
+                            Citta citta = elencoCitta.get(position);
+                            mCittaSelezionata = citta;
+                            mCittaText.setText(citta.getNome());
+                            updatePosti();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     /**
@@ -368,15 +366,14 @@ public class ModInfoFotoActivity extends ActionBarActivity {
             Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, idPosto);
             String [] projection = {MapperContract.Luogo.NOME};
             Cursor curPosto = mResolver.query(query, projection, null, null, null);
-            if (curPosto != null && curPosto.getCount() > 0) {
-                curPosto.moveToNext();
+            if (curPosto.moveToFirst()) {
                 String nomePosto = curPosto.getString(curPosto.getColumnIndex(projection[0]));
                 mPostoText.setText(nomePosto);
                 mPostoSelezionato = new Posto();
                 mPostoSelezionato.setId(idPosto);
                 mPostoSelezionato.setNome(nomePosto);
-                curPosto.close();
             }
+            curPosto.close();
         }
     }
 
@@ -389,32 +386,32 @@ public class ModInfoFotoActivity extends ActionBarActivity {
         Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
         String [] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
         Cursor curPosto = mResolver.query(query, projection, null, null, MapperContract.Luogo.DEFAULT_SORT);
-        if (curPosto != null && curPosto.getCount() > 0) {
-            while (curPosto.moveToNext()) {
-                Posto posto = new Posto();
-                posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
-                posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
-                elencoPosti.add(posto);
-            }
-            curPosto.close();
+        while (curPosto.moveToNext()) {
+            Posto posto = new Posto();
+            posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
+            posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
+            elencoPosti.add(posto);
         }
-        final PostoSpinnerAdapter postoAdapter = new PostoSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoPosti);
-        mPostoText.setClickable(true);
-        mAddPostoButton.setClickable(true);
-        mPostoText.setTextColor(getResources().getColor(R.color.black));
-        mPostoText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_posto, postoAdapter, new DialogHelper.ListDialogCallback() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Posto posto = elencoPosti.get(position);
-                        mPostoSelezionato = posto;
-                        mPostoText.setText(posto.getNome());
-                    }
-                });
-            }
-        });
+        curPosto.close();
+        if (elencoPosti.size() > 0) {
+            final PostoSpinnerAdapter postoAdapter = new PostoSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoPosti);
+            mPostoText.setClickable(true);
+            mAddPostoButton.setClickable(true);
+            mPostoText.setTextColor(getResources().getColor(R.color.black));
+            mPostoText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_posto, postoAdapter, new DialogHelper.ListDialogCallback() {
+                        @Override
+                        public void onItemClick(int position) {
+                            Posto posto = elencoPosti.get(position);
+                            mPostoSelezionato = posto;
+                            mPostoText.setText(posto.getNome());
+                        }
+                    });
+                }
+            });
+        }
     }
 
     /**

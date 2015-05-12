@@ -46,6 +46,8 @@ public final class MapperContract {
         String ID_CITTA = "ref_citta";
         /** ID del luogo collegato con la taballa Luogo */
         String ID_LUOGO = "ref_luogo";
+        /** Totale delel foto scattate nel posto */
+        String COUNT_FOTO = "count_foto";
     }
 
     interface DatiCittaColumns {
@@ -144,7 +146,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.posto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.posto";
 
-        public static final String [] PROJECTION_ALL = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA };
+        public static final String [] PROJECTION_ALL = {ID_POSTO, VISITATO, ID_CITTA, ID_LUOGO, COUNT_FOTO, Luogo.ID, Luogo.NOME, Luogo.LATITUDINE, Luogo.LONGITUDINE, Luogo.ID_CITTA };
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_POSTO + " DESC";

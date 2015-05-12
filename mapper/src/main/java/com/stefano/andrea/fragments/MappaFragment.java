@@ -2,6 +2,7 @@ package com.stefano.andrea.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
@@ -16,21 +17,27 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
+import com.stefano.andrea.activities.DettagliCittaActivity;
+import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
 import com.stefano.andrea.utils.MapperContext;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * MappaFragment
  */
-public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>> {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, GoogleMap.OnMarkerClickListener {
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
@@ -44,11 +51,13 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private static final int DISTANCE_LUOGO = 500;
 
     private GoogleMap mMap;
-    private List<GeoInfo> markerData;
+    private List<GeoInfo> mMarkerData;
+    private Map<Marker, GeoInfo> mMarkerDetail;
     private Activity mParentActivity;
     private MapperContext mContext;
     private long mId;
     private int mType;
+    private IconGenerator mIconGenerator;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -87,6 +96,9 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             default:
                 mId = -1;
         }
+        mIconGenerator = new IconGenerator(mParentActivity);
+        mIconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
+        mMarkerDetail = new HashMap<>();
         if (mId != -1)
             getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
     }
@@ -104,6 +116,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -121,7 +134,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         int id = loader.getId();
         switch (id) {
             case MAP_COORD_LOADER:
-                markerData = data;
+                mMarkerData = data;
                 //attendo che la mappa sia stata caricata
                 final Handler handler = new Handler(mParentActivity.getMainLooper());
                 new Thread(new Runnable() {
@@ -151,12 +164,14 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private void setMarkers () {
         mMap.clear();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if (markerData.size() > 0) {
-            for (int i = 0; i < markerData.size(); i++) {
-                Marker marker = mMap.addMarker(createMarker(markerData.get(i)));
+        if (mMarkerData.size() > 0) {
+            for (int i = 0; i < mMarkerData.size(); i++) {
+                GeoInfo item = mMarkerData.get(i);
+                Marker marker = mMap.addMarker(createMarker(item));
+                mMarkerDetail.put(marker, item);
                 builder.include(marker.getPosition());
             }
-            if (markerData.size() == 1) {
+            if (mMarkerData.size() == 1) {
                 LatLngBounds tmpBounds = builder.build();
                 LatLng center = tmpBounds.getCenter();
                 int dist;
@@ -176,7 +191,10 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private MarkerOptions createMarker (GeoInfo item) {
-        return new MarkerOptions().position(new LatLng(item.getLatitudine(), item.getLongitudine())).title(item.getNome());
+        String title = mParentActivity.getResources().getString(R.string.map_bubble_title, item.getNome(), item.getCountFoto());
+        return new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(title)))
+                        .position(new LatLng(item.getLatitudine(), item.getLongitudine()));
     }
 
     private static LatLng move(LatLng startLL, double toNorth, double toEast) {
@@ -198,4 +216,21 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         return Math.toDegrees(rad);
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        GeoInfo item = mMarkerDetail.get(marker);
+        switch (mType) {
+            case CoordinateLoader.ELENCO_CITTA:
+                mContext.setIdCitta(item.getId());
+                mContext.setNomeCitta(item.getNome());
+                startActivity(new Intent(mParentActivity, DettagliCittaActivity.class));
+                break;
+            case CoordinateLoader.ELENCO_POSTI:
+                mContext.setIdPosto(item.getId());
+                mContext.setNomePosto(item.getNome());
+                startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
+                break;
+        }
+        return false;
+    }
 }
