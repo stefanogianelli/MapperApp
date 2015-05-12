@@ -209,7 +209,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             ContentValues values = new ContentValues();
             values.put(MapperContract.DatiCitta.NOME, citta.getNome());
             values.put(MapperContract.DatiCitta.NAZIONE, citta.getNazione());
-            JSONObject geoInfo = null;
+            /*JSONObject geoInfo = null;
             try {
                 geoInfo = LocationHelper.getGeocodeInformations(citta.getNome() + "," + citta.getNazione());
             } catch (IOException e) {
@@ -229,6 +229,14 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                     citta.setIdCitta(idCitta);
                     return RESULT_OK;
                 }
+            }*/
+            values.put(MapperContract.DatiCitta.LATITUDINE, citta.getLatitudine());
+            values.put(MapperContract.DatiCitta.LONGITUDINE, citta.getLongitudine());
+            Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
+            long idCitta = Long.parseLong(uri.getLastPathSegment());
+            if (idCitta != -1) {
+                citta.setIdCitta(idCitta);
+                return RESULT_OK;
             }
             return RESULT_ERROR;
         }

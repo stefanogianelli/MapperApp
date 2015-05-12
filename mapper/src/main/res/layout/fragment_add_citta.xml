@@ -10,6 +10,11 @@
         android:text="@string/aggiungi_citta"
         android:textColor="@color/white"
         android:paddingLeft="@dimen/dialog_header_padding_left"/>
+    <AutoCompleteTextView
+        android:id="@+id/autocomplete_citta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"/>
     <EditText
         android:id="@+id/text_add_citta"
         android:layout_width="match_parent"

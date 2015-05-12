@@ -22,9 +22,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
+import com.stefano.andrea.dialogs.AddCittaDialog;
 import com.stefano.andrea.loaders.CittaLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
@@ -39,7 +41,7 @@ import java.util.List;
 /**
  * DettagliViaggioFragment
  */
-public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, DialogHelper.AggiungiCittaCallback {
+public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, AddCittaDialog.AggiungiCittaCallback {
 
     private static final int CITTA_LOADER = 1;
     private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliViaggioFragment.idViaggio";
@@ -164,14 +166,16 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     /**
      * Aggiunge una nuova citta al viaggio
      * @param nomeCitta Il nome della citta
-     * @param nomeNazione Il nome della nazione
+     * @param coordinates Le coordinate della citta'
      */
     @Override
-    public void creaNuovaCitta(String nomeCitta, String nomeNazione) {
+    public void creaNuovaCitta(String nomeCitta, String indirizzo, LatLng coordinates) {
         Citta citta = new Citta();
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
-        citta.setNazione(nomeNazione);
+        citta.setNazione(indirizzo);
+        citta.setLatitudine(coordinates.latitude);
+        citta.setLongitudine(coordinates.longitude);
         new InsertTask<>(mParentActivity, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
     }
 
@@ -208,7 +212,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     private void openDialogAddCitta(View view) {
-        DialogHelper.showDialogAggiungiCitta(mParentActivity, this);
+        //DialogHelper.showDialogAggiungiCitta(mParentActivity, this);
+        AddCittaDialog dialog = AddCittaDialog.newInstance();
+        dialog.setCallback(this);
+        dialog.show(getChildFragmentManager(), "dialog");
     }
 
     @Override
