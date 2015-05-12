@@ -3,7 +3,6 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -208,17 +207,13 @@ public class FullFotoFragment extends Fragment {
 
             newUiOptions ^= View.SYSTEM_UI_FLAG_LOW_PROFILE;
 
-        if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-        if (Build.VERSION.SDK_INT >= 16) {
             newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-        if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
+
+            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+
             newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE;
 
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
         decorView.setSystemUiVisibility(newUiOptions);
 
