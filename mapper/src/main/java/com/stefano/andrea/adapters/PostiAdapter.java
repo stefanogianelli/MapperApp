@@ -15,7 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Posto;
@@ -127,7 +126,7 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
                     //Creating the instance of PopupMenu
                     PopupMenu popup = new PopupMenu(mActivity, menuButton);
                     //Inflating the Popup using xml file
-                    popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+                    popup.getMenuInflater().inflate(R.menu.popup_two, popup.getMenu());
 
                     //registering popup with OnMenuItemClickListener
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -151,9 +150,6 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
                                         }
                                     });
                                     dialog.create().show();
-                                    break;
-                                case R.id.menu_rename:
-                                    Toast.makeText(mActivity, "Vuoi rinominare : " + posto.getNome(), Toast.LENGTH_SHORT).show();
                                     break;
                             }
                             return true;
