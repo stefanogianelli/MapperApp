@@ -3,6 +3,7 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -199,17 +200,43 @@ public class FullFotoFragment extends Fragment {
     /**
      * Detects and toggles immersive mode (also known as "hidey bar" mode).
      */
+    public void toggleHideyBar() {
+        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+
+        // Navigation bar hiding:  Backwards compatible to ICS.
+        if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+
+        // Status bar hiding: Backwards compatible to Jellybean
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+
+        if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+    }
+
+
     public void toggleUiFlags() {
 
         View decorView = getActivity().getWindow().getDecorView();
         int uiOptions = decorView.getSystemUiVisibility();
         int newUiOptions = uiOptions;
 
+            newUiOptions ^= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+
             newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
 
             newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
             newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE;
+
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
         decorView.setSystemUiVisibility(newUiOptions);
 
