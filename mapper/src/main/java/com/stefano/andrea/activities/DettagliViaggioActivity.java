@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.stefano.andrea.adapters.TabAdapter;
@@ -22,7 +21,7 @@ import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
-public class DettagliViaggioActivity extends ActionBarActivity {
+public class DettagliViaggioActivity extends AppCompatActivity {
 
     private static final int DETTAGLI_FRAGMENT = 0;
     private static final int FOTO_FRAGMENT = 1;
@@ -40,11 +39,11 @@ public class DettagliViaggioActivity extends ActionBarActivity {
         String mNomeViaggio = context.getNomeViaggio();
         mIdViaggio = context.getIdViaggio();
         //acquisito riferimenti
-        View toolbarView = findViewById(R.id.dettagli_viaggio_toolbar);
+        Toolbar toolbarView = (Toolbar) findViewById(R.id.dettagli_viaggio_toolbar);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         //attivo action bar
-        setSupportActionBar((Toolbar) toolbarView);
+        setSupportActionBar(toolbarView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);

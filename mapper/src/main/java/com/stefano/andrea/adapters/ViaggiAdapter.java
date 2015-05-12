@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -45,7 +44,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
         void rinominaViaggio (int position, Viaggio viaggio);
     }
 
-    public ViaggiAdapter(ViaggioOnClickListener listener, ActionBarActivity activity, ActionMode.Callback callback) {
+    public ViaggiAdapter(ViaggioOnClickListener listener, Activity activity, ActionMode.Callback callback) {
         super(activity, callback);
         mContext = activity.getApplicationContext();
         mListener = listener;
