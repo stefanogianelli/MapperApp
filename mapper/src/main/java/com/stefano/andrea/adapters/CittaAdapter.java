@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.stefano.andrea.activities.R;
@@ -126,7 +125,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
                     //Creating the instance of PopupMenu
                     PopupMenu popup = new PopupMenu(mActivity, button1);
                     //Inflating the Popup using xml file
-                    popup.getMenuInflater().inflate(R.menu.popup_one, popup.getMenu());
+                    popup.getMenuInflater().inflate(R.menu.popup_two, popup.getMenu());
 
                     //registering popup with OnMenuItemClickListener
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -150,9 +149,6 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
                                         }
                                     });
                                     dialog.create().show();
-                                    break;
-                                case R.id.menu_rename:
-                                    Toast.makeText(mActivity, "Vuoi rinominare : " + citta.getNome(), Toast.LENGTH_SHORT).show();
                                     break;
                             }
                             return true;
