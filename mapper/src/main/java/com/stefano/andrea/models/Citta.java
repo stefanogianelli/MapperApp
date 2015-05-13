@@ -1,9 +1,12 @@
 package com.stefano.andrea.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Citta
  */
-public class Citta {
+public class Citta implements Parcelable {
 
     private long id;
     private long idCitta;
@@ -18,6 +21,20 @@ public class Citta {
 
     public Citta () {
         this.id = -1;
+        this.idPlace = "-1";
+    }
+
+    public Citta (Parcel pc) {
+        id = pc.readLong();
+        idCitta = pc.readLong();
+        idViaggio = pc.readLong();
+        nome = pc.readString();
+        idPlace = pc.readString();
+        latitudine = pc.readDouble();
+        longitudine = pc.readDouble();
+        countPostiVisitati = pc.readInt();
+        countPosti = pc.readInt();
+        countFoto = pc.readInt();
     }
 
     public long getId() {
@@ -99,4 +116,35 @@ public class Citta {
     public void setCountFoto(int countFoto) {
         this.countFoto = countFoto;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeLong(idCitta);
+        dest.writeLong(idViaggio);
+        dest.writeString(nome);
+        dest.writeString(idPlace);
+        dest.writeDouble(latitudine);
+        dest.writeDouble(longitudine);
+        dest.writeInt(countPostiVisitati);
+        dest.writeInt(countPosti);
+        dest.writeInt(countFoto);
+    }
+
+    public static final Parcelable.Creator<Citta> CREATOR = new Parcelable.Creator<Citta>() {
+        @Override
+        public Citta createFromParcel(Parcel source) {
+            return new Citta(source);
+        }
+
+        @Override
+        public Citta[] newArray(int size) {
+            return new Citta[size];
+        }
+    };
 }

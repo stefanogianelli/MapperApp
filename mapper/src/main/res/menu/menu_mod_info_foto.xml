@@ -15,4 +15,8 @@
         mapper:showAsAction="ifRoom|withText"
         android:title="@string/cancel" />
 
+    <item
+        android:id="@+id/action_localizza"
+        android:title="Localizza" />
+
 </menu>

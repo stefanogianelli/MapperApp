@@ -150,8 +150,10 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
 
     @Override
     public void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override

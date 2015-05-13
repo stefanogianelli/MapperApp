@@ -5,8 +5,12 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +28,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.dialogs.AddCittaDialog;
@@ -35,12 +42,13 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.DialogHelper;
+import com.stefano.andrea.utils.FetchAddressIntentService;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModInfoFotoActivity extends AppCompatActivity {
+public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
@@ -52,6 +60,16 @@ public class ModInfoFotoActivity extends AppCompatActivity {
 
     private static final int CLEAR_CITTA = 1;
     private static final int CLEAR_POSTO = 2;
+    private static final int ID_INSERT_CITY = -42;
+
+    //Localization variables
+    private static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
+    private static final String LOCATION_ADDRESS_KEY = "location-address";
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private boolean mAddressRequested;
+    private AddressResultReceiver mResultReceiver;
+    private Citta mCittaLocalizzata;
 
     private ContentResolver mResolver;
     private boolean mFotoSalvata = false;
@@ -113,6 +131,13 @@ public class ModInfoFotoActivity extends AppCompatActivity {
         inizializzaCitta(idCitta);
         //inizializzo posto
         inizializzaPosto(idPosto);
+        //configuro handler per la localizzazione
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        mAddressRequested = false;
+        updateValuesFromBundle(savedInstanceState);
+
+        updateUIWidgets();
+        buildGoogleApiClient();
     }
 
 
@@ -136,34 +161,19 @@ public class ModInfoFotoActivity extends AppCompatActivity {
         } else if (id == R.id.action_salva_foto) {
             if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
                 if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1) {
-                    List<Foto> elencoFoto = new ArrayList<>();
-                    for (int i = 0; i < mImagePath.size(); i++) {
-                        Foto foto = new Foto();
-                        foto.setPath(mImagePath.get(i));
-                        //acquisisco dettagli dell'immagine
-                        ImageDetails dettagli = getMediaStoreData(foto.getPath());
-                        foto.setIdMediaStore(dettagli.getIdMediaStore());
-                        foto.setData(dettagli.getData());
-                        double lat = dettagli.getLatitudine();
-                        double lon = dettagli.getLongitudine();
-                        if (lat == 0 && lon == 0) {
-                            foto.setLatitudine(mCittaSelezionata.getLatitudine());
-                            foto.setLongitudine(mCittaSelezionata.getLongitudine());
-                        } else {
-                            foto.setLatitudine(lat);
-                            foto.setLongitudine(lon);
-                        }
-                        foto.setIdViaggio(mViaggioSelezionato.getId());
-                        foto.setIdCitta(mCittaSelezionata.getId());
-                        if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
-                            foto.setIdPosto(mPostoSelezionato.getId());
-                        if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
-                            foto.setCamera(1);
-                        elencoFoto.add(foto);
-                    }
-                    new InsertTask<>(this, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
-                    mFotoSalvata = true;
+                    addFoto();
                     finish();
+                } else if (mCittaLocalizzata != null) {
+                    addNewCity();
+                    Cursor c = mResolver.query(MapperContract.Citta.CONTENT_URI,
+                            new String [] {MapperContract.Citta.ID_CITTA},
+                            null, null, MapperContract.Citta.DEFAULT_SORT + " LIMIT 1");
+                    if (c.moveToFirst()) {
+                        mCittaSelezionata = mCittaLocalizzata;
+                        mCittaSelezionata.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
+                    }
+                    c.close();
+                    addFoto();
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
             } else {
@@ -180,9 +190,48 @@ public class ModInfoFotoActivity extends AppCompatActivity {
             }
             finish();
             return true;
+        } else if (id == R.id.action_localizza) {
+            if (!mAddressRequested)
+                fetchAddressButtonHandler();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addNewCity () {
+        mCittaLocalizzata.setIdViaggio(mViaggioSelezionato.getId());
+        new InsertTask<>(ModInfoFotoActivity.this, null, mCittaLocalizzata).execute(InsertTask.INSERISCI_CITTA);
+    }
+
+    private void addFoto () {
+        List<Foto> elencoFoto = new ArrayList<>();
+        for (int i = 0; i < mImagePath.size(); i++) {
+            Foto foto = new Foto();
+            foto.setPath(mImagePath.get(i));
+            //acquisisco dettagli dell'immagine
+            ImageDetails dettagli = getMediaStoreData(foto.getPath());
+            foto.setIdMediaStore(dettagli.getIdMediaStore());
+            foto.setData(dettagli.getData());
+            double lat = dettagli.getLatitudine();
+            double lon = dettagli.getLongitudine();
+            if (lat == 0 && lon == 0) {
+                foto.setLatitudine(mCittaSelezionata.getLatitudine());
+                foto.setLongitudine(mCittaSelezionata.getLongitudine());
+            } else {
+                foto.setLatitudine(lat);
+                foto.setLongitudine(lon);
+            }
+            foto.setIdViaggio(mViaggioSelezionato.getId());
+            foto.setIdCitta(mCittaSelezionata.getId());
+            if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
+                foto.setIdPosto(mPostoSelezionato.getId());
+            if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
+                foto.setCamera(1);
+            elencoFoto.add(foto);
+        }
+        new InsertTask<>(this, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
+        mFotoSalvata = true;
     }
 
     /**
@@ -249,7 +298,10 @@ public class ModInfoFotoActivity extends AppCompatActivity {
                             mViaggioText.setText(viaggio.getNome());
                             //ricarico l'elenco delle citta'
                             clearSelection(CLEAR_CITTA);
-                            updateCitta();
+                            if (mCittaLocalizzata != null) {
+                                displayAddressOutput();
+                            } else
+                                updateCitta();
                         }
                     });
                 }
@@ -311,17 +363,22 @@ public class ModInfoFotoActivity extends AppCompatActivity {
      */
     private void updateCitta () {
         final List<Citta> elencoCitta = new ArrayList<>();
-        Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mViaggioSelezionato.getId());
-        String [] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME};
-        Cursor curCitta = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
-        while (curCitta.moveToNext()) {
-            Citta citta = new Citta();
-            citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
-            citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
-            elencoCitta.add(citta);
+        if (mCittaLocalizzata != null) {
+            elencoCitta.add(mCittaLocalizzata);
         }
-        curCitta.close();
-        mAddCittaButton.setClickable(true);
+        if (mViaggioSelezionato != null) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mViaggioSelezionato.getId());
+            String[] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME};
+            Cursor curCitta = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
+            while (curCitta.moveToNext()) {
+                Citta citta = new Citta();
+                citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
+                citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
+                elencoCitta.add(citta);
+            }
+            curCitta.close();
+            mAddCittaButton.setClickable(true);
+        }
         if (elencoCitta.size() > 0) {
             final CittaSpinnerAdapter cittaAdapter = new CittaSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoCitta);
             mCittaText.setClickable(true);
@@ -406,34 +463,36 @@ public class ModInfoFotoActivity extends AppCompatActivity {
      */
     private void updatePosti () {
         final List<Posto> elencoPosti = new ArrayList<>();
-        Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
-        String [] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
-        Cursor curPosto = mResolver.query(query, projection, null, null, MapperContract.Luogo.DEFAULT_SORT);
-        while (curPosto.moveToNext()) {
-            Posto posto = new Posto();
-            posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
-            posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
-            elencoPosti.add(posto);
-        }
-        curPosto.close();
-        mAddPostoButton.setClickable(true);
-        if (elencoPosti.size() > 0) {
-            final PostoSpinnerAdapter postoAdapter = new PostoSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoPosti);
-            mPostoText.setClickable(true);
-            mPostoText.setTextColor(getResources().getColor(R.color.black));
-            mPostoText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_posto, postoAdapter, new DialogHelper.ListDialogCallback() {
-                        @Override
-                        public void onItemClick(int position) {
-                            Posto posto = elencoPosti.get(position);
-                            mPostoSelezionato = posto;
-                            mPostoText.setText(posto.getNome());
-                        }
-                    });
-                }
-            });
+        if (mCittaSelezionata.getId() != ID_INSERT_CITY) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
+            String[] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
+            Cursor curPosto = mResolver.query(query, projection, null, null, MapperContract.Luogo.DEFAULT_SORT);
+            while (curPosto.moveToNext()) {
+                Posto posto = new Posto();
+                posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
+                posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
+                elencoPosti.add(posto);
+            }
+            curPosto.close();
+            mAddPostoButton.setClickable(true);
+            if (elencoPosti.size() > 0) {
+                final PostoSpinnerAdapter postoAdapter = new PostoSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoPosti);
+                mPostoText.setClickable(true);
+                mPostoText.setTextColor(getResources().getColor(R.color.black));
+                mPostoText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_posto, postoAdapter, new DialogHelper.ListDialogCallback() {
+                            @Override
+                            public void onItemClick(int position) {
+                                Posto posto = elencoPosti.get(position);
+                                mPostoSelezionato = posto;
+                                mPostoText.setText(posto.getNome());
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
@@ -520,6 +579,20 @@ public class ModInfoFotoActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         //TODO: trovare fix per il fatto che la funzione non venga sempre chiamata
         super.onDestroy();
@@ -582,4 +655,184 @@ public class ModInfoFotoActivity extends AppCompatActivity {
             return convertView;
         }
     }
+
+    //LOCATION METHODS
+
+    /**
+     * Updates fields based on data stored in the bundle.
+     */
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            // Check savedInstanceState to see if the address was previously requested.
+            if (savedInstanceState.keySet().contains(ADDRESS_REQUESTED_KEY)) {
+                mAddressRequested = savedInstanceState.getBoolean(ADDRESS_REQUESTED_KEY);
+            }
+            // Check savedInstanceState to see if the location address string was previously found
+            // and stored in the Bundle. If it was found, display the address string in the UI.
+            if (savedInstanceState.keySet().contains(LOCATION_ADDRESS_KEY)) {
+                displayAddressOutput();
+            }
+        }
+    }
+
+    /**
+     * Builds a GoogleApiClient. Uses {@code #addApi} to request the LocationServices API.
+     */
+    private synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    /**
+     * Runs when user clicks the Fetch Address button. Starts the service to fetch the address if
+     * GoogleApiClient is connected.
+     */
+    private void fetchAddressButtonHandler() {
+        // We only start the service to fetch the address if GoogleApiClient is connected.
+        if (mGoogleApiClient.isConnected() && mLastLocation != null) {
+            startIntentService();
+        }
+        // If GoogleApiClient isn't connected, we process the user's request by setting
+        // mAddressRequested to true. Later, when GoogleApiClient connects, we launch the service to
+        // fetch the address. As far as the user is concerned, pressing the Fetch Address button
+        // immediately kicks off the process of getting the address.
+        mAddressRequested = true;
+        updateUIWidgets();
+    }
+
+    /**
+     * Creates an intent, adds location data to it as an extra, and starts the intent service for
+     * fetching an address.
+     */
+    private void startIntentService() {
+        // Create an intent for passing to the intent service responsible for fetching the address.
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+
+        // Pass the result receiver as an extra to the service.
+        intent.putExtra(FetchAddressIntentService.RECEIVER, mResultReceiver);
+
+        // Pass the location data as an extra to the service.
+        intent.putExtra(FetchAddressIntentService.LOCATION_DATA_EXTRA, mLastLocation);
+
+        // Start the service. If the service isn't already running, it is instantiated and started
+        // (creating a process for it if needed); if it is running then it remains running. The
+        // service kills itself automatically once all intents are processed.
+        startService(intent);
+    }
+
+    /**
+     * Receiver for data sent from FetchAddressIntentService.
+     */
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        /**
+         *  Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
+         */
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultCode == FetchAddressIntentService.FAILURE_RESULT) {
+                showToast(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY));
+            } else if (resultCode == FetchAddressIntentService.SUCCESS_RESULT) {
+                mCittaLocalizzata = new Citta();
+                mCittaLocalizzata.setId(ID_INSERT_CITY);
+                mCittaLocalizzata.setNome(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY));
+                mCittaLocalizzata.setLatitudine(mLastLocation.getLatitude());
+                mCittaLocalizzata.setLongitudine(mLastLocation.getLongitude());
+                //update UI
+                displayAddressOutput();
+            }
+
+            // Reset. Enable the Fetch Address button and stop showing the progress bar.
+            mAddressRequested = false;
+            updateUIWidgets();
+        }
+    }
+
+    /**
+     * Toggles the visibility of the progress bar. Enables or disables the Fetch Address button.
+     */
+    private void updateUIWidgets() {
+        //TODO: implementare indicatore che indica la ricerca delle coordinate
+        /*if (mAddressRequested) {
+            mProgressBar.setVisibility(ProgressBar.VISIBLE);
+            mFetchAddressButton.setEnabled(false);
+        } else {
+            mProgressBar.setVisibility(ProgressBar.GONE);
+            mFetchAddressButton.setEnabled(true);
+        }*/
+    }
+
+    /**
+     * Updates the address in the UI.
+     */
+    private void displayAddressOutput() {
+        mCittaText.setText(mCittaLocalizzata.getNome());
+        updateCitta();
+    }
+
+    /**
+     * Shows a toast with the given text.
+     */
+    private void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save whether the address has been requested.
+        savedInstanceState.putBoolean(ADDRESS_REQUESTED_KEY, mAddressRequested);
+
+        // Save the address string.
+        if (mCittaLocalizzata != null)
+            savedInstanceState.putParcelable(LOCATION_ADDRESS_KEY, mCittaLocalizzata);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    /**
+     * Runs when a GoogleApiClient object successfully connects.
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        // Gets the best and most recent location currently available, which may be null
+        // in rare cases when a location is not available.
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        //TODO: ricavare localita' dal GPS in caso l'ultima non sia disponibile
+        if (mLastLocation != null) {
+            // Determine whether a Geocoder is available.
+            if (!Geocoder.isPresent()) {
+                Toast.makeText(this, R.string.no_geocoder_available, Toast.LENGTH_LONG).show();
+                return;
+            }
+            // It is possible that the user presses the button to get the address before the
+            // GoogleApiClient object successfully connects. In such a case, mAddressRequested
+            // is set to true, but no attempt is made to fetch the address (see
+            // fetchAddressButtonHandler()) . Instead, we start the intent service here if the
+            // user has requested an address, since we now have a connection to GoogleApiClient.
+            if (mAddressRequested) {
+                startIntentService();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
 }

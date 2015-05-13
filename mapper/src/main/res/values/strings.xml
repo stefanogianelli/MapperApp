@@ -126,6 +126,12 @@
     <string name="all_right_reserved">All rights reserved.</string>
     <string name="about">About</string>
 
+    <!-- FetchAddressIntentService -->
+    <string name="no_address_found">Nessun indirizzo trovato</string>
+    <string name="no_location_data_provided">Provider non disponibile</string>
+    <string name="service_not_available">Servizio non disponibile</string>
+    <string name="invalid_lat_long_used">Coordinate non valide</string>
+    <string name="no_geocoder_available">Geocoder non disponibile</string>
 
     <string name="hello_world">Hello world!</string>
 

@@ -153,8 +153,10 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int insertItem() {
             //verifico se la citta esiste gia nel database
-            int res = this.getDatiCitta();
-            if (res == RESULT_ERROR) {
+            int res;
+            if (citta.getIdPlace().equals("-1"))
+                res = this.getDatiCitta();
+            else {
                 //creo la citta
                 InsertDatiCitta datiCitta = new InsertDatiCitta();
                 res = datiCitta.insertItem();
