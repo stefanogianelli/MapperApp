@@ -34,8 +34,15 @@ public class ViaggiLoader extends BaseAsyncTaskLoader<List<Viaggio>> {
             viaggio.setCountCitta(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_CITTA)));
             viaggio.setCountPosti(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_POSTI)));
             viaggio.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Viaggio.COUNT_FOTO)));
-            viaggio.setPathFoto(c.getString(c.getColumnIndex(MapperContract.Viaggio.PATH_FOTO)));
+            Cursor foto = mResolver.query(MapperContract.Foto.CONTENT_URI,
+                    new String [] {MapperContract.Foto.PATH},
+                    MapperContract.Foto.ID_VIAGGIO + "=?",
+                    new String [] {Long.toString(viaggio.getId())},
+                    MapperContract.Foto.DEFAULT_SORT + " LIMIT 1");
+            if (foto.moveToFirst())
+                viaggio.setPathFoto(foto.getString(foto.getColumnIndex(MapperContract.Foto.PATH)));
             elencoViaggi.add(viaggio);
+            foto.close();
         }
         c.close();
         return elencoViaggi;

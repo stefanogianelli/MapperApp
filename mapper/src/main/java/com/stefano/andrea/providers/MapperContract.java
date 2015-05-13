@@ -18,8 +18,6 @@ public final class MapperContract {
         String COUNT_POSTI = "count_posti";
         /** Totale delle foto presenti nel viaggio */
         String COUNT_FOTO = "count_foto";
-        /** Percorso della foto di copertina del viaggio */
-        String PATH_FOTO = "path_foto";
     }
 
     interface CittaColumns {
@@ -116,7 +114,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.viaggi";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.viaggio";
 
-        public static final String[] PROJECTION_ALL = {ID_VIAGGIO, NOME, COUNT_CITTA, COUNT_POSTI, COUNT_FOTO, PATH_FOTO};
+        public static final String[] PROJECTION_ALL = {ID_VIAGGIO, NOME, COUNT_CITTA, COUNT_POSTI, COUNT_FOTO};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_VIAGGIO + " DESC";

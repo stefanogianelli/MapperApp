@@ -32,7 +32,6 @@ public class MapperDatabase extends SQLiteOpenHelper {
         String DECREMENTA_COUNT_POSTI = "decrementa_count_posti";
         String INCREMENTA_COUNT_FOTO = "incrementa_count_foto";
         String DECREMENTA_COUNT_FOTO = "decrementa_count_foto";
-        String CAMBIA_IMMAGINE_VIAGGIO = "cambia_immagine_viaggio";
         String AGGIORNA_POSTI_VISITATI = "aggiorna_posti_visitati";
         String ELIMINA_DATI_CITTA = "elimina_dati_citta";
         String ELIMINA_LUOGO = "elimina_luogo";
@@ -47,8 +46,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "`" + MapperContract.Viaggio.NOME + "` TEXT NOT NULL," +
             "`" + MapperContract.Viaggio.COUNT_CITTA + "` INTEGER DEFAULT 0," +
             "`" + MapperContract.Viaggio.COUNT_POSTI + "` INTEGER DEFAULT 0," +
-            "`" + MapperContract.Viaggio.COUNT_FOTO + "` INTEGER DEFAULT 0," +
-            "`" + MapperContract.Viaggio.PATH_FOTO + "` TEXT DEFAULT null);";
+            "`" + MapperContract.Viaggio.COUNT_FOTO + "` INTEGER DEFAULT 0);";
 
     //Create table CITTA
     private static final String CREATE_CITTA = "CREATE TABLE \"" + Tables.CITTA + "\" (" +
@@ -163,10 +161,6 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "UPDATE " + Tables.POSTO + " SET " + MapperContract.Posto.COUNT_FOTO + " = " + MapperContract.Posto.COUNT_FOTO + " - 1 WHERE " + Tables.POSTO + "." + MapperContract.Posto.ID_POSTO + " = old." + MapperContract.Foto.ID_POSTO + "; " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " - 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = old." + MapperContract.Foto.ID_CITTA + "; END;";
 
-    //Trigger che modifica immagine al viaggio
-    private static final String TRIGGER_CAMBIA_IMMAGINE_VIAGGIO = "CREATE TRIGGER " + Triggers.CAMBIA_IMMAGINE_VIAGGIO + " AFTER UPDATE ON " + Tables.FOTO + " BEGIN " +
-            "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.PATH_FOTO + " = " + MapperContract.Foto.PATH + " WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = new." + MapperContract.Foto.ID_VIAGGIO + "; END;";
-
     //Trigger che aggiorna il contatore dei posti visitati
     private static final String TRIGGER_AGGIORNA_POSTI_VISITATI = "CREATE TRIGGER " + Triggers.AGGIORNA_POSTI_VISITATI + " AFTER UPDATE OF " + MapperContract.Posto.VISITATO + " ON " + Tables.POSTO + " BEGIN " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.POSTI_VISITATI + " = " + MapperContract.Citta.POSTI_VISITATI + " + 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Posto.ID_CITTA + " AND new." + MapperContract.Posto.VISITATO + " = 1; " +
@@ -214,7 +208,6 @@ public class MapperDatabase extends SQLiteOpenHelper {
         db.execSQL(TRIGGER_DECREMENTA_COUNT_POSTI);
         db.execSQL(TRIGGER_INCREMENTA_COUNT_FOTO);
         db.execSQL(TRIGGER_DECREMENTA_COUNT_FOTO);
-        db.execSQL(TRIGGER_CAMBIA_IMMAGINE_VIAGGIO);
         db.execSQL(TRIGGER_AGGIORNA_POSTI_VISITATI);
         db.execSQL(TRIGGER_ELIMINA_DATI_CITTA);
         db.execSQL(TRIGGER_ELIMINA_LUOGO);
@@ -238,7 +231,6 @@ public class MapperDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_POSTI);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.INCREMENTA_COUNT_FOTO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_FOTO);
-        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.CAMBIA_IMMAGINE_VIAGGIO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.AGGIORNA_POSTI_VISITATI);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_DATI_CITTA);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_LUOGO);
