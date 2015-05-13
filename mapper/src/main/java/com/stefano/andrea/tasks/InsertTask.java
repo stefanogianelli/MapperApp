@@ -178,8 +178,8 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
          * Verifica se esistono nel database i dati di una citta
          */
         private int getDatiCitta () {
-            String selection = MapperContract.DatiCitta.NOME + "=? AND " + MapperContract.DatiCitta.NAZIONE + "=?";
-            String [] selectionArgs = {citta.getNome(), citta.getNazione()};
+            String selection = MapperContract.DatiCitta.ID_PLACE + "=?";
+            String [] selectionArgs = {citta.getIdPlace()};
             Cursor c = mResolver.query(MapperContract.DatiCitta.CONTENT_URI, MapperContract.DatiCitta.PROJECTION_ALL, selection, selectionArgs, MapperContract.DatiCitta.DEFAULT_SORT);
             if (c != null && c.getCount() > 0) {
                 c.moveToNext();
@@ -208,28 +208,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         public int insertItem() {
             ContentValues values = new ContentValues();
             values.put(MapperContract.DatiCitta.NOME, citta.getNome());
-            values.put(MapperContract.DatiCitta.NAZIONE, citta.getNazione());
-            /*JSONObject geoInfo = null;
-            try {
-                geoInfo = LocationHelper.getGeocodeInformations(citta.getNome() + "," + citta.getNazione());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (geoInfo != null) {
-                double latitudine = LocationHelper.getLatitudine(geoInfo);
-                double longitudine = LocationHelper.getLongitudine(geoInfo);
-                values.put(MapperContract.DatiCitta.LATITUDINE, latitudine);
-                values.put(MapperContract.DatiCitta.LONGITUDINE, longitudine);
-                Log.d(TAG, citta.getNome() + " - Lat: " + latitudine + " , Lng: " + longitudine);
-                Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
-                long idCitta = Long.parseLong(uri.getLastPathSegment());
-                if (idCitta != -1) {
-                    citta.setIdCitta(idCitta);
-                    return RESULT_OK;
-                }
-            }*/
+            values.put(MapperContract.DatiCitta.ID_PLACE, citta.getIdPlace());
             values.put(MapperContract.DatiCitta.LATITUDINE, citta.getLatitudine());
             values.put(MapperContract.DatiCitta.LONGITUDINE, citta.getLongitudine());
             Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);

@@ -9,7 +9,7 @@ public class Citta {
     private long idCitta;
     private long idViaggio;
     private String nome;
-    private String nazione;
+    private String idPlace;
     private double latitudine;
     private double longitudine;
     private int countPostiVisitati;
@@ -52,12 +52,12 @@ public class Citta {
         this.nome = nome;
     }
 
-    public String getNazione() {
-        return nazione;
+    public String getIdPlace() {
+        return idPlace;
     }
 
-    public void setNazione(String nazione) {
-        this.nazione = nazione;
+    public void setIdPlace(String idPlace) {
+        this.idPlace = idPlace;
     }
 
     public double getLatitudine() {

@@ -168,14 +168,15 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     /**
      * Aggiunge una nuova citta al viaggio
      * @param nomeCitta Il nome della citta
+     * @param idPlace L'id del luogo nel database di Google
      * @param coordinates Le coordinate della citta'
      */
     @Override
-    public void creaNuovaCitta(String nomeCitta, String indirizzo, LatLng coordinates) {
+    public void creaNuovaCitta(String nomeCitta, String idPlace, LatLng coordinates) {
         Citta citta = new Citta();
         citta.setIdViaggio(mIdViaggio);
         citta.setNome(nomeCitta);
-        citta.setNazione(indirizzo);
+        citta.setIdPlace(idPlace);
         citta.setLatitudine(coordinates.latitude);
         citta.setLongitudine(coordinates.longitude);
         new InsertTask<>(mParentActivity, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);

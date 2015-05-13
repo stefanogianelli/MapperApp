@@ -346,7 +346,7 @@ public class ModInfoFotoActivity extends AppCompatActivity {
                         Citta citta = new Citta();
                         citta.setIdViaggio(mViaggioSelezionato.getId());
                         citta.setNome(nomeCitta);
-                        citta.setNazione(nomeNazione);
+                        citta.setIdPlace(nomeNazione);
                         InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
                             @Override
                             public void insertItem(Citta item) {

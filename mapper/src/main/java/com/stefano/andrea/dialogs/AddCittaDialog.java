@@ -45,7 +45,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
      * Callback invocata dal dialog aggiungi citta
      */
     public interface AggiungiCittaCallback {
-        void creaNuovaCitta (String nomeCitta, String indirizzo, LatLng coordinates);
+        void creaNuovaCitta (String nomeCitta, String idPlace, LatLng coordinates);
     }
 
     private AggiungiCittaCallback mCallback;
@@ -193,10 +193,10 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             // Get the Place object from the buffer.
             final Place place = places.get(0);
             String placeName = place.getName().toString();
-            String placeAddress = place.getAddress().toString();
+            String idPlace = place.getId();
             LatLng placeCoordinates = place.getLatLng();
 
-            mCallback.creaNuovaCitta(placeName, placeAddress, placeCoordinates);
+            mCallback.creaNuovaCitta(placeName, idPlace, placeCoordinates);
 
             places.release();
             dismiss();

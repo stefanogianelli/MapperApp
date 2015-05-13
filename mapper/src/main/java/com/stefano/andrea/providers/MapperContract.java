@@ -55,8 +55,8 @@ public final class MapperContract {
         String ID = "id_dati_citta";
         /** Nome della citta */
         String NOME = "nome";
-        /** Nome della nazione */
-        String NAZIONE = "nazione";
+        /** ID della localita' nel database di Google */
+        String ID_PLACE = "id_place";
         /** Latitudine della citta */
         String LATITUDINE = "latitudine";
         /** Longitudine della citta */
@@ -131,7 +131,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.citta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.citta";
 
-        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.NAZIONE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
+        public static final String [] PROJECTION_ALL = {ID_CITTA, ID_DATI_CITTA, ID_VIAGGIO, COUNT_POSTI, POSTI_VISITATI, COUNT_FOTO, DatiCitta.NOME, DatiCitta.ID_PLACE, DatiCitta.LATITUDINE, DatiCitta.LONGITUDINE, DatiCitta.COUNT};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = ID_CITTA + " DESC";
@@ -160,7 +160,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.daticitta";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.daticitta";
 
-        public static final String[] PROJECTION_ALL = {ID, NOME, NAZIONE, LATITUDINE, LONGITUDINE, COUNT};
+        public static final String[] PROJECTION_ALL = {ID, NOME, ID_PLACE, LATITUDINE, LONGITUDINE, COUNT};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = DatiCittaColumns.NOME + " ASC";
