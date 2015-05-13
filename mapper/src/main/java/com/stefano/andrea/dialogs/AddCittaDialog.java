@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -81,7 +82,8 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_citta, container, false);
         view.setOnClickListener(null);
-        EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_citta);
+        final EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_citta);
+        final ImageView clearButton = (ImageView) view.findViewById(R.id.clearable_button_clear);
         final ListView suggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
         List<Integer> placesTypes = new ArrayList<>();
         placesTypes.add(Place.TYPE_GEOCODE);
@@ -99,15 +101,24 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString();
-                if (!query.isEmpty())
+                if (!query.isEmpty()) {
                     mAdapter.getFilter().filter(query);
-                else
+                    clearButton.setEnabled(true);
+                } else {
                     mAdapter.clear();
+                    clearButton.setEnabled(false);
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                autocompleteView.setText("");
             }
         });
         return view;

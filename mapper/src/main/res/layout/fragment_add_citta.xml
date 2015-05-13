@@ -39,7 +39,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dip"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:clickable="true"
+            android:clickable="false"
             android:focusable="true"
             android:background="?android:selectableItemBackground"/>
 
