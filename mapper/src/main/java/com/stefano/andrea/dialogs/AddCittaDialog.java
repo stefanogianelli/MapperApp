@@ -86,7 +86,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
         List<Integer> placesTypes = new ArrayList<>();
         placesTypes.add(Place.TYPE_GEOCODE);
         AutocompleteFilter filter = AutocompleteFilter.create(placesTypes);
-        mAdapter = new PlaceAutocompleteAdapter(mParentActivity, R.layout.item_autocomplete,
+        mAdapter = new PlaceAutocompleteAdapter(mParentActivity, R.layout.item_autocomplete_citta,
                 mGoogleApiClient, PLACES_BOUND, filter);
         suggestions.setAdapter(mAdapter);
         suggestions.setOnItemClickListener(mAutocompleteClickListener);
