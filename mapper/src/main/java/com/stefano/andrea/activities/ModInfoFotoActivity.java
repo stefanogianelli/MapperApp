@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -77,6 +78,10 @@ public class ModInfoFotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mod_info_foto);
+        //setup della toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_foto_activity);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mResolver = getContentResolver();
         //acquisisco parametri dall'intent e inizializzo a -1 quelli senza valore
         Intent intent = getIntent();
@@ -125,7 +130,10 @@ public class ModInfoFotoActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_salva_foto) {
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        } else if (id == R.id.action_salva_foto) {
             if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
                 if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1) {
                     List<Foto> elencoFoto = new ArrayList<>();

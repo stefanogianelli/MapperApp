@@ -117,33 +117,4 @@ public class DettagliCittaActivity extends AppCompatActivity {
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta);
     }
 
-    /*public class TabDettagliCittaAdapter extends FragmentStatePagerAdapter {
-
-        private CharSequence [] mTitles = {"Posti","Foto"};
-        private int mNumbOfTabs = 2;
-
-        public TabDettagliCittaAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if(position == 0) {
-                return DettagliCittaFragment.newInstance(mIdViaggio, mIdCitta);
-            } else {
-                return ElencoFotoFragment.newInstance(mIdCitta, FotoLoader.FOTO_CITTA);
-            }
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitles[position];
-        }
-
-        @Override
-        public int getCount() {
-            return mNumbOfTabs;
-        }
-    }*/
-
 }
