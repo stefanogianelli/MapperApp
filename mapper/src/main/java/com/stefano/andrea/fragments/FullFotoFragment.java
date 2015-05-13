@@ -42,6 +42,8 @@ public class FullFotoFragment extends Fragment {
     private Activity mParentActivity;
     private List<Foto> mElencoFoto;
     private int mPosition;
+    private ImageAdapter mAdapter;
+    private ViewPager mPager;
 
     public FullFotoFragment () { }
 
@@ -63,7 +65,7 @@ public class FullFotoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_full_foto, container, false);
-        ViewPager pager = (ViewPager) rootView.findViewById(R.id.pager);
+        mPager = (ViewPager) rootView.findViewById(R.id.pager);
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.full_foto_toolbar);
         Bundle args = getArguments();
         if (args != null) {
@@ -73,8 +75,9 @@ public class FullFotoFragment extends Fragment {
         ((AppCompatActivity) mParentActivity).setSupportActionBar(toolbar);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
-        pager.setAdapter(new ImageAdapter(mParentActivity));
-        pager.setCurrentItem(mPosition);
+        mAdapter = new ImageAdapter(mParentActivity);
+        mPager.setAdapter(mAdapter);
+        mPager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
         return rootView;
     }
@@ -101,7 +104,7 @@ public class FullFotoFragment extends Fragment {
             getFragmentManager().popBackStack();
             return true;
         } else if (id == R.id.action_dettagli) {
-            DialogHelper.showDettagliFotoDialog(mParentActivity);
+            DialogHelper.showDettagliFotoDialog(mParentActivity, mElencoFoto.get(mPager.getCurrentItem()));
             return true;
         }
         return super.onOptionsItemSelected(item);

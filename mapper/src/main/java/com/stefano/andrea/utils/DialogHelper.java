@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.models.Foto;
 
 /**
  * DialogsHelper
@@ -264,7 +265,7 @@ public class DialogHelper {
         builder.create().show();
     }
 
-    public static void showDettagliFotoDialog (Activity activity) {
+    public static void showDettagliFotoDialog (Activity activity, Foto foto) {
        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_dettagli_foto, null);
@@ -278,7 +279,7 @@ public class DialogHelper {
         TextView indirizzo = (TextView) v.findViewById(R.id.df_testo_indirizzo);
         TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
 
-        percorso.setText("percorso");
+        percorso.setText(foto.getPath());
         formato.setText("formato");
         dimensione.setText("dimensione");
         risoluzione.setText("risoluzione");
