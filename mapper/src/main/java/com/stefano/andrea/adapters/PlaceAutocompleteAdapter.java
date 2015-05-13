@@ -18,9 +18,13 @@ package com.stefano.andrea.adapters;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -30,6 +34,7 @@ import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.stefano.andrea.activities.R;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,6 +85,16 @@ public class PlaceAutocompleteAdapter
         mGoogleApiClient = googleApiClient;
         mBounds = bounds;
         mPlaceFilter = filter;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        PlaceAutocomplete item = getItem(position);
+        if (convertView == null)
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_autocomplete_citta, parent, false);
+        TextView place = (TextView) convertView.findViewById(R.id.suggested_city);
+        place.setText(item.toString());
+        return convertView;
     }
 
     /**

@@ -10,7 +10,7 @@
     android:src="@drawable/ic_location_city_grey600_48dp"/>
 
 <TextView
-    android:id="@android:id/text1"
+    android:id="@+id/suggested_city"
     style="?android:attr/spinnerDropDownItemStyle"
     android:singleLine="true"
     android:layout_width="match_parent"
