@@ -134,7 +134,7 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
                             switch (id) {
                                 case R.id.menu_remove:
                                     AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
-                                    dialog.setMessage(R.string.conferma_cancellazione_viaggio);
+                                    dialog.setMessage(R.string.conferma_cancellazione_citta);
                                     dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
