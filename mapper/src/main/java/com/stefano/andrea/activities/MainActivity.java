@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         toolbar.setNavigationIcon(R.drawable.logo_icon_24);
         //attivo action bar
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         //inizializzo recyclerview
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);

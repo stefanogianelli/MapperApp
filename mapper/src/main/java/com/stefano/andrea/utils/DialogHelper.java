@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.models.Foto;
 
 /**
  * DialogsHelper
@@ -213,12 +215,39 @@ public class DialogHelper {
         builder.create().show();
     }
 
-    public static void showDettagliFotoDialog (Activity activity) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+    public static void showDettagliFotoDialog (Activity activity, Foto foto) {
+       final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_dettagli_foto, null);
+        TextView percorso = (TextView) v.findViewById(R.id.df_testo_percorso);
+        TextView formato = (TextView) v.findViewById(R.id.df_testo_formato);
+        TextView dimensione = (TextView) v.findViewById(R.id.df_testo_dimensione);
+        TextView risoluzione = (TextView) v.findViewById(R.id.df_testo_risoluzione);
+        TextView fotocamera = (TextView) v.findViewById(R.id.df_testo_fotocamera);
+        TextView exif = (TextView) v.findViewById(R.id.df_testo_exif);
+        TextView data = (TextView) v.findViewById(R.id.df_testo_data);
+        TextView indirizzo = (TextView) v.findViewById(R.id.df_testo_indirizzo);
+        TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
+
+        percorso.setText(foto.getPath());
+        formato.setText("formato");
+        dimensione.setText("dimensione");
+        risoluzione.setText("risoluzione");
+        fotocamera.setText("fotocamera");
+        exif.setText("exif");
+        data.setText("data");
+        indirizzo.setText("indirizzo");
+
         builder.setView(v);
-        builder.create().show();
+        final AlertDialog dialog = builder.create();
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
 }
