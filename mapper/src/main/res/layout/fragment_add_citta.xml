@@ -3,14 +3,13 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
-    <TextView  style="?android:textAppearanceLargeInverse"
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_add_citta_dialog"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dialog_header_height"
-        android:gravity="center_vertical"
-        android:background="@color/dialog_header_bckg"
-        android:text="@string/aggiungi_citta"
-        android:textColor="@color/white"
-        android:paddingLeft="@dimen/dialog_header_padding_left"/>
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"

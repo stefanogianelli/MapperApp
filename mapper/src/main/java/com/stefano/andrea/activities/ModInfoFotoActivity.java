@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.stefano.andrea.dialogs.AddCittaDialog;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.ImageDetails;
@@ -339,14 +343,17 @@ public class ModInfoFotoActivity extends AppCompatActivity {
         mAddCittaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: da riscrivere
-                /*DialogHelper.showDialogAggiungiCitta(ModInfoFotoActivity.this, new DialogHelper.AggiungiCittaCallback() {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                AddCittaDialog dialog = AddCittaDialog.newInstance();
+                dialog.setCallback(new AddCittaDialog.AggiungiCittaCallback() {
                     @Override
-                    public void creaNuovaCitta(String nomeCitta, String nomeNazione) {
+                    public void creaNuovaCitta(String nomeCitta, String idPlace, LatLng coordinates) {
                         Citta citta = new Citta();
                         citta.setIdViaggio(mViaggioSelezionato.getId());
                         citta.setNome(nomeCitta);
-                        citta.setIdPlace(nomeNazione);
+                        citta.setIdPlace(idPlace);
+                        citta.setLatitudine(coordinates.latitude);
+                        citta.setLongitudine(coordinates.longitude);
                         InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
                             @Override
                             public void insertItem(Citta item) {
@@ -357,7 +364,10 @@ public class ModInfoFotoActivity extends AppCompatActivity {
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
                     }
-                });*/
+                });
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
             }
         });
         mAddCittaButton.setClickable(false);
