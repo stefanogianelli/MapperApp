@@ -102,7 +102,8 @@ public class PlaceAutocompleteAdapter
 
     @Override
     public void clear() {
-        mResultList.clear();
+        if (mResultList != null)
+            mResultList.clear();
         super.clear();
     }
 
