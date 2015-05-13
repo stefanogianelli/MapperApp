@@ -21,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
@@ -28,6 +29,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PlaceAutocompleteAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AddCittaDialog
@@ -51,8 +55,8 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
     private String mPlaceAddress;
     private LatLng mPlaceCoordinates;
 
-    private static final LatLngBounds BOUNDS_GREATER_SYDNEY = new LatLngBounds(
-            new LatLng(-34.041458, 150.790100), new LatLng(-33.682247, 151.383362));
+    private static final LatLngBounds PLACES_BOUND = new LatLngBounds(
+            new LatLng(36.164943, -8.353179), new LatLng(71.437853, 37.086275));
 
     public static AddCittaDialog newInstance () {
         return new AddCittaDialog();
@@ -88,8 +92,11 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
         autocompleteView.setOnItemClickListener(mAutocompleteClickListener);
         // Set up the adapter that will retrieve suggestions from the Places Geo Data API that cover
         // the entire world.
+        List<Integer> placesTypes = new ArrayList<>();
+        placesTypes.add(Place.TYPE_GEOCODE);
+        AutocompleteFilter filter = AutocompleteFilter.create(placesTypes);
         mAdapter = new PlaceAutocompleteAdapter(mParentActivity, R.layout.item_autocomplete,
-                mGoogleApiClient, BOUNDS_GREATER_SYDNEY, null);
+                mGoogleApiClient, PLACES_BOUND, filter);
         autocompleteView.setAdapter(mAdapter);
 
         // Add action buttons
