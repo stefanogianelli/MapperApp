@@ -10,6 +10,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
@@ -212,10 +214,12 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     private void openDialogAddCitta(View view) {
-        //DialogHelper.showDialogAggiungiCitta(mParentActivity, this);
+        FragmentManager fragmentManager = getFragmentManager();
         AddCittaDialog dialog = AddCittaDialog.newInstance();
         dialog.setCallback(this);
-        dialog.show(getChildFragmentManager(), "dialog");
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
     }
 
     @Override

@@ -21,7 +21,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -95,7 +94,16 @@ public class PlaceAutocompleteAdapter
      */
     @Override
     public int getCount() {
-        return mResultList.size();
+        if (mResultList != null)
+            return mResultList.size();
+        else
+            return 0;
+    }
+
+    @Override
+    public void clear() {
+        mResultList.clear();
+        super.clear();
     }
 
     /**
@@ -175,8 +183,6 @@ public class PlaceAutocompleteAdapter
             // Confirm that the query completed successfully, otherwise return null
             final Status status = autocompletePredictions.getStatus();
             if (!status.isSuccess()) {
-                Toast.makeText(getContext(), "Error contacting API: " + status.toString(),
-                        Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Error getting autocomplete prediction API call: " + status.toString());
                 autocompletePredictions.release();
                 return null;
@@ -189,7 +195,7 @@ public class PlaceAutocompleteAdapter
             // AutocompletePrediction objects encapsulate the API response (place ID and description).
 
             Iterator<AutocompletePrediction> iterator = autocompletePredictions.iterator();
-            ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
+            ArrayList<PlaceAutocomplete> resultList = new ArrayList<>(autocompletePredictions.getCount());
             while (iterator.hasNext()) {
                 AutocompletePrediction prediction = iterator.next();
                 // Get the details of this prediction and copy it into a new PlaceAutocomplete object.

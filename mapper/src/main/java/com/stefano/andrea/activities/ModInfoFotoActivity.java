@@ -339,7 +339,8 @@ public class ModInfoFotoActivity extends AppCompatActivity {
         mAddCittaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogHelper.showDialogAggiungiCitta(ModInfoFotoActivity.this, new DialogHelper.AggiungiCittaCallback() {
+                //TODO: da riscrivere
+                /*DialogHelper.showDialogAggiungiCitta(ModInfoFotoActivity.this, new DialogHelper.AggiungiCittaCallback() {
                     @Override
                     public void creaNuovaCitta(String nomeCitta, String nomeNazione) {
                         Citta citta = new Citta();
@@ -356,7 +357,7 @@ public class ModInfoFotoActivity extends AppCompatActivity {
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
                     }
-                });
+                });*/
             }
         });
         mAddCittaButton.setClickable(false);
@@ -497,10 +498,7 @@ public class ModInfoFotoActivity extends AppCompatActivity {
         String selection = MediaStore.Images.Media.DATA + "=?";
         String [] selectionArgs = {mImagePath.get(0).substring(7)};
         int count = mResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, selectionArgs);
-        if (count > 0)
-            return true;
-        else
-            return false;
+        return count > 0;
     }
 
     @Override

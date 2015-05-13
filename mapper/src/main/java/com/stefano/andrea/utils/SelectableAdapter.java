@@ -1,7 +1,7 @@
 package com.stefano.andrea.utils;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -70,7 +70,7 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
      */
     public void startActionMode () {
         if (mActionMode == null) {
-            mActionMode = ((ActionBarActivity) mActivity).startSupportActionMode(mCallback);
+            mActionMode = ((AppCompatActivity) mActivity).startSupportActionMode(mCallback);
         }
     }
 

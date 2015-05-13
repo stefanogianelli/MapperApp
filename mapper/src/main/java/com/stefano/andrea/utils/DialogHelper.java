@@ -116,56 +116,6 @@ public class DialogHelper {
     }
 
     /**
-     * Callback invocata dal dialog aggiungi citta
-     */
-    public interface AggiungiCittaCallback {
-        void creaNuovaCitta (String nomeCitta, String nomeNazione);
-    }
-
-    /**
-     * Mostra il dialog per l'aggiunta di una nuova citta
-     * @param activity L'activity corrente
-     * @param callback L'implementazione della callback per la creazione della citta
-     */
-    public static void showDialogAggiungiCitta (Activity activity, final AggiungiCittaCallback callback) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        LayoutInflater inflater = activity.getLayoutInflater();
-        View v = inflater.inflate(R.layout.fragment_add_citta, null);
-        builder.setView(v);
-
-        final EditText nomeCitta = (EditText) v.findViewById(R.id.text_add_citta);
-
-        // Add action buttons
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        Dialog d = (Dialog) dialog;
-                        EditText nomeNazione = (EditText) d.findViewById(R.id.text_add_citta_nn);
-                        callback.creaNuovaCitta(nomeCitta.getText().toString(), nomeNazione.getText().toString());
-                        dialog.dismiss();
-                    }
-                })
-        .setNegativeButton(R.string.cancel, null);
-
-        final AlertDialog dialog = builder.create();
-
-        nomeCitta.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {}
-            @Override public void onTextChanged(CharSequence c, int i, int i2, int i3) {}
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.toString().length() == 0){
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                } else {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }
-            }
-        });
-        dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-    }
-
-    /**
      * Callback invocata dal dialog aggiungi posto
      */
     public interface AggiungiPostoCallback {
