@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:mapper="http://schemas.android.com/apk/res-auto" >
 
-    <item android:id="@+id/action_dettagli" android:title="@string/dettagli" app:showAsAction="never" />
-    <item android:id="@+id/action_mostra_su_mappa" android:title="@string/mostra_su_mappa" app:showAsAction="never" />
     <item android:id="@+id/action_modifica" android:title="@string/edit" app:showAsAction="never" />
+    <item android:id="@+id/action_mostra_su_mappa" android:title="@string/mostra_su_mappa" app:showAsAction="never" />
+    <item android:id="@+id/action_dettagli" android:title="@string/dettagli" app:showAsAction="never" />
 
     <item
         android:id="@+id/action_condividi_foto"

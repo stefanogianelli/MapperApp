@@ -2,8 +2,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/verydark_grey"
-    android:paddingBottom="@dimen/dialog_header_padding_left">
+    android:background="@color/verydark_grey">
 
     <TextView
         android:layout_width="match_parent"
@@ -182,7 +181,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
@@ -210,7 +208,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
@@ -238,7 +235,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal"
             android:clickable="true"
             android:focusable="true"/>
@@ -250,6 +246,7 @@
         android:layout_gravity="end"
         android:gravity="right|end">
     <TextView
+        android:id="@+id/btn_closeDettagliFoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
@@ -260,7 +257,9 @@
         android:paddingTop="@dimen/df_btn_margin_v"
         android:paddingBottom="@dimen/df_btn_margin_v"
         android:clickable="true"
-        android:focusable="true" />
+        android:focusable="true"
+        android:background="?android:selectableItemBackground"
+        android:onClick="closeDettagliFoto"/>
     </LinearLayout>
 
 </LinearLayout>
