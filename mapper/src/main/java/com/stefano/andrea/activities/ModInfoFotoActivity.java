@@ -68,6 +68,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private Location mFotoLocation;
     private boolean mAddressRequested;
     private AddressResultReceiver mResultReceiver;
     private Citta mCittaLocalizzata;
@@ -707,15 +708,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      * GoogleApiClient is connected.
      */
     private void fetchAddressButtonHandler() {
-        // We only start the service to fetch the address if GoogleApiClient is connected.
+        mAddressRequested = true;
         if (mGoogleApiClient.isConnected() && mLastLocation != null) {
             startIntentService();
         }
-        // If GoogleApiClient isn't connected, we process the user's request by setting
-        // mAddressRequested to true. Later, when GoogleApiClient connects, we launch the service to
-        // fetch the address. As far as the user is concerned, pressing the Fetch Address button
-        // immediately kicks off the process of getting the address.
-        mAddressRequested = true;
         updateUIWidgets();
     }
 
@@ -731,7 +727,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         intent.putExtra(FetchAddressIntentService.RECEIVER, mResultReceiver);
 
         // Pass the location data as an extra to the service.
-        intent.putExtra(FetchAddressIntentService.LOCATION_DATA_EXTRA, mLastLocation);
+        if (mFotoLocation != null && !mAddressRequested) {
+            Log.d(TAG, "Acquisco localita' dalla foto");
+            intent.putExtra(FetchAddressIntentService.LOCATION_DATA_EXTRA, mFotoLocation);
+        } else {
+            Log.d(TAG, "Acquisco localita' corrente");
+            intent.putExtra(FetchAddressIntentService.LOCATION_DATA_EXTRA, mLastLocation);
+        }
 
         // Start the service. If the service isn't already running, it is instantiated and started
         // (creating a process for it if needed); if it is running then it remains running. The
@@ -759,8 +761,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mCittaLocalizzata.setId(ID_INSERT_CITY);
                 mCittaLocalizzata.setNome(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY));
                 mCittaLocalizzata.setNazione(resultData.getString(FetchAddressIntentService.RESULT_COUNTRY));
-                mCittaLocalizzata.setLatitudine(mLastLocation.getLatitude());
-                mCittaLocalizzata.setLongitudine(mLastLocation.getLongitude());
+                if (mAddressRequested) {
+                    mCittaLocalizzata.setLatitudine(mLastLocation.getLatitude());
+                    mCittaLocalizzata.setLongitudine(mLastLocation.getLongitude());
+                } else {
+                    mCittaLocalizzata.setLatitudine(mFotoLocation.getLatitude());
+                    mCittaLocalizzata.setLongitudine(mFotoLocation.getLongitude());
+                }
                 //update UI
                 displayAddressOutput();
             }
@@ -819,7 +826,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         // Gets the best and most recent location currently available, which may be null
         // in rare cases when a location is not available.
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        //TODO: ricavare localita' dal GPS in caso l'ultima non sia disponibile
         if (mLastLocation != null) {
             // Determine whether a Geocoder is available.
             if (!Geocoder.isPresent()) {
@@ -834,6 +840,19 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             if (mAddressRequested) {
                 startIntentService();
             }
+        }
+
+        //Acquisisco coordinate della foto
+        Log.d(TAG, "Acquisisco coordinate della foto");
+        ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
+        double latitudine = dettagli.getLatitudine();
+        double longitudine = dettagli.getLongitudine();
+        if (latitudine != 0 && longitudine != 0) {
+            Log.d(TAG, "Coordinate trovate!");
+            mFotoLocation = new Location("Mapper");
+            mFotoLocation.setLatitude(latitudine);
+            mFotoLocation.setLongitude(longitudine);
+            startIntentService();
         }
     }
 
