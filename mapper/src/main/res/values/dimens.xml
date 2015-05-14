@@ -48,6 +48,7 @@
     <dimen name="space_between_cards">4dp</dimen>
 
     <!-- mod_info_foto -->
+    <dimen name="mif_padding_h">16dp</dimen>
     <dimen name="width_horizz_tab_title_container">60dp</dimen>
     <dimen name="info_margin">8dp</dimen>
     <dimen name="info_margin_big">10dp</dimen>

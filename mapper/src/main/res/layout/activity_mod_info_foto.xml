@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -15,6 +15,12 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/mif_padding_h">
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="200dp" >
@@ -24,15 +30,16 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:scaleType="fitCenter"
-            android:layout_gravity="center"
-            android:src="@drawable/prova02"/>
+            android:layout_gravity="center"/>
 
         <TextView
             android:id="@+id/numero_immagini"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
+            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginRight="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:paddingTop="@dimen/num_foto_padding_top"
@@ -75,7 +82,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal"
+                android:paddingLeft="?android:listPreferredItemPaddingLeft"
                 android:paddingStart="?android:listPreferredItemPaddingLeft"
+                android:paddingRight="?android:listPreferredItemPaddingRight"
                 android:paddingEnd="?android:listPreferredItemPaddingRight"
                 android:gravity="center_vertical">
                 <TextView style="?android:textAppearanceListItemSmall"
@@ -102,6 +111,7 @@
                 android:background="?android:selectableItemBackground"
                 android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
                 android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
+                android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
                 android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
                 android:clickable="true"
                 android:focusable="true"
@@ -146,7 +156,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
+            android:paddingLeft="?android:listPreferredItemPaddingLeft"
             android:paddingStart="?android:listPreferredItemPaddingLeft"
+            android:paddingRight="?android:listPreferredItemPaddingRight"
             android:paddingEnd="?android:listPreferredItemPaddingRight"
             android:gravity="center_vertical">
             <TextView style="?android:textAppearanceListItemSmall"
@@ -172,6 +184,7 @@
             android:background="?android:selectableItemBackground"
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
+            android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
             android:focusable="true"
             android:contentDescription="@string/new_citta" />
@@ -195,7 +208,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
+            android:paddingLeft="?android:listPreferredItemPaddingLeft"
             android:paddingStart="?android:listPreferredItemPaddingLeft"
+            android:paddingRight="?android:listPreferredItemPaddingRight"
             android:paddingEnd="?android:listPreferredItemPaddingRight"
             android:gravity="center_vertical">
             <TextView style="?android:textAppearanceListItemSmall"
@@ -221,6 +236,7 @@
             android:background="?android:selectableItemBackground"
             android:layout_marginTop="@dimen/standard_touch_icon_margin_min"
             android:layout_marginBottom="@dimen/standard_touch_icon_margin_min"
+            android:layout_marginRight="@dimen/standard_touch_icon_margin_min"
             android:layout_marginEnd="@dimen/standard_touch_icon_margin_min"
             android:focusable="true"
             android:contentDescription="@string/new_posto" />
@@ -228,8 +244,17 @@
 
     </LinearLayout>
 
-
-
+    </LinearLayout>
 
 </LinearLayout>
-</ScrollView>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:background="@color/info_background"
+        android:text="@string/geolocalizza"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
