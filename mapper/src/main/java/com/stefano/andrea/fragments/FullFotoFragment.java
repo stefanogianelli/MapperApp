@@ -44,6 +44,7 @@ public class FullFotoFragment extends Fragment {
     private int mPosition;
     private ImageAdapter mAdapter;
     private ViewPager mPager;
+    private Thread thread;
 
     public FullFotoFragment () { }
 
@@ -75,11 +76,46 @@ public class FullFotoFragment extends Fragment {
         ((AppCompatActivity) mParentActivity).setSupportActionBar(toolbar);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
+
+        int uiOptions = mParentActivity.getWindow().getDecorView().getSystemUiVisibility();
+        boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        if(isImmersiveModeEnabled){
+            ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
+        }else{
+            ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
+        }
+
         mAdapter = new ImageAdapter(mParentActivity);
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
+        thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    synchronized (this) {
+                        wait(1000);
+                        mParentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toggleUiFlags();
+                            }
+                        });
+
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            };
+        };
+        thread.start();
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        toggleUiFlags();
     }
 
     @Override
@@ -139,14 +175,6 @@ public class FullFotoFragment extends Fragment {
                 @Override
                 public void onSingleTapConfirmed() {
                     toggleUiFlags();
-                    // Nascondo la toolbar
-                    int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
-                    boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
-                    if(isImmersiveModeEnabled){
-                        ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
-                    }else{
-                        ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
-                    }
                 }
             });
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
@@ -203,10 +231,11 @@ public class FullFotoFragment extends Fragment {
     /**
      * Detects and toggles immersive mode (also known as "hidey bar" mode).
      */
-    public void toggleHideyBar() {
-        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+    public void toggleUiFlags() {
+
+        View decorView = getActivity().getWindow().getDecorView();
+        int uiOptions = decorView.getSystemUiVisibility();
         int newUiOptions = uiOptions;
-        boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
 
         // Navigation bar hiding:  Backwards compatible to ICS.
         if (Build.VERSION.SDK_INT >= 14) {
@@ -221,27 +250,16 @@ public class FullFotoFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= 18) {
             newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         }
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-    }
-
-
-    public void toggleUiFlags() {
-
-        View decorView = getActivity().getWindow().getDecorView();
-        int uiOptions = decorView.getSystemUiVisibility();
-        int newUiOptions = uiOptions;
-
-            newUiOptions ^= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-
-            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE;
-
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
         decorView.setSystemUiVisibility(newUiOptions);
+
+        // Nascondo la toolbar
+        boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        if(isImmersiveModeEnabled){
+            ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
+        }else{
+            ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
+        }
 
     }
 
