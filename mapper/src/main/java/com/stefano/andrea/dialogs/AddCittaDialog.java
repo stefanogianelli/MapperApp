@@ -217,7 +217,9 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             // Get the Place object from the buffer.
             final Place place = places.get(0);
             String placeName = place.getName().toString();
-            String nazione = place.getAddress().toString();
+            String address = place.getAddress().toString().replace(" ", "");
+            String [] addresses = address.split(",");
+            String nazione = addresses[addresses.length - 1];
             LatLng placeCoordinates = place.getLatLng();
 
             mCallback.creaNuovaCitta(placeName, nazione, placeCoordinates);
