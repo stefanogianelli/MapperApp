@@ -69,10 +69,12 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     //Localization variables
     private static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     private static final String LOCATION_ADDRESS_KEY = "location-address";
+    private static final String FOTO_ADDRESS_KEY = "foto-address";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Location mFotoLocation;
     private boolean mAddressRequested;
+    private boolean mFotoRequested;
     private AddressResultReceiver mResultReceiver;
     private Citta mCittaLocalizzata;
 
@@ -100,6 +102,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private Citta mCittaSelezionata;
     /** posto al quale associare la/e foto */
     private Posto mPostoSelezionato;
+    /** ID della citta' passato tramite intent */
+    private long mIdCitta;
+    /** ID del posto passato tramite intent */
+    private long mIdPosto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +122,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
         mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
         long idViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
-        long idCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
-        long idPosto = intent.getLongExtra(EXTRA_ID_POSTO, -1);
+        mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
+        mIdPosto = intent.getLongExtra(EXTRA_ID_POSTO, -1);
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         mCountImages = (TextView) findViewById(R.id.numero_immagini);
@@ -150,12 +156,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         //inizializzo viaggio
         inizializzaViaggio(idViaggio);
         //inizializzo citta
-        inizializzaCitta(idCitta);
+        inizializzaCitta();
         //inizializzo posto
-        inizializzaPosto(idPosto);
+        inizializzaPosto();
         //configuro handler per la localizzazione
         mResultReceiver = new AddressResultReceiver(new Handler());
         mAddressRequested = false;
+        mFotoRequested = false;
         updateValuesFromBundle(savedInstanceState);
 
         updateUIWidgets();
@@ -366,18 +373,17 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Seleziona la citta' se l'id e' diverso da -1
-     * @param idCitta L'id della citta'
      */
-    private void inizializzaCitta (long idCitta) {
-        if (idCitta != -1) {
-            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idCitta);
+    private void inizializzaCitta () {
+        if (mIdCitta != -1) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
             String [] projection = {MapperContract.DatiCitta.NOME};
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta.moveToFirst()) {
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
                 mCittaText.setText(nomeCitta);
                 mCittaSelezionata = new Citta();
-                mCittaSelezionata.setId(idCitta);
+                mCittaSelezionata.setId(mIdCitta);
                 mCittaSelezionata.setNome(nomeCitta);
             }
             cCitta.close();
@@ -457,7 +463,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                             @Override
                             public void insertItem(Citta item) {
                                 clearSelection(CLEAR_POSTO);
-                                inizializzaCitta(item.getId());
+                                mIdCitta = item.getId();
+                                inizializzaCitta();
                                 updateCitta();
                                 sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
                             }
@@ -475,18 +482,17 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Inizializza il posto se l'id e' diverso da -1
-     * @param idPosto L'id del posto
      */
-    private void inizializzaPosto (long idPosto) {
-        if (idPosto != -1) {
-            Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, idPosto);
+    private void inizializzaPosto () {
+        if (mIdPosto != -1) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, mIdPosto);
             String [] projection = {MapperContract.Luogo.NOME};
             Cursor curPosto = mResolver.query(query, projection, null, null, null);
             if (curPosto.moveToFirst()) {
                 String nomePosto = curPosto.getString(curPosto.getColumnIndex(projection[0]));
                 mPostoText.setText(nomePosto);
                 mPostoSelezionato = new Posto();
-                mPostoSelezionato.setId(idPosto);
+                mPostoSelezionato.setId(mIdPosto);
                 mPostoSelezionato.setNome(nomePosto);
             }
             curPosto.close();
@@ -551,7 +557,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                         InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
                             @Override
                             public void insertItem(Posto item) {
-                                inizializzaPosto(item.getId());
+                                mIdPosto = item.getId();
+                                inizializzaPosto();
                                 updatePosti();
                                 sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
                             }
@@ -715,6 +722,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             if (savedInstanceState.keySet().contains(ADDRESS_REQUESTED_KEY)) {
                 mAddressRequested = savedInstanceState.getBoolean(ADDRESS_REQUESTED_KEY);
             }
+            if (savedInstanceState.keySet().contains(FOTO_ADDRESS_KEY)) {
+                mFotoRequested = savedInstanceState.getBoolean(FOTO_ADDRESS_KEY);
+            }
             // Check savedInstanceState to see if the location address string was previously found
             // and stored in the Bundle. If it was found, display the address string in the UI.
             if (savedInstanceState.keySet().contains(LOCATION_ADDRESS_KEY)) {
@@ -810,6 +820,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
             // Reset. Enable the Fetch Address button and stop showing the progress bar.
             mAddressRequested = false;
+            mFotoRequested = false;
             updateUIWidgets();
         }
     }
@@ -818,7 +829,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      * Toggles the visibility of the progress bar. Enables or disables the Fetch Address button.
      */
     private void updateUIWidgets() {
-        if (mAddressRequested) {
+        if (mAddressRequested || mFotoRequested) {
             mInfoProgress.setVisibility(ProgressBar.VISIBLE);
             mGeolocalizzaButton.setEnabled(false);
         } else {
@@ -839,6 +850,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save whether the address has been requested.
         savedInstanceState.putBoolean(ADDRESS_REQUESTED_KEY, mAddressRequested);
+        savedInstanceState.putBoolean(FOTO_ADDRESS_KEY, mFotoRequested);
 
         // Save the address string.
         if (mCittaLocalizzata != null)
@@ -865,24 +877,28 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             // is set to true, but no attempt is made to fetch the address (see
             // fetchAddressButtonHandler()) . Instead, we start the intent service here if the
             // user has requested an address, since we now have a connection to GoogleApiClient.
-            if (mAddressRequested) {
+            if (mAddressRequested || mFotoRequested) {
                 startIntentService();
             }
         }
 
-        //Acquisisco coordinate della foto
-        Log.d(TAG, "Acquisisco coordinate della foto");
-        ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
-        double latitudine = dettagli.getLatitudine();
-        double longitudine = dettagli.getLongitudine();
-        if (latitudine != 0 && longitudine != 0) {
-            Log.d(TAG, "Coordinate trovate!");
-            mFotoLocation = new Location("Mapper");
-            mFotoLocation.setLatitude(latitudine);
-            mFotoLocation.setLongitude(longitudine);
-            startIntentService();
-        } else {
-            setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red);
+        if (mIdCitta == -1 && mIdPosto == -1) {
+            //Acquisisco coordinate della foto
+            Log.d(TAG, "Acquisisco coordinate della foto");
+            ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
+            double latitudine = dettagli.getLatitudine();
+            double longitudine = dettagli.getLongitudine();
+            if (latitudine != 0 && longitudine != 0) {
+                Log.d(TAG, "Coordinate trovate!");
+                mFotoLocation = new Location("Mapper");
+                mFotoLocation.setLatitude(latitudine);
+                mFotoLocation.setLongitude(longitudine);
+                mFotoRequested = true;
+                setInfoToolbar(R.string.recupero_info, R.color.white);
+                startIntentService();
+            } else {
+                setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red);
+            }
         }
     }
 
@@ -908,6 +924,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     private void setInfoToolbar (String message, int colorId) {
+        if (mInfoToolbar.getVisibility() == View.INVISIBLE)
+            mInfoToolbar.setVisibility(View.VISIBLE);
         mInfoToolbar.setBackgroundColor(getResources().getColor(colorId));
         mInfoText.setText(message);
     }
