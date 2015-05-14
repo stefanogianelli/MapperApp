@@ -158,12 +158,12 @@ public class DialogHelper {
         TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
 
         percorso.setText(foto.getPath());
-        formato.setText("formato");
-        dimensione.setText("dimensione");
-        risoluzione.setText("risoluzione");
-        fotocamera.setText("fotocamera");
-        exif.setText("exif");
-        data.setText("data");
+        formato.setText(foto.getMimeType());
+        dimensione.setText(String.valueOf(foto.getSize()));
+        risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
+        fotocamera.setText(foto.getModel());
+        exif.setText(foto.getExif());
+        data.setText(String.valueOf(foto.getData()));
         indirizzo.setText("indirizzo");
 
         builder.setView(v);

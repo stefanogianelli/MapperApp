@@ -8,8 +8,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.intents.MapperIntent;
@@ -20,6 +22,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -339,6 +342,17 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 values.put(MapperContract.Foto.ID_CITTA, foto.getIdCitta());
                 values.put(MapperContract.Foto.ID_MEDIA_STORE, foto.getIdMediaStore());
                 values.put(MapperContract.Foto.CAMERA, foto.getCamera());
+                values.put(MapperContract.Foto.MIME_TYPE, foto.getMimeType());
+                values.put(MapperContract.Foto.WIDTH, foto.getWidth());
+                values.put(MapperContract.Foto.HEIGHT, foto.getHeight());
+                values.put(MapperContract.Foto.SIZE, foto.getSize());
+                try {
+                    ExifInterface exif = new ExifInterface(foto.getPath().substring(7));
+                    values.put(MapperContract.Foto.EXIF, exif.getAttribute(ExifInterface.TAG_APERTURE));
+                    values.put(MapperContract.Foto.MODEL, exif.getAttribute(ExifInterface.TAG_MODEL));
+                } catch (IOException e) {
+                    Log.e(TAG, "Impossibile leggere i dati EXIF - " + e.getMessage());
+                }
                 if (foto.getIdPosto() != -1)
                     values.put(MapperContract.Foto.ID_POSTO, foto.getIdPosto());
                 Uri uri = mResolver.insert(MapperContract.Foto.CONTENT_URI, values);

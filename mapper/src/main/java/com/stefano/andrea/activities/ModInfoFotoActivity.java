@@ -246,6 +246,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
             foto.setIdViaggio(mViaggioSelezionato.getId());
             foto.setIdCitta(mCittaSelezionata.getId());
+            foto.setMimeType(dettagli.getMimeType());
+            foto.setWidth(dettagli.getWidth());
+            foto.setHeight(dettagli.getHeight());
+            foto.setSize(dettagli.getSize());
             if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
                 foto.setIdPosto(mPostoSelezionato.getId());
             if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
@@ -591,7 +595,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      */
     private ImageDetails getMediaStoreData (String path) {
         ImageDetails dettagli = new ImageDetails();
-        String [] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE };
+        String [] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE,
+            MediaStore.MediaColumns.WIDTH, MediaStore.MediaColumns.HEIGHT, MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.SIZE};
         String selection = MediaStore.Images.Media.DATA + "=?";
         String [] selectionArgs = { path.substring(7) };
         Cursor cursor = mResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
@@ -600,6 +605,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             dettagli.setData(cursor.getInt(cursor.getColumnIndex(projection[1])));
             dettagli.setLatitudine(cursor.getDouble(cursor.getColumnIndex(projection[2])));
             dettagli.setLongitudine(cursor.getDouble(cursor.getColumnIndex(projection[3])));
+            dettagli.setWidth(cursor.getString(cursor.getColumnIndex(projection[4])));
+            dettagli.setHeight(cursor.getString(cursor.getColumnIndex(projection[5])));
+            dettagli.setMimeType(cursor.getString(cursor.getColumnIndex(projection[6])));
+            dettagli.setSize(cursor.getInt(cursor.getColumnIndex(projection[7])));
         }
         cursor.close();
         return dettagli;
