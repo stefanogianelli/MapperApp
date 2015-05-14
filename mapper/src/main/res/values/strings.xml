@@ -135,6 +135,10 @@
 
     <!-- ModInfoFoto -->
     <string name="menu_localizza">Localizza</string>
+    <string name="recupero_info">Recupero informazioni foto</string>
+
+
+
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
