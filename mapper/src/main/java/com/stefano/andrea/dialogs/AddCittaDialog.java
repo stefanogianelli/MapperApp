@@ -2,6 +2,7 @@ package com.stefano.andrea.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -55,6 +58,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
     private GoogleApiClient mGoogleApiClient;
     private Activity mParentActivity;
     private PlaceAutocompleteAdapter mAdapter;
+    private ProgressBar mProgressBar;
 
     private static final LatLngBounds PLACES_BOUND = new LatLngBounds(
             new LatLng(36.164943, -8.353179), new LatLng(71.437853, 37.086275));
@@ -89,6 +93,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
         final EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_citta);
         final ImageView clearButton = (ImageView) view.findViewById(R.id.clearable_button_clear);
         final ListView suggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.toolbar_progress_bar);
         toolbar.setTitle(getString(R.string.aggiungi_citta));
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -101,7 +106,12 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
         placesTypes.add(Place.TYPE_GEOCODE);
         AutocompleteFilter filter = AutocompleteFilter.create(placesTypes);
         mAdapter = new PlaceAutocompleteAdapter(mParentActivity, R.layout.item_autocomplete_citta,
-                mGoogleApiClient, PLACES_BOUND, filter);
+                mGoogleApiClient, PLACES_BOUND, filter, new PlaceAutocompleteAdapter.OnLoadComplete() {
+            @Override
+            public void onLoadComplete() {
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
         suggestions.setAdapter(mAdapter);
         suggestions.setOnItemClickListener(mAutocompleteClickListener);
         autocompleteView.addTextChangedListener(new TextWatcher() {
@@ -114,6 +124,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString();
                 if (!query.isEmpty()) {
+                    mProgressBar.setVisibility(View.VISIBLE);
                     mAdapter.getFilter().filter(query);
                     clearButton.setEnabled(true);
                 } else {
@@ -127,6 +138,24 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
 
             }
         });
+        autocompleteView.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            hideKeyboard();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+        autocompleteView.requestFocus();
+        InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,18 +255,18 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             mCallback.creaNuovaCitta(placeName, nazione, placeCoordinates);
 
             places.release();
-            hide_keyboard(mParentActivity);
+            hideKeyboard();
             dismiss();
         }
     };
 
-    public static void hide_keyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+    public void hideKeyboard () {
+        InputMethodManager inputMethodManager = (InputMethodManager) mParentActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
+        View view = mParentActivity.getCurrentFocus();
         //If no view currently has focus, create a new one, just so we can grab a window token from it
         if(view == null) {
-            view = new View(activity);
+            view = new View(mParentActivity);
         }
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }

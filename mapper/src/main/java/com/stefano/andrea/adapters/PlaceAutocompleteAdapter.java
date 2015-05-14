@@ -53,6 +53,10 @@ import java.util.concurrent.TimeUnit;
 public class PlaceAutocompleteAdapter
         extends ArrayAdapter<PlaceAutocompleteAdapter.PlaceAutocomplete> implements Filterable {
 
+    public interface OnLoadComplete {
+        void onLoadComplete ();
+    }
+
     private static final String TAG = "PlacesAdapter";
     /**
      * Current results returned by this adapter.
@@ -74,17 +78,20 @@ public class PlaceAutocompleteAdapter
      */
     private AutocompleteFilter mPlaceFilter;
 
+    private OnLoadComplete mListener;
+
     /**
      * Initializes with a resource for text rows and autocomplete query bounds.
      *
      * @see android.widget.ArrayAdapter#ArrayAdapter(android.content.Context, int)
      */
     public PlaceAutocompleteAdapter(Context context, int resource, GoogleApiClient googleApiClient,
-                                    LatLngBounds bounds, AutocompleteFilter filter) {
+                                    LatLngBounds bounds, AutocompleteFilter filter, OnLoadComplete listener) {
         super(context, resource);
         mGoogleApiClient = googleApiClient;
         mBounds = bounds;
         mPlaceFilter = filter;
+        mListener = listener;
     }
 
     @Override
@@ -161,6 +168,8 @@ public class PlaceAutocompleteAdapter
                     // The API did not return any results, invalidate the data set.
                     notifyDataSetInvalidated();
                 }
+                if (mListener != null)
+                    mListener.onLoadComplete();
             }
         };
         return filter;
