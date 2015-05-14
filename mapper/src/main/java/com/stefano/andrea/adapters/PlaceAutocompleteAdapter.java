@@ -80,6 +80,8 @@ public class PlaceAutocompleteAdapter
 
     private OnLoadComplete mListener;
 
+    private int mResource;
+
     /**
      * Initializes with a resource for text rows and autocomplete query bounds.
      *
@@ -92,13 +94,14 @@ public class PlaceAutocompleteAdapter
         mBounds = bounds;
         mPlaceFilter = filter;
         mListener = listener;
+        mResource = resource;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         PlaceAutocomplete item = getItem(position);
         if (convertView == null)
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_autocomplete_citta, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(mResource, parent, false);
         TextView place = (TextView) convertView.findViewById(R.id.suggested_subtitle);
         place.setText(item.toString());
         TextView placeTitle = (TextView) convertView.findViewById(R.id.suggested_title);

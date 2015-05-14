@@ -2,7 +2,6 @@ package com.stefano.andrea.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
@@ -115,77 +114,6 @@ public class DialogHelper {
         } else {
             callback.viaggioActionButton(position, id, input);
         }
-    }
-
-    /**
-     * Callback invocata dal dialog aggiungi posto
-     */
-    public interface AggiungiPostoCallback {
-        void creaNuovoPosto (String nomePosto);
-    }
-
-    /**
-     * Mostra il dialog per l'aggiunta di un posto
-     * @param activity L'activity corrente
-     * @param callback L'implementazione della callback per l'aggiunta di un posto
-     */
-    public static void showDialogAggiungiPosto(Activity activity, final AggiungiPostoCallback callback) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        LayoutInflater inflater = activity.getLayoutInflater();
-        View v = inflater.inflate(R.layout.fragment_add_posto, null);
-        builder.setView(v);
-
-        final EditText nomePosto = (EditText) v.findViewById(R.id.text_add_posto);
-            // Add action buttons
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    Dialog d = (Dialog) dialog;
-                    callback.creaNuovoPosto(nomePosto.getText().toString());
-                    d.dismiss();
-                }
-                })
-            .setNegativeButton(R.string.cancel, null);
-
-        final AlertDialog dialog = builder.create();
-
-        nomePosto.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {}
-            @Override public void onTextChanged(CharSequence c, int i, int i2, int i3) {}
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.toString().length() == 0){
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                } else {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }
-            }
-        });
-
-        //  Setto il tasto INVIO (solo se il testo non è vuoto)
-        nomePosto.setOnKeyListener(new View.OnKeyListener()
-        {
-            public boolean onKey(View v, int keyCode, KeyEvent event)
-            {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (nomePosto.getText().toString().length()!=0))
-                {
-                    switch (keyCode)
-                    {
-                        case KeyEvent.KEYCODE_DPAD_CENTER:
-                        case KeyEvent.KEYCODE_ENTER:
-                            callback.creaNuovoPosto(nomePosto.getText().toString());
-                            dialog.dismiss();
-                            return true;
-                        default:
-                            break;
-                    }
-                }
-                return false;
-            }
-        });
-
-        dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
     /**

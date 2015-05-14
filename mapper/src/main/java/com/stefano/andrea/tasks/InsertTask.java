@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.intents.MapperIntent;
@@ -20,12 +19,7 @@ import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
-import com.stefano.andrea.utils.LocationHelper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -289,31 +283,18 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
         @Override
         public int insertItem() {
-            JSONObject geoInfo = null;
-            try {
-                geoInfo = LocationHelper.getGeocodeInformations(posto.getNome());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (geoInfo != null) {
-                ContentValues values = new ContentValues();
-                values.put(MapperContract.Luogo.NOME, posto.getNome());
-                double latitudine = LocationHelper.getLatitudine(geoInfo);
-                double longitudine = LocationHelper.getLongitudine(geoInfo);
-                values.put(MapperContract.Luogo.LATITUDINE, latitudine);
-                values.put(MapperContract.Luogo.LONGITUDINE, longitudine);
-                Log.d(TAG, "Posto " + posto.getNome() + ", lat = " + latitudine + ", long = " + longitudine);
-                int res = getIdDatiCitta();
-                if (res == RESULT_OK) {
-                    values.put(MapperContract.Luogo.ID_CITTA, posto.getIdDatiCitta());
-                    Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
-                    long id = Long.parseLong(uri.getLastPathSegment());
-                    if (id != -1) {
-                        posto.setIdLuogo(id);
-                        return RESULT_OK;
-                    }
+            ContentValues values = new ContentValues();
+            values.put(MapperContract.Luogo.NOME, posto.getNome());
+            values.put(MapperContract.Luogo.LATITUDINE, posto.getLatitudine());
+            values.put(MapperContract.Luogo.LONGITUDINE, posto.getLongitudine());
+            int res = getIdDatiCitta();
+            if (res == RESULT_OK) {
+                values.put(MapperContract.Luogo.ID_CITTA, posto.getIdDatiCitta());
+                Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
+                long id = Long.parseLong(uri.getLastPathSegment());
+                if (id != -1) {
+                    posto.setIdLuogo(id);
+                    return RESULT_OK;
                 }
             }
             return RESULT_ERROR;

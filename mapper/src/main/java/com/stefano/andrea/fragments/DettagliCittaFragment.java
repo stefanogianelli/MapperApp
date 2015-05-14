@@ -13,6 +13,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.view.ActionMode;
@@ -25,9 +27,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
+import com.stefano.andrea.dialogs.AddPostoDialog;
 import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.providers.MapperContract;
@@ -43,7 +47,7 @@ import java.util.List;
 /**
  * DettagliCittaFragment
  */
-public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener, DialogHelper.AggiungiPostoCallback {
+public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener, AddPostoDialog.AggiungiPostoCallback {
 
     private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliCittaFragment.idViaggio";
     private static final String ID_CITTA = "com.stefano.andrea.fragments.DettagliCittaFragment.idCitta";
@@ -186,12 +190,15 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     /**
      * Aggiunge un nuovo posto all'interno di una citta'
      * @param nomePosto Il nome del posto
+     * @param coordinates Le coordinate del posto
      */
     @Override
-    public void creaNuovoPosto(String nomePosto) {
+    public void creaNuovoPosto(String nomePosto, LatLng coordinates) {
         Posto posto = new Posto();
         posto.setNome(nomePosto);
         posto.setIdCitta(mIdCitta);
+        posto.setLatitudine(coordinates.latitude);
+        posto.setLongitudine(coordinates.longitude);
         new InsertTask<>(mParentActivity, mAdapter, posto).execute(InsertTask.INSERISCI_POSTO);
     }
 
@@ -228,7 +235,12 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     }
 
     private void openDialogAddPosto(View view) {
-        DialogHelper.showDialogAggiungiPosto(mParentActivity, this);
+        FragmentManager fragmentManager = getFragmentManager();
+        AddPostoDialog dialog = AddPostoDialog.newInstance();
+        dialog.setCallback(this);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
     }
 
     @Override

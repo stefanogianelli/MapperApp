@@ -36,6 +36,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.dialogs.AddCittaDialog;
+import com.stefano.andrea.dialogs.AddPostoDialog;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
@@ -533,12 +534,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         mAddPostoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogHelper.showDialogAggiungiPosto(ModInfoFotoActivity.this, new DialogHelper.AggiungiPostoCallback() {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                AddPostoDialog dialog = AddPostoDialog.newInstance();
+                dialog.setCallback(new AddPostoDialog.AggiungiPostoCallback() {
                     @Override
-                    public void creaNuovoPosto(String nomePosto) {
+                    public void creaNuovoPosto(String nomePosto, LatLng coordinates) {
                         Posto posto = new Posto();
                         posto.setIdCitta(mCittaSelezionata.getId());
                         posto.setNome(nomePosto);
+                        posto.setLatitudine(coordinates.latitude);
+                        posto.setLongitudine(coordinates.longitude);
                         InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
                             @Override
                             public void insertItem(Posto item) {
@@ -550,6 +555,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
                     }
                 });
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
             }
         });
         mAddPostoButton.setClickable(false);
