@@ -34,6 +34,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stefano.andrea.dialogs.AddCittaDialog;
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.ImageDetails;
@@ -327,6 +328,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                                 clearSelection(CLEAR_CITTA);
                                 inizializzaViaggio(item.getId());
                                 updateViaggi();
+                                sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
                             }
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
@@ -431,6 +433,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                                 clearSelection(CLEAR_POSTO);
                                 inizializzaCitta(item.getId());
                                 updateCitta();
+                                sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
                             }
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
@@ -520,6 +523,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                             public void insertItem(Posto item) {
                                 inizializzaPosto(item.getId());
                                 updatePosti();
+                                sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
                             }
                         };
                         new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);

@@ -167,6 +167,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
                     citta.setId(id);
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
                     mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
                     return RESULT_OK;
                 }
@@ -250,6 +251,8 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
                     posto.setId(id);
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
                     mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
                     return RESULT_OK;
                 }
@@ -361,6 +364,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 long id = Long.parseLong(uri.getLastPathSegment());
                 if (id != -1) {
                     foto.setId(id);
+                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
                     mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
                     mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
                     mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));

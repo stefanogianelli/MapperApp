@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.BaseAsyncTaskLoader;
@@ -22,7 +23,7 @@ public class PostiLoader extends BaseAsyncTaskLoader<List<Posto>> {
     private long mIdCitta;
 
     public PostiLoader(Context context, long idCitta) {
-        super(context);
+        super(context, MapperIntent.UPDATE_POSTO);
         mResolver = context.getContentResolver();
         mIdCitta = idCitta;
     }

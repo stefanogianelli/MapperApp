@@ -117,6 +117,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         public int cancellaItem(Citta item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, item.getId());
             int count = mResolver.delete(uri, null, null);
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
             return count;
@@ -129,6 +130,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         public int cancellaItem(Posto item) {
             Uri uri = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, item.getId());
             int count = mResolver.delete(uri, null, null);
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
             return count;
@@ -149,6 +152,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
             String selection = MapperContract.Foto.ID + "=?";
             String [] selectionArgs = {Long.toString(item.getId())};
             int count = mResolver.delete(MapperContract.Foto.CONTENT_URI, selection, selectionArgs);
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
             return count;

@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.BaseAsyncTaskLoader;
@@ -19,7 +20,7 @@ public class ViaggiLoader extends BaseAsyncTaskLoader<List<Viaggio>> {
     private ContentResolver mResolver;
 
     public ViaggiLoader(Context context) {
-        super(context);
+        super(context, MapperIntent.UPDATE_VIAGGIO);
         mResolver = context.getContentResolver();
     }
 
