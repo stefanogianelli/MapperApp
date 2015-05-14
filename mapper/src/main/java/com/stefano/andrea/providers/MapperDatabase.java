@@ -73,7 +73,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
     private static final String CREATE_DATI_CITTA = "CREATE TABLE \"" + Tables.DATI_CITTA + "\" (" +
             "`" + MapperContract.DatiCitta.ID + "` INTEGER PRIMARY KEY AUTOINCREMENT," +
             "`" + MapperContract.DatiCitta.NOME + "` TEXT NOT NULL," +
-            "`" + MapperContract.DatiCitta.ID_PLACE + "` TEXT NOT NULL," +
+            "`" + MapperContract.DatiCitta.NAZIONE + "` TEXT NOT NULL," +
             "`" + MapperContract.DatiCitta.LATITUDINE + "` REAL NOT NULL," +
             "`" + MapperContract.DatiCitta.LONGITUDINE + "` REAL NOT NULL," +
             "`" + MapperContract.DatiCitta.COUNT + "` INTEGER DEFAULT 0);";

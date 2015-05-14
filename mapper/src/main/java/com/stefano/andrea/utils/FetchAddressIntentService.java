@@ -27,6 +27,7 @@ public class FetchAddressIntentService extends IntentService {
     public static final String PACKAGE_NAME = "com.stefano.andrea.mapper";
     public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
     public static final String RESULT_DATA_KEY  = PACKAGE_NAME + ".RESULT_DATA_KEY";
+    public static final String RESULT_COUNTRY = PACKAGE_NAME + ".RESULT_COUNTRY";
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
     
     private static final String TAG = "FetchAddressIntent";
@@ -132,7 +133,7 @@ public class FetchAddressIntentService extends IntentService {
             // getPostalCode() ("94043", for example)
             // getCountryCode() ("US", for example)
             // getCountryName() ("United States", for example)
-            deliverResultToReceiver(SUCCESS_RESULT, address.getLocality());
+            deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName());
         }
     }
 
@@ -142,6 +143,16 @@ public class FetchAddressIntentService extends IntentService {
     private void deliverResultToReceiver(int resultCode, String message) {
         Bundle bundle = new Bundle();
         bundle.putString(RESULT_DATA_KEY, message);
+        mReceiver.send(resultCode, bundle);
+    }
+
+    /**
+     * Sends a resultCode and two messages to the receiver.
+     */
+    private void deliverResultToReceiver(int resultCode, String city, String country) {
+        Bundle bundle = new Bundle();
+        bundle.putString(RESULT_DATA_KEY, city);
+        bundle.putString(RESULT_COUNTRY, country);
         mReceiver.send(resultCode, bundle);
     }
 }

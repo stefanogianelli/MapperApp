@@ -33,6 +33,7 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         //Aggiungo dati citta di default
         values.clear();
         values.put(MapperContract.DatiCitta.NOME, CITTA);
+        values.put(MapperContract.DatiCitta.NAZIONE, NAZIONE);
         values.put(MapperContract.DatiCitta.LATITUDINE, 0);
         values.put(MapperContract.DatiCitta.LONGITUDINE, 0);
         mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
@@ -87,6 +88,7 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         String nazione = "Italia";
         ContentValues values = new ContentValues();
         values.put(MapperContract.DatiCitta.NOME, nome);
+        values.put(MapperContract.DatiCitta.NAZIONE, nazione);
         values.put(MapperContract.DatiCitta.LATITUDINE, 0);
         values.put(MapperContract.DatiCitta.LONGITUDINE, 0);
         Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
@@ -98,6 +100,7 @@ public class MapperContentProviderTest extends ProviderTestCase2<MapperContentPr
         //aggiungo nuova citta di prova
         ContentValues values = new ContentValues();
         values.put(MapperContract.DatiCitta.NOME, "provadelete");
+        values.put(MapperContract.DatiCitta.NAZIONE, "italia");
         values.put(MapperContract.DatiCitta.LATITUDINE, 0);
         values.put(MapperContract.DatiCitta.LONGITUDINE, 0);
         Uri result = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);

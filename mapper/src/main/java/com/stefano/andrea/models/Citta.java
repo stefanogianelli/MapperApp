@@ -12,7 +12,7 @@ public class Citta implements Parcelable {
     private long idCitta;
     private long idViaggio;
     private String nome;
-    private String idPlace;
+    private String nazione;
     private double latitudine;
     private double longitudine;
     private int countPostiVisitati;
@@ -21,7 +21,6 @@ public class Citta implements Parcelable {
 
     public Citta () {
         this.id = -1;
-        this.idPlace = "-1";
     }
 
     public Citta (Parcel pc) {
@@ -29,7 +28,7 @@ public class Citta implements Parcelable {
         idCitta = pc.readLong();
         idViaggio = pc.readLong();
         nome = pc.readString();
-        idPlace = pc.readString();
+        nazione = pc.readString();
         latitudine = pc.readDouble();
         longitudine = pc.readDouble();
         countPostiVisitati = pc.readInt();
@@ -69,12 +68,12 @@ public class Citta implements Parcelable {
         this.nome = nome;
     }
 
-    public String getIdPlace() {
-        return idPlace;
+    public String getNazione() {
+        return nazione;
     }
 
-    public void setIdPlace(String idPlace) {
-        this.idPlace = idPlace;
+    public void setNazione(String nazione) {
+        this.nazione = nazione;
     }
 
     public double getLatitudine() {
@@ -128,7 +127,7 @@ public class Citta implements Parcelable {
         dest.writeLong(idCitta);
         dest.writeLong(idViaggio);
         dest.writeString(nome);
-        dest.writeString(idPlace);
+        dest.writeString(nazione);
         dest.writeDouble(latitudine);
         dest.writeDouble(longitudine);
         dest.writeInt(countPostiVisitati);
@@ -147,4 +146,15 @@ public class Citta implements Parcelable {
             return new Citta[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Citta) {
+            if (this == o)
+                return true;
+            Citta c = (Citta) o;
+            return this.nome.equals(c.getNome()) && this.nazione.equals(c.getNazione());
+        } else
+            return false;
+    }
 }

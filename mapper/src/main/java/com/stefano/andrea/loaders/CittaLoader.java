@@ -39,7 +39,7 @@ public class CittaLoader extends BaseAsyncTaskLoader<List<Citta>> {
             citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
             citta.setIdViaggio(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_VIAGGIO)));
             citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
-            citta.setIdPlace(c.getString(c.getColumnIndex(MapperContract.DatiCitta.ID_PLACE)));
+            citta.setNazione(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NAZIONE)));
             citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
             citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
             citta.setCountPostiVisitati(c.getInt(c.getColumnIndex(MapperContract.Citta.POSTI_VISITATI)));

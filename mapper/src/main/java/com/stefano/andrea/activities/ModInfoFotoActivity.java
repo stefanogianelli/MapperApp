@@ -160,20 +160,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             return true;
         } else if (id == R.id.action_salva_foto) {
             if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
-                if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1) {
+                if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
                     addFoto();
                     finish();
                 } else if (mCittaLocalizzata != null) {
                     addNewCity();
-                    Cursor c = mResolver.query(MapperContract.Citta.CONTENT_URI,
-                            new String [] {MapperContract.Citta.ID_CITTA},
-                            null, null, MapperContract.Citta.DEFAULT_SORT + " LIMIT 1");
-                    if (c.moveToFirst()) {
-                        mCittaSelezionata = mCittaLocalizzata;
-                        mCittaSelezionata.setId(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)));
-                    }
-                    c.close();
-                    addFoto();
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
             } else {
@@ -201,7 +192,15 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     private void addNewCity () {
         mCittaLocalizzata.setIdViaggio(mViaggioSelezionato.getId());
-        new InsertTask<>(ModInfoFotoActivity.this, null, mCittaLocalizzata).execute(InsertTask.INSERISCI_CITTA);
+        InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
+            @Override
+            public void insertItem(Citta item) {
+                mCittaSelezionata = item;
+                addFoto();
+                finish();
+            }
+        };
+        new InsertTask<>(ModInfoFotoActivity.this, adapter, mCittaLocalizzata).execute(InsertTask.INSERISCI_CITTA);
     }
 
     private void addFoto () {
@@ -363,21 +362,28 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      */
     private void updateCitta () {
         final List<Citta> elencoCitta = new ArrayList<>();
-        if (mCittaLocalizzata != null) {
-            elencoCitta.add(mCittaLocalizzata);
-        }
         if (mViaggioSelezionato != null) {
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mViaggioSelezionato.getId());
-            String[] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME};
+            String[] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.NAZIONE};
             Cursor curCitta = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
             while (curCitta.moveToNext()) {
                 Citta citta = new Citta();
                 citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
                 citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
+                citta.setNazione(curCitta.getString(curCitta.getColumnIndex(projection[2])));
                 elencoCitta.add(citta);
             }
             curCitta.close();
             mAddCittaButton.setClickable(true);
+        }
+        if (mCittaLocalizzata != null) {
+            if (!elencoCitta.contains(mCittaLocalizzata))
+                elencoCitta.add(0, mCittaLocalizzata);
+            else {
+                int pos = elencoCitta.indexOf(mCittaLocalizzata);
+                mCittaSelezionata = elencoCitta.get(pos);
+                mCittaText.setText(mCittaLocalizzata.getNome());
+            }
         }
         if (elencoCitta.size() > 0) {
             final CittaSpinnerAdapter cittaAdapter = new CittaSpinnerAdapter(ModInfoFotoActivity.this, R.layout.spinner_row_item, elencoCitta);
@@ -412,11 +418,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 AddCittaDialog dialog = AddCittaDialog.newInstance();
                 dialog.setCallback(new AddCittaDialog.AggiungiCittaCallback() {
                     @Override
-                    public void creaNuovaCitta(String nomeCitta, String idPlace, LatLng coordinates) {
+                    public void creaNuovaCitta(String nomeCitta, String nazione, LatLng coordinates) {
                         Citta citta = new Citta();
                         citta.setIdViaggio(mViaggioSelezionato.getId());
                         citta.setNome(nomeCitta);
-                        citta.setIdPlace(idPlace);
+                        citta.setNazione(nazione);
                         citta.setLatitudine(coordinates.latitude);
                         citta.setLongitudine(coordinates.longitude);
                         InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
@@ -670,6 +676,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             // Check savedInstanceState to see if the location address string was previously found
             // and stored in the Bundle. If it was found, display the address string in the UI.
             if (savedInstanceState.keySet().contains(LOCATION_ADDRESS_KEY)) {
+                mCittaLocalizzata = savedInstanceState.getParcelable(LOCATION_ADDRESS_KEY);
                 displayAddressOutput();
             }
         }
@@ -742,6 +749,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mCittaLocalizzata = new Citta();
                 mCittaLocalizzata.setId(ID_INSERT_CITY);
                 mCittaLocalizzata.setNome(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY));
+                mCittaLocalizzata.setNazione(resultData.getString(FetchAddressIntentService.RESULT_COUNTRY));
                 mCittaLocalizzata.setLatitudine(mLastLocation.getLatitude());
                 mCittaLocalizzata.setLongitudine(mLastLocation.getLongitude());
                 //update UI

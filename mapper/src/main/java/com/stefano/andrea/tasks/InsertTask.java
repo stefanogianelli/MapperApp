@@ -153,10 +153,8 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         @Override
         public int insertItem() {
             //verifico se la citta esiste gia nel database
-            int res;
-            if (citta.getIdPlace().equals("-1"))
-                res = this.getDatiCitta();
-            else {
+            int res = this.getDatiCitta();
+            if (res == RESULT_ERROR) {
                 //creo la citta
                 InsertDatiCitta datiCitta = new InsertDatiCitta();
                 res = datiCitta.insertItem();
@@ -180,8 +178,8 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
          * Verifica se esistono nel database i dati di una citta
          */
         private int getDatiCitta () {
-            String selection = MapperContract.DatiCitta.ID_PLACE + "=?";
-            String [] selectionArgs = {citta.getIdPlace()};
+            String selection = MapperContract.DatiCitta.NOME + "=? AND " + MapperContract.DatiCitta.NAZIONE + "=?";
+            String [] selectionArgs = {citta.getNome(), citta.getNazione()};
             Cursor c = mResolver.query(MapperContract.DatiCitta.CONTENT_URI, MapperContract.DatiCitta.PROJECTION_ALL, selection, selectionArgs, MapperContract.DatiCitta.DEFAULT_SORT);
             if (c != null && c.getCount() > 0) {
                 c.moveToNext();
@@ -210,7 +208,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         public int insertItem() {
             ContentValues values = new ContentValues();
             values.put(MapperContract.DatiCitta.NOME, citta.getNome());
-            values.put(MapperContract.DatiCitta.ID_PLACE, citta.getIdPlace());
+            values.put(MapperContract.DatiCitta.NAZIONE, citta.getNazione());
             values.put(MapperContract.DatiCitta.LATITUDINE, citta.getLatitudine());
             values.put(MapperContract.DatiCitta.LONGITUDINE, citta.getLongitudine());
             Uri uri = mResolver.insert(MapperContract.DatiCitta.CONTENT_URI, values);
