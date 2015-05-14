@@ -43,9 +43,9 @@
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:gravity="center"
-                    android:indeterminateTint="@color/white"
+                    android:indeterminateTint="@color/dark_grey"
                     android:indeterminateTintMode="src_in"
-                    android:layout_gravity="center"  />
+                    android:layout_gravity="center" />
 
             </LinearLayout>
 
@@ -290,6 +290,7 @@
 
 </LinearLayout>
     <Button
+        android:id="@+id/action_geolocalizza"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
