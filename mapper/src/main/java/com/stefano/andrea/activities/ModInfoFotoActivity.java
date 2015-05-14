@@ -216,8 +216,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             double lat = dettagli.getLatitudine();
             double lon = dettagli.getLongitudine();
             if (lat == 0 && lon == 0) {
-                foto.setLatitudine(mCittaSelezionata.getLatitudine());
-                foto.setLongitudine(mCittaSelezionata.getLongitudine());
+                if (mPostoSelezionato != null) {
+                    foto.setLatitudine(mPostoSelezionato.getLatitudine());
+                    foto.setLongitudine(mPostoSelezionato.getLongitudine());
+                } else {
+                    foto.setLatitudine(mCittaSelezionata.getLatitudine());
+                    foto.setLongitudine(mCittaSelezionata.getLongitudine());
+                }
             } else {
                 foto.setLatitudine(lat);
                 foto.setLongitudine(lon);

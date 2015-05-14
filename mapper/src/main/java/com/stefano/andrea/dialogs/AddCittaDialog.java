@@ -76,6 +76,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
                     .addApi(Places.GEO_DATA_API)
                     .build();
         }
+        setRetainInstance(true);
     }
 
     @Nullable
