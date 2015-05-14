@@ -2,30 +2,66 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white" >
 
-    <TextView  style="?android:textAppearanceLargeInverse"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dialog_header_height"
-        android:gravity="center_vertical"
-        android:background="@color/dialog_header_bckg"
-        android:text="@string/aggiungi_posto"
-        android:textColor="@color/white"
-        android:paddingLeft="@dimen/dialog_header_padding_left"/>
-
-    <EditText
-        android:id="@+id/text_add_posto"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_add_posto_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
-        android:textColor="@color/black"
-        android:scrollHorizontally="false"
-        android:singleLine="true"
-        android:inputType="textCapSentences|textAutoCorrect"
-        android:imeOptions="actionSend"
-        android:hint="@string/add_posto" />
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" >
+
+        <ProgressBar
+            android:id="@+id/toolbar_progress_bar_posto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/white"
+            android:indeterminateTintMode="src_in"
+            android:layout_gravity="right"
+            android:visibility="gone" />
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/autocomplete_posti"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:paddingRight="35dip"
+            android:textColor="@color/black"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:inputType="textCapSentences|textAutoCorrect"
+            android:imeOptions="actionSend"
+            android:hint="@string/add_posto" />
+
+        <ImageView
+            android:id="@+id/clearable_button_clear"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dip"
+            android:src="@drawable/ic_menu_close_clear_cancel_orange"
+            android:clickable="false"
+            android:focusable="true"
+            android:background="?android:selectableItemBackground"/>
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/autocomplete_suggestions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
