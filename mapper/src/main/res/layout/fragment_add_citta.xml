@@ -9,7 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize" />
+        android:minHeight="?attr/actionBarSize" >
+
+        <ProgressBar
+        android:id="@+id/toolbar_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/white"
+        android:indeterminateTintMode="src_in"
+        android:layout_gravity="right"
+        />
+
+
+    </android.support.v7.widget.Toolbar>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
@@ -28,6 +40,7 @@
             android:scrollHorizontally="false"
             android:singleLine="true"
             android:inputType="textCapSentences|textAutoCorrect"
+            android:imeOptions="actionSend"
             android:hint="@string/add_citta" />
 
         <ImageView
