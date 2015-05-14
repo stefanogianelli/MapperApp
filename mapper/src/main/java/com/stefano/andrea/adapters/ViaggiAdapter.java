@@ -4,15 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -66,11 +65,11 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
 
     @Override
     public void onBindViewHolder(ViaggiHolder holder, int position) {
-        CardView card = (CardView) holder.itemView;
+        LinearLayout check = (LinearLayout) holder.itemView.findViewById(R.id.image_checked);
         if (isSelected(position)) {
-            card.setCardBackgroundColor(mActivity.getResources().getColor(R.color.selected_overlay));
+            check.setVisibility(View.VISIBLE);
         } else {
-            card.setCardBackgroundColor(Color.WHITE);
+            check.setVisibility(View.GONE);
         }
         Viaggio viaggio = mListaViaggi.get(position);
         holder.bindViaggio(viaggio);

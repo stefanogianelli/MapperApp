@@ -4,6 +4,8 @@
     <string name="title_tab_dettagli">Dettagli</string>
     <string name="title_tab_foto">Foto</string>
     <string name="title_tab_mappa">Mappa</string>
+    <string name="checked">Checked</string>
+
     <!-- Azioni -->
     <string name="delete">Elimina</string>
     <string name="ok">OK</string>

@@ -74,6 +74,19 @@
         </LinearLayout>
 
     </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/image_checked"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/info_background"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_check_white_48dp"
+                android:contentDescription="@string/checked"/>
+        </LinearLayout>
     </FrameLayout>
 
 </android.support.v7.widget.CardView>
