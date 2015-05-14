@@ -51,7 +51,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
      * Callback invocata dal dialog aggiungi posto
      */
     public interface AggiungiPostoCallback {
-        void creaNuovoPosto (String nomePosto);
+        void creaNuovoPosto (String nomePosto, LatLng coordinates);
     }
 
     private AggiungiPostoCallback mCallback;
@@ -63,7 +63,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
     private static final LatLngBounds PLACES_BOUND = new LatLngBounds(
             new LatLng(36.164943, -8.353179), new LatLng(71.437853, 37.086275));
 
-    public AddPostoDialog newInstance () {
+    public static AddPostoDialog newInstance () {
         return new AddPostoDialog();
     }
 
@@ -250,7 +250,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
             //TODO: get coordinate da qua
             LatLng placeCoordinates = place.getLatLng();
 
-            mCallback.creaNuovoPosto(placeName);
+            mCallback.creaNuovoPosto(placeName, placeCoordinates);
 
             places.release();
             hideKeyboard();
