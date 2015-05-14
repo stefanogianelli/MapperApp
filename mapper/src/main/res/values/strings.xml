@@ -23,6 +23,8 @@
 
     <!-- Main activity -->
     <string name="suggerimento_crea_viaggio">Crea un nuovo viaggio</string>
+    <string name="suggerimento_crea_citta">Aggiungi tutte le città che vuoi visitare</string>
+    <string name="suggerimento_crea_posto">Aggiungi tutti posti che vuoi visitare in questa città</string>
 
     <!-- dialogs -->
     <string name="aggiungi_viaggio">Nome del viaggio</string>

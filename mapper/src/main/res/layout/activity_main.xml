@@ -32,14 +32,11 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="100dp"
         android:layout_marginBottom="20dp"
-        android:visibility="gone">
+        android:visibility="gone" >
 
-        <TextView
+        <TextView style="@style/TextWithShadow"
             android:layout_width="wrap_content"
-            android:maxWidth="150dp"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textColor="@color/black"
             android:text="@string/suggerimento_crea_viaggio" />
 
         <ImageView

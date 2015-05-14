@@ -10,6 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone" >
+
+        <TextView style="@style/TextWithShadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/suggerimento_crea_citta" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/arrow_suggerimento"
+            android:layout_marginLeft="75dp" />
+    </LinearLayout>
+
     <com.stefano.andrea.utils.CustomFAB
         android:id="@+id/fab_aggiunta_citta"
         android:layout_width="@dimen/fab_size"
