@@ -15,7 +15,7 @@
     android:minHeight="40dip"
     android:paddingLeft="@dimen/dialog_icon_margin"
     android:paddingStart="@dimen/dialog_icon_margin" >
-    <TextView android:id="@+id/suggested_city_title"
+    <TextView android:id="@+id/suggested_title"
         android:singleLine="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -24,7 +24,7 @@
         android:ellipsize="end"
         android:textColor="@color/black" />
     <TextView
-        android:id="@+id/suggested_city"
+        android:id="@+id/suggested_subtitle"
         android:singleLine="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
