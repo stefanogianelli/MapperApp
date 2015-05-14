@@ -25,8 +25,8 @@
     <color name="popup_background">#e7333333</color>
 
     <!-- FAB -->
-    <color name="fab_color_normal">#FFFF4444</color>
-    <color name="fab_color_pressed">#ff8080</color>
+    <color name="fab_color_normal">#FFdb4437</color>
+    <color name="fab_color_pressed">#FFe06055</color>
     <!-- Scrolling tabs -->
     <color name="ColorPrimary">#FFFFBB33</color>
     <color name="ColorPrimaryDark">#FFFF8800</color>
