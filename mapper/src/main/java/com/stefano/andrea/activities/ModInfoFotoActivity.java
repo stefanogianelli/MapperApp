@@ -23,8 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +84,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private TextView mCittaText;
     private ImageView mAddCittaButton;
     private TextView mPostoText;
+    private Toolbar mInfoToolbar;
+    private TextView mInfoText;
+    private ProgressBar mInfoProgress;
+    private Button mGeolocalizzaButton;
     private ImageView mAddPostoButton;
     //elenco dei percorsi delle imamgini
     private ArrayList<String> mImagePath;
@@ -119,6 +125,19 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         mAddCittaButton = (ImageButton) findViewById(R.id.mod_foto_add_citta);
         mPostoText = (TextView) findViewById(R.id.txt_edit_posto_foto);
         mAddPostoButton = (ImageButton) findViewById(R.id.mod_foto_add_posto);
+        mInfoToolbar = (Toolbar) findViewById(R.id.info_foto_message_bar);
+        mInfoText = (TextView) findViewById(R.id.info_foto_message_text);
+        mInfoProgress = (ProgressBar) findViewById(R.id.info_foto_progress_bar);
+        mGeolocalizzaButton = (Button) findViewById(R.id.action_geolocalizza);
+        mGeolocalizzaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mAddressRequested) {
+                    setInfoToolbar(R.string.recupero_info, R.color.white);
+                    fetchAddressButtonHandler();
+                }
+            }
+        });
         //setup dei pulsanti
         setupAddViaggioButton();
         setupAddCittaButton();
@@ -182,10 +201,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                     Log.d(TAG, "Errore durante l'eliminazione della foto");
             }
             finish();
-            return true;
-        } else if (id == R.id.action_localizza) {
-            if (!mAddressRequested)
-                fetchAddressButtonHandler();
             return true;
         }
 
@@ -755,12 +770,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == FetchAddressIntentService.FAILURE_RESULT) {
-                showToast(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY));
+                setInfoToolbar(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY), R.color.red);
             } else if (resultCode == FetchAddressIntentService.SUCCESS_RESULT) {
+                String nome = resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY);
+                String nazione = resultData.getString(FetchAddressIntentService.RESULT_COUNTRY);
+                String message = getResources().getString(R.string.photo_information_found, nome);
+                setInfoToolbar(message, R.color.green);
                 mCittaLocalizzata = new Citta();
                 mCittaLocalizzata.setId(ID_INSERT_CITY);
-                mCittaLocalizzata.setNome(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY));
-                mCittaLocalizzata.setNazione(resultData.getString(FetchAddressIntentService.RESULT_COUNTRY));
+                mCittaLocalizzata.setNome(nome);
+                mCittaLocalizzata.setNazione(nazione);
                 if (mAddressRequested) {
                     mCittaLocalizzata.setLatitudine(mLastLocation.getLatitude());
                     mCittaLocalizzata.setLongitudine(mLastLocation.getLongitude());
@@ -782,14 +801,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      * Toggles the visibility of the progress bar. Enables or disables the Fetch Address button.
      */
     private void updateUIWidgets() {
-        //TODO: implementare indicatore che indica la ricerca delle coordinate
-        /*if (mAddressRequested) {
-            mProgressBar.setVisibility(ProgressBar.VISIBLE);
-            mFetchAddressButton.setEnabled(false);
+        if (mAddressRequested) {
+            mInfoProgress.setVisibility(ProgressBar.VISIBLE);
+            mGeolocalizzaButton.setEnabled(false);
         } else {
-            mProgressBar.setVisibility(ProgressBar.GONE);
-            mFetchAddressButton.setEnabled(true);
-        }*/
+            mInfoProgress.setVisibility(ProgressBar.GONE);
+            mGeolocalizzaButton.setEnabled(true);
+        }
     }
 
     /**
@@ -798,13 +816,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private void displayAddressOutput() {
         mCittaText.setText(mCittaLocalizzata.getNome());
         updateCitta();
-    }
-
-    /**
-     * Shows a toast with the given text.
-     */
-    private void showToast(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -829,7 +840,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (mLastLocation != null) {
             // Determine whether a Geocoder is available.
             if (!Geocoder.isPresent()) {
-                Toast.makeText(this, R.string.no_geocoder_available, Toast.LENGTH_LONG).show();
+                setInfoToolbar(R.string.no_geocoder_available, R.color.red);
                 return;
             }
             // It is possible that the user presses the button to get the address before the
@@ -853,6 +864,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             mFotoLocation.setLatitude(latitudine);
             mFotoLocation.setLongitude(longitudine);
             startIntentService();
+        } else {
+            setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red);
         }
     }
 
@@ -869,6 +882,17 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+        setInfoToolbar(R.string.connection_error, R.color.red);
+    }
+
+    private void setInfoToolbar (int stringId, int colorId) {
+        mInfoToolbar.setBackgroundColor(getResources().getColor(colorId));
+        mInfoText.setText(stringId);
+    }
+
+    private void setInfoToolbar (String message, int colorId) {
+        mInfoToolbar.setBackgroundColor(getResources().getColor(colorId));
+        mInfoText.setText(message);
     }
 
 }

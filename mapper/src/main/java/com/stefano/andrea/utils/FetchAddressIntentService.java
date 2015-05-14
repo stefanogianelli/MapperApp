@@ -133,7 +133,14 @@ public class FetchAddressIntentService extends IntentService {
             // getPostalCode() ("94043", for example)
             // getCountryCode() ("US", for example)
             // getCountryName() ("United States", for example)
-            deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName());
+            String locality = address.getLocality();
+            String country = address.getCountryName();
+            if (locality != null && country != null)
+                deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName());
+            else {
+                errorMessage = getString(R.string.no_address_found);
+                deliverResultToReceiver(FAILURE_RESULT, errorMessage);
+            }
         }
     }
 

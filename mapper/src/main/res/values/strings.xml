@@ -134,9 +134,10 @@
     <string name="no_geocoder_available">Geocoder non disponibile</string>
 
     <!-- ModInfoFoto -->
-    <string name="menu_localizza">Localizza</string>
     <string name="recupero_info">Recupero informazioni foto</string>
-
+    <string name="no_foto_coordinate_available">Nessuna informazione disponibile</string>
+    <string name="photo_information_found">Crediamo che la foto sia stata scattata a %s</string>
+    <string name="connection_error">Errore di connessione</string>
 
 
 
