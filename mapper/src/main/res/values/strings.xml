@@ -21,6 +21,9 @@
     <string name="condividi">Condividi</string>
     <string name="aggiungi_foto">Aggiungi foto</string>
 
+    <!-- Main activity -->
+    <string name="suggerimento_crea_viaggio">Crea un nuovo viaggio</string>
+
     <!-- dialogs -->
     <string name="aggiungi_viaggio">Nome del viaggio</string>
     <string name="aggiungi_citta">Nome della città</string>
