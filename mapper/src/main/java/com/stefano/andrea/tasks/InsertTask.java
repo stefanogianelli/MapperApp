@@ -178,18 +178,18 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
          * Verifica se esistono nel database i dati di una citta
          */
         private int getDatiCitta () {
+            int result = RESULT_ERROR;
             String selection = MapperContract.DatiCitta.NOME + "=? AND " + MapperContract.DatiCitta.NAZIONE + "=?";
             String [] selectionArgs = {citta.getNome(), citta.getNazione()};
-            Cursor c = mResolver.query(MapperContract.DatiCitta.CONTENT_URI, MapperContract.DatiCitta.PROJECTION_ALL, selection, selectionArgs, MapperContract.DatiCitta.DEFAULT_SORT);
-            if (c != null && c.getCount() > 0) {
-                c.moveToNext();
+            Cursor c = mResolver.query(MapperContract.DatiCitta.CONTENT_URI, MapperContract.DatiCitta.PROJECTION_ALL, selection, selectionArgs, MapperContract.DatiCitta.DEFAULT_SORT + " LIMIT 1");
+            if (c.moveToFirst()) {
                 citta.setIdCitta(c.getLong(c.getColumnIndex(MapperContract.DatiCitta.ID)));
                 citta.setLatitudine(c.getLong(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
                 citta.setLongitudine(c.getLong(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
-                c.close();
-                return RESULT_OK;
+                result = RESULT_OK;
             }
-            return RESULT_ERROR;
+            c.close();
+            return result;
         }
     }
 
@@ -258,17 +258,17 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
 
         private int getLuogo () {
+            int result = RESULT_ERROR;
             String [] projection = {MapperContract.Luogo.ID};
             String selection = MapperContract.Luogo.NOME + "=?";
             String [] selectionArgs = {posto.getNome()};
-            Cursor c = mResolver.query(MapperContract.Luogo.CONTENT_URI, projection, selection, selectionArgs, MapperContract.Luogo.DEFAULT_SORT);
-            if (c != null && c.getCount() > 0) {
-                c.moveToNext();
+            Cursor c = mResolver.query(MapperContract.Luogo.CONTENT_URI, projection, selection, selectionArgs, MapperContract.Luogo.DEFAULT_SORT + " LIMIT 1");
+            if (c.moveToFirst()) {
                 posto.setIdLuogo(c.getLong(c.getColumnIndex(MapperContract.Luogo.ID)));
-                c.close();
-                return RESULT_OK;
+                result = RESULT_OK;
             }
-            return RESULT_ERROR;
+            c.close();
+            return result;
         }
 
     }
@@ -317,16 +317,16 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
 
         private int getIdDatiCitta () {
+            int result = RESULT_ERROR;
             String [] projection = {MapperContract.Citta.ID_DATI_CITTA};
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, posto.getIdCitta());
-            Cursor c = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
-            if (c != null && c.getCount() > 0) {
-                c.moveToNext();
+            Cursor c = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT + " LIMIT 1");
+            if (c.moveToFirst()) {
                 posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
-                c.close();
-                return RESULT_OK;
+                result = RESULT_OK;
             }
-            return RESULT_ERROR;
+            c.close();
+            return result;
         }
     }
 
