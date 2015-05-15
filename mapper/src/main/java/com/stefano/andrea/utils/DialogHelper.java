@@ -1,5 +1,6 @@
 package com.stefano.andrea.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,10 +17,15 @@ import android.widget.TextView;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * DialogsHelper
  */
 public class DialogHelper {
+
+    private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm";
 
     /**
      * Mostra un alert dialog standard, con solo il pulsante OK
@@ -143,6 +149,7 @@ public class DialogHelper {
         builder.create().show();
     }
 
+    @SuppressLint("SimpleDateFormat")
     public static void showDettagliFotoDialog (Activity activity, Foto foto) {
        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -157,13 +164,14 @@ public class DialogHelper {
         TextView indirizzo = (TextView) v.findViewById(R.id.df_testo_indirizzo);
         TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
 
-        percorso.setText(foto.getPath());
+        percorso.setText(foto.getPath().substring(7));
         formato.setText(foto.getMimeType());
-        dimensione.setText(String.valueOf(foto.getSize()));
+        String dimensioneSI = formatByte(foto.getSize(), true);
+        dimensione.setText(dimensioneSI);
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
         fotocamera.setText(foto.getModel());
         exif.setText(foto.getExif());
-        data.setText(String.valueOf(foto.getData()));
+        data.setText(new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date(foto.getData())));
         indirizzo.setText("indirizzo");
 
         builder.setView(v);
@@ -176,6 +184,14 @@ public class DialogHelper {
             }
         });
         dialog.show();
+    }
+
+    public static String formatByte(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
 }

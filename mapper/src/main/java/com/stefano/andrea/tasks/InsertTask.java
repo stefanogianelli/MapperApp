@@ -22,6 +22,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -335,7 +336,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 Foto foto = elencoFoto.get(i);
                 values.clear();
                 values.put(MapperContract.Foto.PATH, foto.getPath());
-                values.put(MapperContract.Foto.DATA, foto.getData());
+                values.put(MapperContract.Foto.DATA, getPhotoDate(foto.getPath()));
                 values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
                 values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
                 values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
@@ -366,6 +367,14 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 }
             }
             return RESULT_OK;
+        }
+
+        private long getPhotoDate (String path) {
+            File file = new File(path.substring(7));
+            if(file.exists()) {
+                return file.lastModified();
+            }
+            return 0;
         }
     }
 
