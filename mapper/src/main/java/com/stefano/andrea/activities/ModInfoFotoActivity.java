@@ -877,7 +877,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             // is set to true, but no attempt is made to fetch the address (see
             // fetchAddressButtonHandler()) . Instead, we start the intent service here if the
             // user has requested an address, since we now have a connection to GoogleApiClient.
-            if (mAddressRequested || mFotoRequested) {
+            if (mAddressRequested) {
                 startIntentService();
             }
         }
@@ -894,8 +894,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mFotoLocation.setLatitude(latitudine);
                 mFotoLocation.setLongitude(longitudine);
                 mFotoRequested = true;
-                setInfoToolbar(R.string.recupero_info, R.color.white);
                 startIntentService();
+                setInfoToolbar(R.string.recupero_info, R.color.white);
+                updateUIWidgets();
             } else {
                 setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red);
             }
@@ -918,16 +919,15 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         setInfoToolbar(R.string.connection_error, R.color.red);
     }
 
-    private void setInfoToolbar (int stringId, int colorId) {
-        mInfoToolbar.setBackgroundColor(getResources().getColor(colorId));
-        mInfoText.setText(stringId);
-    }
-
     private void setInfoToolbar (String message, int colorId) {
         if (mInfoToolbar.getVisibility() == View.INVISIBLE)
             mInfoToolbar.setVisibility(View.VISIBLE);
         mInfoToolbar.setBackgroundColor(getResources().getColor(colorId));
         mInfoText.setText(message);
+    }
+
+    private void setInfoToolbar (int stringId, int colorId) {
+        setInfoToolbar(getString(stringId), colorId);
     }
 
 }
