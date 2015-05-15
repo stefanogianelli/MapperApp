@@ -215,7 +215,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
                     if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
                         addFoto();
-                        finish();
                     } else if (mCittaLocalizzata != null) {
                         addNewCity();
                     } else {
@@ -249,7 +248,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mCittaSelezionata = item;
                 if (mFotoIDs == null) {
                     addFoto();
-                    finish();
                 } else {
                     updateFoto();
                 }
@@ -316,7 +314,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 foto.setCamera(1);
             elencoFoto.add(foto);
         }
-        new InsertTask<>(this, null, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
+        InsertTask.InsertAdapter adapter = new InsertTask.InsertAdapter() {
+            @Override
+            public void insertItem(Object item) {
+                finish();
+            }
+        };
+        new InsertTask<>(this, adapter, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
         mFotoSalvata = true;
     }
 
