@@ -89,33 +89,18 @@ public class FullFotoFragment extends Fragment {
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
-        thread = new Thread(){
-            @Override
-            public void run() {
-                try {
-                    synchronized (this) {
-                        wait(1000);
-                        mParentActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                toggleUiFlags();
-                            }
-                        });
 
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            };
-        };
-        thread.start();
+        setImmersiveTimer(500);
+
         return rootView;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        toggleUiFlags();
+        int uiOptions = mParentActivity.getWindow().getDecorView().getSystemUiVisibility();
+        boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        if (isImmersiveModeEnabled){ toggleUiFlags(); }
     }
 
     @Override
@@ -152,8 +137,11 @@ public class FullFotoFragment extends Fragment {
 
         public ImageAdapter(Context context) {
             inflater = LayoutInflater.from(context);
+        }
 
-
+        @Override
+        public void finishUpdate(ViewGroup container) {
+            super.finishUpdate(container);
         }
 
         @Override
@@ -177,6 +165,7 @@ public class FullFotoFragment extends Fragment {
                     toggleUiFlags();
                 }
             });
+
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
             ImageLoader.getInstance().loadImage(mElencoFoto.get(position).getPath(), new SimpleImageLoadingListener() {
@@ -218,6 +207,7 @@ public class FullFotoFragment extends Fragment {
             });
 
             view.addView(imageLayout, 0);
+
             return imageLayout;
         }
 
@@ -261,6 +251,29 @@ public class FullFotoFragment extends Fragment {
             ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
         }
 
+    }
+
+    public void setImmersiveTimer(final int time){
+        thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    synchronized (this) {
+                        wait(time);
+                        mParentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toggleUiFlags();
+                            }
+                        });
+
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            };
+        };
+        thread.start();
     }
 
 
