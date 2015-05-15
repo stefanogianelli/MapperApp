@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
 
+import java.text.DecimalFormat;
+
 /**
  * DialogsHelper
  */
@@ -159,7 +161,7 @@ public class DialogHelper {
 
         percorso.setText(foto.getPath());
         formato.setText(foto.getMimeType());
-        dimensione.setText(String.valueOf(foto.getSize()));
+        dimensione.setText(formatBytes(foto.getSize()));
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
         fotocamera.setText(foto.getModel());
         exif.setText(foto.getExif());
@@ -176,6 +178,15 @@ public class DialogHelper {
             }
         });
         dialog.show();
+    }
+
+
+    static String formatBytes(int bytes) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.##");
+        if(bytes < 1024) return bytes + " Bytes";
+        else if(bytes < 1048576) return decimalFormat.format(bytes / 1024) + " KB";
+        else if(bytes < 1073741824) return decimalFormat.format(bytes / 1048576) + " MB";
+        else return decimalFormat.format(bytes / 1073741824) + " GB";
     }
 
 }

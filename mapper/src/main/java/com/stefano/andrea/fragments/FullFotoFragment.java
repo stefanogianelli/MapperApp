@@ -89,9 +89,7 @@ public class FullFotoFragment extends Fragment {
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
-
         setImmersiveTimer(500);
-
         return rootView;
     }
 
@@ -207,7 +205,6 @@ public class FullFotoFragment extends Fragment {
             });
 
             view.addView(imageLayout, 0);
-
             return imageLayout;
         }
 
