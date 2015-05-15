@@ -3,6 +3,7 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.loaders.FotoLoader;
@@ -85,6 +87,29 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
                         }
                     });
                     dialog.create().show();
+                    return true;
+                case R.id.menu_modifica_foto:
+                    Intent intent = new Intent(mParentActivity, ModInfoFotoActivity.class);
+                    ArrayList<Integer> fotoId = new ArrayList<>();
+                    ArrayList<String> fotoPath = new ArrayList<>();
+                    for (int i = 0; i < mElencoFoto.size(); i++) {
+                        if (mAdapter.getSelectedItems().contains(i)) {
+                            fotoId.add((int) mElencoFoto.get(i).getId());
+                            fotoPath.add(mElencoFoto.get(i).getPath());
+                        }
+                    }
+                    intent.putIntegerArrayListExtra(ModInfoFotoActivity.EXTRA_LISTA_FOTO, fotoId);
+                    intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoPath);
+                    switch (mTipoElenco) {
+                        case FotoLoader.FOTO_POSTO:
+                            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, mElencoFoto.get(0).getIdPosto());
+                        case FotoLoader.FOTO_CITTA:
+                            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, mElencoFoto.get(0).getIdCitta());
+                        case FotoLoader.FOTO_VIAGGIO:
+                            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, mElencoFoto.get(0).getIdViaggio());
+                    }
+                    startActivity(intent);
+                    mode.finish();
                     return true;
                 default:
                     return false;

@@ -2,6 +2,7 @@ package com.stefano.andrea.activities;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -45,6 +46,7 @@ import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.InsertTask;
+import com.stefano.andrea.tasks.UpdateTask;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.FetchAddressIntentService;
 import com.stefano.andrea.utils.PhotoUtils;
@@ -57,7 +59,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
     public final static String EXTRA_ID_POSTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idPosto";
-    public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.Foto";
+    public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.foto";
+    public final static String EXTRA_LISTA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.listaFoto";
     public final static String EXTRA_TIPO_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.tipoFoto";
 
     private static final String TAG = "ModInfoFotoActivity";
@@ -94,6 +97,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private ImageView mAddPostoButton;
     //elenco dei percorsi delle imamgini
     private ArrayList<String> mImagePath;
+    //elenco degli ID delle immagini da modificare
+    private ArrayList<Integer> mFotoIDs;
     //indica se la foto e' stata scattata dalla fotocamera o acquisita dalla galleria
     private int mTipoFoto;
     //viaggio al quale associare la/e foto
@@ -102,6 +107,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private Citta mCittaSelezionata;
     /** posto al quale associare la/e foto */
     private Posto mPostoSelezionato;
+    /** ID del viaggio passato tramite intent */
+    private long mIdViaggio;
     /** ID della citta' passato tramite intent */
     private long mIdCitta;
     /** ID del posto passato tramite intent */
@@ -120,8 +127,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_FOTO))
             mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
+        if (intent.hasExtra(EXTRA_LISTA_FOTO))
+            mFotoIDs = intent.getIntegerArrayListExtra(EXTRA_LISTA_FOTO);
         mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
-        long idViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
+        mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
         mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
         mIdPosto = intent.getLongExtra(EXTRA_ID_POSTO, -1);
         //acquisisco riferimenti
@@ -153,7 +162,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         //carico elenchi
         updateViaggi();
         //inizializzo viaggio
-        inizializzaViaggio(idViaggio);
+        inizializzaViaggio();
         //inizializzo citta
         inizializzaCitta();
         //inizializzo posto
@@ -187,18 +196,36 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             finish();
             return true;
         } else if (id == R.id.action_salva_foto) {
-            if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
-                if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
-                    addFoto();
-                    finish();
-                } else if (mCittaLocalizzata != null) {
-                    addNewCity();
+            //verifico se sono in modalita' modifica o creazione
+            if (mFotoIDs != null) {
+                //modalita' modifica
+                if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1) {
+                    if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
+                        updateFoto();
+                    }  else if (mCittaLocalizzata != null) {
+                        addNewCity();
+                    } else {
+                        Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this, getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
+                //modalità creazione
+                if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
+                    if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
+                        addFoto();
+                        finish();
+                    } else if (mCittaLocalizzata != null) {
+                        addNewCity();
+                    } else {
+                        Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
+                    }
+                else {
+                    Toast.makeText(this, getResources().getString(R.string.viaggio_non_selezionato), Toast.LENGTH_SHORT).show();
+                }
+                return true;
             }
-            return true;
         } else if (id == R.id.action_annula_foto) {
             if (mTipoFoto == PhotoUtils.CAMERA_REQUEST) {
                 mFotoCancellata = cancellaFoto();
@@ -220,11 +247,38 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             @Override
             public void insertItem(Citta item) {
                 mCittaSelezionata = item;
-                addFoto();
-                finish();
+                if (mFotoIDs == null) {
+                    addFoto();
+                    finish();
+                } else {
+                    updateFoto();
+                }
             }
         };
         new InsertTask<>(ModInfoFotoActivity.this, adapter, mCittaLocalizzata).execute(InsertTask.INSERISCI_CITTA);
+    }
+
+    private void updateFoto () {
+        ContentValues values = new ContentValues();
+        if (mIdViaggio != mViaggioSelezionato.getId()) {
+            //modifico viaggio
+            values.put(MapperContract.Foto.ID_VIAGGIO, mViaggioSelezionato.getId());
+        }
+        if (mIdCitta != mCittaSelezionata.getId()) {
+            //modifico citta'
+            values.put(MapperContract.Foto.ID_CITTA, mCittaSelezionata.getId());
+        }
+        if (mPostoSelezionato != null && mIdPosto != mPostoSelezionato.getId()) {
+            //modifico posto
+            values.put(MapperContract.Posto.ID_POSTO, mPostoSelezionato.getId());
+        }
+        UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
+            @Override
+            public void UpdateItem(int position, String nome) {
+                finish();
+            }
+        };
+        new UpdateTask(this, 0, values, mFotoIDs, adapter).execute(UpdateTask.UPDATE_FOTO);
     }
 
     private void addFoto () {
@@ -282,18 +336,17 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Seleziona il vaggio se l'id e' diverso da -1
-     * @param idViaggio L'id del viaggio
      */
-    private void inizializzaViaggio(long idViaggio) {
+    private void inizializzaViaggio() {
         //controllo se e' stato selezionato un viaggio
-        if (idViaggio != -1) {
+        if (mIdViaggio != -1) {
             //viaggio selezionato
-            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, idViaggio);
+            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
             String [] projection = { MapperContract.Viaggio.NOME };
             Cursor curViaggio = mResolver.query(viaggio, projection, null, null, null);
             if (curViaggio.moveToFirst()) {
                 String nomeViaggio = curViaggio.getString(curViaggio.getColumnIndex(projection[0]));
-                mViaggioSelezionato = new Viaggio(idViaggio, nomeViaggio);
+                mViaggioSelezionato = new Viaggio(mIdViaggio, nomeViaggio);
                 mViaggioText.setText(nomeViaggio);
             }
             curViaggio.close();
@@ -358,7 +411,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                             @Override
                             public void insertItem(Viaggio item) {
                                 clearSelection(CLEAR_CITTA);
-                                inizializzaViaggio(item.getId());
+                                mIdViaggio = item.getId();
+                                inizializzaViaggio();
                                 updateViaggi();
                                 sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
                             }
@@ -882,7 +936,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
         }
 
-        if (mCittaLocalizzata == null && !mAddressRequested && mIdCitta == -1 && mIdPosto == -1) {
+        if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == -1 && mIdPosto == -1) {
             //Acquisisco coordinate della foto
             Log.d(TAG, "Acquisisco coordinate della foto");
             ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));

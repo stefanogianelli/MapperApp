@@ -1,6 +1,7 @@
 package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
+import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
@@ -205,7 +207,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Viaggio viaggio = new Viaggio(nome);
             new InsertTask<>(this, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
         } else {
-            new UpdateTask(this, position, id, nome, mAdapter).execute();
+            List<Integer> elencoId = new ArrayList<>();
+            elencoId.add((int) id);
+            ContentValues values = new ContentValues();
+            values.put(MapperContract.Viaggio.NOME, nome);
+            new UpdateTask(this, position, values, elencoId, mAdapter).execute(UpdateTask.UPDATE_VIAGGIO);
         }
     }
 

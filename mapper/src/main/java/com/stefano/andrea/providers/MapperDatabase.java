@@ -32,6 +32,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
         String DECREMENTA_COUNT_POSTI = "decrementa_count_posti";
         String INCREMENTA_COUNT_FOTO = "incrementa_count_foto";
         String DECREMENTA_COUNT_FOTO = "decrementa_count_foto";
+        String UPDATE_COUNT_FOTO = "update_count_foto";
         String AGGIORNA_POSTI_VISITATI = "aggiorna_posti_visitati";
         String ELIMINA_DATI_CITTA = "elimina_dati_citta";
         String ELIMINA_LUOGO = "elimina_luogo";
@@ -167,6 +168,15 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "UPDATE " + Tables.POSTO + " SET " + MapperContract.Posto.COUNT_FOTO + " = " + MapperContract.Posto.COUNT_FOTO + " - 1 WHERE " + Tables.POSTO + "." + MapperContract.Posto.ID_POSTO + " = old." + MapperContract.Foto.ID_POSTO + "; " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " - 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = old." + MapperContract.Foto.ID_CITTA + "; END;";
 
+    //Trigger che aggiorna il contatore delle foto allo spostamento della foto
+    private static final String TRIGGER_UPDATE_COUNT_FOTO = "CREATE TRIGGER " + Triggers.UPDATE_COUNT_FOTO + " AFTER UPDATE ON " + Tables.FOTO + " BEGIN " +
+            "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_FOTO + " = " + MapperContract.Viaggio.COUNT_FOTO + " - 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = old." + MapperContract.Foto.ID_VIAGGIO + "; " +
+            "UPDATE " + Tables.VIAGGIO + " SET " + MapperContract.Viaggio.COUNT_FOTO + " = " + MapperContract.Viaggio.COUNT_FOTO + " + 1 WHERE " + Tables.VIAGGIO + "." + MapperContract.Viaggio.ID_VIAGGIO + " = new." + MapperContract.Foto.ID_VIAGGIO + "; " +
+            "UPDATE " + Tables.POSTO + " SET " + MapperContract.Posto.COUNT_FOTO + " = " + MapperContract.Posto.COUNT_FOTO + " - 1 WHERE " + Tables.POSTO + "." + MapperContract.Posto.ID_POSTO + " = old." + MapperContract.Foto.ID_POSTO + "; " +
+            "UPDATE " + Tables.POSTO + " SET " + MapperContract.Posto.COUNT_FOTO + " = " + MapperContract.Posto.COUNT_FOTO + " + 1 WHERE " + Tables.POSTO + "." + MapperContract.Posto.ID_POSTO + " = new." + MapperContract.Foto.ID_POSTO + "; " +
+            "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " - 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = old." + MapperContract.Foto.ID_CITTA + "; " +
+            "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.COUNT_FOTO + " = " + MapperContract.Citta.COUNT_FOTO + " + 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Foto.ID_CITTA + "; END;";
+
     //Trigger che aggiorna il contatore dei posti visitati
     private static final String TRIGGER_AGGIORNA_POSTI_VISITATI = "CREATE TRIGGER " + Triggers.AGGIORNA_POSTI_VISITATI + " AFTER UPDATE OF " + MapperContract.Posto.VISITATO + " ON " + Tables.POSTO + " BEGIN " +
             "UPDATE " + Tables.CITTA + " SET " + MapperContract.Citta.POSTI_VISITATI + " = " + MapperContract.Citta.POSTI_VISITATI + " + 1 WHERE " + Tables.CITTA + "." + MapperContract.Citta.ID_CITTA + " = new." + MapperContract.Posto.ID_CITTA + " AND new." + MapperContract.Posto.VISITATO + " = 1; " +
@@ -214,6 +224,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
         db.execSQL(TRIGGER_DECREMENTA_COUNT_POSTI);
         db.execSQL(TRIGGER_INCREMENTA_COUNT_FOTO);
         db.execSQL(TRIGGER_DECREMENTA_COUNT_FOTO);
+        db.execSQL(TRIGGER_UPDATE_COUNT_FOTO);
         db.execSQL(TRIGGER_AGGIORNA_POSTI_VISITATI);
         db.execSQL(TRIGGER_ELIMINA_DATI_CITTA);
         db.execSQL(TRIGGER_ELIMINA_LUOGO);
@@ -237,6 +248,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_POSTI);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.INCREMENTA_COUNT_FOTO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.DECREMENTA_COUNT_FOTO);
+        db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.UPDATE_COUNT_FOTO);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.AGGIORNA_POSTI_VISITATI);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_DATI_CITTA);
         db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.ELIMINA_LUOGO);

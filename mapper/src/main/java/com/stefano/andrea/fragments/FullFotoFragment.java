@@ -2,6 +2,7 @@ package com.stefano.andrea.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.utils.DialogHelper;
@@ -124,6 +126,20 @@ public class FullFotoFragment extends Fragment {
             return true;
         } else if (id == R.id.action_dettagli) {
             DialogHelper.showDettagliFotoDialog(mParentActivity, mElencoFoto.get(mPager.getCurrentItem()));
+            return true;
+        } else if (id == R.id.action_modifica) {
+            Intent intent = new Intent(mParentActivity, ModInfoFotoActivity.class);
+            ArrayList<Integer> fotoId = new ArrayList<>();
+            ArrayList<String> fotoPath = new ArrayList<>();
+            Foto foto = mElencoFoto.get(mPager.getCurrentItem());
+            fotoId.add((int) foto.getId());
+            fotoPath.add(foto.getPath());
+            intent.putIntegerArrayListExtra(ModInfoFotoActivity.EXTRA_LISTA_FOTO, fotoId);
+            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoPath);
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, foto.getIdPosto());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, foto.getIdCitta());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, foto.getIdViaggio());
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
