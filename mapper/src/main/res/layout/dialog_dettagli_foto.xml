@@ -237,7 +237,8 @@
             android:textColor="@color/white"
             android:layout_gravity="center_horizontal"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:background="?android:selectableItemBackground"/>
     </LinearLayout>
 
     <LinearLayout

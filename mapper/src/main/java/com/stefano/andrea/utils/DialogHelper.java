@@ -11,12 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * DialogsHelper
@@ -163,10 +166,26 @@ public class DialogHelper {
         formato.setText(foto.getMimeType());
         dimensione.setText(formatBytes(foto.getSize()));
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
-        fotocamera.setText(foto.getModel());
-        exif.setText(foto.getExif());
-        data.setText(String.valueOf(foto.getData()));
+        if(foto.getModel()==null){
+            LinearLayout fotoCamera = (LinearLayout) v.findViewById(R.id.df_container_fotocamera);
+            fotoCamera.setVisibility(View.GONE);
+        }else{
+            fotocamera.setText(foto.getModel());
+        }
+        if(foto.getExif()==null){
+            LinearLayout fotoExif = (LinearLayout) v.findViewById(R.id.df_container_exif);
+            fotoExif.setVisibility(View.GONE);
+        }else{
+            exif.setText(foto.getExif());
+        }
+        data.setText(new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.getDefault()).format(foto.getData()*1000L));
         indirizzo.setText("indirizzo");
+        indirizzo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Intent verso mappa
+            }
+        });
 
         builder.setView(v);
         final AlertDialog dialog = builder.create();
@@ -179,7 +198,6 @@ public class DialogHelper {
         });
         dialog.show();
     }
-
 
     static String formatBytes(int bytes) {
         DecimalFormat decimalFormat = new DecimalFormat("0.##");
