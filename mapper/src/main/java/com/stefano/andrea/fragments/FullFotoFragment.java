@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +28,8 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.dialogs.DettagliFotoDialog;
 import com.stefano.andrea.models.Foto;
-import com.stefano.andrea.utils.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,26 +124,37 @@ public class FullFotoFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Foto currentFoto = mElencoFoto.get(mPager.getCurrentItem());
         if (id == android.R.id.home) {
             getFragmentManager().popBackStack();
             return true;
         } else if (id == R.id.action_dettagli) {
-            DialogHelper.showDettagliFotoDialog(mParentActivity, mElencoFoto.get(mPager.getCurrentItem()));
+            FragmentManager fragmentManager = getFragmentManager();
+            DettagliFotoDialog dialog = DettagliFotoDialog.newInstance(currentFoto);
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
             return true;
         } else if (id == R.id.action_modifica) {
             Intent intent = new Intent(mParentActivity, ModInfoFotoActivity.class);
             ArrayList<Integer> fotoId = new ArrayList<>();
             ArrayList<String> fotoPath = new ArrayList<>();
-            Foto foto = mElencoFoto.get(mPager.getCurrentItem());
-            fotoId.add((int) foto.getId());
-            fotoPath.add(foto.getPath());
+            fotoId.add((int) currentFoto.getId());
+            fotoPath.add(currentFoto.getPath());
             intent.putIntegerArrayListExtra(ModInfoFotoActivity.EXTRA_LISTA_FOTO, fotoId);
             intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoPath);
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, foto.getIdPosto());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, foto.getIdCitta());
-            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, foto.getIdViaggio());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, currentFoto.getIdPosto());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, currentFoto.getIdCitta());
+            intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, currentFoto.getIdViaggio());
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_mostra_su_mappa) {
+            Uri maps = Uri.parse("geo:0,0?q=" + currentFoto.getLatitudine() + "," + currentFoto.getLongitudine() + "(Foto)");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(maps);
+            if (intent.resolveActivity(mParentActivity.getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

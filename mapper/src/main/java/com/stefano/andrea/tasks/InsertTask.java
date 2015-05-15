@@ -352,7 +352,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                     //APERTURE + EXPOSURE_TIME + ISO
                     String exifData = "F/"  + exif.getAttribute(ExifInterface.TAG_APERTURE);
                     exifData += " " + exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME) + "m";
-                    exifData += " ISO_" + exif.getAttribute(ExifInterface.TAG_ISO);
+                    exifData += " ISO-" + exif.getAttribute(ExifInterface.TAG_ISO);
                     values.put(MapperContract.Foto.EXIF, exifData);
                     values.put(MapperContract.Foto.MODEL, exif.getAttribute(ExifInterface.TAG_MODEL));
                 } catch (IOException e) {
