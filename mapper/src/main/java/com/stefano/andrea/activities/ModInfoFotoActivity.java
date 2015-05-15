@@ -200,10 +200,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             if (mFotoIDs != null) {
                 //modalita' modifica
                 if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1) {
-                    if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
-                        updateFoto();
-                    }  else if (mCittaLocalizzata != null) {
+                    if (mCittaLocalizzata != null) {
                         addNewCity();
+                    } else if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
+                        updateFoto();
                     } else {
                         Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
                     }
@@ -270,13 +270,17 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             //modifico posto
             values.put(MapperContract.Posto.ID_POSTO, mPostoSelezionato.getId());
         }
-        UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
-            @Override
-            public void UpdateItem(int position, String nome) {
-                finish();
-            }
-        };
-        new UpdateTask(this, 0, values, mFotoIDs, adapter).execute(UpdateTask.UPDATE_FOTO);
+        if (values.size() > 0) {
+            UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
+                @Override
+                public void UpdateItem(int position, String nome) {
+                    finish();
+                }
+            };
+            new UpdateTask(this, 0, values, mFotoIDs, adapter).execute(UpdateTask.UPDATE_FOTO);
+        } else {
+            finish();
+        }
     }
 
     private void addFoto () {
