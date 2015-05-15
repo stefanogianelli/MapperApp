@@ -13,11 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="150dp">
 
-    <ImageView
+    <com.stefano.andrea.utils.ScaleImageView
         android:id="@+id/copertina_viaggio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"/>
+        android:scaleType="centerCrop"/>
 
     <RelativeLayout
         android:id="@+id/viaggio_item_thumbnail"
