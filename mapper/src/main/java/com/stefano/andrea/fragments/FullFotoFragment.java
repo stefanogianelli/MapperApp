@@ -155,6 +155,11 @@ public class FullFotoFragment extends Fragment {
             if (intent.resolveActivity(mParentActivity.getPackageManager()) != null) {
                 startActivity(intent);
             }
+        }else if(id == R.id.action_condividi_foto){
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("image/jpeg");
+            share.putExtra(Intent.EXTRA_STREAM, Uri.parse(currentFoto.getPath()));
+            startActivity(Intent.createChooser(share, "Share Image"));
         }
         return super.onOptionsItemSelected(item);
     }
