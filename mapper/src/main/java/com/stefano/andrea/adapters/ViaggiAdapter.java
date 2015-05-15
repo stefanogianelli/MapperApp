@@ -21,6 +21,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
+import com.stefano.andrea.utils.ScaleImageView;
 import com.stefano.andrea.utils.SelectableAdapter;
 import com.stefano.andrea.utils.SelectableHolder;
 
@@ -117,7 +118,7 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
             nomeViaggio = (TextView) itemView.findViewById(R.id.viaggio_item_label);
             viaggioLabel = (TextView) itemView.findViewById(R.id.viaggio_item_label_subtitle);
             button1 = (ImageButton) itemView.findViewById(R.id.button_popup_item_viaggio);
-            copertina = (ImageView) itemView.findViewById(R.id.copertina_viaggio);
+            copertina = (ScaleImageView) itemView.findViewById(R.id.copertina_viaggio);
         }
 
         public void bindViaggio (final Viaggio viaggio) {
