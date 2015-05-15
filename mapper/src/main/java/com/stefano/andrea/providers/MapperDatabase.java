@@ -100,6 +100,12 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "`" + MapperContract.Foto.ID_POSTO + "` INTEGER DEFAULT null," +
             "`" + MapperContract.Foto.ID_MEDIA_STORE + "` INTEGER NOT NULL," +
             "`" + MapperContract.Foto.CAMERA + "` INTEGER DEFAULT 0," +
+            "`" + MapperContract.Foto.MODEL + "` TEXT," +
+            "`" + MapperContract.Foto.EXIF + "` TEXT," +
+            "`" + MapperContract.Foto.WIDTH + "` TEXT," +
+            "`" + MapperContract.Foto.HEIGHT + "` TEXT," +
+            "`" + MapperContract.Foto.MIME_TYPE + "` TEXT," +
+            "`" + MapperContract.Foto.SIZE + "` TEXT," +
             "FOREIGN KEY(`" + MapperContract.Foto.ID_VIAGGIO + "`) REFERENCES " + Tables.VIAGGIO + " (`" + MapperContract.Viaggio.ID_VIAGGIO + "`)," +
             "FOREIGN KEY(`" + MapperContract.Foto.ID_CITTA + "`) REFERENCES " + Tables.CITTA + " (`" + MapperContract.Citta.ID_CITTA + "`)," +
             "FOREIGN KEY(`" + MapperContract.Foto.ID_POSTO + "`) REFERENCES " + Tables.POSTO + " (`" + MapperContract.Posto.ID_POSTO + "`));";

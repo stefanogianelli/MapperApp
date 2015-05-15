@@ -102,10 +102,12 @@ public class PlaceAutocompleteAdapter
         PlaceAutocomplete item = getItem(position);
         if (convertView == null)
             convertView = LayoutInflater.from(getContext()).inflate(mResource, parent, false);
-        TextView place = (TextView) convertView.findViewById(R.id.suggested_subtitle);
-        place.setText(item.toString());
+        String place = item.toString();
+        TextView placeView = (TextView) convertView.findViewById(R.id.suggested_subtitle);
+        placeView.setText(place);
         TextView placeTitle = (TextView) convertView.findViewById(R.id.suggested_title);
-        placeTitle.setText("Titolo");
+        String [] details = place.split(",");
+        placeTitle.setText(details[0]);
         return convertView;
     }
 

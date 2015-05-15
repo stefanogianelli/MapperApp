@@ -99,6 +99,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 dismiss();
             }
         });

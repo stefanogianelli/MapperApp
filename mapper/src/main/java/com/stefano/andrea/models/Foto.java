@@ -18,6 +18,12 @@ public class Foto implements Parcelable {
     private long idPosto;
     private int idMediaStore;
     private int camera;
+    private String mimeType;
+    private String width;
+    private String height;
+    private int size;
+    private String exif;
+    private String model;
 
     public Foto () {
         this.id = -1;
@@ -36,6 +42,12 @@ public class Foto implements Parcelable {
         idPosto = pc.readLong();
         idMediaStore = pc.readInt();
         camera = pc.readInt();
+        mimeType = pc.readString();
+        width = pc.readString();
+        height = pc.readString();
+        size = pc.readInt();
+        exif = pc.readString();
+        model = pc.readString();
     }
 
     public long getId() {
@@ -118,6 +130,54 @@ public class Foto implements Parcelable {
         this.camera = camera;
     }
 
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getWidth() {
+        return width;
+    }
+
+    public void setWidth(String width) {
+        this.width = width;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public String getExif() {
+        return exif;
+    }
+
+    public void setExif(String exif) {
+        this.exif = exif;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -135,6 +195,12 @@ public class Foto implements Parcelable {
         dest.writeLong(idPosto);
         dest.writeInt(idMediaStore);
         dest.writeInt(camera);
+        dest.writeString(mimeType);
+        dest.writeString(width);
+        dest.writeString(height);
+        dest.writeInt(size);
+        dest.writeString(model);
+        dest.writeString(exif);
     }
 
     public static final Parcelable.Creator<Foto> CREATOR = new Parcelable.Creator<Foto>() {
