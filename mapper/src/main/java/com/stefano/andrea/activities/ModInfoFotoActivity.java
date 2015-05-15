@@ -140,7 +140,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             @Override
             public void onClick(View v) {
                 if (!mAddressRequested) {
-                    setInfoToolbar(R.string.recupero_info, R.color.white);
                     fetchAddressButtonHandler();
                 }
             }
@@ -754,6 +753,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (mGoogleApiClient.isConnected() && mLastLocation != null) {
             startIntentService();
         }
+        setInfoToolbar(R.string.recupero_info, R.color.white);
         updateUIWidgets();
     }
 
@@ -882,7 +882,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
         }
 
-        if (mIdCitta == -1 && mIdPosto == -1) {
+        if (!mAddressRequested && mIdCitta == -1 && mIdPosto == -1) {
             //Acquisisco coordinate della foto
             Log.d(TAG, "Acquisisco coordinate della foto");
             ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
