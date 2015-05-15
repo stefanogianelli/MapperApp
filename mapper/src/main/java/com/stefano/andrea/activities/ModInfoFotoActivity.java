@@ -882,7 +882,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
         }
 
-        if (!mAddressRequested && mIdCitta == -1 && mIdPosto == -1) {
+        if (mCittaLocalizzata == null && !mAddressRequested && mIdCitta == -1 && mIdPosto == -1) {
             //Acquisisco coordinate della foto
             Log.d(TAG, "Acquisisco coordinate della foto");
             ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
@@ -895,7 +895,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mFotoLocation.setLongitude(longitudine);
                 mFotoRequested = true;
                 startIntentService();
-                setInfoToolbar(R.string.recupero_info, R.color.white);
+                setInfoToolbar(R.string.recupero_info_foto, R.color.white);
                 updateUIWidgets();
             } else {
                 setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red);
