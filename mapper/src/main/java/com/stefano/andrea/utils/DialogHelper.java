@@ -1,5 +1,6 @@
 package com.stefano.andrea.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,20 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.models.Foto;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.Date;
 
 /**
  * DialogsHelper
  */
 public class DialogHelper {
+
+    private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm";
 
     /**
      * Mostra un alert dialog standard, con solo il pulsante OK
@@ -148,6 +149,7 @@ public class DialogHelper {
         builder.create().show();
     }
 
+    @SuppressLint("SimpleDateFormat")
     public static void showDettagliFotoDialog (Activity activity, Foto foto) {
        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -162,30 +164,15 @@ public class DialogHelper {
         TextView indirizzo = (TextView) v.findViewById(R.id.df_testo_indirizzo);
         TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
 
-        percorso.setText(foto.getPath());
+        percorso.setText(foto.getPath().substring(7));
         formato.setText(foto.getMimeType());
-        dimensione.setText(formatBytes(foto.getSize()));
+        String dimensioneSI = formatByte(foto.getSize(), true);
+        dimensione.setText(dimensioneSI);
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
-        if(foto.getModel()==null){
-            LinearLayout fotoCamera = (LinearLayout) v.findViewById(R.id.df_container_fotocamera);
-            fotoCamera.setVisibility(View.GONE);
-        }else{
-            fotocamera.setText(foto.getModel());
-        }
-        if(foto.getExif()==null){
-            LinearLayout fotoExif = (LinearLayout) v.findViewById(R.id.df_container_exif);
-            fotoExif.setVisibility(View.GONE);
-        }else{
-            exif.setText(foto.getExif());
-        }
-        data.setText(new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.getDefault()).format(foto.getData()*1000L));
+        fotocamera.setText(foto.getModel());
+        exif.setText(foto.getExif());
+        data.setText(new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date(foto.getData())));
         indirizzo.setText("indirizzo");
-        indirizzo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Intent verso mappa
-            }
-        });
 
         builder.setView(v);
         final AlertDialog dialog = builder.create();
@@ -199,12 +186,12 @@ public class DialogHelper {
         dialog.show();
     }
 
-    static String formatBytes(int bytes) {
-        DecimalFormat decimalFormat = new DecimalFormat("0.##");
-        if(bytes < 1024) return bytes + " Bytes";
-        else if(bytes < 1048576) return decimalFormat.format(bytes / 1024) + " KB";
-        else if(bytes < 1073741824) return decimalFormat.format(bytes / 1048576) + " MB";
-        else return decimalFormat.format(bytes / 1073741824) + " GB";
+    public static String formatByte(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
 }

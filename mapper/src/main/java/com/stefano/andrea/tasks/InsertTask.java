@@ -22,6 +22,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -335,7 +336,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 Foto foto = elencoFoto.get(i);
                 values.clear();
                 values.put(MapperContract.Foto.PATH, foto.getPath());
-                values.put(MapperContract.Foto.DATA, foto.getData());
+                values.put(MapperContract.Foto.DATA, getPhotoDate(foto.getPath()));
                 values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
                 values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
                 values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
@@ -348,7 +349,11 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 values.put(MapperContract.Foto.SIZE, foto.getSize());
                 try {
                     ExifInterface exif = new ExifInterface(foto.getPath().substring(7));
-                    values.put(MapperContract.Foto.EXIF, exif.getAttribute(ExifInterface.TAG_APERTURE));
+                    //APERTURE + EXPOSURE_TIME + ISO
+                    String exifData = "F/"  + exif.getAttribute(ExifInterface.TAG_APERTURE);
+                    exifData += " " + exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME) + "m";
+                    exifData += " ISO_" + exif.getAttribute(ExifInterface.TAG_ISO);
+                    values.put(MapperContract.Foto.EXIF, exifData);
                     values.put(MapperContract.Foto.MODEL, exif.getAttribute(ExifInterface.TAG_MODEL));
                 } catch (IOException e) {
                     Log.e(TAG, "Impossibile leggere i dati EXIF - " + e.getMessage());
@@ -366,6 +371,14 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 }
             }
             return RESULT_OK;
+        }
+
+        private long getPhotoDate (String path) {
+            File file = new File(path.substring(7));
+            if(file.exists()) {
+                return file.lastModified();
+            }
+            return 0;
         }
     }
 

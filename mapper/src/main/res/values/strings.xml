@@ -89,10 +89,10 @@
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
-    <string name="no_internet_message_dialog">Impossibile creare la citta.\nNessuna connessione a Internet.</string>
+    <string name="no_internet_message_dialog">Impossibile creare la città.\nNessuna connessione a Internet.</string>
     <!-- Dialog errore creazione citta -->
     <string name="errore_nuova_citta_title_dialog">Errore</string>
-    <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della citta.</string>
+    <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della città.</string>
 
     <!-- DettagliCittaFragment -->
     <string name="add_posto">Nome del posto</string>
@@ -141,7 +141,8 @@
     <string name="no_geocoder_available">Geocoder non disponibile</string>
 
     <!-- ModInfoFoto -->
-    <string name="recupero_info">Recupero informazioni foto</string>
+    <string name="recupero_info">Recupero informazioni sulla località</string>
+    <string name="recupero_info_foto">Recupero informazioni foto</string>
     <string name="no_foto_coordinate_available">Nessuna informazione disponibile</string>
     <string name="photo_information_found">Crediamo che la foto sia stata scattata a %s</string>
     <string name="connection_error">Errore di connessione</string>
