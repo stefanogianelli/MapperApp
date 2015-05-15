@@ -863,19 +863,15 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             } else if (resultCode == FetchAddressIntentService.SUCCESS_RESULT) {
                 String nome = resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY);
                 String nazione = resultData.getString(FetchAddressIntentService.RESULT_COUNTRY);
+                LatLng coordinates = resultData.getParcelable(FetchAddressIntentService.RESULT_COORDINATES);
                 String message = getResources().getString(R.string.photo_information_found, nome);
                 setInfoToolbar(message, R.color.green);
                 mCittaLocalizzata = new Citta();
                 mCittaLocalizzata.setId(ID_INSERT_CITY);
                 mCittaLocalizzata.setNome(nome);
                 mCittaLocalizzata.setNazione(nazione);
-                if (mAddressRequested) {
-                    mCittaLocalizzata.setLatitudine(mLastLocation.getLatitude());
-                    mCittaLocalizzata.setLongitudine(mLastLocation.getLongitude());
-                } else {
-                    mCittaLocalizzata.setLatitudine(mFotoLocation.getLatitude());
-                    mCittaLocalizzata.setLongitudine(mFotoLocation.getLongitude());
-                }
+                mCittaLocalizzata.setLatitudine(coordinates.latitude);
+                mCittaLocalizzata.setLongitudine(coordinates.longitude);
                 //update UI
                 displayAddressOutput();
             }

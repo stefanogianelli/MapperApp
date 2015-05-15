@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.stefano.andrea.activities.R;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class FetchAddressIntentService extends IntentService {
     public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
     public static final String RESULT_DATA_KEY  = PACKAGE_NAME + ".RESULT_DATA_KEY";
     public static final String RESULT_COUNTRY = PACKAGE_NAME + ".RESULT_COUNTRY";
+    public static final String RESULT_COORDINATES = PACKAGE_NAME + ".RESULT_COORDINATES";
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
     
     private static final String TAG = "FetchAddressIntent";
@@ -135,11 +137,22 @@ public class FetchAddressIntentService extends IntentService {
             // getCountryName() ("United States", for example)
             String locality = address.getLocality();
             String country = address.getCountryName();
-            if (locality != null && country != null) {
-                deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName());
-                return;
-            } else {
-                errorMessage = getString(R.string.no_address_found);
+            try {
+                List<Address> citiesInfo = geocoder.getFromLocationName(address.getLocality() + "," + address.getCountryName(), 1);
+                if (citiesInfo.size() > 0) {
+                    Address cityInfo = citiesInfo.get(0);
+                    LatLng coordinates = new LatLng(cityInfo.getLatitude(), cityInfo.getLongitude());
+                    if (locality != null && country != null && coordinates != null) {
+                        deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName(), coordinates);
+                        return;
+                    } else {
+                        errorMessage = getString(R.string.no_address_found);
+                    }
+                } else
+                    errorMessage = getString(R.string.no_address_found);
+            } catch (IOException e) {
+                errorMessage = getString(R.string.service_not_available);
+                Log.e(TAG, errorMessage, e);
             }
             if (!errorMessage.isEmpty())
                 deliverResultToReceiver(FAILURE_RESULT, errorMessage);
@@ -158,10 +171,11 @@ public class FetchAddressIntentService extends IntentService {
     /**
      * Sends a resultCode and two messages to the receiver.
      */
-    private void deliverResultToReceiver(int resultCode, String city, String country) {
+    private void deliverResultToReceiver(int resultCode, String city, String country, LatLng coordinates) {
         Bundle bundle = new Bundle();
         bundle.putString(RESULT_DATA_KEY, city);
         bundle.putString(RESULT_COUNTRY, country);
+        bundle.putParcelable(RESULT_COORDINATES, coordinates);
         mReceiver.send(resultCode, bundle);
     }
 }
