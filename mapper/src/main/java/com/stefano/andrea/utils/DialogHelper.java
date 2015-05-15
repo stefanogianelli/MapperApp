@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
@@ -169,8 +170,18 @@ public class DialogHelper {
         String dimensioneSI = formatByte(foto.getSize(), true);
         dimensione.setText(dimensioneSI);
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
-        fotocamera.setText(foto.getModel());
-        exif.setText(foto.getExif());
+        if(foto.getModel()==null){
+            LinearLayout fotoCamera = (LinearLayout) v.findViewById(R.id.df_container_fotocamera);
+            fotoCamera.setVisibility(View.GONE);
+        }else{
+            fotocamera.setText(foto.getModel());
+        }
+        if(foto.getExif()==null){
+            LinearLayout fotoExif = (LinearLayout) v.findViewById(R.id.df_container_exif);
+            fotoExif.setVisibility(View.GONE);
+        }else{
+            exif.setText(foto.getExif());
+        }
         data.setText(new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date(foto.getData())));
         indirizzo.setText("indirizzo");
 
