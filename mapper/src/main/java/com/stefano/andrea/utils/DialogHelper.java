@@ -20,6 +20,8 @@ import com.stefano.andrea.models.Foto;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import java.text.DecimalFormat;
+
 /**
  * DialogsHelper
  */
