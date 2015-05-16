@@ -255,7 +255,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<List<Citta>> loader) { }
 
-
     public void slideToBottom(View view){
         TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
         animate.setDuration(500);

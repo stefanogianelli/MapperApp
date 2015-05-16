@@ -165,8 +165,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
-            if (mImageUri != null)
+            if (mImageUri != null) {
+                LinearLayout sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_viaggio);
+                if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
                 PhotoUtils.mostraDialog(this, mImageUri);
+            }
         }
 
         return super.onOptionsItemSelected(item);

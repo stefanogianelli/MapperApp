@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stefano.andrea.adapters.TabAdapter;
@@ -103,8 +106,11 @@ public class DettagliCittaActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
-            if (mImageUri != null)
+            if (mImageUri != null) {
+                LinearLayout sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_posto);
+                if (sugg.getVisibility()== View.VISIBLE){slideToBottom(sugg);}
                 PhotoUtils.mostraDialog(this, mImageUri);
+            }
             return true;
         }
 
@@ -115,6 +121,13 @@ public class DettagliCittaActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta);
+    }
+
+    public void slideToBottom(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
+        animate.setDuration(500);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
     }
 
 }
