@@ -1,7 +1,5 @@
 package com.stefano.andrea.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -232,6 +230,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * @param view View
      */
     public void openDialogAddViaggio(View view) {
+        LinearLayout sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_viaggio);
+        if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
         DialogHelper.showViaggioDialog(this, -1, -1, null, this);
     }
 
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .translationY(view.getHeight())
                 .alpha(1.0f)
                 .setDuration(900)
-                .setListener(new AnimatorListenerAdapter() {
+                /*.setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -294,7 +294,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         }
                         slideToBottom(view);
                     }
-                });
+                }) */
+                ;
 
     }
 

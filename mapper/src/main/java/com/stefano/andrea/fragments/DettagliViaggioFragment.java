@@ -1,8 +1,6 @@
 package com.stefano.andrea.fragments;
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -220,6 +218,8 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     }
 
     private void openDialogAddCitta(View view) {
+        LinearLayout sugg = (LinearLayout) mView.findViewById(R.id.suggerimento_crea_citta);
+        if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
         FragmentManager fragmentManager = getFragmentManager();
         AddCittaDialog dialog = AddCittaDialog.newInstance();
         dialog.setCallback(this);
@@ -269,7 +269,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 .translationY(view.getHeight())
                 .alpha(1.0f)
                 .setDuration(900)
-                .setListener(new AnimatorListenerAdapter() {
+                /*.setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -280,7 +280,8 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                         }
                         slideToBottom(view);
                     }
-                });
+                }) */
+                ;
 
     }
 

@@ -1,7 +1,5 @@
 package com.stefano.andrea.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -240,6 +238,8 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     }
 
     private void openDialogAddPosto(View view) {
+        LinearLayout sugg = (LinearLayout) mView.findViewById(R.id.suggerimento_crea_posto);
+        if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
         FragmentManager fragmentManager = getFragmentManager();
         AddPostoDialog dialog = AddPostoDialog.newInstance();
         dialog.setCallback(this);
@@ -288,7 +288,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                 .translationY(view.getHeight())
                 .alpha(1.0f)
                 .setDuration(900)
-                .setListener(new AnimatorListenerAdapter() {
+                /*.setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -299,7 +299,8 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                         }
                         slideToBottom(view);
                     }
-                });
+                }) */
+                ;
 
     }
 
