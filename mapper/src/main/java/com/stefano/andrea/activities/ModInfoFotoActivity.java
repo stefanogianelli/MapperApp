@@ -815,7 +815,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (mGoogleApiClient.isConnected() && mLastLocation != null) {
             startIntentService();
         }
-        setInfoToolbar(R.string.recupero_info, R.color.white);
+        setInfoToolbar(R.string.recupero_info, R.color.white, R.color.black);
         updateUIWidgets();
     }
 
@@ -859,13 +859,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == FetchAddressIntentService.FAILURE_RESULT) {
-                setInfoToolbar(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY), R.color.red);
+                setInfoToolbar(resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY), R.color.red, R.color.white);
             } else if (resultCode == FetchAddressIntentService.SUCCESS_RESULT) {
                 String nome = resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY);
                 String nazione = resultData.getString(FetchAddressIntentService.RESULT_COUNTRY);
                 LatLng coordinates = resultData.getParcelable(FetchAddressIntentService.RESULT_COORDINATES);
                 String message = getResources().getString(R.string.photo_information_found, nome);
-                setInfoToolbar(message, R.color.green);
+                setInfoToolbar(message, R.color.green, R.color.white);
                 mCittaLocalizzata = new Citta();
                 mCittaLocalizzata.setId(ID_INSERT_CITY);
                 mCittaLocalizzata.setNome(nome);
@@ -927,7 +927,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (mLastLocation != null) {
             // Determine whether a Geocoder is available.
             if (!Geocoder.isPresent()) {
-                setInfoToolbar(R.string.no_geocoder_available, R.color.red);
+                setInfoToolbar(R.string.no_geocoder_available, R.color.red, R.color.white);
                 return;
             }
             // It is possible that the user presses the button to get the address before the
@@ -953,10 +953,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mFotoLocation.setLongitude(longitudine);
                 mFotoRequested = true;
                 startIntentService();
-                setInfoToolbar(R.string.recupero_info_foto, R.color.white);
+                setInfoToolbar(R.string.recupero_info_foto, R.color.white, R.color.black);
                 updateUIWidgets();
             } else {
-                setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red);
+                setInfoToolbar(R.string.no_foto_coordinate_available, R.color.red, R.color.white);
             }
         }
     }
@@ -974,18 +974,19 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-        setInfoToolbar(R.string.connection_error, R.color.red);
+        setInfoToolbar(R.string.connection_error, R.color.red, R.color.white);
     }
 
-    private void setInfoToolbar (String message, int colorId) {
+    private void setInfoToolbar (String message, int colorId, int textColorId) {
         if (mInfoToolbar.getVisibility() == View.INVISIBLE)
             mInfoToolbar.setVisibility(View.VISIBLE);
         mInfoToolbar.setBackgroundColor(getResources().getColor(colorId));
         mInfoText.setText(message);
+        mInfoText.setTextColor(getResources().getColor(textColorId));
     }
 
-    private void setInfoToolbar (int stringId, int colorId) {
-        setInfoToolbar(getString(stringId), colorId);
+    private void setInfoToolbar (int stringId, int colorId, int textColorId) {
+        setInfoToolbar(getString(stringId), colorId, textColorId);
     }
 
 }
