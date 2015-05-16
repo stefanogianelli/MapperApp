@@ -1,5 +1,7 @@
 package com.stefano.andrea.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -26,6 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.stefano.andrea.activities.DettagliPostoActivity;
@@ -61,6 +65,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private CustomFAB mFab;
     private List<Posto> mElencoPosti;
     private MapperContext mContext;
+    private View mView;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -149,10 +154,10 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
+        mView =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
         //acquisisco riferimenti
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview_scroll);
-        mFab = (CustomFAB) view.findViewById(R.id.fab_aggiunta_posto);
+        RecyclerView mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
+        mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_posto);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
@@ -172,7 +177,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                 }
             }
         });
-        return view;
+        return mView;
     }
 
     /**
@@ -261,9 +266,41 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                 mAdapter.setElencoPosti(data);
                 mElencoPosti = data;
         }
+        if (mAdapter.getItemCount() == 0){
+            final LinearLayout sugg = (LinearLayout) mView.findViewById(R.id.suggerimento_crea_posto);
+            animateSugg(sugg);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Posto>> loader) { }
+
+    public void slideToBottom(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
+        animate.setDuration(500);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
+    }
+    public void animateSugg(final View view){
+        view.setVisibility(View.VISIBLE);
+        view.setAlpha(0.0f);
+        view.animate()
+                .translationY(view.getHeight())
+                .alpha(1.0f)
+                .setDuration(900)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        slideToBottom(view);
+                    }
+                });
+
+    }
 
 }

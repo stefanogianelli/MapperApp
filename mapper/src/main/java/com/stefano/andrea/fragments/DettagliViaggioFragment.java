@@ -1,6 +1,8 @@
 package com.stefano.andrea.fragments;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -23,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.stefano.andrea.activities.DettagliCittaActivity;
@@ -54,6 +58,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private CustomFAB mFab;
     private Activity mParentActivity;
     private MapperContext mContext;
+    private View mView;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -139,10 +144,10 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
+        mView = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
-        mFab = (CustomFAB) v.findViewById(R.id.fab_aggiunta_citta);
-        RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerview_scroll);
+        mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_citta);
+        RecyclerView mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
@@ -162,7 +167,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 }
             }
         });
-        return v;
+        return mView;
     }
 
     /**
@@ -241,8 +246,43 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 mAdapter.setElencoCitta(data);
                 mElencoCitta = data;
         }
+        if (mAdapter.getItemCount() == 0){
+            final LinearLayout sugg = (LinearLayout) mView.findViewById(R.id.suggerimento_crea_citta);
+            animateSugg(sugg);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Citta>> loader) { }
+
+
+    public void slideToBottom(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
+        animate.setDuration(500);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
+    }
+    public void animateSugg(final View view){
+        view.setVisibility(View.VISIBLE);
+        view.setAlpha(0.0f);
+        view.animate()
+                .translationY(view.getHeight())
+                .alpha(1.0f)
+                .setDuration(900)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        slideToBottom(view);
+                    }
+                });
+
+    }
+
+
 }
