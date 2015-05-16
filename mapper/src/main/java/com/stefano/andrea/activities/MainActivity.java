@@ -1,5 +1,7 @@
 package com.stefano.andrea.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -18,6 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -137,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     .build();
             ImageLoader.getInstance().init(config);
         }
+
     }
 
     @Override
@@ -254,8 +259,43 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 mAdapter.setListaViaggi(data);
                 mListaViaggi = data;
         }
+        if (mAdapter.getItemCount() == 0){
+            final LinearLayout sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_viaggio);
+            animateSugg(sugg);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Viaggio>> loader) { }
+
+
+
+    public void slideToBottom(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
+        animate.setDuration(500);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
+    }
+    public void animateSugg(final View view){
+        view.setVisibility(View.VISIBLE);
+        view.setAlpha(0.0f);
+        view.animate()
+                .translationY(view.getHeight())
+                .alpha(1.0f)
+                .setDuration(900)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        slideToBottom(view);
+                    }
+                });
+
+    }
+
 }
