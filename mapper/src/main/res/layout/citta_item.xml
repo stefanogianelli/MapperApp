@@ -5,14 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardUseCompatPadding="true"  >
-
-    <!--- Parametri della CardView da rimettere se si vogliono mostrare le citta separate
-    android:layout_marginTop="@dimen/space_between_cards"
-android:layout_marginBottom="@dimen/space_between_cards"
-android:layout_marginLeft="@dimen/activity_horizontal_margin"
-android:layout_marginRight="@dimen/activity_horizontal_margin"-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,14 +24,6 @@ android:layout_marginRight="@dimen/activity_horizontal_margin"-->
             android:layout_weight="1"
             android:orientation="horizontal">
 
-        <!--<ImageView
-            android:id="@+id/citta_item_thumbnail"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_location_city_grey600_48dp" />-->
             <com.github.lzyzsd.circleprogress.DonutProgress
                 android:id="@+id/donut_progress_city"
                 android:layout_width="40dp"

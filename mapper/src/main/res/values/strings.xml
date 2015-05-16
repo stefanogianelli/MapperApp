@@ -59,6 +59,7 @@
         <item quantity="one">%1$d posto, %2$d foto</item>
         <item quantity="other">%1$d posti, %2$d foto</item>
     </plurals>
+    <string name="subTitleDettagliViaggioFragment">Città da visitare</string>
 
     <!-- Info fotografie -->
     <string name="scattata_presso">Presso:</string>
