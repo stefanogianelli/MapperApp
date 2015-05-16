@@ -99,6 +99,7 @@
     <string name="add_posto">Nome del posto</string>
     <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
     <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
+    <string name="subTitleDettagliCittaFragment">Posti da visitare</string>
 
     <!-- ElencoFotoFragment -->
     <string name="conferma_cancellazione_foto">Vuoi cancellare le foto?</string>

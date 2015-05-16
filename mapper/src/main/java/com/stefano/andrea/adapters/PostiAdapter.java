@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -111,11 +112,19 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
         private void bindPosto (final Posto posto) {
             this.itemView.setTag(posto);
             nomePosto.setText(posto.getNome());
+            if(posto.isVisitato()){
+                nomePosto.setPaintFlags(nomePosto.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
             checkBox.setChecked(posto.isVisitato());
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     posto.setVisitato(isChecked);
+                    if(isChecked){
+                        nomePosto.setPaintFlags(nomePosto.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    }else{
+                        nomePosto.setPaintFlags(nomePosto.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    }
                     mListener.visitatoPosto(posto);
                 }
             });
