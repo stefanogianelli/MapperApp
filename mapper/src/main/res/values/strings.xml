@@ -22,11 +22,6 @@
     <string name="aggiungi_foto">Aggiungi foto</string>
     <string name="condividi_foto">Condividi foto</string>
 
-    <!-- Main activity -->
-    <string name="suggerimento_crea_viaggio">Crea un nuovo viaggio</string>
-    <string name="suggerimento_crea_citta">Aggiungi tutte le città che vuoi visitare</string>
-    <string name="suggerimento_crea_posto">Aggiungi tutti posti che vuoi visitare in questa città</string>
-
     <!-- dialogs -->
     <string name="aggiungi_viaggio">Nome del viaggio</string>
     <string name="aggiungi_citta">Nome della città</string>
@@ -38,6 +33,7 @@
     <string name="image">Immagine</string>
 
     <!-- MainActivity -->
+    <string name="suggerimento_crea_viaggio">Crea un nuovo viaggio</string>
     <string name="add_viaggio">Nome del viaggio</string>
     <string name="add_citta">Nome della città</string>
     <string name="add_citta_nn">In quale idPlace?</string>
@@ -54,12 +50,24 @@
     <string name="conferma_cancellazione_citta">Vuoi cancellare la citta?</string>
 
     <!-- DettagliViaggioFragment -->
+    <string name="suggerimento_crea_citta">Aggiungi tutte le città che vuoi visitare</string>
     <string name="nuova_citta_loading_dialog">Recupero informazioni &#8230;</string>
     <plurals name="statistiche_citta">
         <item quantity="one">%1$d posto, %2$d foto</item>
         <item quantity="other">%1$d posti, %2$d foto</item>
     </plurals>
     <string name="subTitleDettagliViaggioFragment">Città da visitare</string>
+
+    <!-- DettagliCittaFragment -->
+    <string name="suggerimento_crea_posto">Aggiungi tutti posti che vuoi visitare in questa città</string>
+    <string name="add_posto">Nome del posto</string>
+    <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
+    <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
+    <string name="subTitleDettagliCittaFragment">Posti da visitare</string>
+
+    <!-- DettagliPostoActivity -->
+    <string name="suggerimento_crea_foto">Aggiungi una nuova foto</string>
+    <string name="subTitleDettagliPostoActivity">Foto scattate</string>
 
     <!-- Info fotografie -->
     <string name="scattata_presso">Presso:</string>
@@ -95,12 +103,6 @@
     <!-- Dialog errore creazione citta -->
     <string name="errore_nuova_citta_title_dialog">Errore</string>
     <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della città.</string>
-
-    <!-- DettagliCittaFragment -->
-    <string name="add_posto">Nome del posto</string>
-    <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
-    <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
-    <string name="subTitleDettagliCittaFragment">Posti da visitare</string>
 
     <!-- ElencoFotoFragment -->
     <string name="conferma_cancellazione_foto">Vuoi cancellare le foto?</string>
