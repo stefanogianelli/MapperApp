@@ -268,7 +268,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         }
         if (mPostoSelezionato != null && mIdPosto != mPostoSelezionato.getId()) {
             //modifico posto
-            values.put(MapperContract.Posto.ID_POSTO, mPostoSelezionato.getId());
+            values.put(MapperContract.Foto.ID_POSTO, mPostoSelezionato.getId());
         }
         if (values.size() > 0) {
             UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
