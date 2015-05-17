@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Foto;
@@ -70,6 +71,8 @@ public class FotoLoader extends BaseAsyncTaskLoader<List<Foto>> {
             foto.setHeight(c.getString(c.getColumnIndex(MapperContract.Foto.HEIGHT)));
             foto.setSize(c.getInt(c.getColumnIndex(MapperContract.Foto.SIZE)));
             foto.setExif(c.getString(c.getColumnIndex(MapperContract.Foto.EXIF)));
+            //get the thumbnail
+            foto.setThumbnail(MediaStore.Images.Thumbnails.getThumbnail(mResolver, foto.getIdMediaStore(), MediaStore.Images.Thumbnails.MINI_KIND, null));
             elencoFoto.add(foto);
         }
         c.close();

@@ -1,5 +1,6 @@
 package com.stefano.andrea.models;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -24,6 +25,7 @@ public class Foto implements Parcelable {
     private int size;
     private String exif;
     private String model;
+    private Bitmap thumbnail;
 
     public Foto () {
         this.id = -1;
@@ -176,6 +178,14 @@ public class Foto implements Parcelable {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     @Override
