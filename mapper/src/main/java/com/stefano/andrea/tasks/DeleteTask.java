@@ -155,6 +155,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+            mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
             return count;
         }
     }

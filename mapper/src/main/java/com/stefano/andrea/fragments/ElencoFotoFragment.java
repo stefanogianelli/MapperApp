@@ -179,6 +179,14 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         fragmentTransaction.commit();
     }
 
+    protected void cancellaFoto (Foto foto) {
+        List<Foto> elencoFoto = new ArrayList<>();
+        elencoFoto.add(foto);
+        List<Integer> indici = new ArrayList<>();
+        indici.add(0);
+        new DeleteTask<>(mParentActivity, mAdapter, elencoFoto, indici).execute(DeleteTask.CANCELLA_FOTO);
+    }
+
     /**
      * Cancella le foto selezionate dall'utente
      */
