@@ -10,8 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -30,9 +28,9 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
-import com.stefano.andrea.dialogs.DettagliFotoDialog;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.tasks.DeleteTask;
+import com.stefano.andrea.utils.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,11 +130,7 @@ public class FullFotoFragment extends Fragment {
             getFragmentManager().popBackStack();
             return true;
         } else if (id == R.id.action_dettagli) {
-            FragmentManager fragmentManager = getFragmentManager();
-            DettagliFotoDialog dialog = DettagliFotoDialog.newInstance(currentFoto);
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
+            DialogHelper.showDettagliFotoDialog(mParentActivity, mElencoFoto.get(mPager.getCurrentItem()));
             return true;
         } else if (id == R.id.action_modifica) {
             Intent intent = new Intent(mParentActivity, ModInfoFotoActivity.class);
@@ -177,9 +171,7 @@ public class FullFotoFragment extends Fragment {
                     indici.add(0);
                     DeleteTask.DeleteAdapter adapter = new DeleteTask.DeleteAdapter() {
                         @Override
-                        public void cancellaItem(Object item) {
-
-                        }
+                        public void cancellaItem(Object item) { }
 
                         @Override
                         public void notificaChange() {

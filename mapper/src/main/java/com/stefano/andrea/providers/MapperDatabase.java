@@ -107,6 +107,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "`" + MapperContract.Foto.HEIGHT + "` TEXT," +
             "`" + MapperContract.Foto.MIME_TYPE + "` TEXT," +
             "`" + MapperContract.Foto.SIZE + "` TEXT," +
+            "`" + MapperContract.Foto.INDIRIZZO + "` TEXT," +
             "FOREIGN KEY(`" + MapperContract.Foto.ID_VIAGGIO + "`) REFERENCES " + Tables.VIAGGIO + " (`" + MapperContract.Viaggio.ID_VIAGGIO + "`)," +
             "FOREIGN KEY(`" + MapperContract.Foto.ID_CITTA + "`) REFERENCES " + Tables.CITTA + " (`" + MapperContract.Citta.ID_CITTA + "`)," +
             "FOREIGN KEY(`" + MapperContract.Foto.ID_POSTO + "`) REFERENCES " + Tables.POSTO + " (`" + MapperContract.Posto.ID_POSTO + "`));";

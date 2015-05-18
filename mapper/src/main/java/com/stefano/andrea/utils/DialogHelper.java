@@ -1,9 +1,12 @@
 package com.stefano.andrea.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -11,8 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.models.Foto;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * DialogsHelper
@@ -141,6 +150,72 @@ public class DialogHelper {
             }
         });
         builder.create().show();
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static void showDettagliFotoDialog (final Activity activity, final Foto foto) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_dettagli_foto, null);
+        LinearLayout fotoCamera = (LinearLayout) v.findViewById(R.id.df_container_fotocamera);
+        LinearLayout fotoExif = (LinearLayout) v.findViewById(R.id.df_container_exif);
+        TextView percorso = (TextView) v.findViewById(R.id.df_testo_percorso);
+        TextView formato = (TextView) v.findViewById(R.id.df_testo_formato);
+        TextView dimensione = (TextView) v.findViewById(R.id.df_testo_dimensione);
+        TextView risoluzione = (TextView) v.findViewById(R.id.df_testo_risoluzione);
+        TextView fotocamera = (TextView) v.findViewById(R.id.df_testo_fotocamera);
+        TextView exif = (TextView) v.findViewById(R.id.df_testo_exif);
+        TextView data = (TextView) v.findViewById(R.id.df_testo_data);
+        TextView indirizzo = (TextView) v.findViewById(R.id.df_testo_indirizzo);
+        TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
+
+        percorso.setText(foto.getPath().substring(7));
+        formato.setText(foto.getMimeType());
+        String dimensioneSI = formatByte(foto.getSize(), true);
+        dimensione.setText(dimensioneSI);
+        risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
+        if (foto.getModel()==null || foto.getModel().isEmpty()) {
+            fotoCamera.setVisibility(View.GONE);
+        } else {
+            fotocamera.setText(foto.getModel());
+        }
+        if (foto.getExif().contains("null")) {
+            fotoExif.setVisibility(View.GONE);
+        } else {
+            exif.setText(foto.getExif());
+        }
+        data.setText(new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Date(foto.getData())));
+        indirizzo.setText(foto.getIndirizzo());
+        indirizzo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri maps = Uri.parse("geo:0,0?q=" + foto.getLatitudine() + "," + foto.getLongitudine() + "(Posto)");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(maps);
+                if (intent.resolveActivity(activity.getPackageManager()) != null) {
+                    activity.startActivity(intent);
+                }
+            }
+        });
+
+        builder.setView(v);
+        final AlertDialog dialog = builder.create();
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private static String formatByte(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
 }
