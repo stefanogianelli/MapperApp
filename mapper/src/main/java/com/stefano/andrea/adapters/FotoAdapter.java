@@ -98,7 +98,11 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
         }
 
         public void bindFoto (Foto foto) {
-            mImageLoader.displayImage(foto.getPath(), fotoView);
+            if (foto.getThumbnail() != null) {
+                fotoView.setImageBitmap(foto.getThumbnail());
+            } else {
+                mImageLoader.displayImage(foto.getPath(), fotoView);
+            }
         }
 
         @Override

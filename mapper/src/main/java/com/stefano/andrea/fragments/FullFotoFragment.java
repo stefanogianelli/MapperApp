@@ -1,7 +1,9 @@
 package com.stefano.andrea.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -30,6 +32,7 @@ import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.dialogs.DettagliFotoDialog;
 import com.stefano.andrea.models.Foto;
+import com.stefano.andrea.tasks.DeleteTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +127,7 @@ public class FullFotoFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Foto currentFoto = mElencoFoto.get(mPager.getCurrentItem());
+        final Foto currentFoto = mElencoFoto.get(mPager.getCurrentItem());
         if (id == android.R.id.home) {
             getFragmentManager().popBackStack();
             return true;
@@ -155,11 +158,53 @@ public class FullFotoFragment extends Fragment {
             if (intent.resolveActivity(mParentActivity.getPackageManager()) != null) {
                 startActivity(intent);
             }
+            return true;
         }else if(id == R.id.action_condividi_foto){
             Intent share = new Intent(Intent.ACTION_SEND);
             share.setType(currentFoto.getMimeType());
             share.putExtra(Intent.EXTRA_STREAM, Uri.parse(currentFoto.getPath()));
             startActivity(Intent.createChooser(share, getString(R.string.condividi_foto)));
+            return true;
+        } else if (id == R.id.action_elimina_foto) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
+            dialog.setMessage(R.string.conferma_cancellazione_foto);
+            dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, int which) {
+                    List<Foto> elencoFoto = new ArrayList<>();
+                    elencoFoto.add(currentFoto);
+                    List<Integer> indici = new ArrayList<>();
+                    indici.add(0);
+                    DeleteTask.DeleteAdapter adapter = new DeleteTask.DeleteAdapter() {
+                        @Override
+                        public void cancellaItem(Object item) {
+
+                        }
+
+                        @Override
+                        public void notificaChange() {
+                            dialog.dismiss();
+                            int position = mPager.getCurrentItem();
+                            mElencoFoto.remove(position);
+                            mPager.getAdapter().notifyDataSetChanged();
+                            int lenght = mPager.getAdapter().getCount();
+                            if (lenght == 0) {
+                                getFragmentManager().popBackStack();
+                            } else  {
+                                if (position != 0) {
+                                    mPager.setCurrentItem(position - 1);
+                                } else {
+                                    mPager.setCurrentItem(position);
+                                }
+                            }
+                        }
+                    };
+                    new DeleteTask<>(mParentActivity, adapter, elencoFoto, indici).execute(DeleteTask.CANCELLA_FOTO);
+                }
+            });
+            dialog.setNegativeButton(R.string.cancel, null);
+            dialog.create().show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -190,6 +235,7 @@ public class FullFotoFragment extends Fragment {
         @Override
         public Object instantiateItem(final ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_full_image, view, false);
+            imageLayout.setTag(mElencoFoto.get(position).getPath());
             final ImageViewTouch imageView = (ImageViewTouch) imageLayout.findViewById(R.id.image);
             //imageView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_IF_BIGGER);
             imageView.setSingleTapListener(new ImageViewTouch.OnImageViewTouchSingleTapListener() {
@@ -235,7 +281,7 @@ public class FullFotoFragment extends Fragment {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     spinner.setVisibility(View.GONE);
-                    imageView.setImageBitmap(loadedImage, null, - 1, 8f);
+                    imageView.setImageBitmap(loadedImage, null, -1, 8f);
                 }
             });
 
@@ -246,6 +292,22 @@ public class FullFotoFragment extends Fragment {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            String path = (String) ((View) object).getTag();
+            boolean exists = false;
+            for (int i = 0; i < mElencoFoto.size(); i++) {
+                if (mElencoFoto.get(i).getPath().equals(path)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists)
+                return PagerAdapter.POSITION_UNCHANGED;
+            else
+                return PagerAdapter.POSITION_NONE;
         }
     }
 

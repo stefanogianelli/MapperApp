@@ -51,6 +51,8 @@ import java.util.List;
  */
 public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener, AddPostoDialog.AggiungiPostoCallback {
 
+    private static final int DETTAGLI_CITTA_CALLBACK = 1010;
+
     private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliCittaFragment.idViaggio";
     private static final String ID_CITTA = "com.stefano.andrea.fragments.DettagliCittaFragment.idCitta";
     private static final int POSTI_LOADER = 2;
@@ -242,7 +244,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
         FragmentManager fragmentManager = getFragmentManager();
         AddPostoDialog dialog = AddPostoDialog.newInstance();
-        dialog.setCallback(this);
+        dialog.setTargetFragment(this, DETTAGLI_CITTA_CALLBACK);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();

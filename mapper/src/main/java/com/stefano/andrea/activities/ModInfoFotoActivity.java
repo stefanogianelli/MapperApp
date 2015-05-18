@@ -54,25 +54,29 @@ import com.stefano.andrea.utils.PhotoUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, AddCittaDialog.AggiungiCittaCallback, AddPostoDialog.AggiungiPostoCallback {
 
-    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
-    public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
-    public final static String EXTRA_ID_POSTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idPosto";
-    public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.foto";
-    public final static String EXTRA_LISTA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.listaFoto";
-    public final static String EXTRA_TIPO_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.tipoFoto";
+    private static final String CLASS_NAME = "com.stefano.andrea.activities.ModInfoFotoAcitivity";
+
+    public final static String EXTRA_ID_VIAGGIO = CLASS_NAME + ".idViaggio";
+    public final static String EXTRA_ID_CITTA = CLASS_NAME + ".idCitta";
+    public final static String EXTRA_ID_POSTO = CLASS_NAME + ".idPosto";
+    public final static String EXTRA_FOTO = CLASS_NAME + ".foto";
+    public final static String EXTRA_LISTA_FOTO = CLASS_NAME + ".listaFoto";
+    public final static String EXTRA_TIPO_FOTO = CLASS_NAME + ".tipoFoto";
 
     private static final String TAG = "ModInfoFotoActivity";
 
     private static final int CLEAR_CITTA = 1;
     private static final int CLEAR_POSTO = 2;
     private static final int ID_INSERT_CITY = -42;
+    private static final int EMPTY_ID = -1;
+
+    private static final String ADDRESS_REQUESTED_KEY = CLASS_NAME + ".address_request_pending";
+    private static final String LOCATION_ADDRESS_KEY = CLASS_NAME + ".location_address";
+    private static final String FOTO_ADDRESS_KEY = CLASS_NAME + ".foto_address";
 
     //Localization variables
-    private static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
-    private static final String LOCATION_ADDRESS_KEY = "location-address";
-    private static final String FOTO_ADDRESS_KEY = "foto-address";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Location mFotoLocation;
@@ -123,16 +127,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mResolver = getContentResolver();
-        //acquisisco parametri dall'intent e inizializzo a -1 quelli senza valore
+        //acquisisco parametri dall'intent e inizializzo a EMPTY_ID quelli senza valore
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_FOTO))
             mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
         if (intent.hasExtra(EXTRA_LISTA_FOTO))
             mFotoIDs = intent.getIntegerArrayListExtra(EXTRA_LISTA_FOTO);
-        mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, -1);
-        mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, -1);
-        mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, -1);
-        mIdPosto = intent.getLongExtra(EXTRA_ID_POSTO, -1);
+        mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, EMPTY_ID);
+        mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, EMPTY_ID);
+        mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, EMPTY_ID);
+        mIdPosto = intent.getLongExtra(EXTRA_ID_POSTO, EMPTY_ID);
         //acquisisco riferimenti
         mImageView = (ImageView) findViewById(R.id.thumb_mod_info_foto);
         mCountImages = (TextView) findViewById(R.id.numero_immagini);
@@ -199,10 +203,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             //verifico se sono in modalita' modifica o creazione
             if (mFotoIDs != null) {
                 //modalita' modifica
-                if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1) {
+                if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != EMPTY_ID) {
                     if (mCittaLocalizzata != null) {
                         addNewCity();
-                    } else if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
+                    } else if (mCittaSelezionata != null && mCittaSelezionata.getId() != EMPTY_ID && mCittaSelezionata.getId() != ID_INSERT_CITY) {
                         updateFoto();
                     } else {
                         Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
@@ -212,8 +216,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 }
             } else {
                 //modalità creazione
-                if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != -1)
-                    if (mCittaSelezionata != null && mCittaSelezionata.getId() != -1 && mCittaSelezionata.getId() != ID_INSERT_CITY) {
+                if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != EMPTY_ID)
+                    if (mCittaSelezionata != null && mCittaSelezionata.getId() != EMPTY_ID && mCittaSelezionata.getId() != ID_INSERT_CITY) {
                         addFoto();
                     } else if (mCittaLocalizzata != null) {
                         addNewCity();
@@ -268,7 +272,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         }
         if (mPostoSelezionato != null && mIdPosto != mPostoSelezionato.getId()) {
             //modifico posto
-            values.put(MapperContract.Posto.ID_POSTO, mPostoSelezionato.getId());
+            if (mPostoSelezionato.getId() == EMPTY_ID)
+                values.putNull(MapperContract.Foto.ID_POSTO);
+            else
+                values.put(MapperContract.Foto.ID_POSTO, mPostoSelezionato.getId());
         }
         if (values.size() > 0) {
             UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
@@ -312,7 +319,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             foto.setWidth(dettagli.getWidth());
             foto.setHeight(dettagli.getHeight());
             foto.setSize(dettagli.getSize());
-            if (mPostoSelezionato != null && mPostoSelezionato.getId() != -1)
+            if (mPostoSelezionato != null && mPostoSelezionato.getId() != EMPTY_ID)
                 foto.setIdPosto(mPostoSelezionato.getId());
             if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
                 foto.setCamera(1);
@@ -343,11 +350,23 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     /**
-     * Seleziona il vaggio se l'id e' diverso da -1
+     * Mostra il nome del viaggio corrente e aggiorna l'elenco delle citta'
+     */
+    private void displayViaggio () {
+        mViaggioText.setText(mViaggioSelezionato.getNome());
+        if (mCittaLocalizzata != null) {
+            clearSelection(CLEAR_CITTA);
+            displayAddressOutput();
+        } else
+            updateCitta();
+    }
+
+    /**
+     * Seleziona il vaggio se l'id e' diverso da EMPTY_ID
      */
     private void inizializzaViaggio() {
         //controllo se e' stato selezionato un viaggio
-        if (mIdViaggio != -1) {
+        if (mIdViaggio != EMPTY_ID) {
             //viaggio selezionato
             Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
             String [] projection = { MapperContract.Viaggio.NOME };
@@ -355,10 +374,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             if (curViaggio.moveToFirst()) {
                 String nomeViaggio = curViaggio.getString(curViaggio.getColumnIndex(projection[0]));
                 mViaggioSelezionato = new Viaggio(mIdViaggio, nomeViaggio);
-                mViaggioText.setText(nomeViaggio);
+                displayViaggio();
             }
             curViaggio.close();
-            updateCitta();
         }
     }
 
@@ -388,13 +406,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                         public void onItemClick(int position) {
                             Viaggio viaggio = elencoViaggi.get(position);
                             mViaggioSelezionato = viaggio;
-                            mViaggioText.setText(viaggio.getNome());
-                            //ricarico l'elenco delle citta'
-                            clearSelection(CLEAR_CITTA);
-                            if (mCittaLocalizzata != null) {
-                                displayAddressOutput();
-                            } else
-                                updateCitta();
+                            displayViaggio();
+
                         }
                     });
                 }
@@ -433,22 +446,30 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     /**
-     * Seleziona la citta' se l'id e' diverso da -1
+     * Mostra la citta' selezionata e aggiorna l'elenco dei posti
+     */
+    private void displayCitta () {
+        mCittaText.setText(mCittaSelezionata.getNome());
+        clearSelection(CLEAR_POSTO);
+        updatePosti();
+    }
+
+    /**
+     * Seleziona la citta' se l'id e' diverso da EMPTY_ID
      */
     private void inizializzaCitta () {
-        if (mIdCitta != -1) {
+        if (mIdCitta != EMPTY_ID) {
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
             String [] projection = {MapperContract.DatiCitta.NOME};
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta.moveToFirst()) {
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
-                mCittaText.setText(nomeCitta);
                 mCittaSelezionata = new Citta();
                 mCittaSelezionata.setId(mIdCitta);
                 mCittaSelezionata.setNome(nomeCitta);
+                displayCitta();
             }
             cCitta.close();
-            updatePosti();
         }
     }
 
@@ -492,9 +513,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                         public void onItemClick(int position) {
                             Citta citta = elencoCitta.get(position);
                             mCittaSelezionata = citta;
-                            mCittaText.setText(citta.getNome());
-                            clearSelection(CLEAR_POSTO);
-                            updatePosti();
+                            displayCitta();
                         }
                     });
                 }
@@ -511,28 +530,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             public void onClick(View v) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 AddCittaDialog dialog = AddCittaDialog.newInstance();
-                dialog.setCallback(new AddCittaDialog.AggiungiCittaCallback() {
-                    @Override
-                    public void creaNuovaCitta(String nomeCitta, String nazione, LatLng coordinates) {
-                        Citta citta = new Citta();
-                        citta.setIdViaggio(mViaggioSelezionato.getId());
-                        citta.setNome(nomeCitta);
-                        citta.setNazione(nazione);
-                        citta.setLatitudine(coordinates.latitude);
-                        citta.setLongitudine(coordinates.longitude);
-                        InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
-                            @Override
-                            public void insertItem(Citta item) {
-                                clearSelection(CLEAR_POSTO);
-                                mIdCitta = item.getId();
-                                inizializzaCitta();
-                                updateCitta();
-                                sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
-                            }
-                        };
-                        new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
-                    }
-                });
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
@@ -542,10 +539,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     /**
-     * Inizializza il posto se l'id e' diverso da -1
+     * Inizializza il posto se l'id e' diverso da EMPTY_ID
      */
     private void inizializzaPosto () {
-        if (mIdPosto != -1) {
+        if (mIdPosto != EMPTY_ID) {
             Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, mIdPosto);
             String [] projection = {MapperContract.Luogo.NOME};
             Cursor curPosto = mResolver.query(query, projection, null, null, null);
@@ -565,6 +562,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      */
     private void updatePosti () {
         final List<Posto> elencoPosti = new ArrayList<>();
+        elencoPosti.add(new Posto(EMPTY_ID, "Nessun Posto"));
         if (mCittaSelezionata.getId() != ID_INSERT_CITY) {
             Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
             String[] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
@@ -607,26 +605,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             public void onClick(View v) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 AddPostoDialog dialog = AddPostoDialog.newInstance();
-                dialog.setCallback(new AddPostoDialog.AggiungiPostoCallback() {
-                    @Override
-                    public void creaNuovoPosto(String nomePosto, LatLng coordinates) {
-                        Posto posto = new Posto();
-                        posto.setIdCitta(mCittaSelezionata.getId());
-                        posto.setNome(nomePosto);
-                        posto.setLatitudine(coordinates.latitude);
-                        posto.setLongitudine(coordinates.longitude);
-                        InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
-                            @Override
-                            public void insertItem(Posto item) {
-                                mIdPosto = item.getId();
-                                inizializzaPosto();
-                                updatePosti();
-                                sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
-                            }
-                        };
-                        new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
-                    }
-                });
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
@@ -718,6 +696,46 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         }
     }
 
+    @Override
+    public void creaNuovaCitta(String nomeCitta, String nazione, LatLng coordinates) {
+        Citta citta = new Citta();
+        citta.setIdViaggio(mViaggioSelezionato.getId());
+        citta.setNome(nomeCitta);
+        citta.setNazione(nazione);
+        citta.setLatitudine(coordinates.latitude);
+        citta.setLongitudine(coordinates.longitude);
+        InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
+            @Override
+            public void insertItem(Citta item) {
+                clearSelection(CLEAR_POSTO);
+                mIdCitta = item.getId();
+                inizializzaCitta();
+                updateCitta();
+                sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
+            }
+        };
+        new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
+    }
+
+    @Override
+    public void creaNuovoPosto(String nomePosto, LatLng coordinates) {
+        Posto posto = new Posto();
+        posto.setIdCitta(mCittaSelezionata.getId());
+        posto.setNome(nomePosto);
+        posto.setLatitudine(coordinates.latitude);
+        posto.setLongitudine(coordinates.longitude);
+        InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
+            @Override
+            public void insertItem(Posto item) {
+                mIdPosto = item.getId();
+                inizializzaPosto();
+                updatePosti();
+                sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
+            }
+        };
+        new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
+    }
+
     /** Adapter per lo spinner dei viaggi */
     private class ViaggiSpinnerAdapter extends ArrayAdapter<Viaggio> {
 
@@ -790,7 +808,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             // and stored in the Bundle. If it was found, display the address string in the UI.
             if (savedInstanceState.keySet().contains(LOCATION_ADDRESS_KEY)) {
                 mCittaLocalizzata = savedInstanceState.getParcelable(LOCATION_ADDRESS_KEY);
-                displayAddressOutput();
+                if (mCittaSelezionata == null)
+                    displayAddressOutput();
             }
         }
     }
@@ -940,7 +959,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
         }
 
-        if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == -1 && mIdPosto == -1) {
+        if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == EMPTY_ID && mIdPosto == EMPTY_ID) {
             //Acquisisco coordinate della foto
             Log.d(TAG, "Acquisisco coordinate della foto");
             ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
