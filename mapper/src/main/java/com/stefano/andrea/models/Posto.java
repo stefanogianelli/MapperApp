@@ -18,6 +18,11 @@ public class Posto {
         this.id = -1;
     }
 
+    public Posto (long id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
     public long getId() {
         return id;
     }
