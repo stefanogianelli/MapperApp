@@ -1,5 +1,7 @@
 package com.stefano.andrea.models;
 
+import android.graphics.Bitmap;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -8,43 +10,55 @@ import com.google.maps.android.clustering.ClusterItem;
  */
 public class GeoInfo implements ClusterItem {
 
+    private Bitmap miniatura;
     private long id;
     private String nome;
     private double latitudine;
     private double longitudine;
-    private int countFoto;
 
-    public GeoInfo(long id, String nome, double latitudine, double longitudine, int countFoto) {
-        this.id = id;
-        this.nome = nome;
-        this.latitudine = latitudine;
-        this.longitudine = longitudine;
-        this.countFoto = countFoto;
+    public Bitmap getMiniatura() {
+        return miniatura;
+    }
+
+    public void setMiniatura(Bitmap miniatura) {
+        this.miniatura = miniatura;
     }
 
     public long getId() {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public double getLatitudine() {
         return latitudine;
     }
 
+    public void setLatitudine(double latitudine) {
+        this.latitudine = latitudine;
+    }
+
     public double getLongitudine() {
         return longitudine;
     }
 
-    public int getCountFoto() {
-        return countFoto;
+    public void setLongitudine(double longitudine) {
+        this.longitudine = longitudine;
     }
 
     @Override
     public LatLng getPosition() {
-        return new LatLng(this.getLatitudine(),this.getLongitudine());
+        return new LatLng(latitudine, longitudine);
     }
 
 }

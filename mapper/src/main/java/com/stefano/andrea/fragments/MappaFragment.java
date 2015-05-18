@@ -4,6 +4,7 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -220,12 +221,12 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-    private MarkerOptions createMarker (GeoInfo item) {
+    /*private MarkerOptions createMarker (GeoInfo item) {
         String title = mParentActivity.getResources().getString(R.string.map_bubble_title, item.getNome(), item.getCountFoto());
         return new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(title)))
                         .position(new LatLng(item.getLatitudine(), item.getLongitudine()));
-    }
+    }*/
 
     private static LatLng move(LatLng startLL, double toNorth, double toEast) {
         double lonDiff = meterToLongitude(toEast, startLL.latitude);
@@ -297,8 +298,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         @Override
         protected void onBeforeClusterItemRendered(GeoInfo geoInfo, MarkerOptions markerOptions) {
 
-            //mImageView.setImageBitmap(geoInfo.getMiniatura());
-            mImageView.setImageResource((R.drawable.ic_location_city_grey600_48dp));
+            mImageView.setImageBitmap(geoInfo.getMiniatura());
+            //mImageView.setImageResource((R.drawable.ic_location_city_grey600_48dp));
             Bitmap icon = mIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(geoInfo.getNome());
         }
@@ -313,8 +314,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             for (GeoInfo p : cluster.getItems()) {
                 // Draw 4 at most.
                 if (clusterPhotos.size() == 4) break;
-                //Drawable drawable = new BitmapDrawable(getResources(), p.getMiniatura());
-                Drawable drawable =  getResources().getDrawable(R.drawable.ic_location_city_grey600_48dp);
+                Drawable drawable = new BitmapDrawable(getResources(), p.getMiniatura());
+                //Drawable drawable =  getResources().getDrawable(R.drawable.ic_location_city_grey600_48dp);
                 drawable.setBounds(0, 0, width, height);
                 clusterPhotos.add(drawable);
             }
