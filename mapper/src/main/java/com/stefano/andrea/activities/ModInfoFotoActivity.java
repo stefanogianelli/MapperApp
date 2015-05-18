@@ -56,12 +56,14 @@ import java.util.List;
 
 public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, AddCittaDialog.AggiungiCittaCallback, AddPostoDialog.AggiungiPostoCallback {
 
-    public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
-    public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
-    public final static String EXTRA_ID_POSTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idPosto";
-    public final static String EXTRA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.foto";
-    public final static String EXTRA_LISTA_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.listaFoto";
-    public final static String EXTRA_TIPO_FOTO = "com.stefano.andrea.mapper.ModInfoFotoActivity.tipoFoto";
+    private static final String CLASS_NAME = "com.stefano.andrea.activities.ModInfoFotoAcitivity";
+
+    public final static String EXTRA_ID_VIAGGIO = CLASS_NAME + ".idViaggio";
+    public final static String EXTRA_ID_CITTA = CLASS_NAME + ".idCitta";
+    public final static String EXTRA_ID_POSTO = CLASS_NAME + ".idPosto";
+    public final static String EXTRA_FOTO = CLASS_NAME + ".foto";
+    public final static String EXTRA_LISTA_FOTO = CLASS_NAME + ".listaFoto";
+    public final static String EXTRA_TIPO_FOTO = CLASS_NAME + ".tipoFoto";
 
     private static final String TAG = "ModInfoFotoActivity";
 
@@ -70,10 +72,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private static final int ID_INSERT_CITY = -42;
     private static final int EMPTY_ID = -1;
 
+    private static final String ADDRESS_REQUESTED_KEY = CLASS_NAME + ".address_request_pending";
+    private static final String LOCATION_ADDRESS_KEY = CLASS_NAME + ".location_address";
+    private static final String FOTO_ADDRESS_KEY = CLASS_NAME + ".foto_address";
+
     //Localization variables
-    private static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
-    private static final String LOCATION_ADDRESS_KEY = "location-address";
-    private static final String FOTO_ADDRESS_KEY = "foto-address";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Location mFotoLocation;
@@ -347,6 +350,18 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     /**
+     * Mostra il nome del viaggio corrente e aggiorna l'elenco delle citta'
+     */
+    private void displayViaggio () {
+        mViaggioText.setText(mViaggioSelezionato.getNome());
+        if (mCittaLocalizzata != null) {
+            clearSelection(CLEAR_CITTA);
+            displayAddressOutput();
+        } else
+            updateCitta();
+    }
+
+    /**
      * Seleziona il vaggio se l'id e' diverso da EMPTY_ID
      */
     private void inizializzaViaggio() {
@@ -359,10 +374,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             if (curViaggio.moveToFirst()) {
                 String nomeViaggio = curViaggio.getString(curViaggio.getColumnIndex(projection[0]));
                 mViaggioSelezionato = new Viaggio(mIdViaggio, nomeViaggio);
-                mViaggioText.setText(nomeViaggio);
+                displayViaggio();
             }
             curViaggio.close();
-            updateCitta();
         }
     }
 
@@ -392,13 +406,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                         public void onItemClick(int position) {
                             Viaggio viaggio = elencoViaggi.get(position);
                             mViaggioSelezionato = viaggio;
-                            mViaggioText.setText(viaggio.getNome());
-                            //ricarico l'elenco delle citta'
-                            clearSelection(CLEAR_CITTA);
-                            if (mCittaLocalizzata != null) {
-                                displayAddressOutput();
-                            } else
-                                updateCitta();
+                            displayViaggio();
+
                         }
                     });
                 }
@@ -437,6 +446,15 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     /**
+     * Mostra la citta' selezionata e aggiorna l'elenco dei posti
+     */
+    private void displayCitta () {
+        mCittaText.setText(mCittaSelezionata.getNome());
+        clearSelection(CLEAR_POSTO);
+        updatePosti();
+    }
+
+    /**
      * Seleziona la citta' se l'id e' diverso da EMPTY_ID
      */
     private void inizializzaCitta () {
@@ -446,13 +464,12 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta.moveToFirst()) {
                 String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
-                mCittaText.setText(nomeCitta);
                 mCittaSelezionata = new Citta();
                 mCittaSelezionata.setId(mIdCitta);
                 mCittaSelezionata.setNome(nomeCitta);
+                displayCitta();
             }
             cCitta.close();
-            updatePosti();
         }
     }
 
@@ -496,9 +513,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                         public void onItemClick(int position) {
                             Citta citta = elencoCitta.get(position);
                             mCittaSelezionata = citta;
-                            mCittaText.setText(citta.getNome());
-                            clearSelection(CLEAR_POSTO);
-                            updatePosti();
+                            displayCitta();
                         }
                     });
                 }
@@ -793,7 +808,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             // and stored in the Bundle. If it was found, display the address string in the UI.
             if (savedInstanceState.keySet().contains(LOCATION_ADDRESS_KEY)) {
                 mCittaLocalizzata = savedInstanceState.getParcelable(LOCATION_ADDRESS_KEY);
-                displayAddressOutput();
+                if (mCittaSelezionata == null)
+                    displayAddressOutput();
             }
         }
     }
