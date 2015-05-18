@@ -16,4 +16,27 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize" />
 
+    <LinearLayout
+        android:id="@+id/suggerimento_crea_foto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="20dp"
+        android:animateLayoutChanges="true"  >
+
+        <TextView style="@style/TextWithShadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/suggerimento_crea_foto" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/arrow_suggerimento"
+            android:layout_marginLeft="75dp" />
+    </LinearLayout>
+
 </RelativeLayout>
