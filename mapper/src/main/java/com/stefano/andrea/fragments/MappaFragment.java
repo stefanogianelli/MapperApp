@@ -3,6 +3,8 @@ package com.stefano.andrea.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
@@ -11,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +26,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.DettagliPostoActivity;
@@ -29,7 +36,9 @@ import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
 import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.MultiDrawable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +46,7 @@ import java.util.Map;
 /**
  * MappaFragment
  */
-public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, GoogleMap.OnMarkerClickListener {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, GoogleMap.OnMarkerClickListener, ClusterManager.OnClusterClickListener {
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
@@ -58,6 +67,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private long mId;
     private int mType;
     private IconGenerator mIconGenerator;
+    private ClusterManager<GeoInfo> mClusterManager;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -69,7 +79,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public MappaFragment() { }
 
-    @Override
+        @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mParentActivity = activity;
@@ -80,6 +90,9 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
+
+
+
         int tipoMappa = Integer.MIN_VALUE;
         if (args != null) {
             tipoMappa = args.getInt(EXTRA_TIPO_MAPPA);
@@ -110,12 +123,26 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         FrameLayout layout = (FrameLayout) view.findViewById(R.id.container_mappa);
         layout.addView(mapView, 0);
         getMapAsync(this);
+
+
+
         return view;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        mClusterManager = new ClusterManager<GeoInfo>(mParentActivity, mMap);
+        mClusterManager.setRenderer(new MarkerRenderer());
+        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        /*mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);*/
+
         mMap.setOnMarkerClickListener(this);
     }
 
@@ -151,6 +178,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                             @Override
                             public void run() {
                                 setMarkers();
+                                mClusterManager.cluster();
                             }
                         });
                     }
@@ -167,11 +195,12 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         if (mMarkerData.size() > 0) {
             for (int i = 0; i < mMarkerData.size(); i++) {
                 GeoInfo item = mMarkerData.get(i);
-                Marker marker = mMap.addMarker(createMarker(item));
-                mMarkerDetail.put(marker, item);
-                builder.include(marker.getPosition());
+                //Marker marker = mMap.addMarker(createMarker(item));
+                mClusterManager.addItem(item);
+                //mMarkerDetail.put(marker, item);
+                //builder.include(marker.getPosition());
             }
-            if (mMarkerData.size() == 1) {
+            /*if (mMarkerData.size() == 1) {
                 LatLngBounds tmpBounds = builder.build();
                 LatLng center = tmpBounds.getCenter();
                 int dist;
@@ -185,7 +214,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 builder.include(northEast);
             }
             LatLngBounds bounds = builder.build();
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING);
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING);*/
+            CameraUpdate cu = CameraUpdateFactory.newLatLng(new LatLng(51.503186, -0.126446));
             mMap.moveCamera(cu);
         }
     }
@@ -233,4 +263,79 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         }
         return false;
     }
+
+    @Override
+    public boolean onClusterClick(Cluster cluster) {
+        String firstName = cluster.getItems().iterator().next().toString();
+        Toast.makeText(mParentActivity, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+
+    private class MarkerRenderer extends DefaultClusterRenderer<GeoInfo> {
+        private final IconGenerator mIconGenerator = new IconGenerator(mParentActivity.getApplicationContext());
+        private final IconGenerator mClusterIconGenerator = new IconGenerator(mParentActivity.getApplicationContext());
+        private final ImageView mImageView;
+        private final ImageView mClusterImageView;
+        private final int mDimension;
+
+        public MarkerRenderer() {
+            super(mParentActivity.getApplicationContext(), mMap, mClusterManager);
+
+            View multiProfile = mParentActivity.getLayoutInflater().inflate(R.layout.multi_marker, null);
+            mClusterIconGenerator.setContentView(multiProfile);
+            mClusterImageView = (ImageView) multiProfile.findViewById(R.id.image_marker);
+
+            mImageView = new ImageView(mParentActivity.getApplicationContext());
+            mDimension = (int) getResources().getDimension(R.dimen.custom_marker_image);
+            mImageView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
+            int padding = (int) getResources().getDimension(R.dimen.custom_marker_padding);
+            mImageView.setPadding(padding, padding, padding, padding);
+            mIconGenerator.setContentView(mImageView);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(GeoInfo geoInfo, MarkerOptions markerOptions) {
+
+            //mImageView.setImageBitmap(geoInfo.getMiniatura());
+            mImageView.setImageResource((R.drawable.ic_location_city_grey600_48dp));
+            Bitmap icon = mIconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(geoInfo.getNome());
+        }
+
+        @Override
+        protected void onBeforeClusterRendered(Cluster<GeoInfo> cluster, MarkerOptions markerOptions) {
+
+            List<Drawable> clusterPhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
+            int width = mDimension;
+            int height = mDimension;
+
+            for (GeoInfo p : cluster.getItems()) {
+                // Draw 4 at most.
+                if (clusterPhotos.size() == 4) break;
+                //Drawable drawable = new BitmapDrawable(getResources(), p.getMiniatura());
+                Drawable drawable =  getResources().getDrawable(R.drawable.ic_location_city_grey600_48dp);
+                drawable.setBounds(0, 0, width, height);
+                clusterPhotos.add(drawable);
+            }
+            MultiDrawable multiDrawable = new MultiDrawable(clusterPhotos);
+            multiDrawable.setBounds(0, 0, width, height);
+
+            mClusterImageView.setImageDrawable(multiDrawable);
+            Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+        }
+
+        @Override
+        protected boolean shouldRenderAsCluster(Cluster cluster) {
+            // Always render clusters.
+            return cluster.getSize() > 1;
+        }
+    }
+
+
+
+
+
+
 }

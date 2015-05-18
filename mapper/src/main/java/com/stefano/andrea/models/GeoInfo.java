@@ -1,9 +1,12 @@
 package com.stefano.andrea.models;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 /**
  * GeoInfo
  */
-public class GeoInfo {
+public class GeoInfo implements ClusterItem {
 
     private long id;
     private String nome;
@@ -38,4 +41,10 @@ public class GeoInfo {
     public int getCountFoto() {
         return countFoto;
     }
+
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(this.getLatitudine(),this.getLongitudine());
+    }
+
 }

@@ -25,7 +25,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="100dp"
         android:layout_marginBottom="20dp"
-        android:animateLayoutChanges="true"  >
+        android:animateLayoutChanges="true"
+        android:visibility="gone" >
 
         <TextView style="@style/TextWithShadow"
             android:layout_width="wrap_content"
