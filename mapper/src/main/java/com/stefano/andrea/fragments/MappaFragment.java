@@ -2,7 +2,6 @@ package com.stefano.andrea.fragments;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,7 +22,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -31,8 +29,6 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
-import com.stefano.andrea.activities.DettagliCittaActivity;
-import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
@@ -47,18 +43,18 @@ import java.util.Map;
 /**
  * MappaFragment
  */
-public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, GoogleMap.OnMarkerClickListener, ClusterManager.OnClusterClickListener {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener {
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
     public static final int MAPPA_POSTI = 1;
 
     private static final int MAP_COORD_LOADER = 4;
-    private static final int MAP_PADDING = 150;
     private static final int TIMEOUT = 100;
-    private static final double EARTHRADIUS = 6366198;
-    private static final int DISTANCE_CITTA = 5000;
-    private static final int DISTANCE_LUOGO = 500;
+
+    private static final float MIN_ZOOM_POSTI = 13f;
+    private static final float MIN_ZOOM_CITTA = 11f;
+    private static final int NUMERO_MINIATURE = 4;
 
     private GoogleMap mMap;
     private List<GeoInfo> mMarkerData;
@@ -67,7 +63,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private MapperContext mContext;
     private long mId;
     private int mType;
-    private IconGenerator mIconGenerator;
     private ClusterManager<GeoInfo> mClusterManager;
 
     public static MappaFragment newInstance(int tipoMappa) {
@@ -80,7 +75,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public MappaFragment() { }
 
-        @Override
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mParentActivity = activity;
@@ -91,9 +86,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-
-
-
         int tipoMappa = Integer.MIN_VALUE;
         if (args != null) {
             tipoMappa = args.getInt(EXTRA_TIPO_MAPPA);
@@ -110,8 +102,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             default:
                 mId = -1;
         }
-        mIconGenerator = new IconGenerator(mParentActivity);
-        mIconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
         mMarkerDetail = new HashMap<>();
         if (mId != -1)
             getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
@@ -124,9 +114,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         FrameLayout layout = (FrameLayout) view.findViewById(R.id.container_mappa);
         layout.addView(mapView, 0);
         getMapAsync(this);
-
-
-
         return view;
     }
 
@@ -134,7 +121,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mClusterManager = new ClusterManager<GeoInfo>(mParentActivity, mMap);
+        mClusterManager = new ClusterManager<>(mParentActivity, mMap);
         mClusterManager.setRenderer(new MarkerRenderer());
         mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -143,8 +130,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         /*mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);*/
-
-        mMap.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -196,58 +181,22 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         if (mMarkerData.size() > 0) {
             for (int i = 0; i < mMarkerData.size(); i++) {
                 GeoInfo item = mMarkerData.get(i);
-                //Marker marker = mMap.addMarker(createMarker(item));
                 mClusterManager.addItem(item);
                 //mMarkerDetail.put(marker, item);
-                //builder.include(marker.getPosition());
-            }
-            /*if (mMarkerData.size() == 1) {
-                LatLngBounds tmpBounds = builder.build();
-                LatLng center = tmpBounds.getCenter();
-                int dist;
-                if (mType == CoordinateLoader.ELENCO_CITTA)
-                    dist = DISTANCE_CITTA;
-                else
-                    dist = DISTANCE_LUOGO;
-                LatLng northEast = move(center, dist, dist);
-                LatLng southWest = move(center, -dist, -dist);
-                builder.include(southWest);
-                builder.include(northEast);
+                builder.include(item.getPosition());
             }
             LatLngBounds bounds = builder.build();
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING);*/
-            CameraUpdate cu = CameraUpdateFactory.newLatLng(new LatLng(51.503186, -0.126446));
+            float zoom;
+            if (mType == CoordinateLoader.ELENCO_CITTA)
+                zoom = MIN_ZOOM_CITTA;
+            else
+                zoom = MIN_ZOOM_POSTI;
+            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), zoom);
             mMap.moveCamera(cu);
         }
     }
 
-    /*private MarkerOptions createMarker (GeoInfo item) {
-        String title = mParentActivity.getResources().getString(R.string.map_bubble_title, item.getNome(), item.getCountFoto());
-        return new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(title)))
-                        .position(new LatLng(item.getLatitudine(), item.getLongitudine()));
-    }*/
-
-    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
-        double lonDiff = meterToLongitude(toEast, startLL.latitude);
-        double latDiff = meterToLatitude(toNorth);
-        return new LatLng(startLL.latitude + latDiff, startLL.longitude
-                + lonDiff);
-    }
-
-    private static double meterToLongitude(double meterToEast, double latitude) {
-        double latArc = Math.toRadians(latitude);
-        double radius = Math.cos(latArc) * EARTHRADIUS;
-        double rad = meterToEast / radius;
-        return Math.toDegrees(rad);
-    }
-
-    private static double meterToLatitude(double meterToNorth) {
-        double rad = meterToNorth / EARTHRADIUS;
-        return Math.toDegrees(rad);
-    }
-
-    @Override
+    /*@Override
     public boolean onMarkerClick(Marker marker) {
         GeoInfo item = mMarkerDetail.get(marker);
         switch (mType) {
@@ -263,7 +212,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 break;
         }
         return false;
-    }
+    }*/
 
     @Override
     public boolean onClusterClick(Cluster cluster) {
@@ -271,7 +220,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         Toast.makeText(mParentActivity, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
         return true;
     }
-
 
     private class MarkerRenderer extends DefaultClusterRenderer<GeoInfo> {
         private final IconGenerator mIconGenerator = new IconGenerator(mParentActivity.getApplicationContext());
@@ -307,13 +255,13 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         @Override
         protected void onBeforeClusterRendered(Cluster<GeoInfo> cluster, MarkerOptions markerOptions) {
 
-            List<Drawable> clusterPhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
+            List<Drawable> clusterPhotos = new ArrayList<>(Math.min(NUMERO_MINIATURE, cluster.getSize()));
             int width = mDimension;
             int height = mDimension;
 
             for (GeoInfo p : cluster.getItems()) {
                 // Draw 4 at most.
-                if (clusterPhotos.size() == 4) break;
+                if (clusterPhotos.size() == NUMERO_MINIATURE) break;
                 Drawable drawable = new BitmapDrawable(getResources(), p.getMiniatura());
                 //Drawable drawable =  getResources().getDrawable(R.drawable.ic_location_city_grey600_48dp);
                 drawable.setBounds(0, 0, width, height);
