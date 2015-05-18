@@ -25,6 +25,7 @@ public class Foto implements Parcelable {
     private int size;
     private String exif;
     private String model;
+    private String indirizzo;
     private Bitmap thumbnail;
 
     public Foto () {
@@ -50,6 +51,7 @@ public class Foto implements Parcelable {
         size = pc.readInt();
         exif = pc.readString();
         model = pc.readString();
+        indirizzo = pc.readString();
     }
 
     public long getId() {
@@ -180,6 +182,14 @@ public class Foto implements Parcelable {
         this.model = model;
     }
 
+    public String getIndirizzo() {
+        return indirizzo;
+    }
+
+    public void setIndirizzo(String indirizzo) {
+        this.indirizzo = indirizzo;
+    }
+
     public Bitmap getThumbnail() {
         return thumbnail;
     }
@@ -211,6 +221,7 @@ public class Foto implements Parcelable {
         dest.writeInt(size);
         dest.writeString(model);
         dest.writeString(exif);
+        dest.writeString(indirizzo);
     }
 
     public static final Parcelable.Creator<Foto> CREATOR = new Parcelable.Creator<Foto>() {

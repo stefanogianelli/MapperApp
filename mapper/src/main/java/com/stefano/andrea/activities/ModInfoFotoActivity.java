@@ -260,14 +260,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     private void updateFoto () {
+        boolean updated = false;
         ContentValues values = new ContentValues();
         if (mIdViaggio != mViaggioSelezionato.getId()) {
             //modifico viaggio
             values.put(MapperContract.Foto.ID_VIAGGIO, mViaggioSelezionato.getId());
-        }
-        if (mIdCitta != mCittaSelezionata.getId()) {
-            //modifico citta'
-            values.put(MapperContract.Foto.ID_CITTA, mCittaSelezionata.getId());
         }
         if (mPostoSelezionato != null && mIdPosto != mPostoSelezionato.getId()) {
             //modifico posto
@@ -275,6 +272,20 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 values.putNull(MapperContract.Foto.ID_POSTO);
             else
                 values.put(MapperContract.Foto.ID_POSTO, mPostoSelezionato.getId());
+            updated = true;
+        }
+        if (mIdCitta != mCittaSelezionata.getId()) {
+            //modifico citta'
+            values.put(MapperContract.Foto.ID_CITTA, mCittaSelezionata.getId());
+            updated = true;
+        }
+        if (updated) {
+            String indirizzo = "";
+            if (mPostoSelezionato.getId() != EMPTY_ID)
+                indirizzo += mPostoSelezionato.getNome() + ", ";
+            indirizzo += mCittaSelezionata.getNome() + ", " + mCittaSelezionata.getNazione();
+            values.put(MapperContract.Foto.INDIRIZZO, indirizzo);
+            Log.d(TAG, "Indirizzo: " + indirizzo);
         }
         if (values.size() > 0) {
             UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
@@ -308,8 +319,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
             foto.setIdViaggio(mViaggioSelezionato.getId());
             foto.setIdCitta(mCittaSelezionata.getId());
-            if (mPostoSelezionato != null && mPostoSelezionato.getId() != EMPTY_ID)
+            String indirizzo = "";
+            if (mPostoSelezionato != null && mPostoSelezionato.getId() != EMPTY_ID) {
                 foto.setIdPosto(mPostoSelezionato.getId());
+                indirizzo += mPostoSelezionato.getNome() + ", ";
+            }
+            indirizzo += mCittaSelezionata.getNome() + ", " + mCittaSelezionata.getNazione();
+            foto.setIndirizzo(indirizzo);
             if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
                 foto.setCamera(1);
             elencoFoto.add(foto);
@@ -449,14 +465,15 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private void inizializzaCitta () {
         if (mIdCitta != EMPTY_ID) {
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
-            String [] projection = {MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
+            String [] projection = {MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.NAZIONE, MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta.moveToFirst()) {
                 mCittaSelezionata = new Citta();
                 mCittaSelezionata.setId(mIdCitta);
                 mCittaSelezionata.setNome(cCitta.getString(cCitta.getColumnIndex(projection[0])));
-                mCittaSelezionata.setLatitudine(cCitta.getLong(cCitta.getColumnIndex(projection[1])));
-                mCittaSelezionata.setLongitudine(cCitta.getLong(cCitta.getColumnIndex(projection[2])));
+                mCittaSelezionata.setNazione(cCitta.getString(cCitta.getColumnIndex(projection[1])));
+                mCittaSelezionata.setLatitudine(cCitta.getLong(cCitta.getColumnIndex(projection[2])));
+                mCittaSelezionata.setLongitudine(cCitta.getLong(cCitta.getColumnIndex(projection[3])));
                 displayCitta();
             }
             cCitta.close();
@@ -566,8 +583,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 Posto posto = new Posto();
                 posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
                 posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
-                mPostoSelezionato.setLatitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[2])));
-                mPostoSelezionato.setLongitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[3])));
+                posto.setLatitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[2])));
+                posto.setLongitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[3])));
                 elencoPosti.add(posto);
             }
             curPosto.close();

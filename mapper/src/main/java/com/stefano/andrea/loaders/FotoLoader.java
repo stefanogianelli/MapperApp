@@ -71,6 +71,7 @@ public class FotoLoader extends BaseAsyncTaskLoader<List<Foto>> {
             foto.setHeight(c.getString(c.getColumnIndex(MapperContract.Foto.HEIGHT)));
             foto.setSize(c.getInt(c.getColumnIndex(MapperContract.Foto.SIZE)));
             foto.setExif(c.getString(c.getColumnIndex(MapperContract.Foto.EXIF)));
+            foto.setIndirizzo(c.getString(c.getColumnIndex(MapperContract.Foto.INDIRIZZO)));
             //get the thumbnail
             foto.setThumbnail(MediaStore.Images.Thumbnails.getThumbnail(mResolver, foto.getIdMediaStore(), MediaStore.Images.Thumbnails.MINI_KIND, null));
             elencoFoto.add(foto);

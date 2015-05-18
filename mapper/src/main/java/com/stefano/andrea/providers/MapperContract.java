@@ -111,6 +111,8 @@ public final class MapperContract {
         String MIME_TYPE = "mime_type";
         /** Dimensione dell'immagine */
         String SIZE = "size";
+        /** Indirizzo della foto */
+        String INDIRIZZO = "indirizzo";
     }
 
     /** Nome dell'authority */
@@ -201,7 +203,7 @@ public final class MapperContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.mapper.foto";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.mapper.foto";
 
-        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_VIAGGIO, ID_CITTA, ID_POSTO, ID_MEDIA_STORE, CAMERA, MODEL, EXIF, WIDTH, HEIGHT, MIME_TYPE, SIZE};
+        public static final String[] PROJECTION_ALL = {ID, PATH, DATA, LATITUDINE, LONGITUDINE, ID_VIAGGIO, ID_CITTA, ID_POSTO, ID_MEDIA_STORE, CAMERA, MODEL, EXIF, WIDTH, HEIGHT, MIME_TYPE, SIZE, INDIRIZZO};
 
         /** "ORDER BY" clauses. */
         public static final String DEFAULT_SORT = FotoColumns.DATA + " ASC";

@@ -347,6 +347,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 values.put(MapperContract.Foto.WIDTH, foto.getWidth());
                 values.put(MapperContract.Foto.HEIGHT, foto.getHeight());
                 values.put(MapperContract.Foto.SIZE, foto.getSize());
+                values.put(MapperContract.Foto.INDIRIZZO, foto.getIndirizzo());
                 try {
                     ExifInterface exif = new ExifInterface(foto.getPath().substring(7));
                     //APERTURE + EXPOSURE_TIME + ISO
