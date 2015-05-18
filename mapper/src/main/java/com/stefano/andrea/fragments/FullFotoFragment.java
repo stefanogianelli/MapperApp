@@ -235,6 +235,7 @@ public class FullFotoFragment extends Fragment {
         @Override
         public Object instantiateItem(final ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_full_image, view, false);
+            imageLayout.setTag(mElencoFoto.get(position).getPath());
             final ImageViewTouch imageView = (ImageViewTouch) imageLayout.findViewById(R.id.image);
             //imageView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_IF_BIGGER);
             imageView.setSingleTapListener(new ImageViewTouch.OnImageViewTouchSingleTapListener() {
@@ -291,6 +292,22 @@ public class FullFotoFragment extends Fragment {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            String path = (String) ((View) object).getTag();
+            boolean exists = false;
+            for (int i = 0; i < mElencoFoto.size(); i++) {
+                if (mElencoFoto.get(i).getPath().equals(path)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists)
+                return PagerAdapter.POSITION_UNCHANGED;
+            else
+                return PagerAdapter.POSITION_NONE;
         }
     }
 
