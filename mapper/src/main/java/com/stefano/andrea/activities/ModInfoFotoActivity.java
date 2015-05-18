@@ -41,7 +41,6 @@ import com.stefano.andrea.dialogs.AddPostoDialog;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
-import com.stefano.andrea.models.ImageDetails;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
@@ -296,12 +295,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             Foto foto = new Foto();
             foto.setPath(mImagePath.get(i));
             //acquisisco dettagli dell'immagine
-            ImageDetails dettagli = getMediaStoreData(foto.getPath());
-            foto.setIdMediaStore(dettagli.getIdMediaStore());
-            foto.setData(dettagli.getData());
-            double lat = dettagli.getLatitudine();
-            double lon = dettagli.getLongitudine();
-            if (lat == 0 && lon == 0) {
+            getMediaStoreData(foto);
+            //acquisisco dettagli dell'immagine
+            if (foto.getLatitudine() == 0 && foto.getLongitudine() == 0) {
                 if (mPostoSelezionato != null) {
                     foto.setLatitudine(mPostoSelezionato.getLatitudine());
                     foto.setLongitudine(mPostoSelezionato.getLongitudine());
@@ -309,16 +305,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                     foto.setLatitudine(mCittaSelezionata.getLatitudine());
                     foto.setLongitudine(mCittaSelezionata.getLongitudine());
                 }
-            } else {
-                foto.setLatitudine(lat);
-                foto.setLongitudine(lon);
             }
             foto.setIdViaggio(mViaggioSelezionato.getId());
             foto.setIdCitta(mCittaSelezionata.getId());
-            foto.setMimeType(dettagli.getMimeType());
-            foto.setWidth(dettagli.getWidth());
-            foto.setHeight(dettagli.getHeight());
-            foto.setSize(dettagli.getSize());
             if (mPostoSelezionato != null && mPostoSelezionato.getId() != EMPTY_ID)
                 foto.setIdPosto(mPostoSelezionato.getId());
             if (mTipoFoto == PhotoUtils.CAMERA_REQUEST)
@@ -460,13 +449,14 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private void inizializzaCitta () {
         if (mIdCitta != EMPTY_ID) {
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
-            String [] projection = {MapperContract.DatiCitta.NOME};
+            String [] projection = {MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta.moveToFirst()) {
-                String nomeCitta = cCitta.getString(cCitta.getColumnIndex(projection[0]));
                 mCittaSelezionata = new Citta();
                 mCittaSelezionata.setId(mIdCitta);
-                mCittaSelezionata.setNome(nomeCitta);
+                mCittaSelezionata.setNome(cCitta.getString(cCitta.getColumnIndex(projection[0])));
+                mCittaSelezionata.setLatitudine(cCitta.getLong(cCitta.getColumnIndex(projection[1])));
+                mCittaSelezionata.setLongitudine(cCitta.getLong(cCitta.getColumnIndex(projection[2])));
                 displayCitta();
             }
             cCitta.close();
@@ -480,13 +470,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         final List<Citta> elencoCitta = new ArrayList<>();
         if (mViaggioSelezionato != null) {
             Uri query = ContentUris.withAppendedId(MapperContract.Citta.DETTAGLI_VIAGGIO_URI, mViaggioSelezionato.getId());
-            String[] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.NAZIONE};
+            String[] projection = {MapperContract.Citta.ID_CITTA, MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.NAZIONE,
+                MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
             Cursor curCitta = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT);
             while (curCitta.moveToNext()) {
                 Citta citta = new Citta();
                 citta.setId(curCitta.getLong(curCitta.getColumnIndex(projection[0])));
                 citta.setNome(curCitta.getString(curCitta.getColumnIndex(projection[1])));
                 citta.setNazione(curCitta.getString(curCitta.getColumnIndex(projection[2])));
+                citta.setLatitudine(curCitta.getDouble(curCitta.getColumnIndex(projection[3])));
+                citta.setLongitudine(curCitta.getDouble(curCitta.getColumnIndex(projection[4])));
                 elencoCitta.add(citta);
             }
             curCitta.close();
@@ -544,14 +537,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private void inizializzaPosto () {
         if (mIdPosto != EMPTY_ID) {
             Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, mIdPosto);
-            String [] projection = {MapperContract.Luogo.NOME};
+            String [] projection = {MapperContract.Luogo.NOME, MapperContract.Luogo.LATITUDINE, MapperContract.Luogo.LONGITUDINE};
             Cursor curPosto = mResolver.query(query, projection, null, null, null);
             if (curPosto.moveToFirst()) {
                 String nomePosto = curPosto.getString(curPosto.getColumnIndex(projection[0]));
                 mPostoText.setText(nomePosto);
                 mPostoSelezionato = new Posto();
                 mPostoSelezionato.setId(mIdPosto);
-                mPostoSelezionato.setNome(nomePosto);
+                mPostoSelezionato.setNome(curPosto.getString(curPosto.getColumnIndex(projection[0])));
+                mPostoSelezionato.setLatitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[1])));
+                mPostoSelezionato.setLongitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[2])));
             }
             curPosto.close();
         }
@@ -565,12 +560,14 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         elencoPosti.add(new Posto(EMPTY_ID, "Nessun Posto"));
         if (mCittaSelezionata.getId() != ID_INSERT_CITY) {
             Uri query = ContentUris.withAppendedId(MapperContract.Posto.POSTI_IN_CITTA_URI, mCittaSelezionata.getId());
-            String[] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME};
+            String[] projection = {MapperContract.Posto.ID_POSTO, MapperContract.Luogo.NOME, MapperContract.Luogo.LATITUDINE, MapperContract.Luogo.LONGITUDINE};
             Cursor curPosto = mResolver.query(query, projection, null, null, MapperContract.Luogo.DEFAULT_SORT);
             while (curPosto.moveToNext()) {
                 Posto posto = new Posto();
                 posto.setId(curPosto.getLong(curPosto.getColumnIndex(projection[0])));
                 posto.setNome(curPosto.getString(curPosto.getColumnIndex(projection[1])));
+                mPostoSelezionato.setLatitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[2])));
+                mPostoSelezionato.setLongitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[3])));
                 elencoPosti.add(posto);
             }
             curPosto.close();
@@ -636,28 +633,45 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Acquisisce i dettagli di un'immagine
-     * @param path Il percorso assoluto della foto
-     * @return I dati dell'immagine
+     * @param foto La foto che si vuole cercare
      */
-    private ImageDetails getMediaStoreData (String path) {
-        ImageDetails dettagli = new ImageDetails();
+    private void getMediaStoreData (Foto foto) {
         String [] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE,
-            MediaStore.MediaColumns.WIDTH, MediaStore.MediaColumns.HEIGHT, MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.SIZE};
+                MediaStore.MediaColumns.WIDTH, MediaStore.MediaColumns.HEIGHT, MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.SIZE};
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        String [] selectionArgs = { foto.getPath().substring(7) };
+        Cursor cursor = mResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
+        if (cursor.moveToFirst()) {
+            foto.setIdMediaStore(cursor.getInt(cursor.getColumnIndex(projection[0])));
+            foto.setData(cursor.getInt(cursor.getColumnIndex(projection[1])));
+            foto.setLatitudine(cursor.getDouble(cursor.getColumnIndex(projection[2])));
+            foto.setLongitudine(cursor.getDouble(cursor.getColumnIndex(projection[3])));
+            foto.setWidth(cursor.getString(cursor.getColumnIndex(projection[4])));
+            foto.setHeight(cursor.getString(cursor.getColumnIndex(projection[5])));
+            foto.setMimeType(cursor.getString(cursor.getColumnIndex(projection[6])));
+            foto.setSize(cursor.getInt(cursor.getColumnIndex(projection[7])));
+        }
+        cursor.close();
+    }
+
+    /**
+     * Restituisce le coordinate di una foto
+     * @param path Il percorso della foto
+     * @return Le coordinate della foto
+     */
+    private LatLng getCoordinates (String path) {
+        String [] projection = { MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE };
         String selection = MediaStore.Images.Media.DATA + "=?";
         String [] selectionArgs = { path.substring(7) };
         Cursor cursor = mResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
+        double lat = 0;
+        double lon = 0;
         if (cursor.moveToFirst()) {
-            dettagli.setIdMediaStore(cursor.getInt(cursor.getColumnIndex(projection[0])));
-            dettagli.setData(cursor.getInt(cursor.getColumnIndex(projection[1])));
-            dettagli.setLatitudine(cursor.getDouble(cursor.getColumnIndex(projection[2])));
-            dettagli.setLongitudine(cursor.getDouble(cursor.getColumnIndex(projection[3])));
-            dettagli.setWidth(cursor.getString(cursor.getColumnIndex(projection[4])));
-            dettagli.setHeight(cursor.getString(cursor.getColumnIndex(projection[5])));
-            dettagli.setMimeType(cursor.getString(cursor.getColumnIndex(projection[6])));
-            dettagli.setSize(cursor.getInt(cursor.getColumnIndex(projection[7])));
+            lat = cursor.getDouble(cursor.getColumnIndex(projection[0]));
+            lon = cursor.getDouble(cursor.getColumnIndex(projection[1]));
         }
         cursor.close();
-        return dettagli;
+        return new LatLng(lat, lon);
     }
 
     /**
@@ -962,9 +976,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == EMPTY_ID && mIdPosto == EMPTY_ID) {
             //Acquisisco coordinate della foto
             Log.d(TAG, "Acquisisco coordinate della foto");
-            ImageDetails dettagli = getMediaStoreData(mImagePath.get(0));
-            double latitudine = dettagli.getLatitudine();
-            double longitudine = dettagli.getLongitudine();
+            LatLng coord = getCoordinates(mImagePath.get(0));
+            double latitudine = coord.latitude;
+            double longitudine = coord.longitude;
             if (latitudine != 0 && longitudine != 0) {
                 Log.d(TAG, "Coordinate trovate!");
                 mFotoLocation = new Location("Mapper");
