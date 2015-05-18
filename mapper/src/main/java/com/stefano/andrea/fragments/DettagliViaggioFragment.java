@@ -47,6 +47,7 @@ import java.util.List;
  */
 public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, AddCittaDialog.AggiungiCittaCallback {
 
+    private static final int DETTAGLI_VIAGGIO_CALLBACK = 1000;
     private static final int CITTA_LOADER = 1;
     private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliViaggioFragment.idViaggio";
 
@@ -222,7 +223,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
         FragmentManager fragmentManager = getFragmentManager();
         AddCittaDialog dialog = AddCittaDialog.newInstance();
-        dialog.setCallback(this);
+        dialog.setTargetFragment(this, DETTAGLI_VIAGGIO_CALLBACK);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();

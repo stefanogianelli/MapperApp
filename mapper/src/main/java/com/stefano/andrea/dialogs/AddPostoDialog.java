@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,8 +35,10 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PlaceAutocompleteAdapter;
+import com.stefano.andrea.fragments.DettagliCittaFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +74,8 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mParentActivity = activity;
+        if (mParentActivity instanceof ModInfoFotoActivity)
+            mCallback = (AggiungiPostoCallback) mParentActivity;
     }
 
     @Override
@@ -81,7 +86,10 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
                     .addApi(Places.GEO_DATA_API)
                     .build();
         }
-        setRetainInstance(true);
+        //set callback
+        Fragment fragment = getTargetFragment();
+        if (fragment instanceof DettagliCittaFragment)
+            mCallback = (AggiungiPostoCallback) fragment;
     }
 
     @Nullable
@@ -194,10 +202,6 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         Toast.makeText(mParentActivity,
                 "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
                 Toast.LENGTH_SHORT).show();
-    }
-
-    public void setCallback (AggiungiPostoCallback callback) {
-        mCallback = callback;
     }
 
     /**

@@ -54,7 +54,7 @@ import com.stefano.andrea.utils.PhotoUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, AddCittaDialog.AggiungiCittaCallback, AddPostoDialog.AggiungiPostoCallback {
 
     public final static String EXTRA_ID_VIAGGIO = "com.stefano.andrea.mapper.ModInfoFotoActivity.idViaggio";
     public final static String EXTRA_ID_CITTA = "com.stefano.andrea.mapper.ModInfoFotoActivity.idCitta";
@@ -515,28 +515,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             public void onClick(View v) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 AddCittaDialog dialog = AddCittaDialog.newInstance();
-                dialog.setCallback(new AddCittaDialog.AggiungiCittaCallback() {
-                    @Override
-                    public void creaNuovaCitta(String nomeCitta, String nazione, LatLng coordinates) {
-                        Citta citta = new Citta();
-                        citta.setIdViaggio(mViaggioSelezionato.getId());
-                        citta.setNome(nomeCitta);
-                        citta.setNazione(nazione);
-                        citta.setLatitudine(coordinates.latitude);
-                        citta.setLongitudine(coordinates.longitude);
-                        InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
-                            @Override
-                            public void insertItem(Citta item) {
-                                clearSelection(CLEAR_POSTO);
-                                mIdCitta = item.getId();
-                                inizializzaCitta();
-                                updateCitta();
-                                sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
-                            }
-                        };
-                        new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
-                    }
-                });
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
@@ -612,26 +590,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             public void onClick(View v) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 AddPostoDialog dialog = AddPostoDialog.newInstance();
-                dialog.setCallback(new AddPostoDialog.AggiungiPostoCallback() {
-                    @Override
-                    public void creaNuovoPosto(String nomePosto, LatLng coordinates) {
-                        Posto posto = new Posto();
-                        posto.setIdCitta(mCittaSelezionata.getId());
-                        posto.setNome(nomePosto);
-                        posto.setLatitudine(coordinates.latitude);
-                        posto.setLongitudine(coordinates.longitude);
-                        InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
-                            @Override
-                            public void insertItem(Posto item) {
-                                mIdPosto = item.getId();
-                                inizializzaPosto();
-                                updatePosti();
-                                sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
-                            }
-                        };
-                        new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
-                    }
-                });
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.replace(android.R.id.content, dialog).addToBackStack(null).commit();
@@ -721,6 +679,46 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             boolean res = cancellaFoto();
             Log.v(TAG, "onDestroy: cancellata immagine? " + res);
         }
+    }
+
+    @Override
+    public void creaNuovaCitta(String nomeCitta, String nazione, LatLng coordinates) {
+        Citta citta = new Citta();
+        citta.setIdViaggio(mViaggioSelezionato.getId());
+        citta.setNome(nomeCitta);
+        citta.setNazione(nazione);
+        citta.setLatitudine(coordinates.latitude);
+        citta.setLongitudine(coordinates.longitude);
+        InsertTask.InsertAdapter<Citta> adapter = new InsertTask.InsertAdapter<Citta>() {
+            @Override
+            public void insertItem(Citta item) {
+                clearSelection(CLEAR_POSTO);
+                mIdCitta = item.getId();
+                inizializzaCitta();
+                updateCitta();
+                sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
+            }
+        };
+        new InsertTask<>(ModInfoFotoActivity.this, adapter, citta).execute(InsertTask.INSERISCI_CITTA);
+    }
+
+    @Override
+    public void creaNuovoPosto(String nomePosto, LatLng coordinates) {
+        Posto posto = new Posto();
+        posto.setIdCitta(mCittaSelezionata.getId());
+        posto.setNome(nomePosto);
+        posto.setLatitudine(coordinates.latitude);
+        posto.setLongitudine(coordinates.longitude);
+        InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
+            @Override
+            public void insertItem(Posto item) {
+                mIdPosto = item.getId();
+                inizializzaPosto();
+                updatePosti();
+                sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
+            }
+        };
+        new InsertTask<>(ModInfoFotoActivity.this, adapter, posto).execute(InsertTask.INSERISCI_POSTO);
     }
 
     /** Adapter per lo spinner dei viaggi */
