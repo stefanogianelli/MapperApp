@@ -264,6 +264,9 @@
                 android:layout_weight="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:lines="1"
+                android:ellipsize="end"
                 android:textColor="@color/mod_subtitle"
                 android:text="@string/seleziona_posto"
                 android:background="@drawable/custom_spinner"/>
