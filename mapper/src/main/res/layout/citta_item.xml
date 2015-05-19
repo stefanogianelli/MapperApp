@@ -41,17 +41,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView   style="?android:textAppearanceSearchResultSubtitle"
+            <TextView style="?android:textAppearanceSearchResultSubtitle"
                 android:id="@+id/citta_item_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:lines="1"
+                android:ellipsize="end"
                 android:textColor="@color/black"/>
             <TextView
                 android:id="@+id/citta_item_label_subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/grey"/>
-
         </LinearLayout>
         </LinearLayout>
 
