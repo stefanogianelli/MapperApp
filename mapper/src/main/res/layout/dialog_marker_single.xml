@@ -7,7 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18dp"
-        android:text="Roma"
         android:textColor="@color/black"
         android:paddingLeft="@dimen/dialog_header_padding_left"
         android:paddingRight="@dimen/dialog_header_padding_right"
@@ -18,7 +17,7 @@
     <com.stefano.andrea.utils.ScaleImageView
         android:id="@+id/dm_foto"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/prova02"/>
 

@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -40,7 +45,7 @@ import java.util.List;
 /**
  * MappaFragment
  */
-public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>> {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener<GeoInfo>, ClusterManager.OnClusterItemClickListener<GeoInfo> {
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
@@ -60,6 +65,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private long mId;
     private int mType;
     private ClusterManager<GeoInfo> mClusterManager;
+    private List<GeoInfo> mClickedCluster;
+    private GeoInfo mClickedItem;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -98,6 +105,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             default:
                 mId = -1;
         }
+        mClickedCluster = new ArrayList<>();
         if (mId != -1)
             getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
     }
@@ -118,7 +126,13 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
         mClusterManager = new ClusterManager<>(mParentActivity, mMap);
         mClusterManager.setRenderer(new MarkerRenderer());
+        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new MultiItemAdapter());
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleItemAdapter());
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterClickListener(this);
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
     }
 
     @Override
@@ -184,6 +198,20 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
+    @Override
+    public boolean onClusterClick(Cluster<GeoInfo> cluster) {
+        Log.d("MappaFragment", "Click");
+        mClickedCluster.clear();
+        mClickedCluster.addAll(cluster.getItems());
+        return false;
+    }
+
+    @Override
+    public boolean onClusterItemClick(GeoInfo geoInfo) {
+        mClickedItem = geoInfo;
+        return false;
+    }
+
     /*@Override
     public boolean onMarkerClick(Marker marker) {
         GeoInfo item = mMarkerDetail.get(marker);
@@ -233,7 +261,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 mImageView.setImageBitmap(geoInfo.getMiniature().get(0));
             mSingleTextMarker.setText(Integer.toString(geoInfo.getCountFoto()));
             Bitmap icon = mIconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(geoInfo.getNome());
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
 
         @Override
@@ -270,9 +298,82 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
+    private class SingleItemAdapter implements GoogleMap.InfoWindowAdapter {
 
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
 
+        @Override
+        public View getInfoContents(Marker marker) {
+            View view = mParentActivity.getLayoutInflater().inflate(R.layout.dialog_marker_single, null);
+            TextView nome = (TextView) view.findViewById(R.id.dm_nome);
+            nome.setText(mClickedItem.getNome());
+            return view;
+        }
+    }
 
+    private class MultiItemAdapter implements GoogleMap.InfoWindowAdapter {
 
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            View view = mParentActivity.getLayoutInflater().inflate(R.layout.dialog_marker_multiple, null);
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.elenco_marker);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(new MultiItemListAdapter());
+            return view;
+        }
+
+        private class MultiItemListAdapter extends RecyclerView.Adapter<MultiItemListAdapter.MultiItemHolder> {
+
+            @Override
+            public MultiItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_marker_multiple, parent, false);
+                return new MultiItemHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(MultiItemHolder holder, int position) {
+                GeoInfo geoInfo = mClickedCluster.get(position);
+                holder.bind(geoInfo);
+            }
+
+            @Override
+            public int getItemCount() {
+                if (mClickedCluster.size() > 0)
+                    return mClickedCluster.size();
+                else
+                    return 0;
+            }
+
+            protected class MultiItemHolder extends RecyclerView.ViewHolder {
+
+                private ImageView immagine;
+                private TextView nome;
+
+                public MultiItemHolder(View itemView) {
+                    super(itemView);
+                    immagine = (ImageView) itemView.findViewById(R.id.dmm_immagine);
+                    nome = (TextView) itemView.findViewById(R.id.dmm_titolo);
+                }
+
+                protected void bind (GeoInfo geoInfo) {
+                    if (geoInfo.getMiniature().size() > 0)
+                        immagine.setImageBitmap(geoInfo.getMiniature().get(0));
+                    nome.setText(geoInfo.getNome());
+                }
+            }
+
+        }
+
+    }
 
 }
