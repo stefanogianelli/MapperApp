@@ -2,6 +2,7 @@ package com.stefano.andrea.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -33,6 +34,8 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
+import com.stefano.andrea.activities.DettagliCittaActivity;
+import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
@@ -309,6 +312,14 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         public View getInfoContents(Marker marker) {
             View view = mParentActivity.getLayoutInflater().inflate(R.layout.dialog_marker_single, null);
             TextView nome = (TextView) view.findViewById(R.id.dm_nome);
+            TextView button = (TextView) view.findViewById(R.id.dm_dettagli);
+            button.setClickable(true);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openItemDetailFragment(mClickedItem);
+                }
+            });
             nome.setText(mClickedItem.getNome());
             return view;
         }
@@ -358,22 +369,45 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
                 private ImageView immagine;
                 private TextView nome;
+                private ImageView button;
 
                 public MultiItemHolder(View itemView) {
                     super(itemView);
                     immagine = (ImageView) itemView.findViewById(R.id.dmm_immagine);
                     nome = (TextView) itemView.findViewById(R.id.dmm_titolo);
+                    button = (ImageView) itemView.findViewById(R.id.dmm_dettagli);
                 }
 
-                protected void bind (GeoInfo geoInfo) {
+                protected void bind (final GeoInfo geoInfo) {
                     if (geoInfo.getMiniature().size() > 0)
                         immagine.setImageBitmap(geoInfo.getMiniature().get(0));
                     nome.setText(geoInfo.getNome());
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openItemDetailFragment(geoInfo);
+                        }
+                    });
                 }
             }
 
         }
 
+    }
+
+    protected void openItemDetailFragment (GeoInfo item) {
+        switch (mType) {
+            case CoordinateLoader.ELENCO_CITTA:
+                mContext.setIdCitta(item.getId());
+                mContext.setNomeCitta(item.getNome());
+                startActivity(new Intent(mParentActivity, DettagliCittaActivity.class));
+                break;
+            case CoordinateLoader.ELENCO_POSTI:
+                mContext.setIdPosto(item.getId());
+                mContext.setNomePosto(item.getNome());
+                startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
+                break;
+        }
     }
 
 }
