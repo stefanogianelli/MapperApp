@@ -1,8 +1,10 @@
 package com.stefano.andrea.loaders;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -38,50 +40,52 @@ public class CoordinateLoader extends BaseAsyncTaskLoader<List<GeoInfo>> {
     @Override
     public List<GeoInfo> loadInBackground() {
         List<GeoInfo> elenco = new ArrayList<>();
-        String fotoSelection;
-        String [] fotoProjection = new String[2];
         Uri itemUri;
-        String itemSelection;
-        String [] itemProjection = new String[3];
-        fotoProjection[0] = MapperContract.Foto.ID_MEDIA_STORE;
+        String [] itemProjection = new String[5];
+        String fotoSelection;
         switch (mType) {
             case ELENCO_CITTA:
-                fotoSelection = MapperContract.Foto.ID_VIAGGIO + "=?";
-                fotoProjection[1] = MapperContract.Foto.ID_CITTA;
-                itemUri = MapperContract.Citta.CONTENT_URI;
-                itemSelection = MapperContract.Citta.ID_CITTA + "=?";
+                itemUri = MapperContract.Citta.DETTAGLI_VIAGGIO_URI;
                 itemProjection[0] = MapperContract.DatiCitta.NOME;
                 itemProjection[1] = MapperContract.DatiCitta.LATITUDINE;
                 itemProjection[2] = MapperContract.DatiCitta.LONGITUDINE;
+                itemProjection[3] = MapperContract.Citta.COUNT_FOTO;
+                itemProjection[4] = MapperContract.Citta.ID_CITTA;
+                fotoSelection = MapperContract.Foto.ID_CITTA + "=?";
                 break;
             case ELENCO_POSTI:
-                fotoSelection = MapperContract.Foto.ID_CITTA + "=?";
-                fotoProjection[1] = MapperContract.Foto.ID_POSTO;
-                itemUri = MapperContract.Posto.CONTENT_URI;
-                itemSelection = MapperContract.Posto.ID_POSTO + "=?";
+                itemUri = MapperContract.Posto.POSTI_IN_CITTA_URI;
                 itemProjection[0] = MapperContract.Luogo.NOME;
                 itemProjection[1] = MapperContract.Luogo.LATITUDINE;
                 itemProjection[2] = MapperContract.Luogo.LONGITUDINE;
+                itemProjection[3] = MapperContract.Posto.COUNT_FOTO;
+                itemProjection[4] = MapperContract.Posto.ID_POSTO;
+                fotoSelection = MapperContract.Foto.ID_POSTO + "=?";
                 break;
             default:
                 throw new UnsupportedOperationException();
         }
-        Cursor c = mResolver.query(MapperContract.Foto.CONTENT_URI, fotoProjection, fotoSelection,
-                new String [] {Long.toString(mId)}, MapperContract.Foto.DEFAULT_SORT + " LIMIT " + MAX_THUMBNAIL);
+        itemUri = ContentUris.withAppendedId(itemUri, mId);
+        Cursor c = mResolver.query(itemUri, itemProjection, null, null, null);
         while (c.moveToNext()) {
             GeoInfo geoInfo = new GeoInfo();
-            //Acquisisco miniatura
-            int idMedia = c.getInt(c.getColumnIndex(fotoProjection[0]));
-            geoInfo.setMiniatura(MediaStore.Images.Thumbnails.getThumbnail(mResolver, idMedia, MediaStore.Images.Thumbnails.MICRO_KIND, null));
-            //Acquisco i dati della citta/posto
-            geoInfo.setId(c.getLong(c.getColumnIndex(fotoProjection[1])));
-            Cursor item = mResolver.query(itemUri, itemProjection, itemSelection, new String[]{Long.toString(geoInfo.getId())}, null);
-            if (item.moveToFirst()) {
-                geoInfo.setNome(item.getString(item.getColumnIndex(itemProjection[0])));
-                geoInfo.setLatitudine(item.getDouble(item.getColumnIndex(itemProjection[1])));
-                geoInfo.setLongitudine(item.getDouble(item.getColumnIndex(itemProjection[2])));
+            geoInfo.setNome(c.getString(c.getColumnIndex(itemProjection[0])));
+            geoInfo.setLatitudine(c.getDouble(c.getColumnIndex(itemProjection[1])));
+            geoInfo.setLongitudine(c.getDouble(c.getColumnIndex(itemProjection[2])));
+            geoInfo.setCountFoto(c.getInt(c.getColumnIndex(itemProjection[3])));
+            geoInfo.setId(c.getLong(c.getColumnIndex(itemProjection[4])));
+            //acquisisco miniature
+            Cursor fotoCursor = mResolver.query(MapperContract.Foto.CONTENT_URI,
+                    new String [] {MapperContract.Foto.ID_MEDIA_STORE}, fotoSelection,
+                    new String [] {Long.toString(geoInfo.getId())} , MapperContract.Foto.DEFAULT_SORT + " LIMIT " + MAX_THUMBNAIL);
+            List<Bitmap> miniature = new ArrayList<>();
+            while (fotoCursor.moveToNext()) {
+                int idMediaStore = fotoCursor.getInt(fotoCursor.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE));
+                Bitmap miniatura = MediaStore.Images.Thumbnails.getThumbnail(mResolver, idMediaStore, MediaStore.Images.Thumbnails.MICRO_KIND, null);
+                miniature.add(miniatura);
             }
-            item.close();
+            geoInfo.setMiniature(miniature);
+            fotoCursor.close();
             elenco.add(geoInfo);
         }
         c.close();

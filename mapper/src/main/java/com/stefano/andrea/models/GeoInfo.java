@@ -5,23 +5,26 @@ import android.graphics.Bitmap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
+import java.util.List;
+
 /**
  * GeoInfo
  */
 public class GeoInfo implements ClusterItem {
 
-    private Bitmap miniatura;
+    private List<Bitmap> miniature;
     private long id;
     private String nome;
     private double latitudine;
     private double longitudine;
+    private int countFoto;
 
-    public Bitmap getMiniatura() {
-        return miniatura;
+    public List<Bitmap> getMiniature() {
+        return miniature;
     }
 
-    public void setMiniatura(Bitmap miniatura) {
-        this.miniatura = miniatura;
+    public void setMiniature(List<Bitmap> miniature) {
+        this.miniature = miniature;
     }
 
     public long getId() {
@@ -54,6 +57,14 @@ public class GeoInfo implements ClusterItem {
 
     public void setLongitudine(double longitudine) {
         this.longitudine = longitudine;
+    }
+
+    public int getCountFoto() {
+        return countFoto;
+    }
+
+    public void setCountFoto(int countFoto) {
+        this.countFoto = countFoto;
     }
 
     @Override

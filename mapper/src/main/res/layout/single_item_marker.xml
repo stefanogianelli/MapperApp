@@ -5,12 +5,12 @@
     android:layout_height="@dimen/custom_marker_image">
 
     <ImageView
-        android:id="@+id/image_marker"
+        android:id="@+id/single_image_marker"
         android:layout_width="@dimen/custom_marker_image"
         android:layout_height="@dimen/custom_marker_image"/>
 
     <TextView
-        android:id="@+id/text_marker"
+        android:id="@+id/single_text_marker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/Bubble.TextAppearance.Light"

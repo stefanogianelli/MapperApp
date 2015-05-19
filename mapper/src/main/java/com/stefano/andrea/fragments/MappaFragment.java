@@ -241,6 +241,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         private final IconGenerator mIconGenerator = new IconGenerator(mParentActivity);
         private final IconGenerator mClusterIconGenerator = new IconGenerator(mParentActivity);
         private final ImageView mImageView;
+        private final TextView mSingleTextMarker;
         private final ImageView mClusterImageView;
         private final TextView mTextMarker;
         private final int mDimension;
@@ -253,17 +254,19 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             mClusterImageView = (ImageView) multiProfile.findViewById(R.id.image_marker);
             mTextMarker = (TextView) multiProfile.findViewById(R.id.text_marker);
 
-            mImageView = new ImageView(mParentActivity);
+            View singleProfile = mParentActivity.getLayoutInflater().inflate(R.layout.single_item_marker, null);
+            mIconGenerator.setContentView(singleProfile);
+            mImageView = (ImageView) singleProfile.findViewById(R.id.single_image_marker);
+            mSingleTextMarker = (TextView) singleProfile.findViewById(R.id.single_text_marker);
+
             mDimension = (int) getResources().getDimension(R.dimen.custom_marker_image);
-            mImageView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
-            int padding = (int) getResources().getDimension(R.dimen.custom_marker_padding);
-            mImageView.setPadding(padding, padding, padding, padding);
-            mIconGenerator.setContentView(mImageView);
         }
 
         @Override
         protected void onBeforeClusterItemRendered(GeoInfo geoInfo, MarkerOptions markerOptions) {
-            mImageView.setImageBitmap(geoInfo.getMiniatura());
+            if (geoInfo.getMiniature().size() > 0)
+                mImageView.setImageBitmap(geoInfo.getMiniature().get(0));
+            mSingleTextMarker.setText(Integer.toString(geoInfo.getCountFoto()));
             Bitmap icon = mIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(geoInfo.getNome());
         }
@@ -273,19 +276,23 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             List<Drawable> clusterPhotos = new ArrayList<>(Math.min(NUMERO_MINIATURE, cluster.getSize()));
             int width = mDimension;
             int height = mDimension;
+            int count = 0;
 
             for (GeoInfo p : cluster.getItems()) {
-                /** Draw {@link NUMERO_MINIATURE} at most. */
-                if (clusterPhotos.size() == NUMERO_MINIATURE) break;
-                Drawable drawable = new BitmapDrawable(getResources(), p.getMiniatura());
-                drawable.setBounds(0, 0, width, height);
-                clusterPhotos.add(drawable);
+                count += p.getMiniature().size();
+                for (Bitmap b : p.getMiniature()) {
+                    /** Draw {@link NUMERO_MINIATURE} at most. */
+                    if (clusterPhotos.size() == NUMERO_MINIATURE) break;
+                    Drawable drawable = new BitmapDrawable(getResources(), b);
+                    drawable.setBounds(0, 0, width, height);
+                    clusterPhotos.add(drawable);
+                }
             }
             MultiDrawable multiDrawable = new MultiDrawable(clusterPhotos);
             multiDrawable.setBounds(0, 0, width, height);
 
             mClusterImageView.setImageDrawable(multiDrawable);
-            mTextMarker.setText(String.valueOf(cluster.getSize()));
+            mTextMarker.setText(String.valueOf(count));
             Bitmap icon = mClusterIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
