@@ -4,6 +4,8 @@
     <string name="title_tab_dettagli">Dettagli</string>
     <string name="title_tab_foto">Foto</string>
     <string name="title_tab_mappa">Mappa</string>
+    <string name="latitudine">Latitudine</string>
+    <string name="longitudine">Longitudine</string>
     <string name="checked">Checked</string>
 
     <!-- Azioni -->

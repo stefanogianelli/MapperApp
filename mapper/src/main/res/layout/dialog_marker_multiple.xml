@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView android:id="@+id/dm_nome_posto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:text="@string/dettagli"
+        android:textColor="@color/black"
+        android:paddingLeft="@dimen/dialog_header_padding_left"
+        android:paddingRight="@dimen/dialog_header_padding_right"
+        android:paddingEnd="@dimen/dialog_header_padding_right"
+        android:paddingTop="@dimen/dialog_header_padding_left"
+        android:paddingBottom="@dimen/dialog_header_padding_left"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/elenco_marker"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:gravity="right|end">
+    <TextView
+        android:id="@+id/btn_closeDettagliFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/dettagli"
+        android:textColor="@color/verydark_grey"
+        android:paddingLeft="@dimen/df_btn_margin_h"
+        android:paddingRight="@dimen/df_btn_margin_h"
+        android:paddingTop="@dimen/df_btn_margin_v"
+        android:paddingBottom="@dimen/df_btn_margin_v"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:selectableItemBackground"
+        android:onClick="closeDettagliMarker"/>
+    </LinearLayout>
+
+</LinearLayout>

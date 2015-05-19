@@ -108,7 +108,7 @@ public class DettagliCittaActivity extends AppCompatActivity {
             }
             if (mImageUri != null) {
                 LinearLayout sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_posto);
-                if (sugg.getVisibility()== View.VISIBLE){slideToBottom(sugg);}
+                if (sugg!=null && sugg.getVisibility()== View.VISIBLE){slideToBottom(sugg);}
                 PhotoUtils.mostraDialog(this, mImageUri);
             }
             return true;

@@ -105,7 +105,7 @@ public class DettagliViaggioActivity extends AppCompatActivity {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
             LinearLayout sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_citta);
-            if (sugg.getVisibility()== View.VISIBLE){slideToBottom(sugg);}
+            if (sugg!=null && sugg.getVisibility()== View.VISIBLE){slideToBottom(sugg);}
             PhotoUtils.mostraDialog(this, mImageUri);
             return true;
         }
