@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView android:id="@+id/dm_nome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:text="Roma"
+        android:textColor="@color/black"
+        android:paddingLeft="@dimen/dialog_header_padding_left"
+        android:paddingRight="@dimen/dialog_header_padding_right"
+        android:paddingEnd="@dimen/dialog_header_padding_right"
+        android:paddingTop="@dimen/dialog_header_padding_left"
+        android:paddingBottom="@dimen/dialog_header_padding_left"/>
+
+    <com.stefano.andrea.utils.ScaleImageView
+        android:id="@+id/dm_foto"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/prova02"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+
+
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/grey"
+            android:text="@string/latitudine"
+            android:gravity="end" />
+        <TextView style="?android:titleTextStyle"
+            android:id="@+id/dm_latitudine"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/verydark_grey"
+            android:layout_gravity="center_horizontal"
+            android:text="spdovndvjnsjilvsjd jl"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:selectableItemBackground"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/df_margin_v"
+        android:paddingBottom="@dimen/df_margin_v"
+        android:paddingRight="@dimen/df_margin_h"
+        android:paddingLeft="@dimen/df_margin_h"
+        android:paddingStart="@dimen/df_margin_h"
+        android:paddingEnd="@dimen/df_margin_h">
+
+
+        <TextView style="?android:subtitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="@color/grey"
+            android:text="@string/longitudine"
+            android:gravity="end" />
+        <TextView style="?android:titleTextStyle"
+            android:id="@+id/dm_longitudine"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:paddingLeft="@dimen/df_margin_h"
+            android:textColor="@color/verydark_grey"
+            android:layout_gravity="center_horizontal"
+            android:text="spdovndvjnsjilvsjd jl"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:selectableItemBackground"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:gravity="right|end">
+    <TextView
+        android:id="@+id/dm_dettagli"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/dettagli"
+        android:textColor="@color/verydark_grey"
+        android:paddingLeft="@dimen/df_btn_margin_h"
+        android:paddingRight="@dimen/df_btn_margin_h"
+        android:paddingTop="@dimen/df_btn_margin_v"
+        android:paddingBottom="@dimen/df_btn_margin_v"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:selectableItemBackground"
+        android:onClick="closeDettagliMarker"/>
+    </LinearLayout>
+
+</LinearLayout>
