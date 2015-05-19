@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/dmm_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         android:paddingTop="@dimen/df_margin_v"
         android:paddingBottom="@dimen/df_margin_v"
@@ -12,7 +12,8 @@
         android:paddingEnd="@dimen/df_margin_h"
         android:clickable="true"
         android:focusable="true"
-        android:background="?android:selectableItemBackground" >
+        android:background="?android:selectableItemBackground"
+        android:gravity="center_vertical">
 
         <com.stefano.andrea.utils.ScaleImageView
             android:id="@+id/dmm_immagine"

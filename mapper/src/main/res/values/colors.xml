@@ -49,5 +49,8 @@
     <!-- About -->
     <color name="about_title">#ff333333</color>
     <color name="about_subtitle">#ff666666</color>
+    <!-- Dialogo marker -->
+    <color name="background_dialogo_marker">#6e333333</color>
+
 
 </resources>
