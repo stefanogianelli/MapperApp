@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -23,7 +24,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -36,14 +36,13 @@ import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.MultiDrawable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * MappaFragment
  */
-public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener<GeoInfo>,
+        ClusterManager.OnClusterInfoWindowClickListener<GeoInfo>, ClusterManager.OnClusterItemClickListener<GeoInfo>, ClusterManager.OnClusterItemInfoWindowClickListener<GeoInfo> {
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
@@ -58,7 +57,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private GoogleMap mMap;
     private List<GeoInfo> mMarkerData;
-    private Map<Marker, GeoInfo> mMarkerDetail;
     private Activity mParentActivity;
     private MapperContext mContext;
     private long mId;
@@ -102,7 +100,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             default:
                 mId = -1;
         }
-        mMarkerDetail = new HashMap<>();
         if (mId != -1)
             getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
     }
@@ -127,9 +124,9 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
         mClusterManager.setOnClusterClickListener(this);
-        /*mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);*/
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
     }
 
     @Override
@@ -182,7 +179,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             for (int i = 0; i < mMarkerData.size(); i++) {
                 GeoInfo item = mMarkerData.get(i);
                 mClusterManager.addItem(item);
-                //mMarkerDetail.put(marker, item);
                 builder.include(item.getPosition());
             }
             LatLngBounds bounds = builder.build();
@@ -215,27 +211,49 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     }*/
 
     @Override
-    public boolean onClusterClick(Cluster cluster) {
-        String firstName = cluster.getItems().iterator().next().toString();
-        Toast.makeText(mParentActivity, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
+    public boolean onClusterClick(Cluster<GeoInfo> cluster) {
+        long id = cluster.getItems().iterator().next().getId();
+        String nome = cluster.getItems().iterator().next().getNome();
+        Toast.makeText(mParentActivity, nome + " (" + id + ")\nFoto: " + cluster.getSize(), Toast.LENGTH_SHORT).show();
         return true;
     }
 
+    @Override
+    public void onClusterInfoWindowClick(Cluster<GeoInfo> cluster) {
+        // Does nothing, but you could go to a list of the users.
+        Toast.makeText(mParentActivity, "onClusterInfoWindowsClick", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onClusterItemClick(GeoInfo geoInfo) {
+        // Does nothing, but you could go into the user's profile page, for example.
+        Toast.makeText(mParentActivity, "onClusterItemClick", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(GeoInfo geoInfo) {
+        // Does nothing, but you could go into the user's profile page, for example.
+        Toast.makeText(mParentActivity, "onClusterItemInfoWindowClick", Toast.LENGTH_SHORT).show();
+    }
+
     private class MarkerRenderer extends DefaultClusterRenderer<GeoInfo> {
-        private final IconGenerator mIconGenerator = new IconGenerator(mParentActivity.getApplicationContext());
-        private final IconGenerator mClusterIconGenerator = new IconGenerator(mParentActivity.getApplicationContext());
+        private final IconGenerator mIconGenerator = new IconGenerator(mParentActivity);
+        private final IconGenerator mClusterIconGenerator = new IconGenerator(mParentActivity);
         private final ImageView mImageView;
         private final ImageView mClusterImageView;
+        private final TextView mTextMarker;
         private final int mDimension;
 
         public MarkerRenderer() {
-            super(mParentActivity.getApplicationContext(), mMap, mClusterManager);
+            super(mParentActivity, mMap, mClusterManager);
 
             View multiProfile = mParentActivity.getLayoutInflater().inflate(R.layout.multi_marker, null);
             mClusterIconGenerator.setContentView(multiProfile);
             mClusterImageView = (ImageView) multiProfile.findViewById(R.id.image_marker);
+            mTextMarker = (TextView) multiProfile.findViewById(R.id.text_marker);
 
-            mImageView = new ImageView(mParentActivity.getApplicationContext());
+            mImageView = new ImageView(mParentActivity);
             mDimension = (int) getResources().getDimension(R.dimen.custom_marker_image);
             mImageView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
             int padding = (int) getResources().getDimension(R.dimen.custom_marker_padding);
@@ -245,25 +263,21 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
         @Override
         protected void onBeforeClusterItemRendered(GeoInfo geoInfo, MarkerOptions markerOptions) {
-
             mImageView.setImageBitmap(geoInfo.getMiniatura());
-            //mImageView.setImageResource((R.drawable.ic_location_city_grey600_48dp));
             Bitmap icon = mIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(geoInfo.getNome());
         }
 
         @Override
         protected void onBeforeClusterRendered(Cluster<GeoInfo> cluster, MarkerOptions markerOptions) {
-
             List<Drawable> clusterPhotos = new ArrayList<>(Math.min(NUMERO_MINIATURE, cluster.getSize()));
             int width = mDimension;
             int height = mDimension;
 
             for (GeoInfo p : cluster.getItems()) {
-                // Draw 4 at most.
+                /** Draw {@link NUMERO_MINIATURE} at most. */
                 if (clusterPhotos.size() == NUMERO_MINIATURE) break;
                 Drawable drawable = new BitmapDrawable(getResources(), p.getMiniatura());
-                //Drawable drawable =  getResources().getDrawable(R.drawable.ic_location_city_grey600_48dp);
                 drawable.setBounds(0, 0, width, height);
                 clusterPhotos.add(drawable);
             }
@@ -271,7 +285,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             multiDrawable.setBounds(0, 0, width, height);
 
             mClusterImageView.setImageDrawable(multiDrawable);
-            Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
+            mTextMarker.setText(String.valueOf(cluster.getSize()));
+            Bitmap icon = mClusterIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
 
