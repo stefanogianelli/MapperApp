@@ -35,7 +35,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="@string/dettagli"
             android:textColor="@color/verydark_grey"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -44,7 +43,7 @@
             android:clickable="true"
             android:focusable="true"
             android:background="?android:selectableItemBackground"
-
-            />
+            android:src="@drawable/ic_chevron_right_grey600_24dp"
+            android:contentDescription="@string/dettagli"/>
     </LinearLayout>
 
