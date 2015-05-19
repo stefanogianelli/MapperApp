@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/dmm_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -8,7 +9,10 @@
         android:paddingRight="@dimen/df_margin_h"
         android:paddingLeft="@dimen/df_margin_h"
         android:paddingStart="@dimen/df_margin_h"
-        android:paddingEnd="@dimen/df_margin_h">
+        android:paddingEnd="@dimen/df_margin_h"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:selectableItemBackground" >
 
         <com.stefano.andrea.utils.ScaleImageView
             android:id="@+id/dmm_immagine"
@@ -21,6 +25,9 @@
             android:id="@+id/dmm_titolo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:lines="1"
+            android:ellipsize="end"
             android:layout_weight="5"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -40,9 +47,6 @@
             android:paddingRight="16dp"
             android:paddingTop="@dimen/df_btn_margin_v"
             android:paddingBottom="@dimen/df_btn_margin_v"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:selectableItemBackground"
             android:src="@drawable/ic_chevron_right_grey600_24dp"
             android:contentDescription="@string/dettagli"/>
     </LinearLayout>

@@ -4,7 +4,10 @@
     android:layout_height="wrap_content">
 
     <TextView android:id="@+id/dm_nome_posto"
-        android:layout_width="match_parent"
+        android:layout_width="260dp"
+        android:singleLine="true"
+        android:lines="1"
+        android:ellipsize="end"
         android:layout_height="wrap_content"
         android:textSize="18dp"
         android:text="@string/dettagli"

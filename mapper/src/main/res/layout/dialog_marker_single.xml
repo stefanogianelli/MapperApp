@@ -4,8 +4,11 @@
     android:layout_height="wrap_content">
 
     <TextView android:id="@+id/dm_nome"
-        android:layout_width="match_parent"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:lines="1"
+        android:ellipsize="end"
         android:textSize="18dp"
         android:textColor="@color/black"
         android:paddingLeft="@dimen/dialog_header_padding_left"
@@ -17,6 +20,7 @@
     <com.stefano.andrea.utils.ScaleImageView
         android:id="@+id/dm_foto"
         android:layout_width="match_parent"
+        android:maxWidth="240dp"
         android:layout_height="100dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/prova02"/>
