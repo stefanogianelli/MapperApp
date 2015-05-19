@@ -41,7 +41,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
@@ -69,7 +68,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
@@ -97,7 +95,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
@@ -125,7 +122,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
@@ -153,7 +149,6 @@
             android:layout_weight="5"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:text="blabla/bla/blablabla.png"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <LinearLayout
