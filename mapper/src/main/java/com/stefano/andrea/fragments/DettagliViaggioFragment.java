@@ -268,20 +268,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         view.animate()
                 .translationY(view.getHeight())
                 .alpha(1.0f)
-                .setDuration(900)
-                /*.setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        slideToBottom(view);
-                    }
-                }) */
-                ;
+                .setDuration(900);
 
     }
 
