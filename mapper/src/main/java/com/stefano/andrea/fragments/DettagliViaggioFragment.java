@@ -169,6 +169,16 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         return mView;
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (this.isVisible()) {
+            if (!isVisibleToUser) {
+                mAdapter.finishActionMode();
+            }
+        }
+    }
+
     /**
      * Aggiunge una nuova citta al viaggio
      * @param nomeCitta Il nome della citta

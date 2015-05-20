@@ -170,6 +170,16 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (this.isVisible()) {
+            if (!isVisibleToUser) {
+                mAdapter.finishActionMode();
+            }
+        }
+    }
+
+    @Override
     public void selezionataFoto(int posizione) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

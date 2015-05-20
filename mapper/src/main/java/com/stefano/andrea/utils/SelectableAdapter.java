@@ -74,6 +74,13 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
         }
     }
 
+    public void finishActionMode () {
+        if (mActionMode != null) {
+            mActionMode.finish();
+            clearSelection();
+        }
+    }
+
     /**
      * Stop the selection mode
      */
@@ -87,8 +94,10 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
      * Clear the selection status for all items
      */
     public void clearSelection() {
-        selectedItems.clear();
-        notifyDataSetChanged();
+        if (selectedItems.size() > 0) {
+            selectedItems.clear();
+            notifyDataSetChanged();
+        }
         mActionMode = null;
     }
 

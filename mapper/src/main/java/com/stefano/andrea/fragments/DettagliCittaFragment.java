@@ -180,6 +180,16 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         return mView;
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (this.isVisible()) {
+            if (!isVisibleToUser) {
+                mAdapter.finishActionMode();
+            }
+        }
+    }
+
     /**
      * Avvio l'activity con l'elenco delle foto relative al posto selezionato
      * @param posto Il posto desiderato
