@@ -42,6 +42,7 @@ import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +53,11 @@ import java.util.List;
 public class DettagliCittaFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Posto>>, PostiAdapter.PostoOnClickListener, AddPostoDialog.AggiungiPostoCallback {
 
     private static final int DETTAGLI_CITTA_CALLBACK = 1010;
+    private static final String BUNDLE_ACTION_MODE = "com.stefano.andrea.fragments.DettagliCittaFragment.actionMode";
 
-    private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliCittaFragment.idViaggio";
     private static final String ID_CITTA = "com.stefano.andrea.fragments.DettagliCittaFragment.idCitta";
     private static final int POSTI_LOADER = 2;
 
-    private long mIdViaggio;
     private long mIdCitta;
     private Activity mParentActivity;
     private ContentResolver mResolver;
@@ -66,6 +66,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private List<Posto> mElencoPosti;
     private MapperContext mContext;
     private View mView;
+    private SparseBooleanArrayParcelable mItemsSelected;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -120,10 +121,9 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
 
     public DettagliCittaFragment () { }
 
-    public static DettagliCittaFragment newInstance(long idViaggio, long idCitta) {
+    public static DettagliCittaFragment newInstance(long idCitta) {
         DettagliCittaFragment fragment = new DettagliCittaFragment();
         Bundle args = new Bundle();
-        args.putLong(ID_VIAGGIO, idViaggio);
         args.putLong(ID_CITTA, idCitta);
         fragment.setArguments(args);
         return fragment;
@@ -139,21 +139,21 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mIdViaggio = getArguments().getLong(ID_VIAGGIO);
             mIdCitta = getArguments().getLong(ID_CITTA);
         }
         //acquisisco il content resolver
         mResolver = mParentActivity.getContentResolver();
-        //creo l'adapter
-        mAdapter = new PostiAdapter(this, mParentActivity, mCallback);
         //avvio il loader dei posto
         getLoaderManager().initLoader(POSTI_LOADER, null, this);
         mContext = MapperContext.getInstance();
+        //verifico ripristino della action mode
+        if (savedInstanceState != null) {
+            mItemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
         //acquisisco riferimenti
         RecyclerView mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
@@ -161,6 +161,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
+        mAdapter = new PostiAdapter(this, mParentActivity, mCallback);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //configuro fab
@@ -178,6 +179,22 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
             }
         });
         return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mItemsSelected != null) {
+            mAdapter.restoreActionMode(mItemsSelected);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAdapter != null && mAdapter.isEnabledSelectionMode()) {
+            outState.putParcelable(BUNDLE_ACTION_MODE, mAdapter.saveActionmode());
+        }
     }
 
     @Override

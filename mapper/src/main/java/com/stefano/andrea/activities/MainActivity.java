@@ -37,6 +37,7 @@ import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
+import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,8 +45,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener, DialogHelper.ViaggioDialogCallback {
 
-    private final static int VIAGGI_LOADER = 0;
-    private static final String TAG = "MAinActivity";
+    private static final String BUNDLE_ACTION_MODE = "com.stefano.andrea.activities.MainActivity.actionMode";
+    private static final int VIAGGI_LOADER = 0;
+    private static final String TAG = "MainActivity";
 
     private ViaggiAdapter mAdapter;
     private List<Viaggio> mListaViaggi;
@@ -107,55 +109,44 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //acquisisco i riferimenti
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
-        toolbar.setNavigationIcon(R.drawable.logo_icon_24);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
+        mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         //attivo action bar
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.logo_icon_24);
         //inizializzo recyclerview
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //inizializzo l'adapter
         mAdapter = new ViaggiAdapter(this, this, mCallback);
+        //verifico ripristino della action mode
+        if (savedInstanceState != null) {
+            SparseBooleanArrayParcelable itemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
+            if (itemsSelected != null) {
+                mAdapter.restoreActionMode(itemsSelected);
+            }
+        }
         mRecyclerView.setAdapter(mAdapter);
         //inizializzo il caricamento dei dati dei viaggi
         getSupportLoaderManager().initLoader(VIAGGI_LOADER, null, this);
-        //acquisisco riferimento al fab
-        mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
+        //inizializzo Floating Action Button
         mFab.attachToRecyclerView(mRecyclerView);
         //Inizializzo imageloader
-        if (!ImageLoader.getInstance().isInited()) {
-            DisplayImageOptions options = new DisplayImageOptions.Builder()
-                    .showImageForEmptyUri(R.drawable.noimg)
-                    .showImageOnFail(R.drawable.noimg)
-                    .cacheOnDisk(true)
-                    .imageScaleType(ImageScaleType.EXACTLY)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .considerExifParams(true)
-                    .build();
-            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                    .defaultDisplayImageOptions(options)
-                    .build();
-            ImageLoader.getInstance().init(config);
-        }
-
+        setupImageLoader();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         if (id == R.id.action_about) {
             startActivity(new Intent(this,AboutActivity.class));
             return true;
@@ -175,6 +166,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAdapter != null && mAdapter.isEnabledSelectionMode()) {
+            outState.putParcelable(BUNDLE_ACTION_MODE, mAdapter.saveActionmode());
+        }
+    }
+
     /**
      * Avvia la schermata contenente i dettagli del viaggio
      * @param viaggio Il viaggio selezionato
@@ -188,6 +187,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         startActivity(intent);
     }
 
+    /**
+     * Rimuove il viaggio selezionato
+     * @param viaggio Il viaggio da rimuovere
+     */
     @Override
     public void rimuoviViaggio(Viaggio viaggio) {
         List<Viaggio> elencoViaggi = new ArrayList<>();
@@ -197,6 +200,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         new DeleteTask<>(this, mAdapter, elencoViaggi, indici).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
+    /**
+     * Rinomina il viaggio selezionato
+     * @param position La posizione del viaggio nel recyclerview
+     * @param viaggio Il viaggio da rinominare
+     */
     @Override
     public void rinominaViaggio(int position, Viaggio viaggio) {
         DialogHelper.showViaggioDialog(this, position, viaggio.getId(), viaggio.getNome(), this);
@@ -204,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     /**
      * Crea o modifica un nuovo viaggio nel database
+     * @param position La posizione del viaggio nel recyclerview
      * @param id L'id del viaggio, -1 se il viaggio e' da creare
      * @param nome Il nome del viaggio
      */
@@ -218,6 +227,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             ContentValues values = new ContentValues();
             values.put(MapperContract.Viaggio.NOME, nome);
             new UpdateTask(this, position, values, elencoId, mAdapter).execute(UpdateTask.UPDATE_VIAGGIO);
+        }
+    }
+
+    /**
+     * Inizializza, se necessario, la libreria Universal Image Loader
+     */
+    private void setupImageLoader () {
+        if (!ImageLoader.getInstance().isInited()) {
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .showImageForEmptyUri(R.drawable.noimg)
+                    .showImageOnFail(R.drawable.noimg)
+                    .cacheOnDisk(true)
+                    .imageScaleType(ImageScaleType.EXACTLY)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .considerExifParams(true)
+                    .build();
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                    .defaultDisplayImageOptions(options)
+                    .build();
+            ImageLoader.getInstance().init(config);
         }
     }
 
@@ -271,8 +300,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<List<Viaggio>> loader) { }
 
-
-
     public void slideToBottom(View view){
         TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
         animate.setDuration(500);
@@ -285,21 +312,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         view.animate()
                 .translationY(view.getHeight())
                 .alpha(1.0f)
-                .setDuration(900)
-                /*.setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        slideToBottom(view);
-                    }
-                }) */
-                ;
-
+                .setDuration(900);
     }
 
 }

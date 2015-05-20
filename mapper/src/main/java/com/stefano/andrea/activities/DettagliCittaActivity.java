@@ -57,7 +57,7 @@ public class DettagliCittaActivity extends AppCompatActivity {
         //assegno l'adapter al pager
         pager.setAdapter(adapter);
         //configuro tab
-        adapter.addTab(getString(R.string.title_tab_dettagli), DettagliCittaFragment.newInstance(mIdViaggio, mIdCitta), DETTAGLI_FRAGMENT);
+        adapter.addTab(getString(R.string.title_tab_dettagli), DettagliCittaFragment.newInstance(mIdCitta), DETTAGLI_FRAGMENT);
         adapter.addTab(getString(R.string.title_tab_foto), ElencoFotoFragment.newInstance(mIdCitta, FotoLoader.FOTO_CITTA), FOTO_FRAGMENT);
         adapter.addTab(getString(R.string.title_tab_mappa), MappaFragment.newInstance(MappaFragment.MAPPA_POSTI), MAPPA_FRAGMENT);
         tabs.setDistributeEvenly(true);
