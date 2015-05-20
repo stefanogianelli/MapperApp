@@ -128,47 +128,48 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
                     mListener.visitatoPosto(posto);
                 }
             });
-            menuButton.setOnClickListener(new View.OnClickListener() {
+            if (!isEnabledSelectionMode()) {
+                menuButton.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    //Creating the instance of PopupMenu
-                    PopupMenu popup = new PopupMenu(mActivity, menuButton);
-                    //Inflating the Popup using xml file
-                    popup.getMenuInflater().inflate(R.menu.popup_two, popup.getMenu());
+                    @Override
+                    public void onClick(View v) {
+                        //Creating the instance of PopupMenu
+                        PopupMenu popup = new PopupMenu(mActivity, menuButton);
+                        //Inflating the Popup using xml file
+                        popup.getMenuInflater().inflate(R.menu.popup_two, popup.getMenu());
 
-                    //registering popup with OnMenuItemClickListener
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            int id = item.getItemId();
-                            switch (id) {
-                                case R.id.menu_remove:
-                                    AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
-                                    dialog.setMessage(R.string.conferma_cancellazione_posto);
-                                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mListener.cancellaPosto(posto);
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    dialog.create().show();
-                                    break;
+                        //registering popup with OnMenuItemClickListener
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            public boolean onMenuItemClick(MenuItem item) {
+                                int id = item.getItemId();
+                                switch (id) {
+                                    case R.id.menu_remove:
+                                        AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
+                                        dialog.setMessage(R.string.conferma_cancellazione_posto);
+                                        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mListener.cancellaPosto(posto);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.create().show();
+                                        break;
+                                }
+                                return true;
                             }
-                            return true;
-                        }
-                    });
+                        });
 
-                    popup.show();//showing popup menu
-                }
-            });
-
+                        popup.show();//showing popup menu
+                    }
+                });
+            }
         }
 
         @Override

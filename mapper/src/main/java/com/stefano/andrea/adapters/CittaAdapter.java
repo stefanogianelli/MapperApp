@@ -118,47 +118,48 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
             if (citta.getCountPosti() != 0)
                 percentuale = (int) ((((float) citta.getCountPostiVisitati()) / ((float) citta.getCountPosti())) * 100.0f);
             cityStatus.setProgress(percentuale);
-            button1.setOnClickListener(new View.OnClickListener() {
+            if (!isEnabledSelectionMode()) {
+                button1.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    //Creating the instance of PopupMenu
-                    PopupMenu popup = new PopupMenu(mActivity, button1);
-                    //Inflating the Popup using xml file
-                    popup.getMenuInflater().inflate(R.menu.popup_two, popup.getMenu());
+                    @Override
+                    public void onClick(View v) {
+                        //Creating the instance of PopupMenu
+                        PopupMenu popup = new PopupMenu(mActivity, button1);
+                        //Inflating the Popup using xml file
+                        popup.getMenuInflater().inflate(R.menu.popup_two, popup.getMenu());
 
-                    //registering popup with OnMenuItemClickListener
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            int id = item.getItemId();
-                            switch (id) {
-                                case R.id.menu_remove:
-                                    AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
-                                    dialog.setMessage(R.string.conferma_cancellazione_citta);
-                                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mListener.cancellaCitta(citta);
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    dialog.create().show();
-                                    break;
+                        //registering popup with OnMenuItemClickListener
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            public boolean onMenuItemClick(MenuItem item) {
+                                int id = item.getItemId();
+                                switch (id) {
+                                    case R.id.menu_remove:
+                                        AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
+                                        dialog.setMessage(R.string.conferma_cancellazione_citta);
+                                        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mListener.cancellaCitta(citta);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.create().show();
+                                        break;
+                                }
+                                return true;
                             }
-                            return true;
-                        }
-                    });
+                        });
 
-                    popup.show();//showing popup menu
-                }
-            });
-
+                        popup.show();//showing popup menu
+                    }
+                });
+            }
 
         }
 

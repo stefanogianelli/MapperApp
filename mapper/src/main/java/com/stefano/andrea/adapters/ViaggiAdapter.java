@@ -126,50 +126,51 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
             nomeViaggio.setText(viaggio.getNome());
             viaggioLabel.setText(mContext.getResources().getQuantityString(R.plurals.statistiche_viaggio, viaggio.getCountPosti(), viaggio.getCountCitta(), viaggio.getCountPosti(), viaggio.getCountFoto()));
             mImageLoader.displayImage(viaggio.getPathFoto(), copertina);
-            button1.setOnClickListener(new View.OnClickListener() {
+            if (!isEnabledSelectionMode()) {
+                button1.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    //Creating the instance of PopupMenu
-                    PopupMenu popup = new PopupMenu(mActivity, button1);
-                    //Inflating the Popup using xml file
-                    popup.getMenuInflater().inflate(R.menu.popup_one, popup.getMenu());
+                    @Override
+                    public void onClick(View v) {
+                        //Creating the instance of PopupMenu
+                        PopupMenu popup = new PopupMenu(mActivity, button1);
+                        //Inflating the Popup using xml file
+                        popup.getMenuInflater().inflate(R.menu.popup_one, popup.getMenu());
 
-                    //registering popup with OnMenuItemClickListener
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            int id = item.getItemId();
-                            switch (id) {
-                                case R.id.menu_remove:
-                                    AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
-                                    dialog.setMessage(R.string.conferma_cancellazione_viaggio);
-                                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mListener.rimuoviViaggio(viaggio);
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    dialog.create().show();
-                                    break;
-                                case R.id.menu_rename:
-                                    mListener.rinominaViaggio(getLayoutPosition(), viaggio);
-                                    break;
+                        //registering popup with OnMenuItemClickListener
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            public boolean onMenuItemClick(MenuItem item) {
+                                int id = item.getItemId();
+                                switch (id) {
+                                    case R.id.menu_remove:
+                                        AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
+                                        dialog.setMessage(R.string.conferma_cancellazione_viaggio);
+                                        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mListener.rimuoviViaggio(viaggio);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.create().show();
+                                        break;
+                                    case R.id.menu_rename:
+                                        mListener.rinominaViaggio(getLayoutPosition(), viaggio);
+                                        break;
+                                }
+                                return true;
                             }
-                            return true;
-                        }
-                    });
+                        });
 
-                    popup.show();
-                }
-            });
-
+                        popup.show();
+                    }
+                });
+            }
         }
 
         @Override
