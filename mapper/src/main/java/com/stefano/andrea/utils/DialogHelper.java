@@ -12,6 +12,8 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -61,7 +63,7 @@ public class DialogHelper {
      * @param activity L'acitivity corrente
      * @param callback L'implementazione della callback di creazione del viaggio
      */
-    public static void showViaggioDialog(Activity activity, final int position, final long idViaggio, final String nome, final ViaggioDialogCallback callback) {
+    public static void showViaggioDialog(final Activity activity, final int position, final long idViaggio, final String nome, final ViaggioDialogCallback callback) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
         View v = inflater.inflate(R.layout.fragment_add_viaggio, null);
@@ -80,11 +82,17 @@ public class DialogHelper {
         .setNegativeButton(R.string.cancel, null);
         final AlertDialog dialog = builder.create();
         nomeViaggio.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {}
-            @Override public void onTextChanged(CharSequence c, int i, int i2, int i3) {}
+            @Override
+            public void beforeTextChanged(CharSequence c, int i, int i2, int i3) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence c, int i, int i2, int i3) {
+            }
+
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().length() == 0){
+                if (editable.toString().length() == 0) {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
@@ -107,6 +115,17 @@ public class DialogHelper {
                     }
                 }
                 return false;
+            }
+        });
+
+        nomeViaggio.requestFocus();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(nomeViaggio.getWindowToken(), 0);
             }
         });
 
