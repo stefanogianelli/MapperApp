@@ -360,7 +360,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 int randomPosition = mRandom.nextInt(mClickedItem.getMiniature().size());
                 sfondo.setImageBitmap(mClickedItem.getMiniature().get(randomPosition));
             } else {
-                sfondo.setImageResource(R.drawable.noimg);
+                sfondo.setImageResource(R.drawable.noimg_small);
             }
             return view;
         }
