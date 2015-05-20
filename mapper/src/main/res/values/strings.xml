@@ -114,7 +114,7 @@
     <string name="mostra_su_mappa">Mostra su mappa</string>
 
     <!-- MappaFragment -->
-    <string name="map_bubble_title">%1$s\n(%2$d foto)</string>
+    <string name="map_count_foto">%d foto</string>
 
     <!-- Action Mode stringhe selezione -->
     <plurals name="action_mode_count_selected">

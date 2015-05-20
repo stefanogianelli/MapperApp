@@ -8,8 +8,7 @@
         android:id="@+id/dm_foto"
         android:layout_width="260dp"
         android:layout_height="140dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/prova02"/>
+        android:scaleType="centerCrop"/>
     
     <View
         android:layout_width="260dp"
@@ -48,22 +47,18 @@
             android:text="Dettagli >"
             android:textColor="@color/white"
             android:paddingRight="16dp"
-            android:clickable="true"
-            android:focusable="true"
             android:background="?android:selectableItemBackground"
-            android:onClick="closeDettagliMarker"
             android:layout_weight="1" />
     </LinearLayout>
 
 
         <TextView style="?android:titleTextStyle"
-            android:id="@+id/dm_longitudine"
+            android:id="@+id/dm_count_foto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/df_margin_h"
             android:textColor="@color/white"
-            android:layout_gravity="center_horizontal"
-            android:text="17 immagini" />
+            android:layout_gravity="center_horizontal" />
 
 
     </LinearLayout>

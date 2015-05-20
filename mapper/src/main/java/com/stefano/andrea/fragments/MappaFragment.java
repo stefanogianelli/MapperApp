@@ -2,7 +2,6 @@ package com.stefano.andrea.fragments;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,7 +12,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -35,8 +34,6 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
-import com.stefano.andrea.activities.DettagliCittaActivity;
-import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
@@ -45,11 +42,14 @@ import com.stefano.andrea.utils.MultiDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * MappaFragment
  */
 public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener<GeoInfo>, ClusterManager.OnClusterItemClickListener<GeoInfo> {
+
+    private static final String TAG = "MappaFragment";
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
@@ -57,10 +57,11 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private static final int MAP_COORD_LOADER = 4;
     private static final int TIMEOUT = 100;
-
-    private static final float MIN_ZOOM_POSTI = 13f;
-    private static final float MIN_ZOOM_CITTA = 11f;
+    private static final int MAP_PADDING = 250;
     private static final int NUMERO_MINIATURE = 4;
+    private static final double EARTHRADIUS = 6366198;
+    private static final int DISTANCE_CITTA = 5000;
+    private static final int DISTANCE_LUOGO = 500;
 
     private GoogleMap mMap;
     private List<GeoInfo> mMarkerData;
@@ -71,6 +72,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private ClusterManager<GeoInfo> mClusterManager;
     private List<GeoInfo> mClickedCluster;
     private GeoInfo mClickedItem;
+    private Random mRandom;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -110,6 +112,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 mId = -1;
         }
         mClickedCluster = new ArrayList<>();
+        mRandom = new Random();
         if (mId != -1)
             getLoaderManager().initLoader(MAP_COORD_LOADER, null, this);
     }
@@ -191,20 +194,46 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 mClusterManager.addItem(item);
                 builder.include(item.getPosition());
             }
+            if (mMarkerData.size() == 1) {
+                LatLngBounds tmpBounds = builder.build();
+                LatLng center = tmpBounds.getCenter();
+                int dist;
+                if (mType == CoordinateLoader.ELENCO_CITTA)
+                    dist = DISTANCE_CITTA;
+                else
+                    dist = DISTANCE_LUOGO;
+                LatLng northEast = move(center, dist, dist);
+                LatLng southWest = move(center, -dist, -dist);
+                builder.include(southWest);
+                builder.include(northEast);
+            }
             LatLngBounds bounds = builder.build();
-            float zoom;
-            if (mType == CoordinateLoader.ELENCO_CITTA)
-                zoom = MIN_ZOOM_CITTA;
-            else
-                zoom = MIN_ZOOM_POSTI;
-            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), zoom);
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING);
             mMap.moveCamera(cu);
         }
     }
 
+    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+        double lonDiff = meterToLongitude(toEast, startLL.latitude);
+        double latDiff = meterToLatitude(toNorth);
+        return new LatLng(startLL.latitude + latDiff, startLL.longitude
+                + lonDiff);
+    }
+
+    private static double meterToLongitude(double meterToEast, double latitude) {
+        double latArc = Math.toRadians(latitude);
+        double radius = Math.cos(latArc) * EARTHRADIUS;
+        double rad = meterToEast / radius;
+        return Math.toDegrees(rad);
+    }
+
+    private static double meterToLatitude(double meterToNorth) {
+        double rad = meterToNorth / EARTHRADIUS;
+        return Math.toDegrees(rad);
+    }
+
     @Override
     public boolean onClusterClick(Cluster<GeoInfo> cluster) {
-        Log.d("MappaFragment", "Click");
         mClickedCluster.clear();
         mClickedCluster.addAll(cluster.getItems());
         return false;
@@ -261,9 +290,15 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
         @Override
         protected void onBeforeClusterItemRendered(GeoInfo geoInfo, MarkerOptions markerOptions) {
-            if (geoInfo.getMiniature().size() > 0)
-                mImageView.setImageBitmap(geoInfo.getMiniature().get(0));
-            mSingleTextMarker.setText(Integer.toString(geoInfo.getCountFoto()));
+            if (geoInfo.getMiniature().size() > 0) {
+                int randomPosition = mRandom.nextInt(geoInfo.getMiniature().size());
+                mImageView.setImageBitmap(geoInfo.getMiniature().get(randomPosition));
+                mSingleTextMarker.setText(Integer.toString(geoInfo.getCountFoto()));
+                mSingleTextMarker.setVisibility(View.VISIBLE);
+            } else {
+                mImageView.setImageResource(R.drawable.noimg);
+                mSingleTextMarker.setVisibility(View.GONE);
+            }
             Bitmap icon = mIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
@@ -288,16 +323,20 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             MultiDrawable multiDrawable = new MultiDrawable(clusterPhotos);
             multiDrawable.setBounds(0, 0, width, height);
 
-            if (count > 0)
+            if (count > 0) {
                 mClusterImageView.setImageDrawable(multiDrawable);
-            mTextMarker.setText(String.valueOf(count));
+                mTextMarker.setText(String.valueOf(count));
+                mSingleTextMarker.setVisibility(View.VISIBLE);
+            } else {
+                mImageView.setImageResource(R.drawable.noimg);
+                mSingleTextMarker.setVisibility(View.GONE);
+            }
             Bitmap icon = mClusterIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
 
         @Override
         protected boolean shouldRenderAsCluster(Cluster cluster) {
-            // Always render clusters.
             return cluster.getSize() > 1;
         }
     }
@@ -313,15 +352,16 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         public View getInfoContents(Marker marker) {
             View view = mParentActivity.getLayoutInflater().inflate(R.layout.dialog_marker_single, null);
             TextView nome = (TextView) view.findViewById(R.id.dm_nome);
-            TextView button = (TextView) view.findViewById(R.id.dm_dettagli);
-            button.setClickable(true);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openItemDetailFragment(mClickedItem);
-                }
-            });
+            TextView count = (TextView) view.findViewById(R.id.dm_count_foto);
+            ImageView sfondo = (ImageView) view.findViewById(R.id.dm_foto);
             nome.setText(mClickedItem.getNome());
+            count.setText(getResources().getString(R.string.map_count_foto, mClickedItem.getCountFoto()));
+            if (mClickedItem.getMiniature().size() > 0) {
+                int randomPosition = mRandom.nextInt(mClickedItem.getMiniature().size());
+                sfondo.setImageBitmap(mClickedItem.getMiniature().get(randomPosition));
+            } else {
+                sfondo.setImageResource(R.drawable.noimg);
+            }
             return view;
         }
     }
@@ -377,44 +417,24 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
                 private ImageView immagine;
                 private TextView nome;
-                private ImageView button;
 
                 public MultiItemHolder(View itemView) {
                     super(itemView);
                     immagine = (ImageView) itemView.findViewById(R.id.dmm_immagine);
                     nome = (TextView) itemView.findViewById(R.id.dmm_titolo);
-                    button = (ImageView) itemView.findViewById(R.id.dmm_dettagli);
                 }
 
                 protected void bind (final GeoInfo geoInfo) {
-                    if (geoInfo.getMiniature().size() > 0)
-                        immagine.setImageBitmap(geoInfo.getMiniature().get(0));
+                    if (geoInfo.getMiniature().size() > 0) {
+                        int randomPosition = mRandom.nextInt(geoInfo.getMiniature().size());
+                        immagine.setImageBitmap(geoInfo.getMiniature().get(randomPosition));
+                    } else {
+                        immagine.setImageResource(R.drawable.noimg);
+                    }
                     nome.setText(geoInfo.getNome());
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openItemDetailFragment(geoInfo);
-                        }
-                    });
                 }
             }
 
-        }
-
-    }
-
-    protected void openItemDetailFragment (GeoInfo item) {
-        switch (mType) {
-            case CoordinateLoader.ELENCO_CITTA:
-                mContext.setIdCitta(item.getId());
-                mContext.setNomeCitta(item.getNome());
-                startActivity(new Intent(mParentActivity, DettagliCittaActivity.class));
-                break;
-            case CoordinateLoader.ELENCO_POSTI:
-                mContext.setIdPosto(item.getId());
-                mContext.setNomePosto(item.getNome());
-                startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
-                break;
         }
     }
 
