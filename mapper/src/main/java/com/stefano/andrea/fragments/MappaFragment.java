@@ -296,7 +296,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 mSingleTextMarker.setText(Integer.toString(geoInfo.getCountFoto()));
                 mSingleTextMarker.setVisibility(View.VISIBLE);
             } else {
-                mImageView.setImageResource(R.drawable.noimg);
+                mImageView.setImageResource(R.drawable.ic_location_city_grey600_48dp);
                 mSingleTextMarker.setVisibility(View.GONE);
             }
             Bitmap icon = mIconGenerator.makeIcon();
@@ -328,7 +328,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 mTextMarker.setText(String.valueOf(count));
                 mSingleTextMarker.setVisibility(View.VISIBLE);
             } else {
-                mImageView.setImageResource(R.drawable.noimg);
+                mImageView.setImageResource(R.drawable.ic_location_city_grey600_48dp);
                 mSingleTextMarker.setVisibility(View.GONE);
             }
             Bitmap icon = mClusterIconGenerator.makeIcon();
@@ -429,7 +429,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                         int randomPosition = mRandom.nextInt(geoInfo.getMiniature().size());
                         immagine.setImageBitmap(geoInfo.getMiniature().get(randomPosition));
                     } else {
-                        immagine.setImageResource(R.drawable.noimg);
+                        immagine.setImageResource(R.drawable.ic_location_city_grey600_48dp);
                     }
                     nome.setText(geoInfo.getNome());
                 }

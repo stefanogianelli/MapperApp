@@ -28,7 +28,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp" >
         <TextView android:id="@+id/dm_nome"
-            android:layout_width="190dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:singleLine="true"
