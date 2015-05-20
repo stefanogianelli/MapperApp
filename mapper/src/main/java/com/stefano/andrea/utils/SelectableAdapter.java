@@ -87,11 +87,8 @@ public abstract class SelectableAdapter<VH extends SelectableHolder> extends Rec
      * Clear the selection status for all items
      */
     public void clearSelection() {
-        List<Integer> selection = getSelectedItems();
         selectedItems.clear();
-        for (Integer i : selection) {
-            notifyItemChanged(i);
-        }
+        notifyDataSetChanged();
         mActionMode = null;
     }
 
