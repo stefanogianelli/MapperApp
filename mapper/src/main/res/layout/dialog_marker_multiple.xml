@@ -23,7 +23,6 @@
         android:scrollbars="vertical"
         android:layout_width="260dp"
         android:layout_height="240dp" />
-    <!-- TODO: Adattare altezza del RecyclerView    -->
 
     <LinearLayout
         android:layout_width="match_parent"

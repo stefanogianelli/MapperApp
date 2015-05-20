@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -340,6 +341,13 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             recyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(new MultiItemListAdapter());
+            // Adatto l'altezza del recyclerview al contenuto
+            int numOfItem = (int) recyclerView.getAdapter().getItemCount();
+            int recyclerHeight = (numOfItem * 180);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    recyclerView.getLayoutParams();
+                    params.height = recyclerHeight;
+            recyclerView.setLayoutParams(params);
             return view;
         }
 
