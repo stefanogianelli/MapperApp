@@ -6,7 +6,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.providers.MapperContract;
@@ -36,14 +40,20 @@ public class UpdateTask extends AsyncTask<Integer, Void, Integer> {
     private List<Integer> mElencoId;
     private UpdateAdapter mAdapter;
     private String mResultString = "";
+    private EventListener mListener;
 
     public UpdateTask (Activity activity, int position, ContentValues values, List<Integer> elencoId, UpdateAdapter adapter) {
+        this(activity, position, values, elencoId, adapter, null);
+    }
+
+    public UpdateTask (Activity activity, int position, ContentValues values, List<Integer> elencoId, UpdateAdapter adapter, @Nullable EventListener listener) {
         mActivity = activity;
         mResolver = activity.getContentResolver();
         mValues = values;
         mElencoId = elencoId;
         mAdapter = adapter;
         mPosition = position;
+        mListener = listener;
     }
 
     @Override
@@ -83,6 +93,14 @@ public class UpdateTask extends AsyncTask<Integer, Void, Integer> {
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
             mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_FOTO));
+            //mostro snackbar di conferma dell'operazione
+            if (mListener != null) {
+                String messaggio = mActivity.getResources().getString(R.string.modificato_viaggio, mResultString);
+                SnackbarManager.show(
+                        Snackbar.with(mActivity)
+                                .text(messaggio)
+                                .eventListener(mListener));
+            }
         } else {
             //mostro dialog d'errore
             DialogHelper.showAlertDialog(mActivity, R.string.errore_inserimento_titolo_dialog, R.string.errore_inserimento_messaggio_dialog);

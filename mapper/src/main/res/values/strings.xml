@@ -159,6 +159,9 @@
     <string name="inserita_nuova_citta">Nuova città creata</string>
     <string name="inserito_nuovo_posto">Nuovo posto creato</string>
 
+    <!-- UpdateTask -->
+    <string name="modificato_viaggio">Modificato il viaggio %s</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
 

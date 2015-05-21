@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             elencoId.add((int) id);
             ContentValues values = new ContentValues();
             values.put(MapperContract.Viaggio.NOME, nome);
-            new UpdateTask(this, position, values, elencoId, mAdapter).execute(UpdateTask.UPDATE_VIAGGIO);
+            new UpdateTask(this, position, values, elencoId, mAdapter, mListener).execute(UpdateTask.UPDATE_VIAGGIO);
         }
     }
 
