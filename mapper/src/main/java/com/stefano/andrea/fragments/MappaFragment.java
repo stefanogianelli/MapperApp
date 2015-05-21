@@ -2,23 +2,26 @@ package com.stefano.andrea.fragments;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -136,7 +139,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
         mClusterManager = new ClusterManager<>(mParentActivity, mMap);
         mClusterManager.setRenderer(new MarkerRenderer());
-        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new MultiItemAdapter());
         mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleItemAdapter());
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterClickListener(this);
@@ -241,6 +243,8 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public boolean onClusterClick(Cluster<GeoInfo> cluster) {
         mClickedCluster.clear();
         mClickedCluster.addAll(cluster.getItems());
+        //mostro dialog con l'elenco degli item presenti nel cluster
+        ClusterDialog.newInstance(mClickedCluster, mType, mContext).show(getFragmentManager(), "Dialog");
         return false;
     }
 
@@ -265,24 +269,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 break;
         }
     }
-
-    /*@Override
-    public boolean onMarkerClick(Marker marker) {
-        GeoInfo item = mMarkerDetail.get(marker);
-        switch (mType) {
-            case CoordinateLoader.ELENCO_CITTA:
-                mContext.setIdCitta(item.getId());
-                mContext.setNomeCitta(item.getNome());
-                startActivity(new Intent(mParentActivity, DettagliCittaActivity.class));
-                break;
-            case CoordinateLoader.ELENCO_POSTI:
-                mContext.setIdPosto(item.getId());
-                mContext.setNomePosto(item.getNome());
-                startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
-                break;
-        }
-        return false;
-    }*/
 
     private class MarkerRenderer extends DefaultClusterRenderer<GeoInfo> {
         private final IconGenerator mIconGenerator = new IconGenerator(mParentActivity);
@@ -387,76 +373,80 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-    private class MultiItemAdapter implements GoogleMap.InfoWindowAdapter {
+    public static class ClusterDialog extends DialogFragment {
 
-        @Override
-        public View getInfoWindow(Marker marker) {
-            return null;
+        private List<GeoInfo> items;
+        private int mType;
+        private MapperContext mContext;
+        private Random mRandom;
+
+        public static ClusterDialog newInstance (List<GeoInfo> elenco, int type, MapperContext context) {
+            ClusterDialog dialog = new ClusterDialog();
+            dialog.items = elenco;
+            dialog.mType = type;
+            dialog.mContext = context;
+            dialog.mRandom = new Random();
+            return dialog;
         }
 
+        @NonNull
         @Override
-        public View getInfoContents(Marker marker) {
-            View view = mParentActivity.getLayoutInflater().inflate(R.layout.dialog_marker_multiple, null);
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.elenco_marker);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(new MultiItemListAdapter());
-            // Adatto l'altezza del recyclerview al contenuto
-            int numOfItem = (int) recyclerView.getAdapter().getItemCount();
-            int recyclerHeight = (numOfItem * 180);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
-                    recyclerView.getLayoutParams();
-                    params.height = recyclerHeight;
-            recyclerView.setLayoutParams(params);
-            return view;
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            ClusterSpinnerAdapter adapter = new ClusterSpinnerAdapter(getActivity(), R.layout.item_dialog_marker_multiple, items);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+            return builder.create();
         }
 
-        private class MultiItemListAdapter extends RecyclerView.Adapter<MultiItemListAdapter.MultiItemHolder> {
+        /** Adapter per lo spinner dei cluster */
+        private class ClusterSpinnerAdapter extends ArrayAdapter<GeoInfo> {
 
-            @Override
-            public MultiItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_marker_multiple, parent, false);
-                return new MultiItemHolder(view);
+            private int mResource;
+
+            public ClusterSpinnerAdapter(Context context, int resource, List<GeoInfo> objects) {
+                super(context, resource, objects);
+                mResource = resource;
             }
 
             @Override
-            public void onBindViewHolder(MultiItemHolder holder, int position) {
-                GeoInfo geoInfo = mClickedCluster.get(position);
-                holder.bind(geoInfo);
-            }
-
-            @Override
-            public int getItemCount() {
-                if (mClickedCluster.size() > 0)
-                    return mClickedCluster.size();
-                else
-                    return 0;
-            }
-
-            protected class MultiItemHolder extends RecyclerView.ViewHolder {
-
-                private ImageView immagine;
-                private TextView nome;
-
-                public MultiItemHolder(View itemView) {
-                    super(itemView);
-                    immagine = (ImageView) itemView.findViewById(R.id.dmm_immagine);
-                    nome = (TextView) itemView.findViewById(R.id.dmm_titolo);
+            public View getView(int position, View convertView, ViewGroup parent) {
+                final GeoInfo item = getItem(position);
+                if (convertView == null)
+                    convertView = LayoutInflater.from(getContext()).inflate(mResource, parent, false);
+                ImageView foto = (ImageView) convertView.findViewById(R.id.dmm_immagine);
+                TextView nome = (TextView) convertView.findViewById(R.id.dmm_titolo);
+                nome.setText(item.getNome());
+                if (item.getMiniature().size() > 0) {
+                    int randomPosition = mRandom.nextInt(item.getMiniature().size());
+                    foto.setImageBitmap(item.getMiniature().get(randomPosition));
+                } else {
+                    foto.setImageResource(R.drawable.ic_location_city_grey600_48dp);
                 }
-
-                protected void bind (final GeoInfo geoInfo) {
-                    if (geoInfo.getMiniature().size() > 0) {
-                        int randomPosition = mRandom.nextInt(geoInfo.getMiniature().size());
-                        immagine.setImageBitmap(geoInfo.getMiniature().get(randomPosition));
-                    } else {
-                        immagine.setImageResource(R.drawable.ic_location_city_grey600_48dp);
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                        switch (mType) {
+                            case CoordinateLoader.ELENCO_CITTA:
+                                mContext.setIdCitta(item.getId());
+                                mContext.setNomeCitta(item.getNome());
+                                startActivity(new Intent(getActivity(), DettagliCittaActivity.class));
+                                break;
+                            case CoordinateLoader.ELENCO_POSTI:
+                                mContext.setIdPosto(item.getId());
+                                mContext.setNomePosto(item.getNome());
+                                startActivity(new Intent(getActivity(), DettagliPostoActivity.class));
+                                break;
+                        }
                     }
-                    nome.setText(geoInfo.getNome());
-                }
+                });
+                return convertView;
             }
-
         }
+
     }
 
 }
