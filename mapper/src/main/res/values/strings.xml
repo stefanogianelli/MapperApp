@@ -65,7 +65,7 @@
     <string name="add_posto">Nome del posto</string>
     <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
     <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
-    <string name="subTitleDettagliCittaFragment">Posti da visitare</string>
+    <string name="noCitta">Non hai ancora aggiunto città</string>
 
     <!-- DettagliPostoActivity -->
     <string name="suggerimento_crea_foto">Aggiungi le fotografie</string>
