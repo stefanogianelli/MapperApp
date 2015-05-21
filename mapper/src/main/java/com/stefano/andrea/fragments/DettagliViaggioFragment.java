@@ -38,6 +38,7 @@ import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
+import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ import java.util.List;
 public class DettagliViaggioFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Citta>>, CittaAdapter.CittaOnClickListener, AddCittaDialog.AggiungiCittaCallback {
 
     private static final int DETTAGLI_VIAGGIO_CALLBACK = 1000;
+    private static final String BUNDLE_ACTION_MODE = "com.stefano.andrea.fragments.DettagliViaggioFragment.actionMode";
     private static final int CITTA_LOADER = 1;
     private static final String ID_VIAGGIO = "com.stefano.andrea.fragments.DettagliViaggioFragment.idViaggio";
 
@@ -139,6 +141,13 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         getLoaderManager().initLoader(CITTA_LOADER, null, this);
         //acquisisco contesto
         mContext = MapperContext.getInstance();
+        //verifico ripristino della action mode
+        if (savedInstanceState != null) {
+            SparseBooleanArrayParcelable mItemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
+            if (mItemsSelected != null) {
+                mAdapter.restoreActionMode(mItemsSelected);
+            }
+        }
     }
 
     @Override
@@ -167,6 +176,14 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             }
         });
         return mView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAdapter != null && mAdapter.isEnabledSelectionMode()) {
+            outState.putParcelable(BUNDLE_ACTION_MODE, mAdapter.saveActionmode());
+        }
     }
 
     @Override

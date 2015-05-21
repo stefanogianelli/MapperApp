@@ -27,6 +27,7 @@ import com.stefano.andrea.adapters.FotoAdapter;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.tasks.DeleteTask;
+import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +38,11 @@ import java.util.List;
 public class ElencoFotoFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Foto>>, FotoAdapter.FotoOnClickListener {
 
     private static final String TAG = "ElencoFotoFragments";
+    private static final String BUNDLE_ACTION_MODE = "com.stefano.andrea.fragments.DettagliFotoFragment.actionMode";
+    private static final int FOTO_LOADER = 3;
 
     private static final String EXTRA_ID = "com.stefano.andrea.fragments.ElencoFotoFragment.id";
     private static final String EXTRA_TIPO_ELENCO = "com.stefano.andrea.fragments.ElencoFotoFragment.tipoElenco";
-
-    private static final int FOTO_LOADER = 3;
 
     private static final int COLUMNS_PORTRAIT = 3;
     private static final int COLUMNS_LANDSCAPE = 5;
@@ -148,6 +149,13 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         }
         mAdapter = new FotoAdapter(mParentActivity, mCallback, this);
         getLoaderManager().initLoader(FOTO_LOADER, null, this);
+        //verifico ripristino della action mode
+        if (savedInstanceState != null) {
+            SparseBooleanArrayParcelable mItemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
+            if (mItemsSelected != null) {
+                mAdapter.restoreActionMode(mItemsSelected);
+            }
+        }
     }
 
     @Override
@@ -167,6 +175,14 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         mRecyclerView.setAdapter(mAdapter);
 
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAdapter != null && mAdapter.isEnabledSelectionMode()) {
+            outState.putParcelable(BUNDLE_ACTION_MODE, mAdapter.saveActionmode());
+        }
     }
 
     @Override

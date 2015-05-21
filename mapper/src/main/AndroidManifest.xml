@@ -33,13 +33,13 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".DettagliViaggioActivity"
             android:label="@string/title_activity_dettagli_viaggio"
+            android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -48,6 +48,7 @@
         <activity
             android:name=".DettagliCittaActivity"
             android:label="@string/title_activity_dettagli_citta"
+            android:configChanges="orientation|screenSize"
             android:parentActivityName=".DettagliViaggioActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

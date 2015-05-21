@@ -66,7 +66,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     private List<Posto> mElencoPosti;
     private MapperContext mContext;
     private View mView;
-    private SparseBooleanArrayParcelable mItemsSelected;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -148,7 +147,10 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         mContext = MapperContext.getInstance();
         //verifico ripristino della action mode
         if (savedInstanceState != null) {
-            mItemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
+            SparseBooleanArrayParcelable mItemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
+            if (mItemsSelected != null) {
+                mAdapter.restoreActionMode(mItemsSelected);
+            }
         }
     }
 
@@ -179,14 +181,6 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
             }
         });
         return mView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mItemsSelected != null) {
-            mAdapter.restoreActionMode(mItemsSelected);
-        }
     }
 
     @Override
