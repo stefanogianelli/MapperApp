@@ -102,6 +102,7 @@
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
     <string name="no_internet_message_dialog">Impossibile creare la città.\nNessuna connessione a Internet.</string>
+
     <!-- Dialog errore creazione citta -->
     <string name="errore_nuova_citta_title_dialog">Errore</string>
     <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della città.</string>
@@ -158,6 +159,23 @@
     <string name="inserito_nuovo_viaggio">Nuovo viaggio creato</string>
     <string name="inserita_nuova_citta">Nuova città creata</string>
     <string name="inserito_nuovo_posto">Nuovo posto creato</string>
+
+    <!-- UpdateTask -->
+    <string name="modificato_viaggio">Modificato il viaggio %s</string>
+
+    <!-- DeleteTask -->
+    <plurals name="cancellazione_viaggio">
+        <item quantity="one">Cancellato %d viaggio</item>
+        <item quantity="other">Cancellati %d viaggi</item>
+    </plurals>
+    <plurals name="cancellazione_citta">
+        <item quantity="one">Cancellata %d città</item>
+        <item quantity="other">Cancellate %d città</item>
+    </plurals>
+    <plurals name="cancellazione_posto">
+        <item quantity="one">Cancellato %d posto</item>
+        <item quantity="other">Cancellati %d posti</item>
+    </plurals>
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>

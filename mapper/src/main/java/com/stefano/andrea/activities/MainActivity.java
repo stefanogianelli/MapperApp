@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         elencoViaggi.add(viaggio);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(this, mAdapter, elencoViaggi, indici).execute(DeleteTask.CANCELLA_VIAGGIO);
+        new DeleteTask<>(this, mAdapter, elencoViaggi, indici, mListener).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             elencoId.add((int) id);
             ContentValues values = new ContentValues();
             values.put(MapperContract.Viaggio.NOME, nome);
-            new UpdateTask(this, position, values, elencoId, mAdapter).execute(UpdateTask.UPDATE_VIAGGIO);
+            new UpdateTask(this, position, values, elencoId, mAdapter, mListener).execute(UpdateTask.UPDATE_VIAGGIO);
         }
     }
 
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * Cancella i viaggi selezionati dall'utente
      */
     private void cancellaViaggi() {
-        new DeleteTask<>(this, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
+        new DeleteTask<>(this, mAdapter, mListaViaggi, mAdapter.getSelectedItems(), mListener).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**
