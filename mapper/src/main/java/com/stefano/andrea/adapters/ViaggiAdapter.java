@@ -166,7 +166,6 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
                                 return true;
                             }
                         });
-
                         popup.show();
                     }
                 });

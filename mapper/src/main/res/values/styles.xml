@@ -22,6 +22,10 @@
         <!-- Actionbar menu text color -->
         <item name="actionMenuTextColor">@color/white</item>
         <item name="android:actionMenuTextColor">@color/white</item>
+
+        <!-- Animazione popup menu -->
+        <item name="android:popupAnimationStyle">@style/popupAnimation</item>
+
     </style>
 
     <style name="Toolbar_Popup" parent="Base.ThemeOverlay.AppCompat.ActionBar">
@@ -53,6 +57,11 @@
         <item name="android:paddingLeft">16dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/verydark_grey</item>
+    </style>
+
+    <style name="popupAnimation">
+        <item name="android:windowEnterAnimation">@anim/popu_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
 
 </resources>
