@@ -45,6 +45,7 @@
     </plurals>
     <string name="conferma_cancellazione_viaggi">Vuoi cancellare i viaggi?</string>
     <string name="conferma_cancellazione_viaggio">Vuoi cancellare il viaggio?</string>
+    <string name="noViaggi">Nessun viaggio</string>
 
     <!-- DettagliViaggioActivity -->
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
@@ -71,6 +72,7 @@
     <!-- DettagliPostoActivity -->
     <string name="suggerimento_crea_foto">Aggiungi le fotografie</string>
     <string name="subTitleDettagliPostoActivity">Foto scattate</string>
+    <string name="noFoto">Nessuna foto aggiunta</string>
 
     <!-- Info fotografie -->
     <string name="scattata_presso">Presso:</string>
