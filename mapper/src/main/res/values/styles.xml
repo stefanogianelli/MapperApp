@@ -54,9 +54,10 @@
 
     <style name="subTitleContainer">
         <item name="android:height">@dimen/default_subtitle_container_height</item>
-        <item name="android:paddingLeft">16dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/verydark_grey</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold|italic</item>
     </style>
 
     <style name="popupAnimation">
