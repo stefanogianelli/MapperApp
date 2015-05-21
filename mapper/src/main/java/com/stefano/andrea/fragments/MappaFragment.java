@@ -2,6 +2,7 @@ package com.stefano.andrea.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -34,6 +35,8 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
+import com.stefano.andrea.activities.DettagliCittaActivity;
+import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
@@ -47,7 +50,7 @@ import java.util.Random;
 /**
  * MappaFragment
  */
-public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener<GeoInfo>, ClusterManager.OnClusterItemClickListener<GeoInfo> {
+public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener<GeoInfo>, ClusterManager.OnClusterItemClickListener<GeoInfo>, ClusterManager.OnClusterItemInfoWindowClickListener<GeoInfo> {
 
     private static final String TAG = "MappaFragment";
 
@@ -137,9 +140,11 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleItemAdapter());
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
     }
 
     @Override
@@ -243,6 +248,22 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     public boolean onClusterItemClick(GeoInfo geoInfo) {
         mClickedItem = geoInfo;
         return false;
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(GeoInfo item) {
+        switch (mType) {
+            case CoordinateLoader.ELENCO_CITTA:
+                mContext.setIdCitta(item.getId());
+                mContext.setNomeCitta(item.getNome());
+                startActivity(new Intent(mParentActivity, DettagliCittaActivity.class));
+                break;
+            case CoordinateLoader.ELENCO_POSTI:
+                mContext.setIdPosto(item.getId());
+                mContext.setNomePosto(item.getNome());
+                startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
+                break;
+        }
     }
 
     /*@Override
