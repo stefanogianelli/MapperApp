@@ -61,14 +61,14 @@
     <string name="subTitleDettagliViaggioFragment">Città da visitare</string>
 
     <!-- DettagliCittaFragment -->
-    <string name="suggerimento_crea_posto">Aggiungi tutti posti che vuoi visitare in questa città</string>
+    <string name="suggerimento_crea_posto">Aggiungi tutti i posti che vuoi visitare in questa città</string>
     <string name="add_posto">Nome del posto</string>
     <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
     <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
     <string name="subTitleDettagliCittaFragment">Posti da visitare</string>
 
     <!-- DettagliPostoActivity -->
-    <string name="suggerimento_crea_foto">Aggiungi una nuova foto</string>
+    <string name="suggerimento_crea_foto">Aggiungi le fotografie</string>
     <string name="subTitleDettagliPostoActivity">Foto scattate</string>
 
     <!-- Info fotografie -->

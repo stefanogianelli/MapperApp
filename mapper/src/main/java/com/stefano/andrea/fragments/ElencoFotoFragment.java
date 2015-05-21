@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
@@ -173,7 +174,6 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-
         return v;
     }
 
@@ -229,10 +229,32 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
             case FOTO_LOADER:
                 mAdapter.setElencoFoto(data);
                 mElencoFoto = (ArrayList<Foto>) data;
+
+                LinearLayout sugg = (LinearLayout) mParentActivity.findViewById(R.id.suggerimento_crea_foto);
+                if(sugg!=null){
+                    if(mAdapter.getItemCount()==0) {
+                        animateSugg(sugg);
+                    }else{
+                        sugg.setVisibility(View.GONE);
+                    }
+                }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Foto>> loader) { }
+
+
+
+    public void animateSugg(final View view){
+        view.setVisibility(View.VISIBLE);
+        view.setAlpha(0.0f);
+        view.animate()
+                .translationY(view.getHeight())
+                .alpha(1.0f)
+                .setDuration(900);
+
+    }
+
 
 }

@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.stefano.andrea.fragments.ElencoFotoFragment;
@@ -24,12 +27,14 @@ public class DettagliPostoActivity extends AppCompatActivity {
     private long mIdViaggio;
     private long mIdCitta;
     private long mIdPosto;
+    private LinearLayout sugg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_posto);
         //acquisisco riferimenti
+        sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_foto);
         MapperContext context = MapperContext.getInstance();
         mIdViaggio = context.getIdViaggio();
         mIdCitta = context.getIdCitta();
@@ -67,8 +72,10 @@ public class DettagliPostoActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Toast.makeText(this, "Errore durante l'accesso alla memoria", Toast.LENGTH_SHORT).show();
             }
-            if (mImageUri != null)
+            if (mImageUri != null) {
+                if (sugg != null && sugg.getVisibility()== View.VISIBLE){slideToBottom(sugg);}
                 PhotoUtils.mostraDialog(this, mImageUri);
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -78,6 +85,15 @@ public class DettagliPostoActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta, mIdPosto);
+    }
+
+
+
+    public void slideToBottom(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
+        animate.setDuration(500);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
     }
 
 }

@@ -20,24 +20,26 @@
         android:id="@+id/suggerimento_crea_foto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="44dp"
         android:animateLayoutChanges="true"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <TextView style="@style/TextWithShadow"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/suggerimento_crea_foto" />
+            android:layout_marginTop="70dp"
+            android:text="@string/suggerimento_crea_foto"
+            android:textSize="24sp"
+            android:gravity="right|end" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:src="@drawable/arrow_suggerimento"
-            android:layout_marginLeft="75dp" />
+            android:src="@drawable/arrow_suggerimento_top" />
     </LinearLayout>
 
 </RelativeLayout>
