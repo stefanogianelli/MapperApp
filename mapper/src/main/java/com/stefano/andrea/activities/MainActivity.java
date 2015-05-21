@@ -15,11 +15,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nispok.snackbar.Snackbar;
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
+        final TextView nessunViaggioInfo = (TextView) findViewById(R.id.no_viaggio);
         //attivo action bar
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.logo_icon_24);
@@ -148,6 +151,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //inizializzo l'adapter
         mAdapter = new ViaggiAdapter(this, this, mCallback);
+        mRecyclerView.setAdapter(mAdapter);
+        //aggiungo observer all'adapter
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                Log.d(TAG, "onChange -> num = " + mAdapter.getItemCount());
+                if (mAdapter.getItemCount() == 0)
+                    nessunViaggioInfo.setVisibility(View.VISIBLE);
+                else
+                    nessunViaggioInfo.setVisibility(View.GONE);
+            }
+        });
         //verifico ripristino della action mode
         if (savedInstanceState != null) {
             SparseBooleanArrayParcelable itemsSelected = savedInstanceState.getParcelable(BUNDLE_ACTION_MODE);
@@ -155,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 mAdapter.restoreActionMode(itemsSelected);
             }
         }
-        mRecyclerView.setAdapter(mAdapter);
         //inizializzo il caricamento dei dati dei viaggi
         getSupportLoaderManager().initLoader(VIAGGI_LOADER, null, this);
         //inizializzo Floating Action Button

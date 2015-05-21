@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.nispok.snackbar.Snackbar;
@@ -186,6 +187,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         //acquisisco riferimenti
         RecyclerView mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
         mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_posto);
+        final TextView nessunPostoInfo = (TextView) mView.findViewById(R.id.no_posti);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
@@ -204,6 +206,17 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
                 } else {
                     DialogHelper.showAlertDialog(mParentActivity, R.string.no_internet_title_dialog, R.string.no_internet_message_dialog);
                 }
+            }
+        });
+        //aggiungo observer all'adapter
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (mAdapter.getItemCount() == 0)
+                    nessunPostoInfo.setVisibility(View.VISIBLE);
+                else
+                    nessunPostoInfo.setVisibility(View.GONE);
             }
         });
         return mView;

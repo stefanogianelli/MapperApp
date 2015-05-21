@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
@@ -164,6 +165,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         View v = inflater.inflate(R.layout.fragment_elenco_foto,container,false);
         //acquisisco riferimenti
         RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
+        final TextView nessunaFotoInfo = (TextView) v.findViewById(R.id.no_foto);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
         int columns;
@@ -174,6 +176,17 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
+        //aggiungo observer all'adapter
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (mAdapter.getItemCount() == 0)
+                    nessunaFotoInfo.setVisibility(View.VISIBLE);
+                else
+                    nessunaFotoInfo.setVisibility(View.GONE);
+            }
+        });
         return v;
     }
 
@@ -244,8 +257,6 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(Loader<List<Foto>> loader) { }
 
-
-
     public void animateSugg(final View view){
         view.setVisibility(View.VISIBLE);
         view.setAlpha(0.0f);
@@ -255,6 +266,5 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
                 .setDuration(900);
 
     }
-
 
 }
