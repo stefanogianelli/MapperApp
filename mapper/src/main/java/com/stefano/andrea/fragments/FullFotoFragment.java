@@ -79,9 +79,11 @@ public class FullFotoFragment extends Fragment {
             mElencoFoto = args.getParcelableArrayList(EXTRA_LISTA_FOTO);
             mPosition = args.getInt(EXTRA_IMAGE_POSITION);
         }
+
         ((AppCompatActivity) mParentActivity).setSupportActionBar(toolbar);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
+        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
         int uiOptions = mParentActivity.getWindow().getDecorView().getSystemUiVisibility();
         boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
@@ -90,6 +92,10 @@ public class FullFotoFragment extends Fragment {
         }else{
             ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
         }
+        uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        rootView.setSystemUiVisibility(uiOptions);
 
         mAdapter = new ImageAdapter(mParentActivity);
         mPager.setAdapter(mAdapter);
@@ -362,7 +368,14 @@ public class FullFotoFragment extends Fragment {
         thread.start();
     }
 
-
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 
 }
 
