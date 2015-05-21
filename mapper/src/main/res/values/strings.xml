@@ -177,11 +177,8 @@
         <item quantity="other">Cancellati %d posti</item>
     </plurals>
 
-    <string name="hello_world">Hello world!</string>
+    <!-- Titoli -->
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_mod_info_foto">Foto</string>
     <string name="title_activity_dettagli_posto">DettagliPostoActivity</string>
 

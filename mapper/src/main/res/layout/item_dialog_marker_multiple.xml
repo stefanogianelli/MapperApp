@@ -19,7 +19,6 @@
             android:id="@+id/dmm_immagine"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/prova02"
             android:scaleType="fitXY" />
 
         <TextView style="?android:subtitleTextStyle"
