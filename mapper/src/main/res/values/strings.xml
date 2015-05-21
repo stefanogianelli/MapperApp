@@ -72,7 +72,7 @@
     <!-- DettagliPostoActivity -->
     <string name="suggerimento_crea_foto">Aggiungi le fotografie</string>
     <string name="subTitleDettagliPostoActivity">Foto scattate</string>
-    <string name="noFoto">Nessuna foto aggiunta</string>
+    <string name="noFoto">Nessuna foto</string>
 
     <!-- Info fotografie -->
     <string name="scattata_presso">Presso:</string>
