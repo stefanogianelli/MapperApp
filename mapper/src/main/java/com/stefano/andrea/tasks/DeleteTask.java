@@ -7,7 +7,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
@@ -46,13 +50,20 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     private List<T> mList;
     private List<Integer> mSelectedItems;
     private Activity mActivity;
+    private String mMessaggio;
+    private EventListener mListener;
 
     public DeleteTask (Activity activity, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems) {
+        this(activity, adapter, list, selectedItems, null);
+    }
+
+    public DeleteTask (Activity activity, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems, @Nullable EventListener listener) {
         mResolver = activity.getContentResolver();
         mAdapter = adapter;
         mList = list;
         mSelectedItems = selectedItems;
         mActivity = activity;
+        mListener = listener;
     }
 
     @Override
@@ -63,12 +74,15 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
             switch (params[0]) {
                 case CANCELLA_VIAGGIO:
                     mDelegate = new CancellaViaggio();
+                    mMessaggio = mActivity.getResources().getQuantityString(R.plurals.cancellazione_viaggio, mSelectedItems.size(), mSelectedItems.size());
                     break;
                 case CANCELLA_CITTA:
                     mDelegate = new CancellaCitta();
+                    mMessaggio = mActivity.getResources().getQuantityString(R.plurals.cancellazione_citta, mSelectedItems.size(), mSelectedItems.size());
                     break;
                 case CANCELLA_POSTO:
                     mDelegate = new CancellaPosto();
+                    mMessaggio = mActivity.getResources().getQuantityString(R.plurals.cancellazione_posto, mSelectedItems.size(), mSelectedItems.size());
                     break;
                 case CANCELLA_FOTO:
                     mDelegate = new CancellaFoto();
@@ -95,9 +109,15 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
-        if (result == RESULT_OK)
+        if (result == RESULT_OK) {
             mAdapter.notificaChange();
-        if (result == RESULT_ERROR) {
+            //mostro snackbar di conferma dell'operazione
+            if (mListener != null)
+                SnackbarManager.show(
+                        Snackbar.with(mActivity)
+                                .text(mMessaggio)
+                                .eventListener(mListener));
+        } else {
             DialogHelper.showAlertDialog(mActivity, R.string.errore_eliminazione_titolo_dialog, R.string.errore_eliminazione_messaggio_dialog);
         }
     }

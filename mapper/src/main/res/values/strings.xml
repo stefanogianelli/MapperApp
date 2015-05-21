@@ -162,6 +162,20 @@
     <!-- UpdateTask -->
     <string name="modificato_viaggio">Modificato il viaggio %s</string>
 
+    <!-- DeleteTask -->
+    <plurals name="cancellazione_viaggio">
+        <item quantity="one">Cancellato %d viaggio</item>
+        <item quantity="other">Cancellati %d viaggi</item>
+    </plurals>
+    <plurals name="cancellazione_citta">
+        <item quantity="one">Cancellata %d città</item>
+        <item quantity="other">Cancellate %d città</item>
+    </plurals>
+    <plurals name="cancellazione_posto">
+        <item quantity="one">Cancellato %d posto</item>
+        <item quantity="other">Cancellati %d posti</item>
+    </plurals>
+
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
 

@@ -264,7 +264,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         elencoPosti.add(posto);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(mParentActivity, mAdapter, elencoPosti, indici).execute(DeleteTask.CANCELLA_POSTO);
+        new DeleteTask<>(mParentActivity, mAdapter, elencoPosti, indici, mListener).execute(DeleteTask.CANCELLA_POSTO);
     }
 
     /**
@@ -283,7 +283,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
      * Cancella i posti selezionati dall'utente
      */
     private void cancellaElencoPosti() {
-        new DeleteTask<>(mParentActivity, mAdapter, mElencoPosti, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_POSTO);
+        new DeleteTask<>(mParentActivity, mAdapter, mElencoPosti, mAdapter.getSelectedItems(), mListener).execute(DeleteTask.CANCELLA_POSTO);
     }
 
     private void openDialogAddPosto(View view) {
