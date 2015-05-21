@@ -58,14 +58,15 @@
         <item quantity="one">%1$d posto, %2$d foto</item>
         <item quantity="other">%1$d posti, %2$d foto</item>
     </plurals>
-    <string name="subTitleDettagliViaggioFragment">Città da visitare</string>
+    <string name="noCitta">Non hai ancora aggiunto città</string>
+
 
     <!-- DettagliCittaFragment -->
     <string name="suggerimento_crea_posto">Aggiungi tutti i posti che vuoi visitare in questa città</string>
     <string name="add_posto">Nome del posto</string>
     <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
     <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
-    <string name="subTitleDettagliCittaFragment">Posti da visitare</string>
+    <string name="noPosti">Non hai ancora aggiunto posti</string>
 
     <!-- DettagliPostoActivity -->
     <string name="suggerimento_crea_foto">Aggiungi le fotografie</string>
