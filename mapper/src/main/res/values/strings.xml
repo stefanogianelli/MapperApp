@@ -154,7 +154,10 @@
     <string name="photo_information_found">Crediamo che la foto sia stata scattata a %s</string>
     <string name="connection_error">Errore di connessione</string>
 
-
+    <!-- InsertTask -->
+    <string name="inserito_nuovo_viaggio">Nuovo viaggio creato</string>
+    <string name="inserita_nuova_citta">Nuova città creata</string>
+    <string name="inserito_nuovo_posto">Nuovo posto creato</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>

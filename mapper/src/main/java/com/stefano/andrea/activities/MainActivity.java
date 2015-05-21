@@ -22,6 +22,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.EventListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -103,6 +105,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mFab.setForceHide(false);
             mFab.show();
         }
+    };
+
+    private EventListener mListener = new EventListener() {
+        @Override
+        public void onShow(Snackbar snackbar) {
+            mFab.moveUp(snackbar.getHeight());
+        }
+
+        @Override
+        public void onShowByReplace(Snackbar snackbar) { }
+
+        @Override
+        public void onShown(Snackbar snackbar) { }
+
+        @Override
+        public void onDismiss(Snackbar snackbar) {
+            mFab.moveDown(snackbar.getHeight());
+        }
+
+        @Override
+        public void onDismissByReplace(Snackbar snackbar) { }
+
+        @Override
+        public void onDismissed(Snackbar snackbar) { }
     };
 
     @Override
@@ -220,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void viaggioActionButton(int position, long id, String nome) {
         if (id == -1) {
             Viaggio viaggio = new Viaggio(nome);
-            new InsertTask<>(this, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
+            new InsertTask<>(this, mAdapter, viaggio, mListener).execute(InsertTask.INSERISCI_VIAGGIO);
         } else {
             List<Integer> elencoId = new ArrayList<>();
             elencoId.add((int) id);
@@ -306,6 +332,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         view.startAnimation(animate);
         view.setVisibility(View.GONE);
     }
+
     public void animateSugg(final View view){
         view.setVisibility(View.VISIBLE);
         view.setAlpha(0.0f);

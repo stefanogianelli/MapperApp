@@ -11,8 +11,12 @@ import android.database.Cursor;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
@@ -55,14 +59,21 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
     private InsertAdapter mAdapter;
     private T mItem;
     private ProgressDialog mDialog;
+    private String mMessaggio;
+    private EventListener mListener;
 
     public InsertTask (Activity activity, InsertAdapter adapter, T item) {
+        this(activity, adapter, item, null);
+    }
+
+    public InsertTask (Activity activity, InsertAdapter adapter, T item, @Nullable EventListener listener) {
         mActivity = activity;
         mContext = activity.getApplicationContext();
         mResolver = activity.getContentResolver();
         mAdapter = adapter;
         mItem = item;
         mDialog = new ProgressDialog(activity);
+        mListener = listener;
     }
 
     @Override
@@ -79,12 +90,15 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             switch (params[0]) {
                 case INSERISCI_VIAGGIO:
                     mDelegate = new InsertViaggio();
+                    mMessaggio = mActivity.getResources().getString(R.string.inserito_nuovo_viaggio);
                     break;
                 case INSERISCI_CITTA:
                     mDelegate = new InsertCitta();
+                    mMessaggio = mActivity.getResources().getString(R.string.inserita_nuova_citta);
                     break;
                 case INSERISCI_POSTO:
                     mDelegate = new InsertPosto();
+                    mMessaggio = mActivity.getResources().getString(R.string.inserito_nuovo_posto);
                     break;
                 case INSERISCI_FOTO:
                     mDelegate = new InsertFoto();
@@ -106,6 +120,12 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             //comunico l'avvenuto inserimento all'adapter
             if (mAdapter != null)
                 mAdapter.insertItem(mItem);
+            //mostro snackbar di conferma dell'operazione
+            if (mListener != null)
+                SnackbarManager.show(
+                        Snackbar.with(mActivity)
+                                .text(mMessaggio)
+                                .eventListener(mListener));
         } else {
             //mostro dialog d'errore
             DialogHelper.showAlertDialog(mActivity, R.string.errore_inserimento_titolo_dialog, R.string.errore_inserimento_messaggio_dialog);

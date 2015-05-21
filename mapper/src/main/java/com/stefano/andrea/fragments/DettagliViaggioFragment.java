@@ -27,6 +27,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
@@ -110,6 +112,30 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             mFab.setForceHide(false);
             mFab.show();
         }
+    };
+
+    private EventListener mListener = new EventListener() {
+        @Override
+        public void onShow(Snackbar snackbar) {
+            mFab.moveUp(snackbar.getHeight());
+        }
+
+        @Override
+        public void onShowByReplace(Snackbar snackbar) { }
+
+        @Override
+        public void onShown(Snackbar snackbar) { }
+
+        @Override
+        public void onDismiss(Snackbar snackbar) {
+            mFab.moveDown(snackbar.getHeight());
+        }
+
+        @Override
+        public void onDismissByReplace(Snackbar snackbar) { }
+
+        @Override
+        public void onDismissed(Snackbar snackbar) { }
     };
 
     public DettagliViaggioFragment () { }
@@ -210,7 +236,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         citta.setNazione(nazione);
         citta.setLatitudine(coordinates.latitude);
         citta.setLongitudine(coordinates.longitude);
-        new InsertTask<>(mParentActivity, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
+        new InsertTask<>(mParentActivity, mAdapter, citta, mListener).execute(InsertTask.INSERISCI_CITTA);
     }
 
     /**
@@ -298,6 +324,5 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 .setDuration(900);
 
     }
-
 
 }

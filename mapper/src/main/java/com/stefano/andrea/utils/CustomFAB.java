@@ -39,4 +39,14 @@ public class CustomFAB extends FloatingActionButton {
         if (!mForceHide)
             super.hide(animate);
     }
+
+    public void moveUp (float height) {
+        setForceHide(true);
+        this.animate().translationYBy(-height);
+    }
+
+    public void moveDown (float height) {
+        setForceHide(false);
+        this.animate().translationYBy(height);
+    }
 }
