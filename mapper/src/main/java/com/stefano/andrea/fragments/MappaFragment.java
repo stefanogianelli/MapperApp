@@ -289,6 +289,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
             View singleProfile = mParentActivity.getLayoutInflater().inflate(R.layout.single_item_marker, null);
             mIconGenerator.setContentView(singleProfile);
+            mIconGenerator.setBackground(getResources().getDrawable(R.drawable.marker_custom_circle));
             mImageView = (ImageView) singleProfile.findViewById(R.id.single_image_marker);
             mSingleTextMarker = (TextView) singleProfile.findViewById(R.id.single_text_marker);
 
