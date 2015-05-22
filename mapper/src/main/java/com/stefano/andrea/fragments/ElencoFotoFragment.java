@@ -164,23 +164,39 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_elenco_foto,container,false);
         //acquisisco riferimenti
-        RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
+        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
         final TextView nessunaFotoInfo = (TextView) v.findViewById(R.id.no_foto);
         //configuro recyclerview
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         int columns;
         if (mParentActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
             columns = COLUMNS_PORTRAIT;
         else
             columns = COLUMNS_LANDSCAPE;
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
         //aggiungo observer all'adapter
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
+                checkVisibility();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                checkVisibility();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                checkVisibility();
+            }
+
+            private void checkVisibility () {
                 if (mAdapter.getItemCount() == 0)
                     nessunaFotoInfo.setVisibility(View.VISIBLE);
                 else

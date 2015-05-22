@@ -38,19 +38,18 @@
     <string name="suggerimento_crea_viaggio">Crea un nuovo viaggio</string>
     <string name="add_viaggio">Nome del viaggio</string>
     <string name="add_citta">Nome della città</string>
-    <string name="add_citta_nn">In quale idPlace?</string>
     <plurals name="statistiche_viaggio">
-        <item quantity="one">%1$d citta, %2$d posto, %3$d foto</item>
-        <item quantity="other">%1$d citta, %2$d posti, %3$d foto</item>
+        <item quantity="one">%1$d città, %2$d posto, %3$d foto</item>
+        <item quantity="other">%1$d città, %2$d posti, %3$d foto</item>
     </plurals>
     <string name="conferma_cancellazione_viaggi">Vuoi cancellare i viaggi?</string>
     <string name="conferma_cancellazione_viaggio">Vuoi cancellare il viaggio?</string>
-    <string name="noViaggi">Nessun viaggio.</string>
+    <string name="nessun_viaggio">Nessun viaggio</string>
 
     <!-- DettagliViaggioActivity -->
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
-    <string name="conferma_cancellazione_piu_citta">Vuoi cancellare le citta?</string>
-    <string name="conferma_cancellazione_citta">Vuoi cancellare la citta?</string>
+    <string name="conferma_cancellazione_piu_citta">Vuoi cancellare le città?</string>
+    <string name="conferma_cancellazione_citta">Vuoi cancellare la città?</string>
 
     <!-- DettagliViaggioFragment -->
     <string name="suggerimento_crea_citta">Aggiungi tutte le città che vuoi visitare</string>
@@ -59,7 +58,7 @@
         <item quantity="one">%1$d posto, %2$d foto</item>
         <item quantity="other">%1$d posti, %2$d foto</item>
     </plurals>
-    <string name="noCitta">Non hai ancora aggiunto città.</string>
+    <string name="nessuna_citta">Non hai ancora aggiunto città</string>
 
 
     <!-- DettagliCittaFragment -->
@@ -67,12 +66,12 @@
     <string name="add_posto">Nome del posto</string>
     <string name="conferma_cancellazione_posti">Vuoi cancellare i posti?</string>
     <string name="conferma_cancellazione_posto">Vuoi cancellare il posto?</string>
-    <string name="noPosti">Non hai ancora aggiunto nessun posto.</string>
+    <string name="noPosti">Non hai ancora aggiunto nessun posto</string>
 
     <!-- DettagliPostoActivity -->
     <string name="suggerimento_crea_foto">Aggiungi le fotografie</string>
     <string name="subTitleDettagliPostoActivity">Foto scattate</string>
-    <string name="noFoto">Nessuna foto.</string>
+    <string name="nessuna_foto">Nessuna foto</string>
 
     <!-- Info fotografie -->
     <string name="scattata_presso">Presso:</string>
@@ -80,11 +79,11 @@
     <string name="viaggio">Viaggio</string>
     <string name="seleziona_viaggio">Seleziona un viaggio</string>
     <string name="citta">Città</string>
-    <string name="seleziona_citta">Seleziona una citta\'</string>
+    <string name="seleziona_citta">Seleziona una città</string>
     <string name="posto">Posto</string>
     <string name="seleziona_posto">Seleziona un posto</string>
     <string name="viaggio_non_selezionato">Selezionare un viaggio</string>
-    <string name="citta_non_selezionata">Selezionare una citta\'</string>
+    <string name="citta_non_selezionata">Selezionare una città</string>
     <string name="spinner_voce_crea_viaggio">Crea nuovo</string>
     <string name="spinner_elenco_viaggio_titolo">Seleziona un viaggio</string>
     <string name="new_viaggio">Nuovo viaggio</string>
@@ -104,11 +103,11 @@
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
-    <string name="no_internet_message_dialog">Impossibile creare la città.\nNessuna connessione a Internet.</string>
+    <string name="no_internet_message_dialog">Impossibile creare la città.\nNessuna connessione a Internet</string>
 
     <!-- Dialog errore creazione citta -->
     <string name="errore_nuova_citta_title_dialog">Errore</string>
-    <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della città.</string>
+    <string name="errore_nuova_citta_message_dialog">Errore durante la creazione della città</string>
 
     <!-- ElencoFotoFragment -->
     <string name="conferma_cancellazione_foto">Vuoi cancellare le foto?</string>

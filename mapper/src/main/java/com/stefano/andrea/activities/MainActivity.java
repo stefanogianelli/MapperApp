@@ -15,7 +15,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -139,25 +138,40 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         //acquisisco i riferimenti
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         final TextView nessunViaggioInfo = (TextView) findViewById(R.id.no_viaggio);
         //attivo action bar
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.logo_icon_24);
         //inizializzo recyclerview
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         //inizializzo l'adapter
         mAdapter = new ViaggiAdapter(this, this, mCallback);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
         //aggiungo observer all'adapter
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
-                Log.d(TAG, "onChange -> num = " + mAdapter.getItemCount());
+                checkVisibility();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                checkVisibility();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                checkVisibility();
+            }
+
+            private void checkVisibility () {
                 if (mAdapter.getItemCount() == 0)
                     nessunViaggioInfo.setVisibility(View.VISIBLE);
                 else
@@ -174,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //inizializzo il caricamento dei dati dei viaggi
         getSupportLoaderManager().initLoader(VIAGGI_LOADER, null, this);
         //inizializzo Floating Action Button
-        mFab.attachToRecyclerView(mRecyclerView);
+        mFab.attachToRecyclerView(recyclerView);
         //Inizializzo imageloader
         setupImageLoader();
     }

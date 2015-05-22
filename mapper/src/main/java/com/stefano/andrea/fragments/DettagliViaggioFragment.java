@@ -182,15 +182,15 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mView = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
         mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_citta);
-        RecyclerView mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
+        RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
         final TextView nessunaCittaInfo = (TextView) mView.findViewById(R.id.no_citta);
         //configuro recyclerview
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mParentActivity));
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         //configuro fab
-        mFab.attachToRecyclerView(mRecyclerView);
+        mFab.attachToRecyclerView(recyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,6 +208,22 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             @Override
             public void onChanged() {
                 super.onChanged();
+                checkVisibility();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                checkVisibility();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                checkVisibility();
+            }
+
+            private void checkVisibility () {
                 if (mAdapter.getItemCount() == 0)
                     nessunaCittaInfo.setVisibility(View.VISIBLE);
                 else
