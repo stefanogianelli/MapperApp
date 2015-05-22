@@ -297,9 +297,11 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 startActivity(new Intent(mParentActivity, DettagliCittaActivity.class));
                 break;
             case CoordinateLoader.ELENCO_POSTI:
-                mContext.setIdPosto(item.getId());
-                mContext.setNomePosto(item.getNome());
-                startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
+                if (item.getId() != ID_CITTA) {
+                    mContext.setIdPosto(item.getId());
+                    mContext.setNomePosto(item.getNome());
+                    startActivity(new Intent(mParentActivity, DettagliPostoActivity.class));
+                }
                 break;
         }
     }
@@ -396,6 +398,9 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
             TextView nome = (TextView) view.findViewById(R.id.dm_nome);
             TextView count = (TextView) view.findViewById(R.id.dm_count_foto);
             ImageView sfondo = (ImageView) view.findViewById(R.id.dm_foto);
+            if (mClickedItem.getId() == ID_CITTA) {
+                view.findViewById(R.id.dm_dettagli).setVisibility(View.GONE);
+            }
             nome.setText(mClickedItem.getNome());
             count.setText(getResources().getString(R.string.map_count_foto, mClickedItem.getCountFoto()));
             if (mClickedItem.getMiniature().size() > 0) {
