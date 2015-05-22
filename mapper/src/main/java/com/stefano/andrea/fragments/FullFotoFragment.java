@@ -177,10 +177,7 @@ public class FullFotoFragment extends Fragment {
                     indici.add(0);
                     DeleteTask.DeleteAdapter adapter = new DeleteTask.DeleteAdapter() {
                         @Override
-                        public void cancellaItem(Object item) { }
-
-                        @Override
-                        public void notificaChange() {
+                        public void cancellaItems(List<Integer> items) {
                             dialog.dismiss();
                             int position = mPager.getCurrentItem();
                             mElencoFoto.remove(position);

@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * CittaAdapter
  */
-public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> implements DeleteTask.DeleteAdapter<Citta>, InsertTask.InsertAdapter<Citta> {
+public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> implements DeleteTask.DeleteAdapter, InsertTask.InsertAdapter<Citta> {
 
     private List<Citta> mElencoCitta;
     private CittaOnClickListener mListener;
@@ -86,12 +86,10 @@ public class CittaAdapter extends SelectableAdapter<CittaAdapter.CittaHolder> im
     }
 
     @Override
-    public void cancellaItem(Citta item) {
-        mElencoCitta.remove(item);
-    }
-
-    @Override
-    public void notificaChange() {
+    public void cancellaItems(List<Integer> items) {
+        for (int i = items.size() - 1; i >= 0; i--) {
+            mElencoCitta.remove((int) items.get(i));
+        }
         notifyDataSetChanged();
     }
 

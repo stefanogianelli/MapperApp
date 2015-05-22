@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * FotoAdapter
  */
-public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> implements DeleteTask.DeleteAdapter<Foto>, InsertTask.InsertAdapter<List<Foto>> {
+public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> implements DeleteTask.DeleteAdapter, InsertTask.InsertAdapter<List<Foto>> {
 
     private FotoOnClickListener mListener;
     private List<Foto> mElencoFoto;
@@ -77,14 +77,11 @@ public class FotoAdapter extends SelectableAdapter<FotoAdapter.FotoHolder> imple
         }
     }
 
-
     @Override
-    public void cancellaItem(Foto item) {
-        mElencoFoto.remove(item);
-    }
-
-    @Override
-    public void notificaChange() {
+    public void cancellaItems(List<Integer> items) {
+        for (int i = items.size() - 1; i >= 0; i--) {
+            mElencoFoto.remove((int) items.get(i));
+        }
         notifyDataSetChanged();
     }
 

@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * PostiAdapter
  */
-public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> implements DeleteTask.DeleteAdapter<Posto>, InsertTask.InsertAdapter<Posto> {
+public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> implements DeleteTask.DeleteAdapter, InsertTask.InsertAdapter<Posto> {
 
     private List<Posto> mElencoPosti;
     private PostoOnClickListener mListener;
@@ -87,12 +87,10 @@ public class PostiAdapter extends SelectableAdapter<PostiAdapter.PostiHolder> im
     }
 
     @Override
-    public void cancellaItem(Posto item) {
-        mElencoPosti.remove(item);
-    }
-
-    @Override
-    public void notificaChange() {
+    public void cancellaItems(List<Integer> items) {
+        for (int i = items.size() - 1; i >= 0; i--) {
+            mElencoPosti.remove((int) items.get(i));
+        }
         notifyDataSetChanged();
     }
 

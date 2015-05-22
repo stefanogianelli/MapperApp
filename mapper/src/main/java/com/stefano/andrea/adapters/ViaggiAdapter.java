@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * ViaggiAdapter
  */
-public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> implements DeleteTask.DeleteAdapter<Viaggio>, InsertTask.InsertAdapter<Viaggio>, UpdateTask.UpdateAdapter {
+public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder> implements DeleteTask.DeleteAdapter, InsertTask.InsertAdapter<Viaggio>, UpdateTask.UpdateAdapter {
 
     private List<Viaggio> mListaViaggi;
     private ViaggioOnClickListener mListener;
@@ -91,19 +91,17 @@ public class ViaggiAdapter extends SelectableAdapter<ViaggiAdapter.ViaggiHolder>
     }
 
     @Override
+    public void cancellaItems (List<Integer> items) {
+        for (int i = items.size() - 1; i >= 0; i--) {
+            mListaViaggi.remove((int) items.get(i));
+        }
+        notifyDataSetChanged();
+    }
+
+    @Override
     public void UpdateItem(int position, String nome) {
         mListaViaggi.get(position).setNome(nome);
         notifyItemChanged(position);
-    }
-
-    @Override
-    public void cancellaItem(Viaggio item) {
-        mListaViaggi.remove(item);
-    }
-
-    @Override
-    public void notificaChange() {
-        notifyDataSetChanged();
     }
 
     protected class ViaggiHolder extends SelectableHolder {

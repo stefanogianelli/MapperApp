@@ -21,6 +21,7 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,9 +33,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         int cancellaItem (T item);
     }
 
-    public interface DeleteAdapter<T> {
-        void cancellaItem (T item);
-        void notificaChange ();
+    public interface DeleteAdapter {
+        void cancellaItems (List<Integer> items);
     }
 
     public final static int CANCELLA_VIAGGIO = 0;
@@ -90,15 +90,10 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
                 default:
                     throw new UnsupportedOperationException();
             }
-            int count;
-            for (int i = mList.size(); i >= 0; i--) {
+            for (int i = mList.size() - 1; i >= 0; i--) {
                 if (mSelectedItems.contains(i)) {
                     //cancello l'elemento
-                    count = mDelegate.cancellaItem(mList.get(i));
-                    //informo l'adapter dell'avvenuta cancellazione
-                    if (count > 0) {
-                        mAdapter.cancellaItem(mList.get(i));
-                    }
+                    mDelegate.cancellaItem(mList.get(i));
                 }
             }
             return RESULT_OK;
@@ -110,7 +105,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
         if (result == RESULT_OK) {
-            mAdapter.notificaChange();
+            Collections.sort(mSelectedItems);
+            mAdapter.cancellaItems(mSelectedItems);
             //mostro snackbar di conferma dell'operazione
             if (mListener != null)
                 SnackbarManager.show(
