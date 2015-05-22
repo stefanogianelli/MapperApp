@@ -4,6 +4,7 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -83,6 +84,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private List<GeoInfo> mClickedCluster;
     private GeoInfo mClickedItem;
     private Random mRandom;
+    private ContentResolver mResolver;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -99,6 +101,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         super.onAttach(activity);
         mParentActivity = activity;
         mContext = MapperContext.getInstance();
+        mResolver = activity.getContentResolver();
     }
 
     @Override
@@ -171,7 +174,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 mMarkerData = data;
                 if (mType == CoordinateLoader.ELENCO_POSTI) {
                     //carico anche i dettagli della citta
-                    Cursor c = mParentActivity.getContentResolver().query(MapperContract.Citta.CONTENT_URI,
+                    Cursor c = mResolver.query(MapperContract.Citta.CONTENT_URI,
                             MapperContract.Citta.PROJECTION_ALL,
                             MapperContract.Citta.ID_CITTA + "=?",
                             new String [] {Long.toString(mContext.getIdCitta())},
@@ -183,7 +186,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                         citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
                         citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
                         citta.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_FOTO)));
-                        Cursor foto = mParentActivity.getContentResolver().query(MapperContract.Foto.CONTENT_URI,
+                        Cursor foto = mResolver.query(MapperContract.Foto.CONTENT_URI,
                                 new String[]{MapperContract.Foto.ID_MEDIA_STORE},
                                 MapperContract.Foto.ID_CITTA + "=?",
                                 new String [] {Long.toString(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)))},
@@ -191,7 +194,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                         List<Bitmap> miniature = new ArrayList<>();
                         if (foto.moveToFirst()) {
                             int idMediaStore = foto.getInt(foto.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE));
-                            miniature.add(MediaStore.Images.Thumbnails.getThumbnail(null, idMediaStore, MediaStore.Images.Thumbnails.MICRO_KIND, null));
+                            miniature.add(MediaStore.Images.Thumbnails.getThumbnail(mResolver, idMediaStore, MediaStore.Images.Thumbnails.MICRO_KIND, null));
                         }
                         citta.setMiniature(miniature);
                         foto.close();
