@@ -367,12 +367,12 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
             if (count > 0) {
                 mClusterImageView.setImageDrawable(multiDrawable);
-                mTextMarker.setText(String.valueOf(count));
                 mSingleTextMarker.setVisibility(View.VISIBLE);
             } else {
-                mImageView.setImageResource(R.drawable.ic_location_city_grey600_48dp);
+                mClusterImageView.setImageResource(R.drawable.ic_location_city_grey600_48dp);
                 mSingleTextMarker.setVisibility(View.GONE);
             }
+            mTextMarker.setText(String.valueOf(cluster.getSize()));
             Bitmap icon = mClusterIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
