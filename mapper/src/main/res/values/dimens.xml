@@ -71,5 +71,8 @@
     <dimen name="custom_marker_image">50dp</dimen>
     <dimen name="custom_marker_padding">2dp</dimen>
 
+    <!-- Item_dialog_marker_multiple -->
+    <dimen name="imm_internal_h_dist">8dp</dimen>
+
 
 </resources>

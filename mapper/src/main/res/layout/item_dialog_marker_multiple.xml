@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/dmm_item"
-        android:layout_width="260dp"
+        android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:paddingTop="@dimen/df_margin_v"
         android:paddingBottom="@dimen/df_margin_v"
-        android:paddingRight="@dimen/df_margin_h"
-        android:paddingLeft="@dimen/df_margin_h"
-        android:paddingStart="@dimen/df_margin_h"
-        android:paddingEnd="@dimen/df_margin_h"
+        android:paddingRight="@dimen/imm_internal_h_dist"
+        android:paddingLeft="@dimen/imm_internal_h_dist"
+        android:paddingStart="@dimen/imm_internal_h_dist"
+        android:paddingEnd="@dimen/imm_internal_h_dist"
         android:clickable="true"
         android:focusable="true"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical">
 
-        <com.stefano.andrea.utils.ScaleImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/dmm_immagine"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:scaleType="fitXY" />
+            app:border_width="1dp"
+            app:border_color="@color/grey"/>
 
         <TextView style="?android:subtitleTextStyle"
             android:id="@+id/dmm_titolo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:lines="1"
@@ -47,7 +49,7 @@
             android:paddingRight="16dp"
             android:paddingTop="@dimen/df_btn_margin_v"
             android:paddingBottom="@dimen/df_btn_margin_v"
-            android:src="@drawable/ic_chevron_right_grey600_24dp"
+            android:src="@drawable/ic_chevron_right_grey600_48dp"
             android:contentDescription="@string/dettagli"/>
     </LinearLayout>
 
