@@ -58,6 +58,12 @@
 
     </RelativeLayout>
 
+    <TextView style="@style/subTitleContainer"
+        android:id="@+id/no_risultati"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/nessun_risultato"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@+id/autocomplete_suggestions"
