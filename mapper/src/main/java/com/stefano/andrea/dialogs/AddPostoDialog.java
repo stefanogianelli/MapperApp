@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -95,7 +96,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_add_posto, container, false);
+        final View view = inflater.inflate(R.layout.fragment_add_posto, container, false);
         view.setOnClickListener(null);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar_add_posto_dialog);
         final EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_posti);
@@ -119,6 +120,12 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
             @Override
             public void onLoadComplete() {
                 mProgressBar.setVisibility(View.GONE);
+                TextView noRes = (TextView) view.findViewById(R.id.no_risultati);
+                if (mAdapter.getCount() == 0) {
+                    noRes.setVisibility(View.VISIBLE);
+                } else {
+                    noRes.setVisibility(View.GONE);
+                }
             }
         });
         suggestions.setAdapter(mAdapter);
