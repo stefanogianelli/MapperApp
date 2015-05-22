@@ -7,11 +7,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
@@ -43,6 +45,7 @@ import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.loaders.CoordinateLoader;
 import com.stefano.andrea.models.GeoInfo;
+import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.MultiDrawable;
 
@@ -56,6 +59,7 @@ import java.util.Random;
 public class MappaFragment extends SupportMapFragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<List<GeoInfo>>, ClusterManager.OnClusterClickListener<GeoInfo>, ClusterManager.OnClusterItemClickListener<GeoInfo>, ClusterManager.OnClusterItemInfoWindowClickListener<GeoInfo> {
 
     private static final String TAG = "MappaFragment";
+    private static final long ID_CITTA = -42;
 
     public static final String EXTRA_TIPO_MAPPA = "com.stefano.andrea.fragments.MappaFragment.tipoMappa";
     public static final int MAPPA_CITTA = 0;
@@ -165,6 +169,36 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         switch (id) {
             case MAP_COORD_LOADER:
                 mMarkerData = data;
+                if (mType == CoordinateLoader.ELENCO_POSTI) {
+                    //carico anche i dettagli della citta
+                    Cursor c = mParentActivity.getContentResolver().query(MapperContract.Citta.CONTENT_URI,
+                            MapperContract.Citta.PROJECTION_ALL,
+                            MapperContract.Citta.ID_CITTA + "=?",
+                            new String [] {Long.toString(mContext.getIdCitta())},
+                            null);
+                    if (c.moveToFirst()) {
+                        GeoInfo citta = new GeoInfo();
+                        citta.setId(ID_CITTA);
+                        citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
+                        citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
+                        citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
+                        citta.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_FOTO)));
+                        Cursor foto = mParentActivity.getContentResolver().query(MapperContract.Foto.CONTENT_URI,
+                                new String[]{MapperContract.Foto.ID_MEDIA_STORE},
+                                MapperContract.Foto.ID_CITTA + "=?",
+                                new String [] {Long.toString(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)))},
+                                MapperContract.Foto.DEFAULT_SORT + " LIMIT 1");
+                        List<Bitmap> miniature = new ArrayList<>();
+                        if (foto.moveToFirst()) {
+                            int idMediaStore = foto.getInt(foto.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE));
+                            miniature.add(MediaStore.Images.Thumbnails.getThumbnail(null, idMediaStore, MediaStore.Images.Thumbnails.MICRO_KIND, null));
+                        }
+                        citta.setMiniature(miniature);
+                        foto.close();
+                        mMarkerData.add(citta);
+                    }
+                    c.close();
+                }
                 //attendo che la mappa sia stata caricata
                 final Handler handler = new Handler(mParentActivity.getMainLooper());
                 new Thread(new Runnable() {
