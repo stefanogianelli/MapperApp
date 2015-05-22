@@ -36,7 +36,6 @@
             android:paddingTop="@dimen/df_btn_margin_v"
             android:paddingBottom="@dimen/df_btn_margin_v"
             android:textColor="@color/black"
-            android:text="Roma"
             android:gravity="start" />
 
         <ImageView

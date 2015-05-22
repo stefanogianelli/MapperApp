@@ -23,6 +23,7 @@
     <string name="condividi">Condividi</string>
     <string name="aggiungi_foto">Aggiungi foto</string>
     <string name="condividi_foto">Condividi foto</string>
+    <string name="go_to_dettagli">Dettagli ></string>
 
     <!-- dialogs -->
     <string name="aggiungi_viaggio">Nome del viaggio</string>
