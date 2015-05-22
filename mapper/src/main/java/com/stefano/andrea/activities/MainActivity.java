@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         final TextView nessunViaggioInfo = (TextView) findViewById(R.id.no_viaggio);
         //attivo action bar
+        toolbar.setLogo(R.drawable.logo_icon_24);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.logo_icon_24);
         //inizializzo recyclerview
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
