@@ -215,7 +215,9 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
                 checkVisibility();
-                recyclerView.smoothScrollToPosition(0);
+                if (((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition() >= 0) {
+                    recyclerView.smoothScrollToPosition(0);
+                }
             }
 
             @Override
