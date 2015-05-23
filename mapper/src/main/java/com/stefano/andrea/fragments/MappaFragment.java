@@ -450,9 +450,11 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                                 startActivity(new Intent(getActivity(), DettagliCittaActivity.class));
                                 break;
                             case CoordinateLoader.ELENCO_POSTI:
-                                mContext.setIdPosto(item.getId());
-                                mContext.setNomePosto(item.getNome());
-                                startActivity(new Intent(getActivity(), DettagliPostoActivity.class));
+                                if (item.getId() != ID_CITTA) {
+                                    mContext.setIdPosto(item.getId());
+                                    mContext.setNomePosto(item.getNome());
+                                    startActivity(new Intent(getActivity(), DettagliPostoActivity.class));
+                                }
                                 break;
                         }
                     }
