@@ -223,7 +223,6 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            view.setClickable(false);
             /*
              Retrieve the place ID of the selected item from the Adapter.
              The adapter stores each Place suggestion in a PlaceAutocomplete object from which we

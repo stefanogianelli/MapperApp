@@ -8,10 +8,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.stefano.andrea.fragments.MappaFragment;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.GeoInfo;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.BaseAsyncTaskLoader;
+import com.stefano.andrea.utils.MapperContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +31,14 @@ public class CoordinateLoader extends BaseAsyncTaskLoader<List<GeoInfo>> {
     private ContentResolver mResolver;
     private long mId;
     private int mType;
+    private MapperContext mContext;
 
     public CoordinateLoader(Context context, long id, int type) {
         super(context, MapperIntent.UPDATE_MAPPA);
         mResolver = context.getContentResolver();
         mId = id;
         mType = type;
+        mContext = MapperContext.getInstance();
     }
 
     @Override
@@ -61,6 +65,34 @@ public class CoordinateLoader extends BaseAsyncTaskLoader<List<GeoInfo>> {
                 itemProjection[3] = MapperContract.Posto.COUNT_FOTO;
                 itemProjection[4] = MapperContract.Posto.ID_POSTO;
                 fotoSelection = MapperContract.Foto.ID_POSTO + "=?";
+                //carico anche i dettagli della citta
+                Cursor c = mResolver.query(MapperContract.Citta.CONTENT_URI,
+                        MapperContract.Citta.PROJECTION_ALL,
+                        MapperContract.Citta.ID_CITTA + "=?",
+                        new String [] {Long.toString(mContext.getIdCitta())},
+                        null);
+                if (c.moveToFirst()) {
+                    GeoInfo citta = new GeoInfo();
+                    citta.setId(MappaFragment.ID_CITTA);
+                    citta.setNome(c.getString(c.getColumnIndex(MapperContract.DatiCitta.NOME)));
+                    citta.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LATITUDINE)));
+                    citta.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.DatiCitta.LONGITUDINE)));
+                    citta.setCountFoto(c.getInt(c.getColumnIndex(MapperContract.Citta.COUNT_FOTO)));
+                    Cursor foto = mResolver.query(MapperContract.Foto.CONTENT_URI,
+                            new String[]{MapperContract.Foto.ID_MEDIA_STORE},
+                            MapperContract.Foto.ID_CITTA + "=?",
+                            new String [] {Long.toString(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_CITTA)))},
+                            MapperContract.Foto.DEFAULT_SORT + " LIMIT 1");
+                    List<Bitmap> miniature = new ArrayList<>();
+                    if (foto.moveToFirst()) {
+                        int idMediaStore = foto.getInt(foto.getColumnIndex(MapperContract.Foto.ID_MEDIA_STORE));
+                        miniature.add(MediaStore.Images.Thumbnails.getThumbnail(mResolver, idMediaStore, MediaStore.Images.Thumbnails.MICRO_KIND, null));
+                    }
+                    citta.setMiniature(miniature);
+                    foto.close();
+                    elenco.add(citta);
+                }
+                c.close();
                 break;
             default:
                 throw new UnsupportedOperationException();
