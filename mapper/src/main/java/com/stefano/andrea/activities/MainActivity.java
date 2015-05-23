@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         //acquisisco i riferimenti
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
         mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
         final TextView nessunViaggioInfo = (TextView) findViewById(R.id.no_viaggio);
         //attivo action bar
@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
                 checkVisibility();
+                recyclerView.smoothScrollToPosition(0);
             }
 
             @Override

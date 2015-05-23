@@ -182,7 +182,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         mView = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
         mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_citta);
-        RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
+        final RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
         final TextView nessunaCittaInfo = (TextView) mView.findViewById(R.id.no_citta);
         //configuro recyclerview
         recyclerView.setHasFixedSize(true);
@@ -215,6 +215,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
                 checkVisibility();
+                recyclerView.smoothScrollToPosition(0);
             }
 
             @Override

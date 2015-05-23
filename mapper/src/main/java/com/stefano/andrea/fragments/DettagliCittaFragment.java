@@ -185,7 +185,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView =  inflater.inflate(R.layout.fragment_dettagli_citta, container, false);
         //acquisisco riferimenti
-        RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
+        final RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
         mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_posto);
         final TextView nessunPostoInfo = (TextView) mView.findViewById(R.id.no_posti);
         //configuro recyclerview
@@ -220,6 +220,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
                 checkVisibility();
+                recyclerView.smoothScrollToPosition(0);
             }
 
             @Override
