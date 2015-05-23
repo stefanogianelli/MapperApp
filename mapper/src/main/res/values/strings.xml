@@ -104,7 +104,7 @@
 
     <!-- Dialoghi autocomplete -->
     <string name="nessun_risultato">Nessun risultato trovato</string>
-
+    <string name="error_connection_google_api">Impossibile connettersi a Google. Errore: %d</string>
 
     <!-- Dialog mancanza connesione internet -->
     <string name="no_internet_title_dialog">Errore</string>
@@ -183,6 +183,12 @@
         <item quantity="one">Cancellato %d posto</item>
         <item quantity="other">Cancellati %d posti</item>
     </plurals>
+
+    <!-- AddCittaDialog -->
+    <string name="add_citta_dialog_message">Aggiunta città</string>
+
+    <!-- AddPostoDialog -->
+    <string name="add_posto_dialog_message">Aggiunta posto</string>
 
     <!-- Titoli -->
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>

@@ -107,7 +107,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         mSuggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
         mProgressBar = (ProgressBar) view.findViewById(R.id.toolbar_progress_bar_posto);
         mAddPostoDialog = new ProgressDialog(mParentActivity);
-        mAddPostoDialog.setMessage("Aggiungo posto");
+        mAddPostoDialog.setMessage(getString(R.string.add_posto_dialog_message));
         toolbar.setTitle(getString(R.string.aggiungi_posto));
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -210,9 +210,8 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        //TODO: tradurre e portare nelle strings
         Toast.makeText(mParentActivity,
-                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
+                getString(R.string.error_connection_google_api, connectionResult.getErrorCode()),
                 Toast.LENGTH_SHORT).show();
     }
 
