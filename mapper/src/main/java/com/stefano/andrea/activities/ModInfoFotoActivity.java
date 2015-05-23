@@ -166,11 +166,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         //carico elenchi
         updateViaggi();
         //inizializzo viaggio
-        inizializzaViaggio();
+        inizializzaViaggio(mIdViaggio);
         //inizializzo citta
-        inizializzaCitta();
+        inizializzaCitta(mIdCitta);
         //inizializzo posto
-        inizializzaPosto();
+        inizializzaPosto(mIdPosto);
         //configuro handler per la localizzazione
         mResultReceiver = new AddressResultReceiver(new Handler());
         mAddressRequested = false;
@@ -369,17 +369,18 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Seleziona il vaggio se l'id e' diverso da EMPTY_ID
+     * @param idViaggio L'id del viaggio
      */
-    private void inizializzaViaggio() {
+    private void inizializzaViaggio(long idViaggio) {
         //controllo se e' stato selezionato un viaggio
-        if (mIdViaggio != EMPTY_ID) {
+        if (idViaggio != EMPTY_ID) {
             //viaggio selezionato
-            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, mIdViaggio);
+            Uri viaggio = ContentUris.withAppendedId(MapperContract.Viaggio.CONTENT_URI, idViaggio);
             String [] projection = { MapperContract.Viaggio.NOME };
             Cursor curViaggio = mResolver.query(viaggio, projection, null, null, null);
             if (curViaggio.moveToFirst()) {
                 String nomeViaggio = curViaggio.getString(curViaggio.getColumnIndex(projection[0]));
-                mViaggioSelezionato = new Viaggio(mIdViaggio, nomeViaggio);
+                mViaggioSelezionato = new Viaggio(idViaggio, nomeViaggio);
                 displayViaggio();
             }
             curViaggio.close();
@@ -438,8 +439,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                             @Override
                             public void insertItem(Viaggio item) {
                                 clearSelection(CLEAR_CITTA);
-                                mIdViaggio = item.getId();
-                                inizializzaViaggio();
+                                inizializzaViaggio(item.getId());
                                 updateViaggi();
                                 sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
                             }
@@ -462,15 +462,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Seleziona la citta' se l'id e' diverso da EMPTY_ID
+     * @param idCitta L'id della citta'
      */
-    private void inizializzaCitta () {
-        if (mIdCitta != EMPTY_ID) {
-            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, mIdCitta);
+    private void inizializzaCitta (long idCitta) {
+        if (idCitta != EMPTY_ID) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, idCitta);
             String [] projection = {MapperContract.DatiCitta.NOME, MapperContract.DatiCitta.NAZIONE, MapperContract.DatiCitta.LATITUDINE, MapperContract.DatiCitta.LONGITUDINE};
             Cursor cCitta = mResolver.query(query, projection, null, null, null);
             if (cCitta.moveToFirst()) {
                 mCittaSelezionata = new Citta();
-                mCittaSelezionata.setId(mIdCitta);
+                mCittaSelezionata.setId(idCitta);
                 mCittaSelezionata.setNome(cCitta.getString(cCitta.getColumnIndex(projection[0])));
                 mCittaSelezionata.setNazione(cCitta.getString(cCitta.getColumnIndex(projection[1])));
                 mCittaSelezionata.setLatitudine(cCitta.getLong(cCitta.getColumnIndex(projection[2])));
@@ -551,17 +552,18 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     /**
      * Inizializza il posto se l'id e' diverso da EMPTY_ID
+     * @param idPosto L'id del posto
      */
-    private void inizializzaPosto () {
-        if (mIdPosto != EMPTY_ID) {
-            Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, mIdPosto);
+    private void inizializzaPosto (long idPosto) {
+        if (idPosto != EMPTY_ID) {
+            Uri query = ContentUris.withAppendedId(MapperContract.Posto.CONTENT_URI, idPosto);
             String [] projection = {MapperContract.Luogo.NOME, MapperContract.Luogo.LATITUDINE, MapperContract.Luogo.LONGITUDINE};
             Cursor curPosto = mResolver.query(query, projection, null, null, null);
             if (curPosto.moveToFirst()) {
                 String nomePosto = curPosto.getString(curPosto.getColumnIndex(projection[0]));
                 mPostoText.setText(nomePosto);
                 mPostoSelezionato = new Posto();
-                mPostoSelezionato.setId(mIdPosto);
+                mPostoSelezionato.setId(idPosto);
                 mPostoSelezionato.setNome(curPosto.getString(curPosto.getColumnIndex(projection[0])));
                 mPostoSelezionato.setLatitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[1])));
                 mPostoSelezionato.setLongitudine(curPosto.getDouble(curPosto.getColumnIndex(projection[2])));
@@ -740,8 +742,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             @Override
             public void insertItem(Citta item) {
                 clearSelection(CLEAR_POSTO);
-                mIdCitta = item.getId();
-                inizializzaCitta();
+                inizializzaCitta(item.getId());
                 updateCitta();
                 sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
             }
@@ -759,8 +760,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         InsertTask.InsertAdapter<Posto> adapter = new InsertTask.InsertAdapter<Posto>() {
             @Override
             public void insertItem(Posto item) {
-                mIdPosto = item.getId();
-                inizializzaPosto();
+                inizializzaPosto(item.getId());
                 updatePosti();
                 sendBroadcast(new Intent(MapperIntent.UPDATE_POSTO));
             }
