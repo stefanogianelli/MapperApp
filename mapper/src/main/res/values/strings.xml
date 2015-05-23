@@ -136,6 +136,10 @@
     <string name="errore_inserimento_messaggio_dialog">Errore durante l\'inserimento</string>
 
     <!-- Task cancellazione items -->
+    <plurals name="cancellazione_elemento_dialog">
+        <item quantity="one">Cancellazione elemento</item>
+        <item quantity="other">Cancellazione elementi</item>
+    </plurals>
     <string name="errore_eliminazione_titolo_dialog">Errore</string>
     <string name="errore_eliminazione_messaggio_dialog">Errore durante l\'eliminazione</string>
 

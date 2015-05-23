@@ -1,8 +1,10 @@
 package com.stefano.andrea.tasks;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -52,6 +54,8 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     private Activity mActivity;
     private String mMessaggio;
     private EventListener mListener;
+    private ProgressDialog mDialog;
+    private Context mContext;
 
     public DeleteTask (Activity activity, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems) {
         this(activity, adapter, list, selectedItems, null);
@@ -63,7 +67,16 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
         mList = list;
         mSelectedItems = selectedItems;
         mActivity = activity;
+        mContext = activity.getApplicationContext();
         mListener = listener;
+        mDialog = new ProgressDialog(activity);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mDialog.setMessage(mContext.getResources().getQuantityString(R.plurals.cancellazione_elemento_dialog, mSelectedItems.size()));
+        mDialog.show();
     }
 
     @Override
@@ -104,6 +117,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
+        mDialog.dismiss();
         if (result == RESULT_OK) {
             Collections.sort(mSelectedItems);
             mAdapter.cancellaItems(mSelectedItems);
