@@ -1,5 +1,6 @@
 package com.stefano.andrea.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -26,8 +27,10 @@ import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.utils.DialogHelper;
 
-import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -350,13 +353,13 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
         }
 
         @Override
+        @SuppressLint("SimpleDateFormat")
         public int insertItem() {
             ContentValues values = new ContentValues();
             for (int i = 0; i < elencoFoto.size(); i++) {
                 Foto foto = elencoFoto.get(i);
                 values.clear();
                 values.put(MapperContract.Foto.PATH, foto.getPath());
-                values.put(MapperContract.Foto.DATA, getPhotoDate(foto.getPath()));
                 values.put(MapperContract.Foto.LATITUDINE, foto.getLatitudine());
                 values.put(MapperContract.Foto.LONGITUDINE, foto.getLongitudine());
                 values.put(MapperContract.Foto.ID_VIAGGIO, foto.getIdViaggio());
@@ -368,16 +371,37 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 values.put(MapperContract.Foto.HEIGHT, foto.getHeight());
                 values.put(MapperContract.Foto.SIZE, foto.getSize());
                 values.put(MapperContract.Foto.INDIRIZZO, foto.getIndirizzo());
+                String dataExif = "";
                 try {
                     ExifInterface exif = new ExifInterface(foto.getPath().substring(7));
                     //APERTURE + EXPOSURE_TIME + ISO
-                    String exifData = "F/"  + exif.getAttribute(ExifInterface.TAG_APERTURE);
-                    exifData += " " + exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME) + "m";
-                    exifData += " ISO-" + exif.getAttribute(ExifInterface.TAG_ISO);
-                    values.put(MapperContract.Foto.EXIF, exifData);
-                    values.put(MapperContract.Foto.MODEL, exif.getAttribute(ExifInterface.TAG_MODEL));
+                    String aperture = exif.getAttribute(ExifInterface.TAG_APERTURE);
+                    String exposureTime = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+                    String iso = exif.getAttribute(ExifInterface.TAG_ISO);
+                    if (aperture != null && exposureTime != null && iso != null) {
+                        String exifData = "F/" + aperture + " " + exposureTime + "m" + " ISO-" + iso;
+                        values.put(MapperContract.Foto.EXIF, exifData);
+                    }
+                    String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+                    if (model != null)
+                        values.put(MapperContract.Foto.MODEL, model);
+                    //leggo la data, se presente
+                    dataExif = exif.getAttribute(ExifInterface.TAG_DATETIME);
                 } catch (IOException e) {
                     Log.e(TAG, "Impossibile leggere i dati EXIF - " + e.getMessage());
+                }
+                if (dataExif != null) {
+                    //uso la data EXIF
+                    try {
+                        Date d = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(dataExif);
+                        values.put(MapperContract.Foto.DATA, d.getTime());
+                    } catch (ParseException e) {
+                        //uso DATE_ADDED
+                        values.put(MapperContract.Foto.DATA, foto.getData() * 1000);
+                    }
+                } else {
+                    //uso DATE_ADDED
+                    values.put(MapperContract.Foto.DATA, foto.getData() * 1000);
                 }
                 if (foto.getIdPosto() != -1)
                     values.put(MapperContract.Foto.ID_POSTO, foto.getIdPosto());
@@ -392,14 +416,6 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                 }
             }
             return RESULT_OK;
-        }
-
-        private long getPhotoDate (String path) {
-            File file = new File(path.substring(7));
-            if(file.exists()) {
-                return file.lastModified();
-            }
-            return 0;
         }
     }
 

@@ -658,7 +658,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      * @param foto La foto che si vuole cercare
      */
     private void getMediaStoreData (Foto foto) {
-        String [] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE,
+        String [] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE,
                 MediaStore.MediaColumns.WIDTH, MediaStore.MediaColumns.HEIGHT, MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.SIZE};
         String selection = MediaStore.Images.Media.DATA + "=?";
         String [] selectionArgs = { foto.getPath().substring(7) };

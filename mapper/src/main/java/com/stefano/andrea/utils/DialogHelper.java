@@ -193,12 +193,12 @@ public class DialogHelper {
         String dimensioneSI = formatByte(foto.getSize(), true);
         dimensione.setText(dimensioneSI);
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
-        if (foto.getModel()==null || foto.getModel().isEmpty()) {
+        if (foto.getModel() == null) {
             fotoCamera.setVisibility(View.GONE);
         } else {
             fotocamera.setText(foto.getModel());
         }
-        if (foto.getExif().contains("null")) {
+        if (foto.getExif() == null) {
             fotoExif.setVisibility(View.GONE);
         } else {
             exif.setText(foto.getExif());
