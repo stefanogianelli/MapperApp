@@ -11,6 +11,9 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 
 /**
  * CustomFAB
+ * Basato sull'implementazione di makovkastar {https://github.com/makovkastar/FloatingActionButton}
+ * Aggiunge funzioni di sincronizzazione dei movimenti del FAB tra il RecyclerView associato, l'Action Mode e la Snackbar
+ * @author Stefano
  */
 public class CustomFAB extends FloatingActionButton {
 
@@ -34,10 +37,20 @@ public class CustomFAB extends FloatingActionButton {
         this.mInterpolator = new AccelerateDecelerateInterpolator();
     }
 
+    /**
+     * Blocca i movimenti del FAB se settato su "true"
+     * @param forceHide True se si vuole bloccare il movimento del FAB, false altrimenti
+     */
     public void setForceHide (boolean forceHide) {
         mForceHide = forceHide;
     }
 
+    /**
+     * Mostra il FAB, con o senza animazione.
+     * Controlla che il FAB sia abilitato a spostarsi.
+     * Chiama automaticamente la moveUp() se il FAB necessita di essere posizionato più in alto.
+     * @param animate True se si vuole abilitare l'animazione, false altrimenti
+     */
     @Override
     public void show(boolean animate) {
         if (!mForceHide) {
@@ -48,24 +61,46 @@ public class CustomFAB extends FloatingActionButton {
         }
     }
 
+    /**
+     * Nasconde il FAB, con o senza animazione.
+     * Controlla che il FAB sia abilitato a spostarsi.
+     * @param animate True se si vuole abilitare l'animazione, false altrimenti
+     */
     @Override
     public void hide(boolean animate) {
         if (!mForceHide)
             super.hide(animate);
     }
 
+    /**
+     * Sposta in alto il FAB con animazione
+     * @param height L'altezza di cui spostare il FAB
+     */
     public void moveUp (float height) {
-        isMovedUp = true;
-        movedHeight = height;
-        ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator).translationY(-height);
+        if (!mForceHide) {
+            isMovedUp = true;
+            movedHeight = height;
+            ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator).translationY(-height);
+        }
     }
 
+    /**
+     * Sposta in basso il FAB con animazione.
+     * Effettua un'interpolazione automatica per mantenere sempre visibile il FAB.
+     * @param height L'altezza di cui spostare il FAB
+     */
     public void moveDown (float height) {
-        isMovedUp = false;
-        float translation = height - (getHeight() / 2) - getMarginBottom();
-        ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator).translationY(translation);
+        if (!mForceHide) {
+            isMovedUp = false;
+            float translation = height - (getHeight() / 2) - getMarginBottom();
+            ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator).translationY(translation);
+        }
     }
 
+    /**
+     * Restituisce il margine del FAB dal basso della schermata
+     * @return Il margine inferiore del FAB
+     */
     private int getMarginBottom() {
         int marginBottom = 0;
         ViewGroup.LayoutParams layoutParams = this.getLayoutParams();

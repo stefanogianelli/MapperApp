@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
             mFab.setForceHide(false);
-            mFab.show(false);
+            mFab.show();
         }
     };
 

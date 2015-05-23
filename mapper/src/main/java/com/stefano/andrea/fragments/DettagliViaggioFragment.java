@@ -111,7 +111,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.stopActionMode();
             mFab.setForceHide(false);
-            mFab.show(false);
+            mFab.show();
         }
     };
 

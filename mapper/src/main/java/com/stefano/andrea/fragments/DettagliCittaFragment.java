@@ -117,7 +117,7 @@ public class DettagliCittaFragment extends Fragment implements LoaderManager.Loa
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.stopActionMode();
             mFab.setForceHide(false);
-            mFab.show(false);
+            mFab.show();
         }
     };
 
