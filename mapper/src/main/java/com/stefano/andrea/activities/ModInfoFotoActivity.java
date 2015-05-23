@@ -204,10 +204,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             if (mFotoIDs != null) {
                 //modalita' modifica
                 if (mViaggioSelezionato != null && mViaggioSelezionato.getId() != EMPTY_ID) {
-                    if (mCittaLocalizzata != null) {
-                        addNewCity();
-                    } else if (mCittaSelezionata != null && mCittaSelezionata.getId() != EMPTY_ID && mCittaSelezionata.getId() != ID_INSERT_CITY) {
+                    if (mCittaSelezionata != null && mCittaSelezionata.getId() != EMPTY_ID && mCittaSelezionata.getId() != ID_INSERT_CITY) {
                         updateFoto();
+                    } else if (mCittaLocalizzata != null) {
+                        addNewCity();
                     } else {
                         Toast.makeText(this, getResources().getString(R.string.citta_non_selezionata), Toast.LENGTH_SHORT).show();
                     }
@@ -267,6 +267,13 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             //modifico viaggio
             values.put(MapperContract.Foto.ID_VIAGGIO, mViaggioSelezionato.getId());
         }
+        if (mIdCitta != mCittaSelezionata.getId()) {
+            //modifico citta'
+            values.put(MapperContract.Foto.ID_CITTA, mCittaSelezionata.getId());
+            //resetto il posto
+            values.putNull(MapperContract.Foto.ID_POSTO);
+            updated = true;
+        }
         if (mPostoSelezionato != null && mIdPosto != mPostoSelezionato.getId()) {
             //modifico posto
             if (mPostoSelezionato.getId() == EMPTY_ID)
@@ -275,14 +282,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 values.put(MapperContract.Foto.ID_POSTO, mPostoSelezionato.getId());
             updated = true;
         }
-        if (mIdCitta != mCittaSelezionata.getId()) {
-            //modifico citta'
-            values.put(MapperContract.Foto.ID_CITTA, mCittaSelezionata.getId());
-            updated = true;
-        }
         if (updated) {
             String indirizzo = "";
-            if (mPostoSelezionato.getId() != EMPTY_ID)
+            if (mPostoSelezionato != null && mPostoSelezionato.getId() != EMPTY_ID)
                 indirizzo += mPostoSelezionato.getNome() + ", ";
             indirizzo += mCittaSelezionata.getNome() + ", " + mCittaSelezionata.getNazione();
             values.put(MapperContract.Foto.INDIRIZZO, indirizzo);
@@ -411,8 +413,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                     DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.spinner_elenco_viaggio_titolo, viaggiAdapter, new DialogHelper.ListDialogCallback() {
                         @Override
                         public void onItemClick(int position) {
-                            Viaggio viaggio = elencoViaggi.get(position);
-                            mViaggioSelezionato = viaggio;
+                            mViaggioSelezionato = elencoViaggi.get(position);
                             displayViaggio();
 
                         }
@@ -505,12 +506,14 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             mAddCittaButton.setClickable(true);
         }
         if (mCittaLocalizzata != null) {
-            if (!elencoCitta.contains(mCittaLocalizzata))
+            if (!elencoCitta.contains(mCittaLocalizzata)) {
                 elencoCitta.add(0, mCittaLocalizzata);
-            else {
+                mCittaSelezionata = mCittaLocalizzata;
+            } else {
                 int pos = elencoCitta.indexOf(mCittaLocalizzata);
                 mCittaSelezionata = elencoCitta.get(pos);
                 mCittaText.setText(mCittaLocalizzata.getNome());
+                updatePosti();
             }
         }
         if (elencoCitta.size() > 0) {
@@ -523,8 +526,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                     DialogHelper.showListDialog(ModInfoFotoActivity.this, R.string.seleziona_citta, cittaAdapter, new DialogHelper.ListDialogCallback() {
                         @Override
                         public void onItemClick(int position) {
-                            Citta citta = elencoCitta.get(position);
-                            mCittaSelezionata = citta;
+                            mCittaSelezionata = elencoCitta.get(position);
                             displayCitta();
                         }
                     });
@@ -959,6 +961,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      */
     private void displayAddressOutput() {
         mCittaText.setText(mCittaLocalizzata.getNome());
+        clearSelection(CLEAR_POSTO);
         updateCitta();
     }
 
