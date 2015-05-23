@@ -2,6 +2,7 @@ package com.stefano.andrea.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -63,6 +64,8 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
     private Activity mParentActivity;
     private PlaceAutocompleteAdapter mAdapter;
     private ProgressBar mProgressBar;
+    private ProgressDialog mAddCittaDialog;
+    private ListView mSuggestions;
 
     private static final LatLngBounds PLACES_BOUND = new LatLngBounds(
             new LatLng(36.164943, -8.353179), new LatLng(71.437853, 37.086275));
@@ -100,8 +103,10 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar_add_citta_dialog);
         final EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_citta);
         final ImageView clearButton = (ImageView) view.findViewById(R.id.clearable_button_clear);
-        final ListView suggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
+        mSuggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
         mProgressBar = (ProgressBar) view.findViewById(R.id.toolbar_progress_bar);
+        mAddCittaDialog = new ProgressDialog(mParentActivity);
+        mAddCittaDialog.setMessage("Aggiungo città");
         toolbar.setTitle(getString(R.string.aggiungi_citta));
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -127,8 +132,8 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
                 }
             }
         });
-        suggestions.setAdapter(mAdapter);
-        suggestions.setOnItemClickListener(mAutocompleteClickListener);
+        mSuggestions.setAdapter(mAdapter);
+        mSuggestions.setOnItemClickListener(mAutocompleteClickListener);
         autocompleteView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -223,6 +228,9 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mSuggestions.setFocusable(false);
+            mSuggestions.setEnabled(false);
+            mAddCittaDialog.show();
             /*
              Retrieve the place ID of the selected item from the Adapter.
              The adapter stores each Place suggestion in a PlaceAutocomplete object from which we
@@ -267,6 +275,7 @@ public class AddCittaDialog extends DialogFragment implements GoogleApiClient.On
 
             places.release();
             hideKeyboard();
+            mAddCittaDialog.dismiss();
             dismiss();
         }
     };

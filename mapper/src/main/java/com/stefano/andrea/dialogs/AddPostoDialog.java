@@ -2,6 +2,7 @@ package com.stefano.andrea.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -62,7 +63,9 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
     private GoogleApiClient mGoogleApiClient;
     private Activity mParentActivity;
     private PlaceAutocompleteAdapter mAdapter;
+    private ProgressDialog mAddPostoDialog;
     private ProgressBar mProgressBar;
+    private ListView mSuggestions;
 
     private static final LatLngBounds PLACES_BOUND = new LatLngBounds(
             new LatLng(36.164943, -8.353179), new LatLng(71.437853, 37.086275));
@@ -101,8 +104,10 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar_add_posto_dialog);
         final EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_posti);
         final ImageView clearButton = (ImageView) view.findViewById(R.id.clearable_button_clear);
-        final ListView suggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
+        mSuggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
         mProgressBar = (ProgressBar) view.findViewById(R.id.toolbar_progress_bar_posto);
+        mAddPostoDialog = new ProgressDialog(mParentActivity);
+        mAddPostoDialog.setMessage("Aggiungo posto");
         toolbar.setTitle(getString(R.string.aggiungi_posto));
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -128,8 +133,8 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
                 }
             }
         });
-        suggestions.setAdapter(mAdapter);
-        suggestions.setOnItemClickListener(mAutocompleteClickListener);
+        mSuggestions.setAdapter(mAdapter);
+        mSuggestions.setOnItemClickListener(mAutocompleteClickListener);
         autocompleteView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -224,6 +229,9 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mSuggestions.setFocusable(false);
+            mSuggestions.setEnabled(false);
+            mAddPostoDialog.show();
             /*
              Retrieve the place ID of the selected item from the Adapter.
              The adapter stores each Place suggestion in a PlaceAutocomplete object from which we
@@ -265,6 +273,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
 
             places.release();
             hideKeyboard();
+            mAddPostoDialog.dismiss();
             dismiss();
         }
     };
