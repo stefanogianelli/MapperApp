@@ -1,4 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -64,9 +68,22 @@
         android:text="@string/nessun_risultato"
         android:visibility="gone"/>
 
+
     <ListView
         android:id="@+id/autocomplete_suggestions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+
+
 </LinearLayout>
+
+
+
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:src="@drawable/powered_by_google_light"
+    android:layout_alignParentBottom="true"/>
+</RelativeLayout>
