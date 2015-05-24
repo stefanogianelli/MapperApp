@@ -190,7 +190,7 @@ public class DialogHelper {
 
         percorso.setText(foto.getPath().substring(7));
         formato.setText(foto.getMimeType());
-        String dimensioneSI = formatByte(foto.getSize(), true);
+        String dimensioneSI = formatByte(foto.getSize());
         dimensione.setText(dimensioneSI);
         risoluzione.setText(foto.getWidth() + "x" + foto.getHeight());
         if (foto.getModel() == null) {
@@ -229,11 +229,11 @@ public class DialogHelper {
         dialog.show();
     }
 
-    private static String formatByte(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
+    private static String formatByte(long bytes) {
+        int unit = 1000;
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        String pre = ("kMGTPE").charAt(exp-1) + "";
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 

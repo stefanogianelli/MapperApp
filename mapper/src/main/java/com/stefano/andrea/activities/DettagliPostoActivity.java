@@ -23,10 +23,16 @@ import java.io.IOException;
 
 public class DettagliPostoActivity extends AppCompatActivity {
 
+    private static final String BUNDLE_ID_VIAGGIO = "com.stefano.andrea.activities.DettagliPostoActivity.idViaggio";
+    private static final String BUNDLE_ID_CITTA = "com.stefano.andrea.activities.DettagliPostoActivity.idCitta";
+    private static final String BUNDLE_ID_POSTO = "com.stefano.andrea.activities.DettagliPostoActivity.idPosto";
+    private static final String BUNDLE_NOME_POSTO = "com.stefano.andrea.activities.DettagliPostoActivity.nomePosto";
+
     private Uri mImageUri;
     private long mIdViaggio;
     private long mIdCitta;
     private long mIdPosto;
+    private String mNomePosto;
     private LinearLayout sugg;
 
     @Override
@@ -36,14 +42,26 @@ public class DettagliPostoActivity extends AppCompatActivity {
         //acquisisco riferimenti
         sugg = (LinearLayout) findViewById(R.id.suggerimento_crea_foto);
         MapperContext context = MapperContext.getInstance();
-        mIdViaggio = context.getIdViaggio();
-        mIdCitta = context.getIdCitta();
-        mIdPosto = context.getIdPosto();
-        String nomePosto = context.getNomePosto();
+        if (savedInstanceState != null) {
+            mIdViaggio = savedInstanceState.getLong(BUNDLE_ID_VIAGGIO);
+            context.setIdViaggio(mIdViaggio);
+            mIdCitta = savedInstanceState.getLong(BUNDLE_ID_CITTA);
+            context.setIdCitta(mIdCitta);
+            mIdPosto = savedInstanceState.getLong(BUNDLE_ID_POSTO);
+            context.setIdPosto(mIdPosto);
+            mNomePosto = savedInstanceState.getString(BUNDLE_NOME_POSTO);
+            context.setNomePosto(mNomePosto);
+        } else {
+            mIdViaggio = context.getIdViaggio();
+            mIdCitta = context.getIdCitta();
+            mIdPosto = context.getIdPosto();
+            mNomePosto = context.getNomePosto();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.dettagli_posto_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        this.setTitle(nomePosto);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        this.setTitle(mNomePosto);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         ElencoFotoFragment fragment = ElencoFotoFragment.newInstance(mIdPosto, FotoLoader.FOTO_POSTO);
@@ -82,12 +100,19 @@ public class DettagliPostoActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(BUNDLE_ID_VIAGGIO, mIdViaggio);
+        outState.putLong(BUNDLE_ID_CITTA, mIdCitta);
+        outState.putLong(BUNDLE_ID_POSTO, mIdPosto);
+        outState.putString(BUNDLE_NOME_POSTO, mNomePosto);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         PhotoUtils.startIntent(this, requestCode, resultCode, data, mImageUri, mIdViaggio, mIdCitta, mIdPosto);
     }
-
-
 
     public void slideToBottom(View view){
         TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());

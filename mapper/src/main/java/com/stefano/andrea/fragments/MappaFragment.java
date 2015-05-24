@@ -4,7 +4,6 @@ package com.stefano.andrea.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -81,7 +80,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
     private List<GeoInfo> mClickedCluster;
     private GeoInfo mClickedItem;
     private Random mRandom;
-    private ContentResolver mResolver;
 
     public static MappaFragment newInstance(int tipoMappa) {
         MappaFragment fragment = new MappaFragment();
@@ -98,7 +96,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         super.onAttach(activity);
         mParentActivity = activity;
         mContext = MapperContext.getInstance();
-        mResolver = activity.getContentResolver();
     }
 
     @Override
@@ -169,9 +166,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         switch (id) {
             case MAP_COORD_LOADER:
                 mMarkerData = data;
-                if (mType == CoordinateLoader.ELENCO_POSTI) {
-
-                }
                 //attendo che la mappa sia stata caricata
                 final Handler handler = new Handler(mParentActivity.getMainLooper());
                 new Thread(new Runnable() {

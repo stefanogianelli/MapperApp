@@ -16,11 +16,12 @@ public abstract class BaseAsyncTaskLoader<D> extends AsyncTaskLoader<D> {
 
     private D mData;
     private DataObserverReceiver mDataObserverReceiver;
-    protected String mIntentFilterAction;
+    private String mIntentFilterAction;
 
     public BaseAsyncTaskLoader(Context context) {
         super(context);
     }
+
     public BaseAsyncTaskLoader(Context ctx, String intentFilterAction) {
         this(ctx);
         mIntentFilterAction = intentFilterAction;

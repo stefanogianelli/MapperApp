@@ -151,7 +151,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             mStartFromIntent = true;
         }
         //verifico se abilitare la frecca indietro della action bar
-        if (!mStartFromIntent) {
+        if (!mStartFromIntent && getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         //Kitkat: verifico se le uri sono da correggere

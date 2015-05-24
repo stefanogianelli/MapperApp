@@ -18,18 +18,14 @@ public class AboutActivity extends AppCompatActivity {
         TextView versione_app = (TextView) findViewById(R.id.versione_app);
         TextView anno_inc = (TextView) findViewById(R.id.anno_inc);
 
-
         PackageInfo pinfo = null;
         try {
             pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionName = pinfo.versionName;
+            versione_app.setText("Versione " + versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        int versionNumber = pinfo.versionCode;
-        String versionName = pinfo.versionName;
-
-
-        versione_app.setText("Versione "+versionName);
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);

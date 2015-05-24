@@ -26,12 +26,17 @@ import java.io.IOException;
 
 public class DettagliCittaActivity extends AppCompatActivity {
 
+    private static final String BUNDLE_ID_VIAGGIO = "com.stefano.andrea.activities.DettagliCittaActivity.idViaggio";
+    private static final String BUNDLE_ID_CITTA = "com.stefano.andrea.activities.DettagliCittaActivity.idCitta";
+    private static final String BUNDLE_NOME_CITTA = "com.stefano.andrea.activities.DettagliCittaActivity.nomeCitta";
+
     private static final int DETTAGLI_FRAGMENT = 0;
     private static final int FOTO_FRAGMENT = 1;
     private static final int MAPPA_FRAGMENT = 2;
 
     private long mIdViaggio;
     private long mIdCitta;
+    private String mNomeCitta;
     private Uri mImageUri;
 
     @Override
@@ -39,19 +44,29 @@ public class DettagliCittaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_citta);
         //recupero i parametri dal contesto
-        MapperContext mContext = MapperContext.getInstance();
-        mIdViaggio = mContext.getIdViaggio();
-        mIdCitta = mContext.getIdCitta();
-        String nomeCitta = mContext.getNomeCitta();
+        MapperContext context = MapperContext.getInstance();
+        if (savedInstanceState != null) {
+            mIdViaggio = savedInstanceState.getLong(BUNDLE_ID_VIAGGIO);
+            context.setIdViaggio(mIdViaggio);
+            mIdCitta = savedInstanceState.getLong(BUNDLE_ID_CITTA);
+            context.setIdCitta(mIdCitta);
+            mNomeCitta = savedInstanceState.getString(BUNDLE_NOME_CITTA);
+            context.setNomeCitta(mNomeCitta);
+        } else {
+            mIdViaggio = context.getIdViaggio();
+            mIdCitta = context.getIdCitta();
+            mNomeCitta = context.getNomeCitta();
+        }
         //acquisito riferimenti
         Toolbar toolbar = (Toolbar) findViewById(R.id.dettagli_citta_toolbar);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         //attivo action bar
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //aggiungo il titolo alla action bar
-        this.setTitle(nomeCitta);
+        this.setTitle(mNomeCitta);
         //creo l'adapter per le tab
         TabAdapter adapter =  new TabAdapter(getSupportFragmentManager());
         //assegno l'adapter al pager
@@ -99,6 +114,14 @@ public class DettagliCittaActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(BUNDLE_ID_VIAGGIO, mIdViaggio);
+        outState.putLong(BUNDLE_ID_CITTA, mIdCitta);
+        outState.putString(BUNDLE_NOME_CITTA, mNomeCitta);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

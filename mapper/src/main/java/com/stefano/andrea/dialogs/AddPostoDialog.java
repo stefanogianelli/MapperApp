@@ -270,7 +270,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         }
     };
 
-    public void hideKeyboard () {
+    private void hideKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) mParentActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
         View view = mParentActivity.getCurrentFocus();

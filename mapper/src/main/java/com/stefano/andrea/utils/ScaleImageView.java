@@ -1,8 +1,5 @@
 package com.stefano.andrea.utils;
 
-/**
- * Created by Andre on 15/05/2015.
- */
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;

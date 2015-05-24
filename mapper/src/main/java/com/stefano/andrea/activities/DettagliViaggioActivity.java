@@ -26,11 +26,15 @@ import java.io.IOException;
 
 public class DettagliViaggioActivity extends AppCompatActivity {
 
+    private static final String BUNDLE_ID_VIAGGIO = "com.stefano.andrea.activities.DettagliViaggioActivity.idViaggio";
+    private static final String BUNDLE_NOME_VIAGGIO = "com.stefano.andrea.activities.DettagliViaggioActivity.nomeViaggio";
+
     private static final int DETTAGLI_FRAGMENT = 0;
     private static final int FOTO_FRAGMENT = 1;
     private static final int MAPPA_FRAGMENT = 2;
 
     private long mIdViaggio;
+    private String mNomeViaggio;
     private Uri mImageUri;
 
     @Override
@@ -39,15 +43,23 @@ public class DettagliViaggioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dettagli_viaggio);
         //recupero i parametri dal contesto
         MapperContext context = MapperContext.getInstance();
-        String mNomeViaggio = context.getNomeViaggio();
-        mIdViaggio = context.getIdViaggio();
+        if (savedInstanceState != null) {
+            mIdViaggio = savedInstanceState.getLong(BUNDLE_ID_VIAGGIO);
+            context.setIdViaggio(mIdViaggio);
+            mNomeViaggio = savedInstanceState.getString(BUNDLE_NOME_VIAGGIO);
+            context.setNomeViaggio(mNomeViaggio);
+        } else {
+            mNomeViaggio = context.getNomeViaggio();
+            mIdViaggio = context.getIdViaggio();
+        }
         //acquisito riferimenti
         Toolbar toolbarView = (Toolbar) findViewById(R.id.dettagli_viaggio_toolbar);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         //attivo action bar
         setSupportActionBar(toolbarView);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //aggiungo il titolo alla action bar
         this.setTitle(mNomeViaggio);
         //Creo l'adapter per le tab
@@ -90,6 +102,13 @@ public class DettagliViaggioActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(BUNDLE_ID_VIAGGIO, mIdViaggio);
+        outState.putString(BUNDLE_NOME_VIAGGIO, mNomeViaggio);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

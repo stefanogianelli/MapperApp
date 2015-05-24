@@ -46,12 +46,12 @@ public class FullFotoFragment extends Fragment {
     private static final String EXTRA_LISTA_FOTO = "com.stefano.andrea.fragments.FullFotoFragment.listaFoto";
     private static final String EXTRA_IMAGE_POSITION = "com.stefano.andrea.fragments.FullFotoFragment.imagePosition";
 
+    private final static int IMMERSIVE_MODE_TIMEOUT = 500;
+
     private Activity mParentActivity;
     private List<Foto> mElencoFoto;
     private int mPosition;
-    private ImageAdapter mAdapter;
     private ViewPager mPager;
-    private Thread thread;
 
     public FullFotoFragment () { }
 
@@ -98,11 +98,10 @@ public class FullFotoFragment extends Fragment {
         uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         rootView.setSystemUiVisibility(uiOptions);
 
-        mAdapter = new ImageAdapter(mParentActivity);
-        mPager.setAdapter(mAdapter);
+        mPager.setAdapter(new ImageAdapter(mParentActivity));
         mPager.setCurrentItem(mPosition);
         setHasOptionsMenu(true);
-        setImmersiveTimer(500);
+        setImmersiveTimer();
         return rootView;
     }
 
@@ -344,13 +343,13 @@ public class FullFotoFragment extends Fragment {
 
     }
 
-    public void setImmersiveTimer(final int time){
-        thread = new Thread(){
+    public void setImmersiveTimer(){
+        new Thread() {
             @Override
             public void run() {
                 try {
                     synchronized (this) {
-                        wait(time);
+                        wait(IMMERSIVE_MODE_TIMEOUT);
                         mParentActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -362,9 +361,8 @@ public class FullFotoFragment extends Fragment {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            };
-        };
-        thread.start();
+            }
+        }.start();
     }
 
     public int getStatusBarHeight() {

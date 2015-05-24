@@ -9,34 +9,29 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
 /**
- * Created by Andre on 22/05/2015.
+ * LocationManager_check
  */
 public class LocationManager_check {
 
-    LocationManager locationManager;
-    Boolean locationServiceBoolean = false;
-    int providerType = 0;
-    static AlertDialog alert;
+    private Boolean locationServiceBoolean = false;
+    private static AlertDialog alert;
 
     public LocationManager_check(Context context) {
-        locationManager = (LocationManager) context
+        LocationManager locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
         boolean gpsIsEnabled = locationManager
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean networkIsEnabled = locationManager
                 .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (networkIsEnabled == true && gpsIsEnabled == true) {
+        if (networkIsEnabled && gpsIsEnabled) {
             locationServiceBoolean = true;
-            providerType = 1;
 
-        } else if (networkIsEnabled != true && gpsIsEnabled == true) {
+        } else if (!networkIsEnabled && gpsIsEnabled) {
             locationServiceBoolean = true;
-            providerType = 2;
 
-        } else if (networkIsEnabled == true && gpsIsEnabled != true) {
+        } else if (networkIsEnabled && !gpsIsEnabled) {
             locationServiceBoolean = true;
-            providerType = 1;
         }
 
     }
@@ -45,15 +40,12 @@ public class LocationManager_check {
         return locationServiceBoolean;
     }
 
-    public int getProviderType() {
-        return providerType;
-    }
-
     public void createLocationServiceError(final Activity activityObj) {
 
         // show alert dialog if Internet is not connected
         AlertDialog.Builder builder = new AlertDialog.Builder(activityObj);
 
+        //TODO: portare nelle stringhe
         builder.setMessage(
                 "Devi abilitare la localizzazione per usare questa funzione. Attivala dalle impostazioni.")
                 .setTitle("Usare la posizione?")

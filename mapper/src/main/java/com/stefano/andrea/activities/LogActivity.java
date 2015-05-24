@@ -38,7 +38,8 @@ public class LogActivity extends AppCompatActivity {
         final ScrollView scrollView = (ScrollView) findViewById(R.id.log_scrollview);
         Toolbar toolbar = (Toolbar) findViewById(R.id.log_activity_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         try {
             Process process = Runtime.getRuntime().exec("logcat -d");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -101,6 +102,7 @@ public class LogActivity extends AppCompatActivity {
     private void writeLogFile () {
         File path = new File(Environment.getExternalStorageDirectory(), "/" + FOLDER);
         if (!path.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             path.mkdirs();
         }
         try {

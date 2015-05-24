@@ -258,8 +258,7 @@
             android:paddingBottom="@dimen/df_btn_margin_v"
             android:clickable="true"
             android:focusable="true"
-            android:background="?android:selectableItemBackground"
-            android:onClick="closeDettagliFoto"/>
+            android:background="?android:selectableItemBackground"/>
         </LinearLayout>
 
     </LinearLayout>

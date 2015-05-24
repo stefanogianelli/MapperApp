@@ -77,7 +77,7 @@ public class FetchAddressIntentService extends IntentService {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                deliverResultToReceiver(FAILURE_RESULT, getString(R.string.service_not_available));
+                deliverResultToReceiver(getString(R.string.service_not_available));
                 stopSelf();
             }
         }, TIMEOUT);
@@ -90,7 +90,7 @@ public class FetchAddressIntentService extends IntentService {
         if (location == null) {
             errorMessage = getString(R.string.no_location_data_provided);
             Log.wtf(TAG, errorMessage);
-            deliverResultToReceiver(FAILURE_RESULT, errorMessage);
+            deliverResultToReceiver(errorMessage);
             return;
         }
 
@@ -136,7 +136,7 @@ public class FetchAddressIntentService extends IntentService {
                 errorMessage = getString(R.string.no_address_found);
                 Log.e(TAG, errorMessage);
             }
-            deliverResultToReceiver(FAILURE_RESULT, errorMessage);
+            deliverResultToReceiver(errorMessage);
         } else {
             Address address = addresses.get(0);
             // Fetch the address lines using {@code getAddressLine},
@@ -156,7 +156,7 @@ public class FetchAddressIntentService extends IntentService {
                     Address cityInfo = citiesInfo.get(0);
                     LatLng coordinates = new LatLng(cityInfo.getLatitude(), cityInfo.getLongitude());
                     if (locality != null && country != null) {
-                        deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName(), coordinates);
+                        deliverResultToReceiver(address.getLocality(), address.getCountryName(), coordinates);
                         return;
                     } else {
                         errorMessage = getString(R.string.no_address_found);
@@ -168,28 +168,28 @@ public class FetchAddressIntentService extends IntentService {
                 Log.e(TAG, errorMessage, e);
             }
             if (!errorMessage.isEmpty())
-                deliverResultToReceiver(FAILURE_RESULT, errorMessage);
+                deliverResultToReceiver(errorMessage);
         }
     }
 
     /**
      * Sends a resultCode and message to the receiver.
      */
-    private void deliverResultToReceiver(int resultCode, String message) {
+    private void deliverResultToReceiver(String message) {
         Bundle bundle = new Bundle();
         bundle.putString(RESULT_DATA_KEY, message);
-        mReceiver.send(resultCode, bundle);
+        mReceiver.send(FetchAddressIntentService.FAILURE_RESULT, bundle);
     }
 
     /**
      * Sends a resultCode and two messages to the receiver.
      */
-    private void deliverResultToReceiver(int resultCode, String city, String country, LatLng coordinates) {
+    private void deliverResultToReceiver(String city, String country, LatLng coordinates) {
         Bundle bundle = new Bundle();
         bundle.putString(RESULT_DATA_KEY, city);
         bundle.putString(RESULT_COUNTRY, country);
         bundle.putParcelable(RESULT_COORDINATES, coordinates);
-        mReceiver.send(resultCode, bundle);
+        mReceiver.send(FetchAddressIntentService.SUCCESS_RESULT, bundle);
     }
 
 }
