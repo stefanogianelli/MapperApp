@@ -55,7 +55,7 @@ import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
 import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.FetchAddressIntentService;
-import com.stefano.andrea.utils.LocationManager_check;
+import com.stefano.andrea.utils.LocationManagerCheck;
 import com.stefano.andrea.utils.PhotoUtils;
 
 import java.util.ArrayList;
@@ -907,7 +907,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             setInfoToolbar(R.string.recupero_info, R.color.white, R.color.black);
             updateUIWidgets();
         }else{
-           LocationManager_check locationManagerCheck = new LocationManager_check(this);
+           LocationManagerCheck locationManagerCheck = new LocationManagerCheck(this);
            if(!locationManagerCheck.isLocationServiceAvailable()){
                locationManagerCheck.createLocationServiceError(this);
            }
