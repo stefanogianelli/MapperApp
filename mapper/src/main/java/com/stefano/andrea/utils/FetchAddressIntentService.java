@@ -62,16 +62,6 @@ public class FetchAddressIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        //set timeout
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                deliverResultToReceiver(FAILURE_RESULT, getString(R.string.service_not_available));
-                stopSelf();
-            }
-        }, TIMEOUT);
-
         String errorMessage = "";
 
         mReceiver = intent.getParcelableExtra(RECEIVER);
@@ -81,6 +71,16 @@ public class FetchAddressIntentService extends IntentService {
             Log.wtf(TAG, "No receiver received. There is nowhere to send the results.");
             return;
         }
+
+        //set timeout
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                deliverResultToReceiver(FAILURE_RESULT, getString(R.string.service_not_available));
+                stopSelf();
+            }
+        }, TIMEOUT);
 
         // Get the location passed to this service through an extra.
         Location location = intent.getParcelableExtra(LOCATION_DATA_EXTRA);
