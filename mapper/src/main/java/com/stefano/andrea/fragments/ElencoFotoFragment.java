@@ -56,6 +56,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private Activity mParentActivity;
     private FotoAdapter mAdapter;
     private ArrayList<Foto> mElencoFoto;
+    private RecyclerView mRecyclerView;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -167,18 +168,18 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_elenco_foto,container,false);
         //acquisisco riferimenti
-        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
         final TextView nessunaFotoInfo = (TextView) v.findViewById(R.id.no_foto);
         //configuro recyclerview
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
         int columns;
         if (mParentActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
             columns = COLUMNS_PORTRAIT;
         else
             columns = COLUMNS_LANDSCAPE;
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
         //aggiungo observer all'adapter
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -225,6 +226,17 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
                 mAdapter.finishActionMode();
             }
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int columns;
+        if (mParentActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            columns = COLUMNS_PORTRAIT;
+        else
+            columns = COLUMNS_LANDSCAPE;
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
     }
 
     @Override
