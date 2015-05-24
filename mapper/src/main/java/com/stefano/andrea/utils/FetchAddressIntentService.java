@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
 
@@ -31,7 +32,9 @@ public class FetchAddressIntentService extends IntentService {
     public static final String RESULT_COUNTRY = PACKAGE_NAME + ".RESULT_COUNTRY";
     public static final String RESULT_COORDINATES = PACKAGE_NAME + ".RESULT_COORDINATES";
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
-    
+
+    private static final int TIMEOUT = 30000;
+
     private static final String TAG = "FetchAddressIntent";
 
     /**
@@ -59,6 +62,16 @@ public class FetchAddressIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+        //set timeout
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                deliverResultToReceiver(FAILURE_RESULT, getString(R.string.service_not_available));
+                stopSelf();
+            }
+        }, TIMEOUT);
+
         String errorMessage = "";
 
         mReceiver = intent.getParcelableExtra(RECEIVER);
@@ -142,7 +155,7 @@ public class FetchAddressIntentService extends IntentService {
                 if (citiesInfo.size() > 0) {
                     Address cityInfo = citiesInfo.get(0);
                     LatLng coordinates = new LatLng(cityInfo.getLatitude(), cityInfo.getLongitude());
-                    if (locality != null && country != null && coordinates != null) {
+                    if (locality != null && country != null) {
                         deliverResultToReceiver(SUCCESS_RESULT, address.getLocality(), address.getCountryName(), coordinates);
                         return;
                     } else {
@@ -178,4 +191,5 @@ public class FetchAddressIntentService extends IntentService {
         bundle.putParcelable(RESULT_COORDINATES, coordinates);
         mReceiver.send(resultCode, bundle);
     }
+
 }
