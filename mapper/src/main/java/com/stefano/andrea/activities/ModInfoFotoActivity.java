@@ -1,17 +1,21 @@
 package com.stefano.andrea.activities;
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -35,7 +39,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.stefano.andrea.dialogs.AddCittaDialog;
 import com.stefano.andrea.dialogs.AddPostoDialog;
 import com.stefano.andrea.intents.MapperIntent;
@@ -88,6 +95,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private ContentResolver mResolver;
     private boolean mFotoSalvata = false;
     private boolean mFotoCancellata = false;
+    private boolean mStartFromIntent = false;
     private ImageView mImageView;
     private TextView mCountImages;
     private TextView mViaggioText;
@@ -100,7 +108,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private Button mGeolocalizzaButton;
     private ImageView mAddPostoButton;
     //elenco dei percorsi delle imamgini
-    private ArrayList<String> mImagePath;
+    private ArrayList<Uri> mFotoUris;
     //elenco degli ID delle immagini da modificare
     private ArrayList<Integer> mFotoIDs;
     //indica se la foto e' stata scattata dalla fotocamera o acquisita dalla galleria
@@ -125,15 +133,41 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         //setup della toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_foto_activity);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mResolver = getContentResolver();
         //acquisisco parametri dall'intent e inizializzo a EMPTY_ID quelli senza valore
         Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_FOTO))
-            mImagePath = intent.getStringArrayListExtra(EXTRA_FOTO);
+        String action = intent.getAction();
+        if (MapperIntent.MAPPER_FOTO.equals(action) || MapperIntent.MAPPER_MODIFICA_FOTO.equals(action)) {
+            //foto dalla app
+            mFotoUris = intent.getParcelableArrayListExtra(EXTRA_FOTO);
+        } else if (Intent.ACTION_SEND.equals(action)) {
+            //ricevuta una foto via intent
+            mFotoUris = new ArrayList<>();
+            mFotoUris.add((Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM));
+            mStartFromIntent = true;
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+            //ricevute più foto via intent
+            mFotoUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            mStartFromIntent = true;
+        }
+        //verifico se abilitare la frecca indietro della action bar
+        if (!mStartFromIntent) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        //Kitkat: verifico se le uri sono da correggere
+        mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, EMPTY_ID);
+        if (!MapperIntent.MAPPER_MODIFICA_FOTO.equals(action) && mTipoFoto != PhotoUtils.CAMERA_REQUEST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            List<Uri> correctedUris = new ArrayList<>();
+            for (int i = 0; i < mFotoUris.size(); i++) {
+                Log.v(TAG, "Original uri: " + mFotoUris.get(i).toString());
+                correctedUris.add(getGalleryPhotoUri(mFotoUris.get(i)));
+                Log.v(TAG, "New uri: " + correctedUris.get(i).toString());
+            }
+            mFotoUris.clear();
+            mFotoUris.addAll(correctedUris);
+        }
         if (intent.hasExtra(EXTRA_LISTA_FOTO))
             mFotoIDs = intent.getIntegerArrayListExtra(EXTRA_LISTA_FOTO);
-        mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, EMPTY_ID);
         mIdViaggio = intent.getLongExtra(EXTRA_ID_VIAGGIO, EMPTY_ID);
         mIdCitta = intent.getLongExtra(EXTRA_ID_CITTA, EMPTY_ID);
         mIdPosto = intent.getLongExtra(EXTRA_ID_POSTO, EMPTY_ID);
@@ -162,6 +196,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         setupAddCittaButton();
         setupAddPostoButton();
         //inizializzo immagine
+        setupImageLoader();
         inizializzaFoto();
         //carico elenchi
         updateViaggi();
@@ -237,7 +272,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 else
                     Log.d(TAG, "Errore durante l'eliminazione della foto");
             }
-            finish();
+            endActivity();
             return true;
         }
 
@@ -294,20 +329,20 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
                 @Override
                 public void UpdateItem(int position, String nome) {
-                    finish();
+                    endActivity();
                 }
             };
             new UpdateTask(this, 0, values, mFotoIDs, adapter).execute(UpdateTask.UPDATE_FOTO);
         } else {
-            finish();
+            endActivity();
         }
     }
 
     private void addFoto () {
         List<Foto> elencoFoto = new ArrayList<>();
-        for (int i = 0; i < mImagePath.size(); i++) {
+        for (int i = 0; i < mFotoUris.size(); i++) {
             Foto foto = new Foto();
-            foto.setPath(mImagePath.get(i));
+            foto.setPath(mFotoUris.get(i).toString());
             //acquisisco dettagli dell'immagine
             getMediaStoreData(foto);
             //acquisisco dettagli dell'immagine
@@ -336,7 +371,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         InsertTask.InsertAdapter adapter = new InsertTask.InsertAdapter() {
             @Override
             public void insertItem(Object item) {
-                finish();
+                endActivity();
             }
         };
         new InsertTask<>(this, adapter, elencoFoto).execute(InsertTask.INSERISCI_FOTO);
@@ -347,11 +382,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      * Mostra la foto scelta nell'apposita view
      */
     private void inizializzaFoto() {
-        if (mImagePath != null) {
+        if (mFotoUris != null) {
             //mostro la prima immagine a campione
-            ImageLoader.getInstance().displayImage(mImagePath.get(0), mImageView);
-            if (mImagePath.size() > 1) {
-                mCountImages.setText(mImagePath.size() + " immagini");
+            ImageLoader.getInstance().displayImage(mFotoUris.get(0).toString(), mImageView);
+            if (mFotoUris.size() > 1) {
+                mCountImages.setText(mFotoUris.size() + " immagini");
                 mCountImages.setVisibility(View.VISIBLE);
             }
         }
@@ -703,7 +738,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      */
     private boolean cancellaFoto () {
         String selection = MediaStore.Images.Media.DATA + "=?";
-        String [] selectionArgs = {mImagePath.get(0).substring(7)};
+        String [] selectionArgs = {mFotoUris.get(0).toString().substring(7)};
         int count = mResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, selectionArgs);
         return count > 0;
     }
@@ -1004,7 +1039,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == EMPTY_ID && mIdPosto == EMPTY_ID) {
             //Acquisisco coordinate della foto
             Log.d(TAG, "Acquisisco coordinate della foto");
-            LatLng coord = getCoordinates(mImagePath.get(0));
+            LatLng coord = getCoordinates(mFotoUris.get(0).toString());
             double latitudine = coord.latitude;
             double longitudine = coord.longitude;
             if (latitudine != 0 && longitudine != 0) {
@@ -1048,6 +1083,65 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     private void setInfoToolbar (int stringId, int colorId, int textColorId) {
         setInfoToolbar(getString(stringId), colorId, textColorId);
+    }
+
+    /**
+     * Restituisce l'uri corretta dell'immagine selezionata dalla galleria.
+     * E' necessario l'utilizzo quando la versione di android e' superiore a kitkat
+     * @param imageUri L'uri dell'immagine acquisita dal document provider
+     * @return L'uri corretta dell'immagine
+     */
+    @TargetApi(19)
+    private Uri getGalleryPhotoUri (Uri imageUri) {
+        Uri uri;
+        try {
+            //documents uri
+            String wholeID = DocumentsContract.getDocumentId(imageUri);
+            String id = wholeID.split(":")[1];
+            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(id).build();
+        } catch (IllegalArgumentException e) {
+            //media provider uri
+            uri = imageUri;
+        }
+        String [] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = mResolver.query(uri, projection, null, null, null);
+        String filePath = null;
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return Uri.parse("file://" + filePath);
+    }
+
+    /**
+     * Inizializza, se necessario, la libreria Universal Image Loader
+     */
+    private void setupImageLoader () {
+        if (!ImageLoader.getInstance().isInited()) {
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .showImageForEmptyUri(R.drawable.noimg)
+                    .showImageOnFail(R.drawable.noimg)
+                    .cacheOnDisk(true)
+                    .imageScaleType(ImageScaleType.EXACTLY)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .considerExifParams(true)
+                    .build();
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                    .defaultDisplayImageOptions(options)
+                    .build();
+            ImageLoader.getInstance().init(config);
+        }
+    }
+
+    /**
+     * Termina l'activity e rimanda alla home se l'app è stata avviata tramite intent
+     */
+    private void endActivity () {
+        if (mStartFromIntent) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+        finish();
     }
 
 }

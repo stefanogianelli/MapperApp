@@ -11,4 +11,7 @@ public class MapperIntent {
     public static final String UPDATE_POSTO = "com.stefano.andrea.intents.MapperIntent.updatePosto";
     public static final String UPDATE_FOTO = "com.stefano.andrea.intents.MapperIntent.updateFoto";
 
+    public static final String MAPPER_FOTO = "com.stefano.andrea.intents.MapperIntent.mapperFoto";
+    public static final String MAPPER_MODIFICA_FOTO = "com.stefano.andrea.intents.MapperIntent.mapperModificaFoto";
+
 }

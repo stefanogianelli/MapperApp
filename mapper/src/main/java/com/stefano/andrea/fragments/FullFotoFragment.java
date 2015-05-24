@@ -28,6 +28,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.utils.DialogHelper;
@@ -141,14 +142,15 @@ public class FullFotoFragment extends Fragment {
         } else if (id == R.id.action_modifica) {
             Intent intent = new Intent(mParentActivity, ModInfoFotoActivity.class);
             ArrayList<Integer> fotoId = new ArrayList<>();
-            ArrayList<String> fotoPath = new ArrayList<>();
+            ArrayList<Uri> fotoUris = new ArrayList<>();
             fotoId.add((int) currentFoto.getId());
-            fotoPath.add(currentFoto.getPath());
+            fotoUris.add(Uri.parse(currentFoto.getPath()));
             intent.putIntegerArrayListExtra(ModInfoFotoActivity.EXTRA_LISTA_FOTO, fotoId);
-            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoPath);
+            intent.putParcelableArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, currentFoto.getIdPosto());
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_CITTA, currentFoto.getIdCitta());
             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, currentFoto.getIdViaggio());
+            intent.setAction(MapperIntent.MAPPER_MODIFICA_FOTO);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_mostra_su_mappa) {

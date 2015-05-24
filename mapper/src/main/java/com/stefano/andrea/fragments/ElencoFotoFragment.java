@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.FotoAdapter;
+import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.loaders.FotoLoader;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.tasks.DeleteTask;
@@ -94,15 +96,16 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
                 case R.id.menu_modifica_foto:
                     Intent intent = new Intent(mParentActivity, ModInfoFotoActivity.class);
                     ArrayList<Integer> fotoId = new ArrayList<>();
-                    ArrayList<String> fotoPath = new ArrayList<>();
+                    ArrayList<Uri> fotoUris = new ArrayList<>();
                     for (int i = 0; i < mElencoFoto.size(); i++) {
                         if (mAdapter.getSelectedItems().contains(i)) {
                             fotoId.add((int) mElencoFoto.get(i).getId());
-                            fotoPath.add(mElencoFoto.get(i).getPath());
+                            fotoUris.add(Uri.parse(mElencoFoto.get(i).getPath()));
                         }
                     }
                     intent.putIntegerArrayListExtra(ModInfoFotoActivity.EXTRA_LISTA_FOTO, fotoId);
-                    intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoPath);
+                    intent.putParcelableArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
+                    intent.setAction(MapperIntent.MAPPER_MODIFICA_FOTO);
                     switch (mTipoElenco) {
                         case FotoLoader.FOTO_POSTO:
                             intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, mElencoFoto.get(0).getIdPosto());

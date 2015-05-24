@@ -1,17 +1,13 @@
 package com.stefano.andrea.utils;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +16,7 @@ import android.widget.Toast;
 
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.intents.MapperIntent;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +32,7 @@ public class PhotoUtils {
     private static final String TAG = "DialogFoto";
 
     public static final int CAMERA_REQUEST = 0;
-    private static final int GALLERY_PICTURE = 1;
-    private static final int GALLERY_PICTURE_KITKAT = 2;
+    public static final int GALLERY_PICTURE = 1;
 
     private static final String PHOTO_PREFIX = "mapper_";
     private static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
@@ -85,7 +81,7 @@ public class PhotoUtils {
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     intent.setType("image/*");
                     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    activity.startActivityForResult(intent, GALLERY_PICTURE_KITKAT);
+                    activity.startActivityForResult(intent, GALLERY_PICTURE);
                 }
                 dialog.dismiss();
             }
@@ -120,40 +116,35 @@ public class PhotoUtils {
      */
     public static void startIntent (Activity activity, int requestCode, int resultCode, Intent data, Uri imageUri, long idViaggio, long idCitta, long idPosto) {
         Intent intent = null;
-        ArrayList<String> fotoUris = new ArrayList<>();
-        if ((requestCode == GALLERY_PICTURE || requestCode == GALLERY_PICTURE_KITKAT) && resultCode == Activity.RESULT_OK) {
-            //singola immagine
+        ArrayList<Uri> fotoUris = new ArrayList<>();
+        if (requestCode == GALLERY_PICTURE && resultCode == Activity.RESULT_OK) {
             if (data.getData() != null) {
+                //singola immagine
                 intent = new Intent(activity, ModInfoFotoActivity.class);
-                String path = data.getData().toString();
-                if (requestCode == GALLERY_PICTURE_KITKAT) {
-                    path = "file://" + getGalleryPhotoPath(data.getData(), activity.getContentResolver());
-                }
-                fotoUris.add(path);
+                fotoUris.add(data.getData());
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             } else if (data.getClipData() != null) {
+                //piu' immagini
                 intent = new Intent(activity, ModInfoFotoActivity.class);
                 ClipData clipData = data.getClipData();
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     ClipData.Item item = clipData.getItemAt(i);
-                    String path = item.getUri().toString();
-                    if (requestCode == GALLERY_PICTURE_KITKAT) {
-                        path = "file://" + getGalleryPhotoPath(item.getUri(), activity.getContentResolver());
-                    }
-                    fotoUris.add(path);
+                    fotoUris.add(item.getUri());
                 }
                 intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, GALLERY_PICTURE);
             }
         } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             intent = new Intent(activity, ModInfoFotoActivity.class);
+            //aggiorno mediascanner
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             mediaScanIntent.setData(imageUri);
             activity.sendBroadcast(mediaScanIntent);
-            fotoUris.add(imageUri.toString());
+            fotoUris.add(imageUri);
             intent.putExtra(ModInfoFotoActivity.EXTRA_TIPO_FOTO, CAMERA_REQUEST);
         }
         if (intent != null) {
-            intent.putStringArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
+            intent.setAction(MapperIntent.MAPPER_FOTO);
+            intent.putParcelableArrayListExtra(ModInfoFotoActivity.EXTRA_FOTO, fotoUris);
             if (idViaggio != -1)
                 intent.putExtra(ModInfoFotoActivity.EXTRA_ID_VIAGGIO, idViaggio);
             if (idCitta != -1)
@@ -162,29 +153,6 @@ public class PhotoUtils {
                 intent.putExtra(ModInfoFotoActivity.EXTRA_ID_POSTO, idPosto);
             activity.startActivity(intent);
         }
-    }
-
-    /**
-     * Restituisce il path corretto dell'immagine selezionata dalla galleria
-     * @param imageUri L'uri dell'immagine acquisita dal document provider
-     * @param resolver Il content resolver dell'applicazione
-     * @return Il path correto dell'immagine
-     */
-    @TargetApi(19)
-    private static String getGalleryPhotoPath (Uri imageUri, ContentResolver resolver) {
-        String wholeID = DocumentsContract.getDocumentId(imageUri);
-        String id = wholeID.split(":")[1];
-        String [] projection = { MediaStore.Images.Media.DATA };
-        String selection = MediaStore.Images.Media._ID + "=?";
-        String [] selectionArgs = { id };
-        Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
-        String filePath = null;
-        int columnIndex = cursor.getColumnIndex(projection[0]);
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-        return filePath;
     }
 
     /**

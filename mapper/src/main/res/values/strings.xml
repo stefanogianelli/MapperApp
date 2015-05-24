@@ -197,7 +197,6 @@
 
     <!-- Titoli -->
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
-    <string name="title_activity_mod_info_foto">Foto</string>
     <string name="title_activity_dettagli_posto">DettagliPostoActivity</string>
     <string name="title_activity_log">Log</string>
 
