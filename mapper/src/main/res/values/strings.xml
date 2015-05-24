@@ -24,6 +24,7 @@
     <string name="aggiungi_foto">Aggiungi foto</string>
     <string name="condividi_foto">Condividi foto</string>
     <string name="go_to_dettagli">Dettagli ></string>
+    <string name="send_log_file">Invia log</string>
 
     <!-- dialogs -->
     <string name="aggiungi_viaggio">Nome del viaggio</string>
