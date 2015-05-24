@@ -31,7 +31,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
@@ -41,9 +40,6 @@ import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PlaceAutocompleteAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * AddPostoDialog
@@ -117,11 +113,8 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
                 dismiss();
             }
         });
-        List<Integer> placesTypes = new ArrayList<>();
-        placesTypes.add(Place.TYPE_ESTABLISHMENT);
-        AutocompleteFilter filter = AutocompleteFilter.create(placesTypes);
         mAdapter = new PlaceAutocompleteAdapter(mParentActivity, R.layout.item_autocomplete_posto,
-                mGoogleApiClient, PLACES_BOUND, filter, new PlaceAutocompleteAdapter.OnLoadComplete() {
+                mGoogleApiClient, PLACES_BOUND, null, new PlaceAutocompleteAdapter.OnLoadComplete() {
             @Override
             public void onLoadComplete() {
                 mProgressBar.setVisibility(View.GONE);
