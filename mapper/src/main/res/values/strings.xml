@@ -46,6 +46,7 @@
     <string name="conferma_cancellazione_viaggi">Vuoi cancellare i viaggi?</string>
     <string name="conferma_cancellazione_viaggio">Vuoi cancellare il viaggio?</string>
     <string name="nessun_viaggio">Nessun viaggio</string>
+    <string name="log_reader_menu">Show Log</string>
 
     <!-- DettagliViaggioActivity -->
     <string name="title_activity_dettagli_viaggio">ActivityDettagliViaggio</string>
@@ -198,5 +199,6 @@
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
     <string name="title_activity_mod_info_foto">Foto</string>
     <string name="title_activity_dettagli_posto">DettagliPostoActivity</string>
+    <string name="title_activity_log">Log</string>
 
 </resources>

@@ -219,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 if (sugg.getVisibility()==View.VISIBLE){slideToBottom(sugg);}
                 PhotoUtils.mostraDialog(this, mImageUri);
             }
+        } else if (id == R.id.action_log_reader) {
+            startActivity(new Intent(this, LogActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
