@@ -45,12 +45,6 @@ public class UpdateListener extends AbstractUpdateListener {
                             informCancel(info);
                         }
                     })
-                    .setNeutralButton(context.getText(R.string.autoupdate_skip), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            informSkip(info);
-                        }
-                    })
                     .setCancelable(false)
                     .create();
             dialog.show();

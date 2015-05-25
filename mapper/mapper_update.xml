@@ -3,8 +3,8 @@
     <appName>Mapper</appName>
     <appDescription>Photos from everywhere!</appDescription>
     <packageName>com.stefano.andrea.mapper</packageName>
-    <versionCode>2</versionCode>  
-    <versionName>1.2</versionName>  
+    <versionCode>1</versionCode>  
+    <versionName>1.1</versionName>  
     <forceUpdate>false</forceUpdate>  
     <autoUpdate>true</autoUpdate>
     <apkUrl>https://github.com/stefanogianelli/MapperApp/releases/download/v1.1/mapper-release-v1.1.apk</apkUrl>

@@ -206,7 +206,6 @@
     <string name="autoupdate_update_tips">Nuova versione</string>
     <string name="autoupdate_confirm">Conferma</string>
     <string name="autoupdate_cancel">Cancella</string>
-    <string name="autoupdate_skip">Rimanda</string>
     <string name="autoupdate_no_update">App aggiornata</string>
 
     <!-- Titoli -->
