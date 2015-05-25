@@ -29,5 +29,6 @@ Nel log NON vengono aggiunti dati personali!
 
 ##### Known Issues
 * Nel dialog dei dettagli delle foto il nome del file non è sempre corretto [(Issue #47)](https://github.com/stefanogianelli/MapperApp/issues/47)
+* Crash durante la ricerca delle città e/o posti [(Issue #53)](https://github.com/stefanogianelli/MapperApp/issues/53)
 
 [Elenco completo delle issue](https://github.com/stefanogianelli/MapperApp/issues)
