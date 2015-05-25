@@ -57,6 +57,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
     private FotoAdapter mAdapter;
     private ArrayList<Foto> mElencoFoto;
     private RecyclerView mRecyclerView;
+    private LinearLayout mProgressBar;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback () {
 
@@ -169,6 +170,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
         View v = inflater.inflate(R.layout.fragment_elenco_foto,container,false);
         //acquisisco riferimenti
         mRecyclerView = (RecyclerView) v.findViewById(R.id.gridViewFotoViaggio);
+        mProgressBar = (LinearLayout) v.findViewById(R.id.loading_layout);
         final TextView nessunaFotoInfo = (TextView) v.findViewById(R.id.no_foto);
         //configuro recyclerview
         mRecyclerView.setHasFixedSize(true);
@@ -273,7 +275,7 @@ public class ElencoFotoFragment extends Fragment implements LoaderManager.Loader
             case FOTO_LOADER:
                 mAdapter.setElencoFoto(data);
                 mElencoFoto = (ArrayList<Foto>) data;
-
+                mProgressBar.setVisibility(View.GONE);
                 LinearLayout sugg = (LinearLayout) mParentActivity.findViewById(R.id.suggerimento_crea_foto);
                 if(sugg!=null){
                     if(mAdapter.getItemCount()==0) {
