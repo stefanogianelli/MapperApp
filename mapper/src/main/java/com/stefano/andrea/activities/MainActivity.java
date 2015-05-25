@@ -2,9 +2,12 @@ package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int VIAGGI_LOADER = 0;
     private static final String TAG = "MainActivity";
 
-    private static final String UPDATE_XML_URL = "https://github.com/stefanogianelli/MapperApp/tree/master/mapper/mapper_update.xml";
+    private static final String UPDATE_XML_URL = "https://raw.githubusercontent.com/stefanogianelli/MapperApp/master/mapper/mapper_update.xml";
 
     private ViaggiAdapter mAdapter;
     private List<Viaggio> mListaViaggi;
@@ -202,7 +205,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //Inizializzo imageloader
         setupImageLoader();
         //controllo presenza di aggiornamenti
-        checkUpdates();
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            checkUpdates();
+        }
     }
 
     @Override

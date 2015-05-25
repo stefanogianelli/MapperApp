@@ -57,16 +57,7 @@ public class UpdateListener extends AbstractUpdateListener {
     }
 
     @Override
-    public void onShowNoUpdateUI() {
-        Context context = getContext();
-        if (context != null) {
-            AlertDialog dialog = new AlertDialog.Builder(context)
-                    .setMessage(context.getText(R.string.autoupdate_no_update))
-                    .setCancelable(true)
-                    .create();
-            dialog.show();
-        }
-    }
+    public void onShowNoUpdateUI() { }
 
     @Override
     public void onShowUpdateProgressUI(final UpdateInfo info, final DownloadTask task, final int progress) {
