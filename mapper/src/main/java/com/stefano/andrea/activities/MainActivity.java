@@ -23,6 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.snowdream.android.app.UpdateFormat;
+import com.github.snowdream.android.app.UpdateManager;
+import com.github.snowdream.android.app.UpdateOptions;
+import com.github.snowdream.android.app.UpdatePeriod;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.EventListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -41,6 +45,7 @@ import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
+import com.stefano.andrea.utils.UpdateListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String BUNDLE_ACTION_MODE = "com.stefano.andrea.activities.MainActivity.actionMode";
     private static final int VIAGGI_LOADER = 0;
     private static final String TAG = "MainActivity";
+
+    private static final String UPDATE_XML_URL = "https://github.com/stefanogianelli/MapperApp/tree/master/mapper/mapper_update.xml";
 
     private ViaggiAdapter mAdapter;
     private List<Viaggio> mListaViaggi;
@@ -194,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mFab.attachToRecyclerView(recyclerView);
         //Inizializzo imageloader
         setupImageLoader();
+        //controllo presenza di aggiornamenti
+        checkUpdates();
     }
 
     @Override
@@ -374,6 +383,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .translationY(view.getHeight())
                 .alpha(1.0f)
                 .setDuration(900);
+    }
+
+    private void checkUpdates () {
+        UpdateManager manager = new UpdateManager(this);
+
+        UpdateOptions options = new UpdateOptions.Builder(this)
+                .checkUrl(UPDATE_XML_URL)
+                .updateFormat(UpdateFormat.XML)
+                .updatePeriod(new UpdatePeriod(UpdatePeriod.EACH_TIME))
+                .checkPackageName(true)
+                .build();
+        manager.check(this, options, new UpdateListener());
     }
 
 }

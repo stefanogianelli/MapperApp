@@ -5,19 +5,6 @@
     android:background="@drawable/border_shadow"
     android:gravity="center_horizontal">
 
-    <!--<TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/dialog_header_bckg"
-        android:text="@string/completa_azione"
-        android:textColor="@color/white"
-        android:paddingLeft="@dimen/dialog_header_padding_left"
-        android:paddingRight="@dimen/dialog_header_padding_right"
-        android:paddingEnd="@dimen/dialog_header_padding_right"
-        android:paddingTop="@dimen/dialog_header_padding_left"
-        android:paddingBottom="@dimen/dialog_header_padding_left"
-        android:layout_gravity="center"/>   -->
-
     <LinearLayout
         android:layout_width="240dp"
         android:layout_height="wrap_content"

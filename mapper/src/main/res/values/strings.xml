@@ -202,6 +202,13 @@
     <string name="no_localizzazione_titolo">Usare la posizione?</string>
     <string name="no_localizzazione_messaggio">Devi abilitare la localizzazione per usare questa funzione. Attivala dalle impostazioni.</string>
 
+    <!-- AutoUpdate -->
+    <string name="autoupdate_update_tips">Nuova versione</string>
+    <string name="autoupdate_confirm">Conferma</string>
+    <string name="autoupdate_cancel">Cancella</string>
+    <string name="autoupdate_skip">Rimanda</string>
+    <string name="autoupdate_no_update">App aggiornata</string>
+
     <!-- Titoli -->
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
     <string name="title_activity_dettagli_posto">DettagliPostoActivity</string>
