@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import com.github.snowdream.android.app.AbstractUpdateListener;
 import com.github.snowdream.android.app.DownloadTask;
@@ -57,7 +58,9 @@ public class UpdateListener extends AbstractUpdateListener {
     }
 
     @Override
-    public void onShowNoUpdateUI() { }
+    public void onShowNoUpdateUI() {
+        Log.d("UpdateListener", "Ultima versione");
+    }
 
     @Override
     public void onShowUpdateProgressUI(final UpdateInfo info, final DownloadTask task, final int progress) {
