@@ -28,5 +28,6 @@ Se riscontri un problema con l'uso dell'app puoi inviare una segnalazione con i 
 Nel log NON vengono aggiunti dati personali!
 
 ##### Known Issues
+* Nel dialog dei dettagli delle foto il nome del file non è sempre corretto [(Issue #47)](https://github.com/stefanogianelli/MapperApp/issues/47)
 
 [Elenco completo delle issue](https://github.com/stefanogianelli/MapperApp/issues)
