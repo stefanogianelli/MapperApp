@@ -1,6 +1,7 @@
 <resources>
     <!-- Valori comuni -->
     <string name="app_name">Mapper</string>
+    <string name="app_motto">Photos from everywhere!</string>
     <string name="title_tab_dettagli">Dettagli</string>
     <string name="title_tab_foto">Foto</string>
     <string name="title_tab_mappa">Mappa</string>
