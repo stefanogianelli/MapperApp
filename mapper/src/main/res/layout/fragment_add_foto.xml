@@ -33,9 +33,10 @@
             android:focusable="true"
             android:background="?android:selectableItemBackground">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_photo_camera_black_36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/camera_color"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/camera"
                 />
@@ -57,9 +58,10 @@
             android:focusable="true"
             android:background="?android:selectableItemBackground">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_collections_black_36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/gallery_color"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/gallery" />
             <TextView
