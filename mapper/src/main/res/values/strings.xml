@@ -65,7 +65,6 @@
     </plurals>
     <string name="nessuna_citta">Non hai ancora aggiunto città</string>
 
-
     <!-- DettagliCittaFragment -->
     <string name="suggerimento_crea_posto">Aggiungi tutti i posti che vuoi visitare in questa città</string>
     <string name="add_posto">Nome del posto</string>
@@ -162,6 +161,7 @@
     <string name="service_not_available">Servizio non disponibile</string>
     <string name="invalid_lat_long_used">Coordinate non valide</string>
     <string name="no_geocoder_available">Geocoder non disponibile</string>
+    <string name="location_search_in_progress">Ricerca della posizione …</string>
 
     <!-- ModInfoFoto -->
     <string name="recupero_info">Recupero informazioni sulla località</string>

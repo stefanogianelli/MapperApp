@@ -37,6 +37,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -61,7 +63,7 @@ import com.stefano.andrea.utils.PhotoUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, AddCittaDialog.AggiungiCittaCallback, AddPostoDialog.AggiungiPostoCallback {
+public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, AddCittaDialog.AggiungiCittaCallback, AddPostoDialog.AggiungiPostoCallback, LocationListener {
 
     private static final String CLASS_NAME = "com.stefano.andrea.activities.ModInfoFotoAcitivity";
 
@@ -82,15 +84,26 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     private static final String ADDRESS_REQUESTED_KEY = CLASS_NAME + ".address_request_pending";
     private static final String LOCATION_ADDRESS_KEY = CLASS_NAME + ".location_address";
     private static final String FOTO_ADDRESS_KEY = CLASS_NAME + ".foto_address";
+    protected final static String REQUESTING_LOCATION_UPDATES_KEY = CLASS_NAME + ".requesting_location_updates_key";
 
     //Localization variables
     private GoogleApiClient mGoogleApiClient;
+    /** Represents a geographical location. */
     private Location mLastLocation;
     private Location mFotoLocation;
     private boolean mAddressRequested;
     private boolean mFotoRequested;
     private AddressResultReceiver mResultReceiver;
     private Citta mCittaLocalizzata;
+    private LocationManagerCheck mLocationManagerCheck;
+    /** Stores parameters for requests to the FusedLocationProviderApi. */
+    private LocationRequest mLocationRequest;
+    /** Tracks the status of the location updates request. Value changes when the user presses the Start Updates and Stop Updates buttons. */
+    private Boolean mRequestingLocationUpdates;
+    /** The desired interval for location updates. Inexact. Updates may be more or less frequent. */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    /** The fastest rate for active location updates. Exact. Updates will never be more frequent than this value. */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
     private ContentResolver mResolver;
     private boolean mFotoSalvata = false;
@@ -207,13 +220,15 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         //inizializzo posto
         inizializzaPosto(mIdPosto);
         //configuro handler per la localizzazione
+        mLocationManagerCheck = new LocationManagerCheck(this);
         mResultReceiver = new AddressResultReceiver(new Handler());
         mAddressRequested = false;
         mFotoRequested = false;
+        mRequestingLocationUpdates = true;
         updateValuesFromBundle(savedInstanceState);
 
-        updateUIWidgets();
         buildGoogleApiClient();
+        updateUIWidgets();
     }
 
 
@@ -323,7 +338,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 indirizzo += mPostoSelezionato.getNome() + ", ";
             indirizzo += mCittaSelezionata.getNome() + ", " + mCittaSelezionata.getNazione();
             values.put(MapperContract.Foto.INDIRIZZO, indirizzo);
-            Log.d(TAG, "Indirizzo: " + indirizzo);
         }
         if (values.size() > 0) {
             UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
@@ -750,6 +764,33 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Within {@code onPause()}, we pause location updates, but leave the
+        // connection to GoogleApiClient intact.  Here, we resume receiving
+        // location updates if the user has requested them.
+
+        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+            if (mLocationManagerCheck.isLocationServiceAvailable()) {
+                startLocationUpdates();
+                updateUIWidgets();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
+        if (mGoogleApiClient.isConnected()) {
+            if (mLocationManagerCheck.isLocationServiceAvailable()) {
+                stopLocationUpdates();
+                updateUIWidgets();
+            }
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (mGoogleApiClient.isConnected()) {
@@ -880,6 +921,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 if (mCittaSelezionata == null)
                     displayAddressOutput();
             }
+            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+                mRequestingLocationUpdates = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY);
+            }
         }
     }
 
@@ -892,6 +936,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        createLocationRequest();
     }
 
     /**
@@ -906,10 +951,11 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
             setInfoToolbar(R.string.recupero_info, R.color.white, R.color.black);
             updateUIWidgets();
-        }else{
-           LocationManagerCheck locationManagerCheck = new LocationManagerCheck(this);
-           if(!locationManagerCheck.isLocationServiceAvailable()){
-               locationManagerCheck.createLocationServiceError(this);
+        } else {
+           if(!mLocationManagerCheck.isLocationServiceAvailable()){
+               mLocationManagerCheck.createLocationServiceError();
+           } else {
+               setInfoToolbar(R.string.no_address_found, R.color.red, R.color.white);
            }
         }
     }
@@ -986,8 +1032,16 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             mInfoProgress.setVisibility(ProgressBar.VISIBLE);
             mGeolocalizzaButton.setEnabled(false);
         } else {
-            mInfoProgress.setVisibility(ProgressBar.GONE);
-            mGeolocalizzaButton.setEnabled(true);
+            if (mInfoProgress.getVisibility() == ProgressBar.VISIBLE)
+                mInfoProgress.setVisibility(ProgressBar.GONE);
+            if (mLocationManagerCheck.isLocationServiceAvailable() && mRequestingLocationUpdates) {
+                //attendo acquisizione posizione
+                mGeolocalizzaButton.setText(R.string.location_search_in_progress);
+                mGeolocalizzaButton.setEnabled(false);
+            } else {
+                mGeolocalizzaButton.setText(R.string.geolocalizza);
+                mGeolocalizzaButton.setEnabled(true);
+            }
         }
     }
 
@@ -1005,7 +1059,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         // Save whether the address has been requested.
         savedInstanceState.putBoolean(ADDRESS_REQUESTED_KEY, mAddressRequested);
         savedInstanceState.putBoolean(FOTO_ADDRESS_KEY, mFotoRequested);
-
+        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
         // Save the address string.
         if (mCittaLocalizzata != null)
             savedInstanceState.putParcelable(LOCATION_ADDRESS_KEY, mCittaLocalizzata);
@@ -1026,6 +1080,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 setInfoToolbar(R.string.no_geocoder_available, R.color.red, R.color.white);
                 return;
             }
+            //disable location updates
+            mRequestingLocationUpdates = false;
+            stopLocationUpdates();
+            updateUIWidgets();
             // It is possible that the user presses the button to get the address before the
             // GoogleApiClient object successfully connects. In such a case, mAddressRequested
             // is set to true, but no attempt is made to fetch the address (see
@@ -1036,14 +1094,19 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
         }
 
+        if (mRequestingLocationUpdates) {
+            if (mLocationManagerCheck.isLocationServiceAvailable()) {
+                startLocationUpdates();
+                updateUIWidgets();
+            }
+        }
+
         if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == EMPTY_ID && mIdPosto == EMPTY_ID) {
             //Acquisisco coordinate della foto
-            Log.d(TAG, "Acquisisco coordinate della foto");
             LatLng coord = getCoordinates(mFotoUris.get(0).toString());
             double latitudine = coord.latitude;
             double longitudine = coord.longitude;
             if (latitudine != 0 && longitudine != 0) {
-                Log.d(TAG, "Coordinate trovate!");
                 mFotoLocation = new Location("Mapper");
                 mFotoLocation.setLatitude(latitudine);
                 mFotoLocation.setLongitude(longitudine);
@@ -1142,6 +1205,66 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             startActivity(new Intent(this, MainActivity.class));
         }
         finish();
+    }
+
+    /**
+     * Sets up the location request. Android has two location request settings:
+     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
+     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
+     * the AndroidManifest.xml.
+     * <p/>
+     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
+     * interval (5 seconds), the Fused Location Provider API returns location updates that are
+     * accurate to within a few feet.
+     * <p/>
+     * These settings are appropriate for mapping applications that show real-time location
+     * updates.
+     */
+    private void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Sets the fastest rate for active location updates. This interval is exact, and your
+        // application will never receive updates faster than this value.
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    /**
+     * Requests location updates from the FusedLocationApi.
+     */
+    private void startLocationUpdates() {
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    /**
+     * Removes location updates from the FusedLocationApi.
+     */
+    protected void stopLocationUpdates() {
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
+
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        mRequestingLocationUpdates = false;
+        stopLocationUpdates();
+        updateUIWidgets();
     }
 
 }

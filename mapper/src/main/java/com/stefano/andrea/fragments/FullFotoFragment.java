@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -52,6 +53,7 @@ public class FullFotoFragment extends Fragment {
     private List<Foto> mElencoFoto;
     private int mPosition;
     private ViewPager mPager;
+    private Toolbar mToolbar;
 
     public FullFotoFragment () { }
 
@@ -74,17 +76,17 @@ public class FullFotoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_full_foto, container, false);
         mPager = (ViewPager) rootView.findViewById(R.id.pager);
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.full_foto_toolbar);
+        mToolbar = (Toolbar) rootView.findViewById(R.id.full_foto_toolbar);
         Bundle args = getArguments();
         if (args != null) {
             mElencoFoto = args.getParcelableArrayList(EXTRA_LISTA_FOTO);
             mPosition = args.getInt(EXTRA_IMAGE_POSITION);
         }
 
-        ((AppCompatActivity) mParentActivity).setSupportActionBar(toolbar);
+        ((AppCompatActivity) mParentActivity).setSupportActionBar(mToolbar);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        mToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
         int uiOptions = mParentActivity.getWindow().getDecorView().getSystemUiVisibility();
         boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
@@ -203,6 +205,17 @@ public class FullFotoFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int paddingRight = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                paddingRight = getNavigationBarHeight();
+            mToolbar.setPadding(0, getStatusBarHeight(), paddingRight, 0);
+        }
     }
 
     private class ImageAdapter extends PagerAdapter {
@@ -372,6 +385,15 @@ public class FullFotoFragment extends Fragment {
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    private int getNavigationBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result ;
     }
 
 }

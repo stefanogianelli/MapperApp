@@ -303,7 +303,6 @@
         android:paddingRight="50dp"
         android:background="@color/info_background"
         android:text="@string/geolocalizza"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"/>
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
