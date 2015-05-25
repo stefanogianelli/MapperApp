@@ -131,9 +131,11 @@ public class PlaceAutocompleteAdapter
 
     @Override
     public void clear() {
-        if (mResultList != null)
-            mResultList.clear();
         super.clear();
+        if (mResultList != null) {
+            mResultList.clear();
+            notifyDataSetChanged();
+        }
     }
 
     /**
