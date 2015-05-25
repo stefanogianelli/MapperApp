@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         UpdateOptions options = new UpdateOptions.Builder(this)
                 .checkUrl(UPDATE_XML_URL)
                 .updateFormat(UpdateFormat.XML)
-                .updatePeriod(new UpdatePeriod(UpdatePeriod.EACH_TIME))
+                .updatePeriod(new UpdatePeriod(UpdatePeriod.EACH_ONE_DAY))
                 .checkPackageName(true)
                 .build();
         manager.check(this, options, new UpdateListener());
