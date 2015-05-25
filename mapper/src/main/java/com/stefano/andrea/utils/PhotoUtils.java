@@ -7,6 +7,8 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -95,20 +97,16 @@ public class PhotoUtils {
 
         Window window = dialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
-
         wlp.gravity = Gravity.TOP;
-        wlp.y = Math.round(convertDpToPixel(48f, activity.getApplicationContext()));
+        wlp.y = Math.round(convertDpToPixel(52f, activity.getApplicationContext()));
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        //int height = displaymetrics.heightPixels;
         int width = displaymetrics.widthPixels;
         wlp.width = width;
-
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
-
         dialog.getWindow().getAttributes().windowAnimations =  R.style.dialog_sliding_animation;
-
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 

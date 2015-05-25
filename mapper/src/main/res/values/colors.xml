@@ -52,5 +52,5 @@
     <!-- Dialogo marker -->
     <color name="background_dialogo_marker">#6e333333</color>
 
-
+    <color name="shadow">#aa666666</color>
 </resources>
