@@ -15,60 +15,46 @@ import com.stefano.andrea.activities.R;
  */
 public class LocationManagerCheck {
 
-    private Boolean locationServiceBoolean = false;
-    private static AlertDialog alert;
+    private LocationManager mLocationManager;
+    private Activity mActivity;
 
-    public LocationManagerCheck(Context context) {
-        LocationManager locationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
-        boolean gpsIsEnabled = locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean networkIsEnabled = locationManager
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        if (networkIsEnabled && gpsIsEnabled) {
-            locationServiceBoolean = true;
-
-        } else if (!networkIsEnabled && gpsIsEnabled) {
-            locationServiceBoolean = true;
-
-        } else if (networkIsEnabled && !gpsIsEnabled) {
-            locationServiceBoolean = true;
-        }
-
+    public LocationManagerCheck(Activity activity) {
+        mActivity = activity;
+        mLocationManager = (LocationManager) activity.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
     }
 
     public Boolean isLocationServiceAvailable() {
+        boolean locationServiceBoolean = false;
+        boolean gpsIsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean networkIsEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if (networkIsEnabled && gpsIsEnabled) {
+            locationServiceBoolean = true;
+        } else if (!networkIsEnabled && gpsIsEnabled) {
+            locationServiceBoolean = true;
+        } else if (networkIsEnabled && !gpsIsEnabled) {
+            locationServiceBoolean = true;
+        }
         return locationServiceBoolean;
     }
 
-    public void createLocationServiceError(final Activity activityObj) {
-
-        // show alert dialog if Internet is not connected
-        AlertDialog.Builder builder = new AlertDialog.Builder(activityObj);
-
-        //TODO: portare nelle stringhe
+    public void createLocationServiceError() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setMessage(
-                activityObj.getString(R.string.no_localizzazione_messaggio))
-                .setTitle(activityObj.getString(R.string.no_localizzazione_titolo))
+                mActivity.getString(R.string.no_localizzazione_messaggio))
+                .setTitle(mActivity.getString(R.string.no_localizzazione_titolo))
                 .setCancelable(false)
-                .setPositiveButton(activityObj.getString(R.string.action_settings),
+                .setPositiveButton(mActivity.getString(R.string.action_settings),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(
                                         Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                activityObj.startActivity(intent);
-                                alert.dismiss();
+                                mActivity.startActivity(intent);
+                                dialog.dismiss();
                             }
                         })
-                .setNegativeButton(activityObj.getString(R.string.annulla),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                alert.dismiss();
-                            }
-                        });
-        alert = builder.create();
-        alert.show();
+                .setNegativeButton(mActivity.getString(R.string.annulla), null);
+        builder.create().show();
     }
 
 }

@@ -338,7 +338,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 indirizzo += mPostoSelezionato.getNome() + ", ";
             indirizzo += mCittaSelezionata.getNome() + ", " + mCittaSelezionata.getNazione();
             values.put(MapperContract.Foto.INDIRIZZO, indirizzo);
-            Log.d(TAG, "Indirizzo: " + indirizzo);
         }
         if (values.size() > 0) {
             UpdateTask.UpdateAdapter adapter = new UpdateTask.UpdateAdapter() {
@@ -773,7 +772,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
         if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             if (mLocationManagerCheck.isLocationServiceAvailable()) {
-                Log.d(TAG, "onResume -> Start location updates");
                 startLocationUpdates();
                 updateUIWidgets();
             }
@@ -786,7 +784,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         // Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
         if (mGoogleApiClient.isConnected()) {
             if (mLocationManagerCheck.isLocationServiceAvailable()) {
-                Log.d(TAG, "onPause -> stopLocationUpdates");
                 stopLocationUpdates();
                 updateUIWidgets();
             }
@@ -956,7 +953,7 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             updateUIWidgets();
         } else {
            if(!mLocationManagerCheck.isLocationServiceAvailable()){
-               mLocationManagerCheck.createLocationServiceError(this);
+               mLocationManagerCheck.createLocationServiceError();
            } else {
                setInfoToolbar(R.string.no_address_found, R.color.red, R.color.white);
            }
@@ -1032,7 +1029,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      */
     private void updateUIWidgets() {
         if (mAddressRequested || mFotoRequested) {
-            Log.d(TAG, "Geolocalizzazione in corso -> disabilito pulsante");
             mInfoProgress.setVisibility(ProgressBar.VISIBLE);
             mGeolocalizzaButton.setEnabled(false);
         } else {
@@ -1040,11 +1036,9 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
                 mInfoProgress.setVisibility(ProgressBar.GONE);
             if (mLocationManagerCheck.isLocationServiceAvailable() && mRequestingLocationUpdates) {
                 //attendo acquisizione posizione
-                Log.d(TAG, "attendo posizione -> disabilito pulsante");
                 mGeolocalizzaButton.setText(R.string.location_search_in_progress);
                 mGeolocalizzaButton.setEnabled(false);
             } else {
-                Log.d(TAG, "nessuna richiesta di geolocalizzazione -> abilito pulsante");
                 mGeolocalizzaButton.setText(R.string.geolocalizza);
                 mGeolocalizzaButton.setEnabled(true);
             }
@@ -1079,10 +1073,8 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     public void onConnected(Bundle connectionHint) {
         // Gets the best and most recent location currently available, which may be null
         // in rare cases when a location is not available.
-        Log.d(TAG, "Ricerco ultima localita'");
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d(TAG, "Trovata ultima localita'!");
             // Determine whether a Geocoder is available.
             if (!Geocoder.isPresent()) {
                 setInfoToolbar(R.string.no_geocoder_available, R.color.red, R.color.white);
@@ -1090,7 +1082,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
             }
             //disable location updates
             mRequestingLocationUpdates = false;
-            Log.d(TAG, "onConnected -> stopLocationUpdates");
             stopLocationUpdates();
             updateUIWidgets();
             // It is possible that the user presses the button to get the address before the
@@ -1105,7 +1096,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
         if (mRequestingLocationUpdates) {
             if (mLocationManagerCheck.isLocationServiceAvailable()) {
-                Log.d(TAG, "onConnected -> Start location updates");
                 startLocationUpdates();
                 updateUIWidgets();
             }
@@ -1113,12 +1103,10 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
         if (mFotoIDs == null && mCittaLocalizzata == null && !mAddressRequested && mIdCitta == EMPTY_ID && mIdPosto == EMPTY_ID) {
             //Acquisisco coordinate della foto
-            Log.d(TAG, "Acquisisco coordinate della foto");
             LatLng coord = getCoordinates(mFotoUris.get(0).toString());
             double latitudine = coord.latitude;
             double longitudine = coord.longitude;
             if (latitudine != 0 && longitudine != 0) {
-                Log.d(TAG, "Coordinate trovate!");
                 mFotoLocation = new Location("Mapper");
                 mFotoLocation.setLatitude(latitudine);
                 mFotoLocation.setLongitude(longitudine);
@@ -1275,7 +1263,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         mRequestingLocationUpdates = false;
-        Log.d(TAG, "onLocationChanged -> stopLocationUpdates");
         stopLocationUpdates();
         updateUIWidgets();
     }
