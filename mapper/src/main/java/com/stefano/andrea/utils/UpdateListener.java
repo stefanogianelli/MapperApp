@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -14,10 +15,14 @@ import com.github.snowdream.android.app.DownloadTask;
 import com.github.snowdream.android.app.UpdateInfo;
 import com.stefano.andrea.activities.R;
 
+import java.io.File;
+
 /**
  * UpdateListener
  */
 public class UpdateListener extends AbstractUpdateListener {
+
+    private static final String TAG = "UpdateListener";
 
     private NotificationManager notificationManager = null;
     private NotificationCompat.Builder notificationBuilder = null;
@@ -53,7 +58,13 @@ public class UpdateListener extends AbstractUpdateListener {
 
     @Override
     public void onShowNoUpdateUI() {
-        Log.d("UpdateListener", "Ultima versione");
+        Log.v(TAG, "Ultima versione");
+        //elimino la cartella temporanea dei download, se presente
+        File downloadDir = new File(Environment.getExternalStorageDirectory(), "/snowdream");
+        if (downloadDir.exists()) {
+            boolean res = deleteDirectory(downloadDir);
+            Log.v(TAG, "Cancellata directory temporanea con esito: " + res);
+        }
     }
 
     @Override
@@ -92,5 +103,23 @@ public class UpdateListener extends AbstractUpdateListener {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
+    }
+
+    private boolean deleteDirectory (File path) {
+        if( path.exists() ) {
+            File[] files = path.listFiles();
+            if (files == null) {
+                return true;
+            }
+            for(int i=0; i<files.length; i++) {
+                if(files[i].isDirectory()) {
+                    deleteDirectory(files[i]);
+                }
+                else {
+                    files[i].delete();
+                }
+            }
+        }
+        return( path.delete() );
     }
 }
