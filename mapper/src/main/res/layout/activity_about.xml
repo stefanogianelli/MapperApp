@@ -18,8 +18,16 @@
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:textColor="@color/about_title"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="5dp"
             android:text="@string/app_name"  />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/about_subtitle"
+            android:layout_marginBottom="4dp"
+            android:text="@string/app_motto"  />
 
         <TextView
             android:id="@+id/versione_app"

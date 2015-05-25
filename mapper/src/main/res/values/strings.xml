@@ -1,6 +1,7 @@
 <resources>
     <!-- Valori comuni -->
     <string name="app_name">Mapper</string>
+    <string name="app_motto">Photos from everywhere!</string>
     <string name="title_tab_dettagli">Dettagli</string>
     <string name="title_tab_foto">Foto</string>
     <string name="title_tab_mappa">Mappa</string>
@@ -13,6 +14,7 @@
     <string name="ok">OK</string>
     <string name="save">Salva</string>
     <string name="cancel">Cancella</string>
+    <string name="annulla">Annulla</string>
     <string name="edit">Modifica</string>
     <string name="remove">Rimuovi</string>
     <string name="rename">Rinomina</string>
@@ -195,6 +197,10 @@
 
     <!-- AddPostoDialog -->
     <string name="add_posto_dialog_message">Aggiunta posto</string>
+
+    <!-- LocationManagerCheck -->
+    <string name="no_localizzazione_titolo">Usare la posizione?</string>
+    <string name="no_localizzazione_messaggio">Devi abilitare la localizzazione per usare questa funzione. Attivala dalle impostazioni.</string>
 
     <!-- Titoli -->
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>

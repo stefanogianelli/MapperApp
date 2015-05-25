@@ -8,6 +8,8 @@ import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
+import com.stefano.andrea.activities.R;
+
 /**
  * LocationManagerCheck
  */
@@ -47,10 +49,10 @@ public class LocationManagerCheck {
 
         //TODO: portare nelle stringhe
         builder.setMessage(
-                "Devi abilitare la localizzazione per usare questa funzione. Attivala dalle impostazioni.")
-                .setTitle("Usare la posizione?")
+                activityObj.getString(R.string.no_localizzazione_messaggio))
+                .setTitle(activityObj.getString(R.string.no_localizzazione_titolo))
                 .setCancelable(false)
-                .setPositiveButton("Impostazioni",
+                .setPositiveButton(activityObj.getString(R.string.action_settings),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(
@@ -59,7 +61,7 @@ public class LocationManagerCheck {
                                 alert.dismiss();
                             }
                         })
-                .setNegativeButton("Annulla",
+                .setNegativeButton(activityObj.getString(R.string.annulla),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 alert.dismiss();
