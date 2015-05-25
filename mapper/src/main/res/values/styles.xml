@@ -69,4 +69,9 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="dialog_sliding_animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
 </resources>
