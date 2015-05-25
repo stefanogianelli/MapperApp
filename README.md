@@ -28,6 +28,5 @@ Se riscontri un problema con l'uso dell'app puoi inviare una segnalazione con i 
 Nel log NON vengono aggiunti dati personali!
 
 ##### Known Issues
-* Ricerca infinita della posizione di una foto se non è attiva la geolocalizzazione
 
 [Elenco completo delle issue](https://github.com/stefanogianelli/MapperApp/issues)
