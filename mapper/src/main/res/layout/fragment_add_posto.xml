@@ -32,7 +32,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <EditText
+        <com.stefano.andrea.utils.AutoCompleteWithoutPopupView
             android:id="@+id/autocomplete_posti"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

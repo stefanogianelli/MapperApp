@@ -10,8 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -40,6 +37,7 @@ import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PlaceAutocompleteAdapter;
 import com.stefano.andrea.fragments.DettagliCittaFragment;
+import com.stefano.andrea.utils.AutoCompleteWithoutPopupView;
 
 /**
  * AddPostoDialog
@@ -98,7 +96,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         final View view = inflater.inflate(R.layout.fragment_add_posto, container, false);
         view.setOnClickListener(null);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar_add_posto_dialog);
-        final EditText autocompleteView = (EditText) view.findViewById(R.id.autocomplete_posti);
+        final AutoCompleteWithoutPopupView autocompleteView = (AutoCompleteWithoutPopupView) view.findViewById(R.id.autocomplete_posti);
         final ImageView clearButton = (ImageView) view.findViewById(R.id.clearable_button_clear);
         mSuggestions = (ListView) view.findViewById(R.id.autocomplete_suggestions);
         mProgressBar = (ProgressBar) view.findViewById(R.id.toolbar_progress_bar_posto);
@@ -128,30 +126,9 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
         });
         mSuggestions.setAdapter(mAdapter);
         mSuggestions.setOnItemClickListener(mAutocompleteClickListener);
-        autocompleteView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString();
-                if (!query.isEmpty()) {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mAdapter.getFilter().filter(query);
-                    clearButton.setEnabled(true);
-                } else {
-                    mAdapter.clear();
-                    clearButton.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        autocompleteView.setLoadingIndicator(mProgressBar);
+        autocompleteView.setClearButton(clearButton);
+        autocompleteView.setAdapter(mAdapter);
         autocompleteView.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -174,6 +151,7 @@ public class AddPostoDialog extends DialogFragment implements GoogleApiClient.On
             @Override
             public void onClick(View v) {
                 autocompleteView.setText("");
+                mAdapter.clear();
             }
         });
         return view;

@@ -82,6 +82,8 @@ public class PlaceAutocompleteAdapter
 
     private int mResource;
 
+    private boolean mClearSelection;
+
     /**
      * Initializes with a resource for text rows and autocomplete query bounds.
      *
@@ -132,10 +134,7 @@ public class PlaceAutocompleteAdapter
     @Override
     public void clear() {
         super.clear();
-        if (mResultList != null) {
-            mResultList.clear();
-            notifyDataSetChanged();
-        }
+        mClearSelection = true;
     }
 
     /**
@@ -176,6 +175,11 @@ public class PlaceAutocompleteAdapter
                 } else {
                     // The API did not return any results, invalidate the data set.
                     notifyDataSetInvalidated();
+                }
+                if (mClearSelection) {
+                    mResultList = null;
+                    notifyDataSetChanged();
+                    mClearSelection = false;
                 }
                 if (mListener != null)
                     mListener.onLoadComplete();
