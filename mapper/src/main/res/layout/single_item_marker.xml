@@ -13,11 +13,12 @@
         android:id="@+id/single_text_marker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="20dp"
+        android:minWidth="20dp"
         android:textAppearance="@style/Bubble.TextAppearance.Light"
-        android:background="@android:color/black"
-        android:paddingLeft="@dimen/custom_marker_padding"
-        android:paddingRight="@dimen/custom_marker_padding"
+        android:background="@drawable/bg_black_circle"
         android:layout_gravity="center"
+        android:gravity="center"
         android:alpha=".8"/>
 
 </FrameLayout>
