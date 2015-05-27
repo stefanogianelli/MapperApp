@@ -39,7 +39,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "mapper_db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     //Create table VIAGGIO
     private static final String CREATE_VIAGGIO = "CREATE TABLE \"" + Tables.VIAGGIO + "\" (" +
@@ -85,9 +85,7 @@ public class MapperDatabase extends SQLiteOpenHelper {
             "`" + MapperContract.Luogo.NOME + "` TEXT NOT NULL," +
             "`" + MapperContract.Luogo.LATITUDINE + "` REAL NOT NULL," +
             "`" + MapperContract.Luogo.LONGITUDINE + "` REAL NOT NULL," +
-            "`" + MapperContract.Luogo.ID_CITTA + "` INTEGER NOT NULL," +
-            "`" + MapperContract.Luogo.COUNT + "` INTEGER DEFAULT 0," +
-            "FOREIGN KEY(`" + MapperContract.Luogo.ID_CITTA + "`) REFERENCES " + Tables.DATI_CITTA + " (`" + MapperContract.DatiCitta.ID + "`));";
+            "`" + MapperContract.Luogo.COUNT + "` INTEGER DEFAULT 0);";
 
     //Create table FOTO
     private static final String CREATE_FOTO = "CREATE TABLE \"" + Tables.FOTO + "\" (" +
@@ -233,6 +231,28 @@ public class MapperDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion == 1 && newVersion == 2)
+            upgradeFrom1to2(db);
+        else
+            recreateDatabase(db);
+    }
+
+    private void upgradeFrom1to2 (SQLiteDatabase db) {
+        //rinomino tabella dei luoghi
+        db.execSQL("ALTER TABLE " + Tables.LUOGO + " RENAME TO " + Tables.LUOGO + "_old;");
+        //creo nuova tabella dei luoghi
+        db.execSQL(CREATE_LUOGO);
+        //copio valori
+        db.execSQL("INSERT INTO " + Tables.LUOGO + " SELECT " + MapperContract.Luogo.ID + ", " +
+                MapperContract.Luogo.NOME + ", " +
+                MapperContract.Luogo.LATITUDINE + ", " +
+                MapperContract.Luogo.LONGITUDINE + ", " +
+                MapperContract.Luogo.COUNT + " FROM " + Tables.LUOGO + "_old ;");
+        //elimino la vecchia tabella
+        db.execSQL("DROP TABLE " + Tables.LUOGO + "_old;");
+    }
+
+    private void recreateDatabase (SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.VIAGGIO);
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CITTA);
         db.execSQL("DROP TABLE IF EXISTS " + Tables.POSTO);

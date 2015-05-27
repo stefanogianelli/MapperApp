@@ -42,7 +42,6 @@ public class PostiLoader extends BaseAsyncTaskLoader<List<Posto>> {
             posto.setNome(c.getString(c.getColumnIndex(MapperContract.Luogo.NOME)));
             posto.setLatitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LATITUDINE)));
             posto.setLongitudine(c.getDouble(c.getColumnIndex(MapperContract.Luogo.LONGITUDINE)));
-            posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Luogo.ID_CITTA)));
             elencoPosti.add(posto);
         }
         c.close();

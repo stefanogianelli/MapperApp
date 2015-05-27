@@ -12,7 +12,6 @@ public class Posto {
     private String nome;
     private double latitudine;
     private double longitudine;
-    private long idDatiCitta;
 
     public Posto () {
         this.id = -1;
@@ -91,13 +90,5 @@ public class Posto {
 
     public void setLongitudine(double longitudine) {
         this.longitudine = longitudine;
-    }
-
-    public long getIdDatiCitta() {
-        return idDatiCitta;
-    }
-
-    public void setIdDatiCitta(long idDatiCitta) {
-        this.idDatiCitta = idDatiCitta;
     }
 }

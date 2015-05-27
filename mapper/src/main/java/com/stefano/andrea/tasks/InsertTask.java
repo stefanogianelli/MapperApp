@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -364,30 +363,13 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
             values.put(MapperContract.Luogo.NOME, posto.getNome());
             values.put(MapperContract.Luogo.LATITUDINE, posto.getLatitudine());
             values.put(MapperContract.Luogo.LONGITUDINE, posto.getLongitudine());
-            int res = getIdDatiCitta();
-            if (res == RESULT_OK) {
-                values.put(MapperContract.Luogo.ID_CITTA, posto.getIdDatiCitta());
-                Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
-                long id = Long.parseLong(uri.getLastPathSegment());
-                if (id != -1) {
-                    posto.setIdLuogo(id);
-                    return RESULT_OK;
-                }
+            Uri uri = mResolver.insert(MapperContract.Luogo.CONTENT_URI, values);
+            long id = Long.parseLong(uri.getLastPathSegment());
+            if (id != -1) {
+                posto.setIdLuogo(id);
+                return RESULT_OK;
             }
             return RESULT_ERROR;
-        }
-
-        private int getIdDatiCitta () {
-            int result = RESULT_ERROR;
-            String [] projection = {MapperContract.Citta.ID_DATI_CITTA};
-            Uri query = ContentUris.withAppendedId(MapperContract.Citta.CONTENT_URI, posto.getIdCitta());
-            Cursor c = mResolver.query(query, projection, null, null, MapperContract.Citta.DEFAULT_SORT + " LIMIT 1");
-            if (c.moveToFirst()) {
-                posto.setIdDatiCitta(c.getLong(c.getColumnIndex(MapperContract.Citta.ID_DATI_CITTA)));
-                result = RESULT_OK;
-            }
-            c.close();
-            return result;
         }
     }
 
