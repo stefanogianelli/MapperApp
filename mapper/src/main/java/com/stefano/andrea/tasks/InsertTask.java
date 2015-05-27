@@ -40,10 +40,17 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     private static final String TAG = "InsertTask";
 
+    /**
+     * Interfaccia che deve essere implementata dalle classi che si occupano dell'inserimento di un nuovo elemento
+     */
     private interface InsertInterface {
         int insertItem ();
     }
 
+    /**
+     * Interfaccia di callback che viene richiamata al termine dell'inserimento, restituendo l'oggetto appena inserito
+     * @param <T> La tipologia dell'elemento
+     */
     public interface InsertAdapter<T> {
         void insertItem (T item);
     }
@@ -55,6 +62,7 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
     private final static int RESULT_OK = 10;
     private final static int RESULT_ERROR = 11;
+    private final static int RESULT_NO_ACTION = 12;
 
     private Activity mActivity;
     private Context mContext;
@@ -129,6 +137,12 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
                         Snackbar.with(mActivity)
                                 .text(mMessaggio)
                                 .eventListener(mListener));
+        } else if (result == RESULT_NO_ACTION) {
+            if (mListener != null)
+                SnackbarManager.show(
+                        Snackbar.with(mActivity)
+                                .text(mActivity.getString(R.string.elemento_presente))
+                                .eventListener(mListener));
         } else {
             //mostro dialog d'errore
             DialogHelper.showAlertDialog(mActivity, R.string.errore_inserimento_titolo_dialog, R.string.errore_inserimento_messaggio_dialog);
@@ -173,27 +187,45 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
         @Override
         public int insertItem() {
-            //verifico se la citta esiste gia nel database
-            int res = this.getDatiCitta();
-            if (res == RESULT_ERROR) {
-                //creo la citta
-                InsertDatiCitta datiCitta = new InsertDatiCitta();
-                res = datiCitta.insertItem();
-            }
-            if (res == RESULT_OK) {
-                ContentValues values = new ContentValues();
-                values.put(MapperContract.Citta.ID_VIAGGIO, citta.getIdViaggio());
-                values.put(MapperContract.Citta.ID_DATI_CITTA, citta.getIdCitta());
-                Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
-                long id = Long.parseLong(uri.getLastPathSegment());
-                if (id != -1) {
-                    citta.setId(id);
-                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
-                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
-                    return RESULT_OK;
+            //verifico se la citta' non sia gia' stata aggiunta al viaggio
+            if (!checkExistence()) {
+                //verifico se la citta' esiste gia nel database
+                int res = this.getDatiCitta();
+                if (res == RESULT_ERROR) {
+                    //creo la citta
+                    InsertDatiCitta datiCitta = new InsertDatiCitta();
+                    res = datiCitta.insertItem();
                 }
-            }
-            return RESULT_ERROR;
+                if (res == RESULT_OK) {
+                    ContentValues values = new ContentValues();
+                    values.put(MapperContract.Citta.ID_VIAGGIO, citta.getIdViaggio());
+                    values.put(MapperContract.Citta.ID_DATI_CITTA, citta.getIdCitta());
+                    Uri uri = mResolver.insert(MapperContract.Citta.CONTENT_URI, values);
+                    long id = Long.parseLong(uri.getLastPathSegment());
+                    if (id != -1) {
+                        citta.setId(id);
+                        mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
+                        mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+                        return RESULT_OK;
+                    }
+                }
+                return RESULT_ERROR;
+            } else
+                return RESULT_NO_ACTION;
+        }
+
+        /**
+         * Verifica se la città che si vuole inserire esiste già
+         * @return True se la città esiste, false altrimenti
+         */
+        private boolean checkExistence () {
+            boolean res = false;
+            String selection = MapperContract.DatiCitta.NOME + "=? AND " + MapperContract.DatiCitta.NAZIONE + "=? AND " + MapperContract.Citta.ID_VIAGGIO + "=?";
+            String [] selectionArgs = {citta.getNome(), citta.getNazione(), Long.toString(citta.getIdViaggio())};
+            Cursor c = mResolver.query(MapperContract.Citta.CONTENT_URI, MapperContract.Citta.PROJECTION_ALL, selection, selectionArgs, null);
+            if (c.getCount() > 0) res = true;
+            c.close();
+            return res;
         }
 
         /**
@@ -257,28 +289,46 @@ public class InsertTask<T> extends AsyncTask<Integer, Void, Integer> {
 
         @Override
         public int insertItem() {
-            //verifico se il luogo e' gia' presente nel db
-            int res = getLuogo();
-            if (res == RESULT_ERROR) {
-                //creo un nuovo luogo
-                InsertLuogo helper = new InsertLuogo();
-                res = helper.insertItem();
-            }
-            if (res == RESULT_OK) {
-                ContentValues values = new ContentValues();
-                values.put(MapperContract.Posto.ID_CITTA, posto.getIdCitta());
-                values.put(MapperContract.Posto.ID_LUOGO, posto.getIdLuogo());
-                Uri uri = mResolver.insert(MapperContract.Posto.CONTENT_URI, values);
-                long id = Long.parseLong(uri.getLastPathSegment());
-                if (id != -1) {
-                    posto.setId(id);
-                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
-                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
-                    mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
-                    return RESULT_OK;
+            //verifico se il posto non sia gia' stata aggiunto al viaggio
+            if (!checkExistence()) {
+                //verifico se il luogo e' gia' presente nel db
+                int res = getLuogo();
+                if (res == RESULT_ERROR) {
+                    //creo un nuovo luogo
+                    InsertLuogo helper = new InsertLuogo();
+                    res = helper.insertItem();
                 }
-            }
-            return RESULT_ERROR;
+                if (res == RESULT_OK) {
+                    ContentValues values = new ContentValues();
+                    values.put(MapperContract.Posto.ID_CITTA, posto.getIdCitta());
+                    values.put(MapperContract.Posto.ID_LUOGO, posto.getIdLuogo());
+                    Uri uri = mResolver.insert(MapperContract.Posto.CONTENT_URI, values);
+                    long id = Long.parseLong(uri.getLastPathSegment());
+                    if (id != -1) {
+                        posto.setId(id);
+                        mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_VIAGGIO));
+                        mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_CITTA));
+                        mActivity.sendBroadcast(new Intent(MapperIntent.UPDATE_MAPPA));
+                        return RESULT_OK;
+                    }
+                }
+                return RESULT_ERROR;
+            } else
+                return RESULT_NO_ACTION;
+        }
+
+        /**
+         * Verifica se il posto che si vuole inserire esiste già
+         * @return True se il posto esiste, false altrimenti
+         */
+        private boolean checkExistence () {
+            boolean res = false;
+            String selection = MapperContract.Luogo.NOME + "=? AND " + MapperContract.Posto.ID_CITTA + "=?";
+            String [] selectionArgs = {posto.getNome(), Long.toString(posto.getIdCitta())};
+            Cursor c = mResolver.query(MapperContract.Posto.CONTENT_URI, MapperContract.Posto.PROJECTION_ALL, selection, selectionArgs, null);
+            if (c.getCount() > 0) res = true;
+            c.close();
+            return res;
         }
 
         private int getLuogo () {
