@@ -1,4 +1,4 @@
-package com.stefano.andrea.utils;
+package com.stefano.andrea.dialogs;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

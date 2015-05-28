@@ -34,12 +34,12 @@ import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
 import com.stefano.andrea.dialogs.AddCittaDialog;
+import com.stefano.andrea.dialogs.DialogHelper;
 import com.stefano.andrea.loaders.CittaLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
-import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 

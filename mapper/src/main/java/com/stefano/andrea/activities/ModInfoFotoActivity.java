@@ -47,6 +47,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.stefano.andrea.dialogs.AddCittaDialog;
 import com.stefano.andrea.dialogs.AddPostoDialog;
+import com.stefano.andrea.dialogs.DialogHelper;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
@@ -56,7 +57,6 @@ import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.services.FetchAddressIntentService;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
-import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.LocationManagerCheck;
 import com.stefano.andrea.utils.PhotoUtils;
 

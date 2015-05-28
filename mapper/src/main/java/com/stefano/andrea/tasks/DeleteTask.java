@@ -15,13 +15,13 @@ import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.dialogs.DialogHelper;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
-import com.stefano.andrea.utils.DialogHelper;
 
 import java.util.Collections;
 import java.util.List;

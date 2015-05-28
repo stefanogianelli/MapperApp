@@ -29,10 +29,10 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.stefano.andrea.activities.ModInfoFotoActivity;
 import com.stefano.andrea.activities.R;
+import com.stefano.andrea.dialogs.DialogHelper;
 import com.stefano.andrea.intents.MapperIntent;
 import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.tasks.DeleteTask;
-import com.stefano.andrea.utils.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -37,13 +37,13 @@ import com.stefano.andrea.activities.DettagliPostoActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.PostiAdapter;
 import com.stefano.andrea.dialogs.AddPostoDialog;
+import com.stefano.andrea.dialogs.DialogHelper;
 import com.stefano.andrea.loaders.PostiLoader;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.providers.MapperContract;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.utils.CustomFAB;
-import com.stefano.andrea.utils.DialogHelper;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 
