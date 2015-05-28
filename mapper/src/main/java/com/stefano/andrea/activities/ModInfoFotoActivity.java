@@ -800,7 +800,6 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
 
     @Override
     protected void onDestroy() {
-        //TODO: trovare fix per il fatto che la funzione non venga sempre chiamata
         super.onDestroy();
         if (mTipoFoto == PhotoUtils.CAMERA_REQUEST && !mFotoSalvata && !mFotoCancellata) {
             boolean res = cancellaFoto();
