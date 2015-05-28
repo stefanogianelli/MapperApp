@@ -209,6 +209,16 @@
     <string name="autoupdate_cancel">Cancella</string>
     <string name="autoupdate_no_update">App aggiornata</string>
 
+    <!-- ConsistencyService -->
+    <plurals name="rimosse_foto_db">
+        <item quantity="one">Rimossa %d foto cancellata dal dispositivo</item>
+        <item quantity="other">Rimosse %d foto cancellate dal dispositivo</item>
+    </plurals>
+    <plurals name="rimosse_foto_folder">
+        <item quantity="one">Rimossa %d foto non più utilizzata</item>
+        <item quantity="other">Rimosse %d foto non più utilizzate</item>
+    </plurals>
+
     <!-- Titoli -->
     <string name="title_activity_dettagli_citta">DettagliCittaActivity</string>
     <string name="title_activity_dettagli_posto">DettagliPostoActivity</string>

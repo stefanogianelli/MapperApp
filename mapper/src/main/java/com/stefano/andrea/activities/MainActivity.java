@@ -40,6 +40,7 @@ import com.stefano.andrea.adapters.ViaggiAdapter;
 import com.stefano.andrea.loaders.ViaggiLoader;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.services.ConsistencyService;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
@@ -57,6 +58,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Viaggio>>, ViaggiAdapter.ViaggioOnClickListener, DialogHelper.ViaggioDialogCallback {
 
     private static final String BUNDLE_ACTION_MODE = "com.stefano.andrea.activities.MainActivity.actionMode";
+    private static final String BUNDLE_STARTUP = "com.stefano.andrea.activities.MainActivity.startup";
     private static final int VIAGGI_LOADER = 0;
     private static final String TAG = "MainActivity";
 
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private List<Viaggio> mListaViaggi;
     private CustomFAB mFab;
     private Uri mImageUri;
+    private boolean mStartUp = true;
 
     private ActionMode.Callback mCallback = new ActionMode.Callback() {
 
@@ -146,6 +149,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //restore instance
+        if (savedInstanceState != null)
+            mStartUp = savedInstanceState.getBoolean(BUNDLE_STARTUP);
         //acquisisco i riferimenti
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
@@ -210,6 +216,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (networkInfo != null && networkInfo.isConnected()) {
             checkUpdates();
         }
+        //avvio il servizio di verifica delle consistenza del db delle foto
+        if (mStartUp) {
+            Intent intent = new Intent(this, ConsistencyService.class);
+            startService(intent);
+            mStartUp = false;
+        }
     }
 
     @Override
@@ -244,10 +256,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        outState.putBoolean(BUNDLE_STARTUP, mStartUp);
         if (mAdapter != null && mAdapter.isEnabledSelectionMode()) {
             outState.putParcelable(BUNDLE_ACTION_MODE, mAdapter.saveActionmode());
         }
+        super.onSaveInstanceState(outState);
     }
 
     /**
