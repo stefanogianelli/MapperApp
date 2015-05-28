@@ -53,10 +53,10 @@ import com.stefano.andrea.models.Foto;
 import com.stefano.andrea.models.Posto;
 import com.stefano.andrea.models.Viaggio;
 import com.stefano.andrea.providers.MapperContract;
+import com.stefano.andrea.services.FetchAddressIntentService;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
 import com.stefano.andrea.utils.DialogHelper;
-import com.stefano.andrea.utils.FetchAddressIntentService;
 import com.stefano.andrea.utils.LocationManagerCheck;
 import com.stefano.andrea.utils.PhotoUtils;
 

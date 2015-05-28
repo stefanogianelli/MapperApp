@@ -108,7 +108,7 @@
         </provider>
 
         <service
-            android:name="com.stefano.andrea.utils.FetchAddressIntentService"
+            android:name="com.stefano.andrea.services.FetchAddressIntentService"
             android:exported="false" />
 
         <service

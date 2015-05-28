@@ -1,4 +1,4 @@
-package com.stefano.andrea.utils;
+package com.stefano.andrea.services;
 
 import android.app.IntentService;
 import android.content.Intent;
