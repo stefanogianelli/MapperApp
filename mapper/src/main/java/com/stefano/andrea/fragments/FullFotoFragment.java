@@ -324,7 +324,7 @@ public class FullFotoFragment extends Fragment {
     /**
      * Detects and toggles immersive mode (also known as "hidey bar" mode).
      */
-    public void toggleUiFlags() {
+    private void toggleUiFlags() {
 
         View decorView = getActivity().getWindow().getDecorView();
         int uiOptions = decorView.getSystemUiVisibility();
@@ -356,7 +356,7 @@ public class FullFotoFragment extends Fragment {
 
     }
 
-    public void setImmersiveTimer(){
+    private void setImmersiveTimer(){
         new Thread() {
             @Override
             public void run() {
@@ -378,7 +378,7 @@ public class FullFotoFragment extends Fragment {
         }.start();
     }
 
-    public int getStatusBarHeight() {
+    private int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
