@@ -222,21 +222,21 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+    private LatLng move(LatLng startLL, double toNorth, double toEast) {
         double lonDiff = meterToLongitude(toEast, startLL.latitude);
         double latDiff = meterToLatitude(toNorth);
         return new LatLng(startLL.latitude + latDiff, startLL.longitude
                 + lonDiff);
     }
 
-    private static double meterToLongitude(double meterToEast, double latitude) {
+    private double meterToLongitude(double meterToEast, double latitude) {
         double latArc = Math.toRadians(latitude);
         double radius = Math.cos(latArc) * EARTHRADIUS;
         double rad = meterToEast / radius;
         return Math.toDegrees(rad);
     }
 
-    private static double meterToLatitude(double meterToNorth) {
+    private double meterToLatitude(double meterToNorth) {
         double rad = meterToNorth / EARTHRADIUS;
         return Math.toDegrees(rad);
     }
