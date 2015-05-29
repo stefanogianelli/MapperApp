@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -54,6 +55,7 @@ public class FullFotoFragment extends Fragment {
     private int mPosition;
     private ViewPager mPager;
     private Toolbar mToolbar;
+    private ActionBar mActionBar;
 
     public FullFotoFragment () { }
 
@@ -84,16 +86,17 @@ public class FullFotoFragment extends Fragment {
         }
 
         ((AppCompatActivity) mParentActivity).setSupportActionBar(mToolbar);
-        ((AppCompatActivity) mParentActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) mParentActivity).getSupportActionBar().setTitle(R.string.full_foto_fragment_title);
+        mActionBar = ((AppCompatActivity) mParentActivity).getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setTitle(R.string.full_foto_fragment_title);
         mToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
         int uiOptions = mParentActivity.getWindow().getDecorView().getSystemUiVisibility();
         boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
         if(isImmersiveModeEnabled){
-            ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
+            mActionBar.hide();
         }else{
-            ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
+            mActionBar.show();
         }
         uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
@@ -349,9 +352,9 @@ public class FullFotoFragment extends Fragment {
         // Nascondo la toolbar
         boolean isImmersiveModeEnabled =  ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
         if(isImmersiveModeEnabled){
-            ((AppCompatActivity) mParentActivity).getSupportActionBar().show();
+            mActionBar.show();
         }else{
-            ((AppCompatActivity) mParentActivity).getSupportActionBar().hide();
+            mActionBar.hide();
         }
 
     }
