@@ -188,7 +188,7 @@ public class DialogHelper {
         TextView indirizzo = (TextView) v.findViewById(R.id.df_testo_indirizzo);
         TextView btnClose = (TextView) v.findViewById(R.id.btn_closeDettagliFoto);
 
-        percorso.setText(foto.getPath().substring(7));
+        percorso.setText(foto.getPath().substring(7)+'\n');
         formato.setText(foto.getMimeType());
         String dimensioneSI = formatByte(foto.getSize());
         dimensione.setText(dimensioneSI);
