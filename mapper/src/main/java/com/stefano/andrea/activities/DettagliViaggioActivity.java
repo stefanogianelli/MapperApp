@@ -3,8 +3,7 @@ package com.stefano.andrea.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,10 +19,8 @@ import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.fragments.MappaFragment;
 import com.stefano.andrea.loaders.FotoLoader;
-import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
-import com.stefano.andrea.utils.SlidingTabLayout;
 
 import java.io.IOException;
 
@@ -58,7 +55,7 @@ public class DettagliViaggioActivity extends AppCompatActivity {
         //acquisito riferimenti
         Toolbar toolbarView = (Toolbar) findViewById(R.id.dettagli_viaggio_toolbar);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         //attivo action bar
         setSupportActionBar(toolbarView);
         if (getSupportActionBar() != null)
@@ -73,14 +70,7 @@ public class DettagliViaggioActivity extends AppCompatActivity {
         adapter.addTab(getString(R.string.title_tab_dettagli), DettagliViaggioFragment.newInstance(mIdViaggio), DETTAGLI_FRAGMENT);
         adapter.addTab(getString(R.string.title_tab_foto), ElencoFotoFragment.newInstance(mIdViaggio, FotoLoader.FOTO_VIAGGIO), FOTO_FRAGMENT);
         adapter.addTab(getString(R.string.title_tab_mappa), MappaFragment.newInstance(MappaFragment.MAPPA_CITTA), MAPPA_FRAGMENT);
-        tabs.setDistributeEvenly(true);
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
-            }
-        });
-        tabs.setViewPager(pager);
+        tabs.setupWithViewPager(pager);
     }
 
     @Override
