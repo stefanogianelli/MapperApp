@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private ViaggiAdapter mAdapter;
     private List<Viaggio> mListaViaggi;
-    private CustomFAB mFab;
+    private FloatingActionButton mFab;
     private Uri mImageUri;
     private boolean mStartUp = true;
 
@@ -74,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mFab.hide();
-            mFab.setForceHide(true);
+            mFab.setVisibility(View.INVISIBLE);
             mode.getMenuInflater().inflate (R.menu.menu_viaggi_selezionati, menu);
             return true;
         }
@@ -116,15 +116,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
-            mFab.setForceHide(false);
-            mFab.show();
+            mFab.setVisibility(View.VISIBLE);
         }
     };
 
     private EventListener mListener = new EventListener() {
         @Override
         public void onShow(Snackbar snackbar) {
-            mFab.moveUp(snackbar.getHeight());
+            //mFab.moveUp(snackbar.getHeight());
         }
 
         @Override
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         @Override
         public void onDismiss(Snackbar snackbar) {
-            mFab.moveDown(snackbar.getHeight());
+            //mFab.moveDown(snackbar.getHeight());
         }
 
         @Override
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //acquisisco i riferimenti
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.elenco_viaggi);
-        mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_viaggio);
+        mFab = (FloatingActionButton) findViewById(R.id.fab_aggiunta_viaggio);
         final TextView nessunViaggioInfo = (TextView) findViewById(R.id.no_viaggio);
         //attivo action bar
         toolbar.setLogo(R.drawable.logo_icon_24);
@@ -206,8 +205,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         //inizializzo il caricamento dei dati dei viaggi
         getSupportLoaderManager().initLoader(VIAGGI_LOADER, null, this);
-        //inizializzo Floating Action Button
-        mFab.attachToRecyclerView(recyclerView);
         //Inizializzo imageloader
         setupImageLoader();
         //controllo presenza di aggiornamenti

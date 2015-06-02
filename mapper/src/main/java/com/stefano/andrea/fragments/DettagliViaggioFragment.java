@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -59,7 +60,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     private CittaAdapter mAdapter;
     private long mIdViaggio;
     private List<Citta> mElencoCitta;
-    private CustomFAB mFab;
+    private FloatingActionButton mFab;
     private Activity mParentActivity;
     private MapperContext mContext;
     private View mView;
@@ -68,9 +69,8 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mFab.hide();
-            mFab.setForceHide(true);
-            mode.getMenuInflater().inflate (R.menu.menu_citta_selezionate, menu);
+            mFab.setVisibility(View.INVISIBLE);
+            mode.getMenuInflater().inflate(R.menu.menu_citta_selezionate, menu);
             return true;
         }
 
@@ -110,15 +110,14 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.stopActionMode();
-            mFab.setForceHide(false);
-            mFab.show();
+            mFab.setVisibility(View.VISIBLE);
         }
     };
 
     private EventListener mListener = new EventListener() {
         @Override
         public void onShow(Snackbar snackbar) {
-            mFab.moveUp(snackbar.getHeight());
+            //mFab.moveUp(snackbar.getHeight());
         }
 
         @Override
@@ -129,7 +128,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
 
         @Override
         public void onDismiss(Snackbar snackbar) {
-            mFab.moveDown(snackbar.getHeight());
+            //mFab.moveDown(snackbar.getHeight());
         }
 
         @Override
@@ -153,7 +152,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mParentActivity = activity;
-        mFab = (CustomFAB) activity.findViewById(R.id.fab_aggiunta_citta);
+        mFab = (FloatingActionButton) activity.findViewById(R.id.fab_aggiunta_citta);
     }
 
     @Override
@@ -190,7 +189,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         recyclerView.setAdapter(mAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //configuro fab
-        mFab.attachToRecyclerView(recyclerView);
+        mFab.setVisibility(View.VISIBLE);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,6 +249,9 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         if (this.isVisible()) {
             if (!isVisibleToUser) {
                 mAdapter.finishActionMode();
+                mFab.setVisibility(View.INVISIBLE);
+            } else {
+                mFab.setVisibility(View.VISIBLE);
             }
         }
     }

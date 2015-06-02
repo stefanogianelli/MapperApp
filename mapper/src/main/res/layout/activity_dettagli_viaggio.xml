@@ -33,18 +33,13 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <com.stefano.andrea.utils.CustomFAB
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_aggiunta_citta"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/fab_margin_bottom"
-        android:layout_marginRight="@dimen/fab_margin_right"
-        android:src="@drawable/fab_icons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        app:fab_colorNormal="@color/fab_color_normal"
-        app:fab_colorPressed="@color/fab_color_pressed" />
+        android:layout_margin="@dimen/fab_margin_right"
+        android:src="@drawable/fab_icons"
+        android:visibility="invisible"/>
 
 </android.support.design.widget.CoordinatorLayout>

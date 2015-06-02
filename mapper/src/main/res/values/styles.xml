@@ -5,7 +5,7 @@
         <!-- Action Bar -->
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryDark">@color/dark_orange</item>
-        <item name="colorAccent">@color/orange</item>
+        <item name="colorAccent">@color/tabsScrollColor</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorPrimaryInverse">@color/black</item>
         <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
