@@ -31,8 +31,6 @@ import com.github.snowdream.android.app.UpdateFormat;
 import com.github.snowdream.android.app.UpdateManager;
 import com.github.snowdream.android.app.UpdateOptions;
 import com.github.snowdream.android.app.UpdatePeriod;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.EventListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -46,7 +44,6 @@ import com.stefano.andrea.services.ConsistencyService;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
 import com.stefano.andrea.tasks.UpdateTask;
-import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
@@ -118,30 +115,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mAdapter.clearSelection();
             mFab.setVisibility(View.VISIBLE);
         }
-    };
-
-    private EventListener mListener = new EventListener() {
-        @Override
-        public void onShow(Snackbar snackbar) {
-            //mFab.moveUp(snackbar.getHeight());
-        }
-
-        @Override
-        public void onShowByReplace(Snackbar snackbar) { }
-
-        @Override
-        public void onShown(Snackbar snackbar) { }
-
-        @Override
-        public void onDismiss(Snackbar snackbar) {
-            //mFab.moveDown(snackbar.getHeight());
-        }
-
-        @Override
-        public void onDismissByReplace(Snackbar snackbar) { }
-
-        @Override
-        public void onDismissed(Snackbar snackbar) { }
     };
 
     @Override
@@ -283,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         elencoViaggi.add(viaggio);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(this, mAdapter, elencoViaggi, indici, mListener).execute(DeleteTask.CANCELLA_VIAGGIO);
+        new DeleteTask<>(this, mAdapter, elencoViaggi, indici).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**
@@ -306,13 +279,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void viaggioActionButton(int position, long id, String nome) {
         if (id == -1) {
             Viaggio viaggio = new Viaggio(nome);
-            new InsertTask<>(this, mAdapter, viaggio, mListener).execute(InsertTask.INSERISCI_VIAGGIO);
+            new InsertTask<>(this, mAdapter, viaggio).execute(InsertTask.INSERISCI_VIAGGIO);
         } else {
             List<Integer> elencoId = new ArrayList<>();
             elencoId.add((int) id);
             ContentValues values = new ContentValues();
             values.put(MapperContract.Viaggio.NOME, nome);
-            new UpdateTask(this, position, values, elencoId, mAdapter, mListener).execute(UpdateTask.UPDATE_VIAGGIO);
+            new UpdateTask(this, position, values, elencoId, mAdapter).execute(UpdateTask.UPDATE_VIAGGIO);
         }
     }
 
@@ -340,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * Cancella i viaggi selezionati dall'utente
      */
     private void cancellaViaggi() {
-        new DeleteTask<>(this, mAdapter, mListaViaggi, mAdapter.getSelectedItems(), mListener).execute(DeleteTask.CANCELLA_VIAGGIO);
+        new DeleteTask<>(this, mAdapter, mListaViaggi, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_VIAGGIO);
     }
 
     /**

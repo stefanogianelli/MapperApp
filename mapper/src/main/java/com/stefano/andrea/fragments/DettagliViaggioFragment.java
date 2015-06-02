@@ -29,8 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.DettagliCittaActivity;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.adapters.CittaAdapter;
@@ -40,7 +38,6 @@ import com.stefano.andrea.loaders.CittaLoader;
 import com.stefano.andrea.models.Citta;
 import com.stefano.andrea.tasks.DeleteTask;
 import com.stefano.andrea.tasks.InsertTask;
-import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
 
@@ -112,30 +109,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
             mAdapter.stopActionMode();
             mFab.setVisibility(View.VISIBLE);
         }
-    };
-
-    private EventListener mListener = new EventListener() {
-        @Override
-        public void onShow(Snackbar snackbar) {
-            //mFab.moveUp(snackbar.getHeight());
-        }
-
-        @Override
-        public void onShowByReplace(Snackbar snackbar) { }
-
-        @Override
-        public void onShown(Snackbar snackbar) { }
-
-        @Override
-        public void onDismiss(Snackbar snackbar) {
-            //mFab.moveDown(snackbar.getHeight());
-        }
-
-        @Override
-        public void onDismissByReplace(Snackbar snackbar) { }
-
-        @Override
-        public void onDismissed(Snackbar snackbar) { }
     };
 
     public DettagliViaggioFragment () { }
@@ -225,7 +198,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
                 checkVisibility();
             }
 
-            private void checkVisibility () {
+            private void checkVisibility() {
                 if (mAdapter.getItemCount() == 0)
                     nessunaCittaInfo.setVisibility(View.VISIBLE);
                 else
@@ -270,7 +243,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         citta.setNazione(nazione);
         citta.setLatitudine(coordinates.latitude);
         citta.setLongitudine(coordinates.longitude);
-        new InsertTask<>(mParentActivity, mAdapter, citta, mListener).execute(InsertTask.INSERISCI_CITTA);
+        new InsertTask<>(mParentActivity, mAdapter, citta).execute(InsertTask.INSERISCI_CITTA);
     }
 
     /**
@@ -295,14 +268,14 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
         elencoCitta.add(citta);
         List<Integer> indici = new ArrayList<>();
         indici.add(0);
-        new DeleteTask<>(mParentActivity, mAdapter, elencoCitta, indici, mListener).execute(DeleteTask.CANCELLA_CITTA);
+        new DeleteTask<>(mParentActivity, mAdapter, elencoCitta, indici).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     /**
      * Cancella le citta selezionate dall'utente
      */
     private void cancellaElencoCitta() {
-        new DeleteTask<>(mParentActivity, mAdapter, mElencoCitta, mAdapter.getSelectedItems(), mListener).execute(DeleteTask.CANCELLA_CITTA);
+        new DeleteTask<>(mParentActivity, mAdapter, mElencoCitta, mAdapter.getSelectedItems()).execute(DeleteTask.CANCELLA_CITTA);
     }
 
     private void openDialogAddCitta(View view) {

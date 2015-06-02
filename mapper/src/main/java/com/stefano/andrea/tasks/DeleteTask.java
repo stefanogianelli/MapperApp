@@ -9,11 +9,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.listeners.EventListener;
 import com.stefano.andrea.activities.R;
 import com.stefano.andrea.dialogs.DialogHelper;
 import com.stefano.andrea.intents.MapperIntent;
@@ -53,22 +50,16 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
     private List<Integer> mSelectedItems;
     private Activity mActivity;
     private String mMessaggio;
-    private EventListener mListener;
     private ProgressDialog mDialog;
     private Context mContext;
 
     public DeleteTask (Activity activity, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems) {
-        this(activity, adapter, list, selectedItems, null);
-    }
-
-    public DeleteTask (Activity activity, DeleteAdapter adapter, List<T> list, List<Integer> selectedItems, @Nullable EventListener listener) {
         mResolver = activity.getContentResolver();
         mAdapter = adapter;
         mList = list;
         mSelectedItems = selectedItems;
         mActivity = activity;
         mContext = activity.getApplicationContext();
-        mListener = listener;
         mDialog = new ProgressDialog(activity);
     }
 
@@ -122,11 +113,7 @@ public class DeleteTask<T> extends AsyncTask<Integer, Void, Integer> {
             Collections.sort(mSelectedItems);
             mAdapter.cancellaItems(mSelectedItems);
             //mostro snackbar di conferma dell'operazione
-            if (mListener != null)
-                SnackbarManager.show(
-                        Snackbar.with(mActivity)
-                                .text(mMessaggio)
-                                .eventListener(mListener));
+            Snackbar.make(mActivity.getCurrentFocus(), mMessaggio, Snackbar.LENGTH_SHORT).show();
         } else {
             DialogHelper.showAlertDialog(mActivity, R.string.errore_eliminazione_titolo_dialog, R.string.errore_eliminazione_messaggio_dialog);
         }
