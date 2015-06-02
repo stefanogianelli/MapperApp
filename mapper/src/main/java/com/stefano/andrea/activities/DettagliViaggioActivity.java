@@ -3,6 +3,7 @@ package com.stefano.andrea.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import com.stefano.andrea.fragments.DettagliViaggioFragment;
 import com.stefano.andrea.fragments.ElencoFotoFragment;
 import com.stefano.andrea.fragments.MappaFragment;
 import com.stefano.andrea.loaders.FotoLoader;
+import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.SlidingTabLayout;
@@ -36,6 +38,7 @@ public class DettagliViaggioActivity extends AppCompatActivity {
     private long mIdViaggio;
     private String mNomeViaggio;
     private Uri mImageUri;
+    private CustomFAB mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class DettagliViaggioActivity extends AppCompatActivity {
         Toolbar toolbarView = (Toolbar) findViewById(R.id.dettagli_viaggio_toolbar);
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mFab = (CustomFAB) findViewById(R.id.fab_aggiunta_citta);
         //attivo action bar
         setSupportActionBar(toolbarView);
         if (getSupportActionBar() != null)
@@ -78,6 +82,25 @@ public class DettagliViaggioActivity extends AppCompatActivity {
             }
         });
         tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0)
+                    mFab.show(true);
+                else
+                    mFab.hide(true);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override

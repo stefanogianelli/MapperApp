@@ -153,6 +153,7 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mParentActivity = activity;
+        mFab = (CustomFAB) activity.findViewById(R.id.fab_aggiunta_citta);
     }
 
     @Override
@@ -181,7 +182,6 @@ public class DettagliViaggioFragment extends Fragment implements LoaderManager.L
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_dettagli_viaggio, container, false);
         //acquisisco riferimenti
-        mFab = (CustomFAB) mView.findViewById(R.id.fab_aggiunta_citta);
         final RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview_scroll);
         final TextView nessunaCittaInfo = (TextView) mView.findViewById(R.id.no_citta);
         //configuro recyclerview
