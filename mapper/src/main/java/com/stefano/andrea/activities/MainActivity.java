@@ -2,12 +2,9 @@ package com.stefano.andrea.activities;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -26,10 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.snowdream.android.app.UpdateFormat;
-import com.github.snowdream.android.app.UpdateManager;
-import com.github.snowdream.android.app.UpdateOptions;
-import com.github.snowdream.android.app.UpdatePeriod;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.EventListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -49,7 +42,6 @@ import com.stefano.andrea.utils.CustomFAB;
 import com.stefano.andrea.utils.MapperContext;
 import com.stefano.andrea.utils.PhotoUtils;
 import com.stefano.andrea.utils.SparseBooleanArrayParcelable;
-import com.stefano.andrea.utils.UpdateListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -210,12 +202,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mFab.attachToRecyclerView(recyclerView);
         //Inizializzo imageloader
         setupImageLoader();
-        //controllo presenza di aggiornamenti
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            checkUpdates();
-        }
         //avvio il servizio di verifica delle consistenza del db delle foto
         if (mStartUp) {
             Intent intent = new Intent(this, ConsistencyService.class);
@@ -234,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_about) {
-            startActivity(new Intent(this,AboutActivity.class));
+            startActivity(new Intent(this, AboutActivity.class));
             return true;
         } else if (id == R.id.action_aggiungi_foto_main) {
             try {
@@ -403,18 +389,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .translationY(view.getHeight())
                 .alpha(1.0f)
                 .setDuration(900);
-    }
-
-    private void checkUpdates () {
-        UpdateManager manager = new UpdateManager(this);
-
-        UpdateOptions options = new UpdateOptions.Builder(this)
-                .checkUrl(UPDATE_XML_URL)
-                .updateFormat(UpdateFormat.XML)
-                .updatePeriod(new UpdatePeriod(UpdatePeriod.EACH_ONE_DAY))
-                .checkPackageName(true)
-                .build();
-        manager.check(this, options, new UpdateListener());
     }
 
 }
