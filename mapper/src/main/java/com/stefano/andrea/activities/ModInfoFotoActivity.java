@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -167,14 +166,14 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
         if (!mStartFromIntent && getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        //Kitkat: verifico se le uri sono da correggere
+        //acquisisco path dei file quando effettuo acquisizioni dalla galleria
         mTipoFoto = intent.getIntExtra(EXTRA_TIPO_FOTO, EMPTY_ID);
-        if (!MapperIntent.MAPPER_MODIFICA_FOTO.equals(action) && mTipoFoto != PhotoUtils.CAMERA_REQUEST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (!MapperIntent.MAPPER_MODIFICA_FOTO.equals(action) && mTipoFoto != PhotoUtils.CAMERA_REQUEST) {
             List<Uri> correctedUris = new ArrayList<>();
             for (int i = 0; i < mFotoUris.size(); i++) {
-                Log.v(TAG, "Original uri: " + mFotoUris.get(i).toString());
+                Log.d(TAG, "Original uri: " + mFotoUris.get(i).toString());
                 correctedUris.add(getGalleryPhotoUri(mFotoUris.get(i)));
-                Log.v(TAG, "New uri: " + correctedUris.get(i).toString());
+                Log.d(TAG, "New uri: " + correctedUris.get(i).toString());
             }
             mFotoUris.clear();
             mFotoUris.addAll(correctedUris);
