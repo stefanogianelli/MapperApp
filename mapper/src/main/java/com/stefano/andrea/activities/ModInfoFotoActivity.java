@@ -1,6 +1,5 @@
 package com.stefano.andrea.activities;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -11,6 +10,7 @@ import android.graphics.Bitmap;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -1152,16 +1152,20 @@ public class ModInfoFotoActivity extends AppCompatActivity implements GoogleApiC
      * @param imageUri L'uri dell'immagine acquisita dal document provider
      * @return L'uri corretta dell'immagine
      */
-    @TargetApi(19)
     private Uri getGalleryPhotoUri (Uri imageUri) {
         Uri uri;
-        try {
-            //documents uri
-            String wholeID = DocumentsContract.getDocumentId(imageUri);
-            String id = wholeID.split(":")[1];
-            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(id).build();
-        } catch (IllegalArgumentException e) {
-            //media provider uri
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                //documents uri
+                String wholeID = DocumentsContract.getDocumentId(imageUri);
+                String id = wholeID.split(":")[1];
+                uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(id).build();
+            } catch (IllegalArgumentException e) {
+                //media provider uri
+                uri = imageUri;
+            }
+        } else {
+            //on version below kitkat no need to involve DocumentsProvider
             uri = imageUri;
         }
         String [] projection = { MediaStore.Images.Media.DATA };
