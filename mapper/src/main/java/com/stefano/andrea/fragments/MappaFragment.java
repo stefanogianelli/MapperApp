@@ -7,7 +7,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +67,6 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private static final int MAP_COORD_LOADER = 4;
     private static final int TIMEOUT = 100;
-    private static final int MAP_PADDING = 250;
     private static final int NUMERO_MINIATURE = 4;
     private static final double EARTHRADIUS = 6366198;
     private static final int DISTANCE_CITTA = 5000;
@@ -198,11 +200,33 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
         mClusterManager.clearItems();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         if (mMarkerData.size() > 0) {
+            //Get the View height and width, so we don't exceed the screen size after padding for the camera updates
+            int cameraPadding, width, height;
+            if (android.os.Build.VERSION.SDK_INT >= 13) {
+                Display display = mParentActivity.getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                width = size.x;
+                height = size.y;
+            } else {
+                Display display = mParentActivity.getWindowManager().getDefaultDisplay();
+                width = display.getWidth();
+                height = display.getHeight();
+            }
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+                //Use verticle size for padding
+                cameraPadding = (int) (height * 0.2f);
+            }else{
+                //Use horizontal size for padding
+                cameraPadding = (int) (width * 0.2f);
+            }
+            //aggiungo i vari marker
             for (int i = 0; i < mMarkerData.size(); i++) {
                 GeoInfo item = mMarkerData.get(i);
                 mClusterManager.addItem(item);
                 builder.include(item.getPosition());
             }
+            //correggo zoom se è presente un solo elemento
             if (mMarkerData.size() == 1) {
                 LatLngBounds tmpBounds = builder.build();
                 LatLng center = tmpBounds.getCenter();
@@ -217,7 +241,7 @@ public class MappaFragment extends SupportMapFragment implements OnMapReadyCallb
                 builder.include(northEast);
             }
             LatLngBounds bounds = builder.build();
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING);
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, cameraPadding);
             mMap.moveCamera(cu);
         }
     }
